@@ -1,0 +1,151 @@
+# Other Topics {#sec-other-topics}
+
+## Mathematical Logic {#sec-math-logic}
+
+In @sec-data-struct and @sec-control-struct we talk about more complicated data structures and control structures (for loops, if statements). 
+I've included this section because it may be useful to review some concepts from mathematical logic.
+
+Unfortunately, to best demonstrate mathematical logic, I'm going to need you to know that a vector is like a list of the same type of thing. 
+In R, vectors are defined using `c()`, so `c(1, 2, 3)` produces a vector with entries 1, 2, 3. 
+In Python, we'll primarily use `numpy` arrays, which we create using `np.array([1, 2, 3])`. 
+Technically, this is creating a list, and then converting that list to a numpy array. 
+
+
+### And, Or, and Not
+
+We can combine logical statements using and, or, and not.
+
+- (X AND Y) requires that both X and Y are true.
+- (X OR Y) requires that one of X or Y is true.
+- (NOT X) is true if X is false, and false if X is true. Sometimes called **negation**.
+
+In R, we use `!` to symbolize NOT, in Python, we use `~` for vector-wise negation (NOT).
+
+Order of operations dictates that NOT is applied before other operations. So `NOT X AND Y` is read as `(NOT X) AND (Y)`. You must use parentheses to change the way this is interpreted.
+
+::: panel-tabset
+#### R
+
+```{r}
+x <- c(TRUE, FALSE, TRUE, FALSE)
+y <- c(TRUE, TRUE, FALSE, FALSE)
+
+x & y # AND
+x | y # OR
+!x & y # NOT X AND Y
+x & !y # X AND NOT Y
+```
+
+#### Python
+
+```{python}
+import numpy as np
+x = np.array([True, False, True, False])
+y = np.array([True, True, False, False])
+
+x & y
+x | y
+~x & y
+x & ~y
+```
+:::
+
+### De Morgan's Laws
+
+[De Morgan's Laws](https://en.wikipedia.org/wiki/De_Morgan%27s_laws) are a set of rules for how to combine logical statements. You can represent them in a number of ways:
+
+-   NOT(A or B) is equivalent to NOT(A) and NOT(B)
+-   NOT(A and B) is equivalent to NOT(A) or NOT(B)
+
+::: panel-tabset
+We can also represent them with Venn Diagrams.
+
+#### Definitions
+
+![Venn Diagram of Set A and Set B](images/other/SetA and SetB.png)
+
+Suppose that we set the convention that ![Shaded regions are TRUE, unshaded regions are FALSE](images/other/TrueFalse.png).
+
+#### DeMorgan's First Law
+
+![A venn diagram illustration of De Morgan's laws showing that the region that is outside of the union of A OR B (aka NOT (A OR B)) is the same as the region that is outside of (NOT A) and (NOT B)](images/other/DeMorgan1.png)
+
+#### DeMorgan's Second Law
+
+![A venn diagram illustration of De Morgan's laws showing that the region that is outside of the union of A AND B (aka NOT (A AND B)) is the same as the region that is outside of (NOT A) OR (NOT B)](images/other/DeMorgan2.png)
+:::
+
+
+
+## Controlling Loops with Break, Next, Continue {#sec-controlling-loops}
+
+<!-- https://www.py4e.com/html3/05-iterations -->
+
+<!-- https://www.datamentor.io/r-programming/break-next/ -->
+
+Sometimes it is useful to control the statements in a loop with a bit more precision. 
+You may want to skip over code and proceed directly to the next iteration, or, as demonstrated in the previous section with the `break` statement, it may be useful to exit the loop prematurely.
+
+### Break Statement
+
+![A break statement is used to exit a loop prematurely](images/other/break-statement.png)
+
+### Next/Continue Statement 
+
+![A next (or continue) statement is used to skip the body of the loop and continue to the next iteration](images/other/next-statement-flow.png)
+
+
+::: callout-warning
+### Example: Next/continue and Break statements
+Let's demonstrate the details of next/continue and break statements.
+
+We can do different things based on whether i is evenly divisible by 3, 5, or both 3 and 5 (thus divisible by 15)
+
+::: panel-tabset
+#### R {.unnumbered}
+
+```{r}
+for (i in 1:20) {
+  if (i %% 15 == 0) {
+    print("Exiting now")
+    break
+  } else if (i %% 3 == 0) {    
+    print("Divisible by 3")
+    next
+    print("After the next statement") # this should never execute
+  } else if (i %% 5 == 0) {
+    print("Divisible by 5")
+  } else {
+    print(i)
+  }
+}
+```
+
+#### Python {.unnumbered}
+
+```{python}
+for i in range(1, 20):
+  if i%15 == 0:
+    print("Exiting now")
+    break
+  elif i%3 == 0:
+    print("Divisible by 3")
+    continue
+    print("After the next statement") # this should never execute
+  elif i%5 == 0:
+    print("Divisible by 5")
+  else: 
+    print(i)
+
+```
+:::
+:::
+
+To be quite honest, I haven't really ever needed to use next/continue statements when I'm programming, and I rarely use break statements. However, it's useful to know they exist just in case you come across a problem where you could put either one to use.
+
+
+## Recursion {#sec-recursion}
+
+Under construction. 
+
+In the meantime, check out @datamentorRecursion2017 (R) and @parewalabspvtPythonRecursion2020 (Python) for decent coverage of the basic idea of recursive functions.
