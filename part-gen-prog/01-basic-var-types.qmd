@@ -1,0 +1,490 @@
+# Variables and Basic Data Types
+
+## Objectives
+
+- Know the basic data types and what their restrictions are
+- Know how to test to see if a variable is a given data type
+- Understand the basics of implicit and explicit type conversion
+- Write code that assigns values to variables
+
+## Basic Definitions
+
+For a general overview, @tomscottWhyTRUETRUE2020 is an excellent introduction to data types:
+
+::: youtube-video-container
+<iframe width="640" height="400" src="https://www.youtube.com/embed/6otW6OXjR8c?list=PL96C35uN7xGLLeET0dOWaKHkAlPsrkcha" title="YouTube video player" frameborder="0" allow="accelerometer; picture-in-picture" allowfullscreen>
+</iframe>
+:::
+
+Let's start this section with some basic vocabulary.
+
+-   a **value** is a basic unit of stuff that a program works with, like `1`, `2`, `"Hello, World"`, and so on.
+-   values have **types** - `2` is an integer, `"Hello, World"` is a string (it contains a "string" of letters). Strings are in quotation marks to let us know that they are not variable names.
+
+In most programming languages (including R and python), there are some very basic data types:
+
+-   **logical** or **boolean** - FALSE/TRUE or 0/1 values. Sometimes, boolean is shortened to **bool**
+
+-   **integer** - whole numbers (positive or negative)
+
+-   **double** or **float** or **numeric**- decimal numbers.
+
+    -   **float** is short for floating-point value.
+    -   **double** is a floating-point value with more precision ("double precision").[^01-prog-intro-1]
+    -   R uses the name **numeric** to indicate a decimal value, regardless of precision.
+
+-   **character** or **string** - holds text, usually enclosed in quotes.
+
+
+[^01-prog-intro-1]: This means that doubles take up more memory but can store more decimal places. You don't need to worry about this much in R, and only a little in Python, but in older and more precise languages such as C/C++/Java, the difference between floats and doubles can be important.
+
+::: callout-important
+## Capitalization matters! {.unnumbered}
+
+In R, boolean values are `TRUE` and `FALSE`, but in Python they are `True` and `False`. Capitalization matters a LOT.
+
+Other things matter too: if we try to write a million, we would write it `1000000` instead of `1,000,000` (in both languages). Commas are used for separating numbers, not for proper spacing and punctuation of numbers. This is a hard thing to get used to but very important -- especially when we start reading in data.
+:::
+
+## Variables
+
+Programming languages use **variables** - names that refer to values. Think of a variable as a container that holds something - instead of referring to the value, you can refer to the container and you will get whatever is stored inside.
+
+### Assignment
+We **assign** variables values using the syntax `object_name <- value` (R) or `object_name = value` (python). You can read this as "object name gets value" in your head.
+
+In R, `<-` is used for assigning a value to a variable. So `x <- "R is awesome"` is read "x gets 'R is awesome'" or "x is assigned the value 'R is awesome'". Technically, you can also use `=` to assign things to variables in R, but most style guides consider this to be poor programming practice, so seriously consider defaulting to `<-`.
+
+In Python, `=` is used for assigning a value to a variable. This tends to be much easier to say out loud, but lacks any indication of directionality.
+
+::: panel-tabset
+#### R {.unnumbered}
+
+```{r assign-value-r, results='hold'}
+message <- "So long and thanks for all the fish"
+year <- 2025
+the_answer <- 42L
+earth_demolished <- FALSE
+```
+
+#### Python {.unnumbered}
+
+```{python assign-value-py, results='hold'}
+message = "So long and thanks for all the fish"
+year = 2025
+the_answer = 42
+earth_demolished = False
+```
+:::
+
+::: callout-note
+Note that in R, we assign variables values using the `<-` operator, where in Python, we assign variables values using the `=` operator. Technically, `=` will work for assignment in both languages, but `<-` is more common than `=` in R by convention.
+:::
+
+We can then use the variables - do numerical computations, evaluate whether a proposition is true or false, and even manipulate the content of strings, all by referencing the variable by name.
+
+### Valid Names
+
+> There are only two hard things in Computer Science: cache invalidation and naming things.\
+> -- Phil Karlton
+
+Object names must start with a letter and can only contain letters, numbers, `_`, and `.` in R. In Python, object names must start with a letter and can consist of letters, numbers, and `_` (that is, `.` is not a valid character in a Python variable name). While it is technically fine to use uppercase variable names in Python, it's recommended that you use lowercase names for variables (you'll see why later).
+
+What happens if we try to create a variable name that isn't valid?
+
+In both languages, starting a variable name with a number will get you an error message that lets you know that something isn't right - "unexpected symbol" in R and "invalid syntax" in python.
+
+::: panel-tabset
+#### R {.unnumbered}
+
+```{r invalid-variable-name-r, error = T}
+1st_thing <- "check your variable names!"
+```
+
+#### Python {.unnumbered}
+
+```{python invalid-variable-name-py, eval = F}
+1st_thing <- "check your variable names!"
+```
+
+Note: Run the above chunk in your python window - the book won't compile if I set it to evaluate 😥. It generates an error of `SyntaxError: invalid syntax (<string>, line 1)`
+
+```{python invalid-variable-name-py2, error = T}
+second.thing <- "this isn't valid"
+```
+
+In python, trying to have a `.` in a variable name gets a more interesting error: "<first part> is not defined". This is because in python, some objects have components and methods that can be accessed with `.`. We'll get into this more later, but there is a good reason for python's restriction about not using `.` in variable names.
+:::
+
+Naming things is difficult! When you name variables, try to make the names descriptive - what does the variable hold? What are you going to do with it? The more (concise) information you can pack into your variable names, the more readable your code will be.
+
+::: callout-note
+#### Learn More
+
+[Why is naming things hard?](https://neilkakkar.com/why-is-naming-things-hard.html) - Blog post by Neil Kakkar
+:::
+
+There are a few different conventions for naming things that may be useful:
+
+-   `some_people_use_snake_case`, where words are separated by underscores
+-   `somePeopleUseCamelCase`, where words are appended but anything after the first word is capitalized (leading to words with humps like a camel).
+-   `some.people.use.periods` (in R, obviously this doesn't work in python)
+-   A few people mix conventions with `variables_thatLookLike.this` and they are almost universally hated 👿
+
+As long as you pick ONE naming convention and don't mix-and-match, you'll be fine. It will be easier to remember what you named your variables (or at least guess) and you'll have fewer moments where you have to go scrolling through your script file looking for a variable you named.
+
+## Types
+
+You can use different functions to test whether a variable has a specific type as well:
+
+::: panel-tabset
+#### R {- .unnumbered}
+
+```{r test-var-type-r, results='hold'}
+is.logical(FALSE)
+is.integer(2L) # by default, R treats all numbers as numeric/decimal values. 
+          # The L indicates that we're talking about an integer. 
+is.integer(2)
+is.numeric(2)
+is.character("Hello, programmer!")
+is.function(print)
+```
+
+In R, you use `is.xxx` functions, where xxx is the name of the type in question.
+
+#### Python {- .unnumbered}
+
+```{python test-var-type-py, results='hold'}
+isinstance(False, bool)
+isinstance(2, int)
+isinstance(2, (int, float)) # Test for one of multiple types
+isinstance(3.1415, float)
+isinstance("This is python code", str)
+```
+
+In python, test for types using the `isinstance` function with an argument containing one or more data types in a tuple (`(int, float)` is an example of a tuple - a static set of multiple values).
+
+If we want to test for whether something is **callable** (can be used like a function), we have to get slightly more complicated:
+
+```{python test-var-type-fn-py}
+callable(print)
+```
+
+This is glossing over some much more technical information about differences between functions and classes (that we haven't covered) [@ryanAnswerHowDetect2009]. 
+:::
+
+
+::: callout-caution
+### Example: Assignment and Testing Types
+::: panel-tabset
+#### Character {.unnumbered}
+
+```{r is-fcns-char, collapse = T, hold = T}
+x <- "R is awesome"
+typeof(x)
+is.character(x)
+is.logical(x)
+is.integer(x)
+is.double(x)
+```
+
+```{python is-fcns-char-py, collapse = T, hold = T}
+x = "python is awesome"
+type(x)
+isinstance(x, str)
+isinstance(x, bool)
+isinstance(x, int)
+isinstance(x, float)
+```
+
+#### Logical {.unnumbered}
+
+```{r is-fcns-lgl, collapse = T, hold = T}
+x <- FALSE
+typeof(x)
+is.character(x)
+is.logical(x)
+is.integer(x)
+is.double(x)
+```
+
+In R, is possible to use the shorthand `F` and `T`, but be careful with this, because `F` and `T` are not reserved, and other information can be stored within them. See [this discussion](https://twitter.com/tslumley/status/1279870794730893312) for pros and cons of using `F` and `T` as variables vs. shorthand for true and false. [^intro-prog-1]
+
+```{python is-fcns-lgl-py, collapse = T, hold = T}
+x = False
+type(x)
+isinstance(x, str)
+isinstance(x, bool)
+isinstance(x, int)
+isinstance(x, float)
+```
+
+Note that in python, boolean variables are also integers. If your goal is to test whether something is a T/F value, you may want to e.g. test whether its value is one of 0 or 1, rather than testing whether it is a boolean variable directly, since integers can also function directly as bools in Python.
+
+#### Integer {.unnumbered}
+
+```{r is-fcns-int, collapse = T, hold = T}
+x <- 2
+typeof(x)
+is.character(x)
+is.logical(x)
+is.integer(x)
+is.double(x)
+```
+
+Wait, 2 is an integer, right?
+
+2 is an integer, but in R, values are assumed to be doubles unless specified. So if we want R to treat 2 as an integer, we need to specify that it is an integer specifically.
+
+```{r is-fcns-int2, collapse = T, hold = T}
+x <- 2L # The L immediately after the 2 indicates that it is an integer.
+typeof(x)
+is.character(x)
+is.logical(x)
+is.integer(x)
+is.double(x)
+is.numeric(x)
+```
+
+```{python is-fcns-int-py, collapse = T, hold = T}
+x = 2
+type(x)
+isinstance(x, str)
+isinstance(x, bool)
+isinstance(x, int)
+isinstance(x, float)
+```
+
+#### Double {.unnumbered}
+
+```{r is-fcns-dbl, collapse = T, hold = T}
+x <- 2.45
+typeof(x)
+is.character(x)
+is.logical(x)
+is.integer(x)
+is.double(x)
+is.numeric(x)
+```
+
+```{python is-fcns-dbl-py, collapse = T, hold = T}
+x = 2.45
+type(x)
+isinstance(x, str)
+isinstance(x, bool)
+isinstance(x, int)
+isinstance(x, float)
+```
+
+#### Numeric {.unnumbered}
+
+A fifth common "type"[^intro-prog-2], `numeric` is really the union of two types: integer and double, and you may come across it when using `str()` or `mode()`, which are similar to `typeof()` but do not quite do the same thing.
+
+The `numeric` category exists because when doing math, we can add an integer and a double, but adding an integer and a string is ... trickier. Testing for numeric variables guarantees that we'll be able to do math with those variables. `is.numeric()` and `as.numeric()` work as you would expect them to work.
+
+The general case of this property of a language is called **implicit type conversion** - that is, R will implicitly (behind the scenes) convert your integer to a double and then add the other double, so that the result is unambiguously a double.
+:::
+
+:::
+
+[^intro-prog-1]: There is also an [R package dedicated to pure evil](https://purrple.cat/blog/2017/05/28/turn-r-users-insane-with-evil/) that will set F and T randomly on startup. Use this information wisely.
+
+[^intro-prog-2]: `numeric` is not really a type, it's a mode. Run `?mode` for more information.
+
+## Type Conversions {#sec-type-conversions}
+
+Programming languages will generally work hard to seamlessly convert variables to different types. So, for instance,
+
+::: panel-tabset
+
+### R {- .unnumbered}
+
+```{r, error = T, collapse = T, hold = T}
+TRUE + 2
+
+2L + 3.1415
+
+"abcd" + 3
+```
+
+### Python {- .unnumbered}
+
+```{python, error = T, collapse = T, hold = T}
+True + 2
+
+int(2) + 3.1415
+
+"abcd" + 3
+```
+:::
+
+This conversion doesn't always work - there's no clear way to make "abcd" into a number we could use in addition. So instead, R or python will issue an error. This error pops up frequently when something went wrong with data import and all of a sudden you just tried to take the mean of a set of string/character variables. Whoops.
+
+When you want to, you can also use `as.xxx()` to make the type conversion **explicit**. So, the analogue of the code above, with explicit conversions would be:
+
+::: panel-tabset
+
+### R {- .unnumbered}
+
+```{r, error = T, collapse = T, hold = T}
+as.double(TRUE) + 2
+
+as.double(2L) + 3.1415
+
+as.numeric("abcd") + 3
+```
+
+### Python {- .unnumbered}
+
+```{python, error = T, collapse = T, hold = T}
+int(True) + 2
+
+float(2) + 3.1415
+
+float("abcd") + 3
+
+import pandas as pd # Load pandas library
+pd.to_numeric("abcd", errors = 'coerce') + 3
+```
+:::
+
+When we make our intent explicit (convert "abcd" to a numeric variable) we get an NA - a missing value - in R. In Python, we get a more descriptive error by default, but we can use the `pandas` library (which adds some statistical functionality) to get a similar result to the result we get in R.
+
+There's still no easy way to figure out where "abcd" is on a number line, but our math will still have a result - `NA + 3` is `NA`.
+
+## Determining a Variable's Type
+
+If you don't know what type a value is, both R and python have functions to help you with that.
+
+::: panel-tabset
+
+### R {- .unnumbered}
+
+If you are unsure what the type of a variable is, use the `typeof()` function to find out.
+
+```{r var-types, collapse = T, hold = T}
+w <- "a string"
+x <- 3L
+y <- 3.1415
+z <- FALSE
+
+typeof(w)
+typeof(x)
+typeof(y)
+typeof(z)
+
+```
+
+### Python {- .unnumbered}
+
+If you are unsure what the type of a variable is, use the `type()` function to find out.
+
+```{python var-types-py, collapse = T, hold = T}
+w = "a string"
+x = 3
+y = 3.1415
+z = False
+
+type(w)
+type(x)
+type(y)
+type(z)
+
+```
+
+:::
+
+::: callout-tip
+
+## Try It Out: Variables and Types {-}
+
+::: panel-tabset
+
+### R {- .unnumbered}
+
+1.  Create variables `string`, `integer`, `decimal`, and `logical`, with types that match the relevant variable names.
+
+```{r tryitout-data-type, eval = F}
+string <- 
+integer <- 
+decimal <- 
+logical <- 
+```
+
+2.  Can you get rid of the error that occurs when this chunk is run?
+
+```{r try-it-out-arithmetic, eval = F}
+logical + decimal
+integer + decimal
+string + integer
+```
+
+3.  What happens when you add string to string? logical to logical?
+
+### Python {- .unnumbered}
+
+1.  Create variables `string`, `integer`, `decimal`, and `logical`, with types that match the relevant variable names.
+
+```{python tryitout-data-type-py, eval = F}
+string = 
+integer = 
+decimal = 
+logical = 
+```
+
+2.  Can you get rid of the error that occurs when this chunk is run?
+
+```{python try-it-out-arithmetic-py, eval = F}
+logical + decimal
+integer + decimal
+string + integer
+```
+
+3.  What happens when you add string to string? logical to logical?
+
+### R Solution {- .unnumbered}
+
+```{r tryitout-data-type-answers, error = T}
+string <- "hi, I'm a string"
+integer <- 4L
+decimal <- 5.412
+logical <- TRUE
+
+logical + decimal
+integer + decimal
+as.numeric(string) + integer
+
+"abcd" + "efgh"
+TRUE + TRUE
+```
+
+In R, adding a string to a string creates an error ("non-numeric argument to binary operator"). Adding a logical to a logical, e.g. TRUE + TRUE, results in `r TRUE + TRUE`, which is a numeric value.
+
+To concatenate strings in R (like the default behavior in python), we would use the `paste0` function: `paste0("abcd", "efgh")`, which returns `r paste0("abcd", "efgh")`.
+
+### Python Solution {- .unnumbered}
+
+```{python tryitout-data-type-answers-py, error = T}
+import pandas as pd
+
+string = "hi, I'm a string"
+integer = 4
+decimal = 5.412
+logical = True
+
+logical + decimal
+integer + decimal
+pd.to_numeric(string, errors='coerce') + integer
+
+"abcd" + "efgh"
+True + True
+```
+
+In Python, when a string is added to another string, the two strings are **concatenated**. This differs from the result in R, which is a "non-numeric argument to binary operator" error.
+
+:::
+
+:::
+
+## References  {#part-gen-prog-01-refs}
+
