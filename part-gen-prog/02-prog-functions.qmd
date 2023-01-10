@@ -68,7 +68,7 @@ Both R and Python operate under the same mathematical rules of precedence that y
 ```
 :::
 
-## String Operations
+## Simple String Operations
 
 Python has some additional operators that work on strings. In R, you will have to use functions to perform these operations, as R does not have string operators.
 
@@ -89,7 +89,7 @@ In R, to concatenate things, we need to use functions: `paste` or `paste0`:
 ```{r}
 paste("first", "second", sep = " ")
 paste("first", "second", collapse = " ")
-paste(c("first", "second"), sep = " ") # sep only works on separate parameters
+paste(c("first", "second"), sep = " ") # sep only works w/ 2 objects passed in
 paste(c("first", "second"), collapse = " ") # collapse works on vectors
 
 paste(c("a", "b", "c", "d"), 
@@ -170,6 +170,106 @@ x = ("test", )*3 # String multiplication
 
 :::
 :::
+
+## Overpowerd Calculators
+
+Now that you're familiar with how to use functions, if not how to define them, you are capable of using R or python as a very fancy calculator. Obviously, both languages can do many more interesting things, which we'll get to, but let's see if we can make R and Python do some very basic stuff that hopefully isn't too foreign to you.
+
+::: callout-caution
+### Example: Triangle Side Length
+
+![A right triangle with sides a, b, and hypotenuse c labeled.](../images/gen-prog/right-triangle.png)
+
+Consider this triangle. I've measured the sides in an image editor and determined that $a = 212$ pixels, $b = 345$ pixels, and $c = 406$ pixels. I suspect, however, that my measurements aren't quite right - for one thing, I tried to measure in the center of the line, but it wasn't easy on the diagonal.
+
+Let's assume that my measurements for $a$ and $b$ are accurate and calculate how far off my estimate was for side $c$.
+
+::: panel-tabset
+#### R
+```{r}
+# Define variables for the 3 sides of the triangle
+a <- 212
+b <- 345
+c_meas <- 406
+c_actual <- sqrt(a^2 + b^2)
+
+# Calculate difference between measured and actual
+# relative to actual 
+# and make it a percentage
+pct_error <- (c_meas - c_actual)/c_actual * 100
+pct_error
+```
+
+#### Python
+```{python}
+# To get the sqrt function, we have to import the math package
+import math
+
+# Define variables for the 3 sides of the triangle
+a = 212
+b = 345
+c_meas = 406
+c_actual = math.sqrt(a**2 + b**2)
+
+# Calculate difference between measured and actual
+# relative to actual 
+# and make it a percentage
+pct_error = (c_meas - c_actual)/c_actual * 100
+pct_error
+```
+:::
+
+Interesting, I wasn't as inaccurate as I thought!
+:::
+
+::: callout-tip
+### Your Turn
+
+Of course, if you remember trigonometry, we don't have to work with right triangles. 
+Let's see if we can use trigonometric functions to do the same task with an oblique triangle.
+
+::: panel-tabset
+#### Problem
+
+Just in case you've forgotten your Trig, the Law of Cosines says that $$c^2 = a^2 + b^2 - 2 a b \cos(C),$$ where $C$ is the angle between sides $a$ and $b$.
+
+![An oblique triangle with sides labeled a, b, and c, and angles labeled as A, B, C with capital letter opposite the lowercase side.](../images/gen-prog/not-right-triangle.png)
+
+I measure side $a = 291$ pixels, side $b = 414$ pixels, and the angle between $a$ and $b$ to be $67.6^\circ$. What will I likely get for the length of side $c$ in pixels?
+
+Remember to check whether R and python compute trig functions using radians or degrees! As a reminder, $\pi$ radians = $180^\circ$.
+
+#### R solution
+```{r}
+# Define variables for the 3 sides of the triangle
+a <- 291
+b <- 414
+c_angle <- 67.6
+c_actual <- sqrt(a^2 + b^2 - 2*a*b*cos(c_angle/180*pi))
+c_actual
+```
+
+I measured the length of side $c$ as 407 pixels.
+
+#### Python solution
+```{python}
+# To get the sqrt and cos functions, we have to import the math package
+import math
+
+# Define variables for the 3 sides of the triangle
+a = 291
+b = 414
+c_angle = 67.6
+c_actual = math.sqrt(a**2 + b**2 - 2*a*b*math.cos(c_angle/180*math.pi))
+c_actual
+```
+
+I measured the length of side $c$ as 407 pixels.
+
+:::
+:::
+
+Congratulations, if you used a TI-83 in high school to do this sort of stuff, you're now just about as proficient with R and python as you were with that!
 
 ## References  {#part-gen-prog-02-refs}
 
