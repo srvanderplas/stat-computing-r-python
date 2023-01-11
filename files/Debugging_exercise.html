@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.0.38">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Debugging Excercises</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+<script src="Debugging_exercise_files/libs/clipboard/clipboard.min.js"></script>
+<script src="Debugging_exercise_files/libs/quarto-html/quarto.js"></script>
+<script src="Debugging_exercise_files/libs/quarto-html/popper.min.js"></script>
+<script src="Debugging_exercise_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="Debugging_exercise_files/libs/quarto-html/anchor.min.js"></script>
+<link href="Debugging_exercise_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="Debugging_exercise_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="Debugging_exercise_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="Debugging_exercise_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="Debugging_exercise_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Debugging Excercises</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    
+  </div>
+  
+
+</header>
+
+<p>In the following examples, evaluate each problem using the criteria of a minimal reproducible example from <a href="https://stackoverflow.com/help/minimal-reproducible-example">this StackOverflow post</a>.</p>
+<p>Specifically, address the following things:</p>
+<ol type="1">
+<li><p>Are the question and problem description complete?</p></li>
+<li><p>Is the issue reproducible? Does it have a description of the problem, with code that reproduces the problem? What could improve it?</p></li>
+<li><p>Is the example minimal? Does it include extra code or information that is not necessary?</p></li>
+<li><p>Does the question describe any attempted solutions?</p></li>
+</ol>
+<p>Then, using what you know about R and Python, try to debug the problem using the strategies in <a href="https://srvanderplas.github.io/unl-stat850/debugging.html">the debugging chapter</a>. Once you are thoroughly stumped, or you believe you have solved the problem, compare your solutions to those given on StackOverflow using the link.</p>
+<section id="why-doesnt-this-r-function-work" class="level1">
+<h1>Why Doesn’t this R function work?</h1>
+<blockquote class="blockquote">
+<p>I created the following function to append new strings on a vector of strings called “meals”. However, when I use this function to append an string input into my “meals” vector, it does not work.</p>
+</blockquote>
+<pre><code> add &lt;- function(str) {
+      meals &lt;- append(meals, as.character(str))  
+    }</code></pre>
+<p><a href="https://stackoverflow.com/questions/39795961/why-doesnt-this-r-function-work?noredirect=1&amp;lq=1">Link</a> to original SO post.</p>
+</section>
+<section id="function-not-working-r" class="level1">
+<h1>Function not working R</h1>
+<blockquote class="blockquote">
+<p>I’ve never programmed before and am trying to learn. I’m following that “coursera” course that I’ve seen other people post about — a course offered by Johns Hopkins on R programming.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>Anyway, this was supposed to be my first function. Yet, it doesn’t work! But when I type out all the steps individually, it runs just fine… Can anyone tell me why?</p>
+</blockquote>
+<pre><code>pollutantmean &lt;- function(directory, pollutant, id = 1:332){
+    x&lt;- list.files("/Users/mike******/Desktop/directory", full.names=TRUE)
+    y&lt;- lapply(x, read.csv)
+    z&lt;- do.call(rbind.data.frame, y[id])
+
+    mean(z$pollutant, na.rm=TRUE)
+}
+pollutantmean(specdata,nitrate,1:10)
+[1] NA
+Warning message:
+In mean.default(z$pollutant, na.rm = TRUE) :
+  argument is not numeric or logical: returning NA
+
+####
+
+x&lt;- list.files("/Users/mike******/Desktop/specdata",full.names=TRUE)
+y&lt;- lapply(x,read.csv)
+z&lt;- do.call(rbind.data.frame,y[1:10])
+mean(z$nitrate,na.rm=TRUE)
+[1] 0.7976266</code></pre>
+<p><a href="https://stackoverflow.com/questions/24123224/function-not-working-r/24141502">Link</a></p>
+</section>
+<section id="inexplicable-error-when-trying-to-export-my-r-notebook" class="level1">
+<h1>Inexplicable error when trying to export my R notebook</h1>
+<blockquote class="blockquote">
+<p>Getting this error from R Markdown when trying to export my .RMD</p>
+</blockquote>
+<pre><code>"Error in filter(Gastropods, Species == "Cellana") :  object 'Species' not found Calls: &lt;Anonymous&gt; ... withCallingHandlers -&gt; withVisible -&gt; eval -&gt; eval -&gt; filter"</code></pre>
+<blockquote class="blockquote">
+<p>However, all my plots are coming out successfully. I can clearly see in the data that the species column is there and that Cellana is a species. No spelling errors or anything.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>My first 20 or so lines of code are below</p>
+</blockquote>
+<pre><code>###
+---
+title: " Lab Report 2 - z5016113"
+output: html_notebook
+i---
+
+#1. Gastropod abundance vs. height on the shore
+
+```{r}
+Gastropods &lt;- read.csv(file = "MaroubraZones.csv", header = TRUE)
+library(ggplot2, dplyr)
+```
+
+```{r}
+Gastropods$Zone &lt;- factor(Gastropods$Zone, levels = c("Low", "Mid", "High"))
+```
+
+```{r}
+Cellana &lt;- filter(Gastropods, Species == "Cellana")  ------&gt; This line is causing the error
+```
+
+```{r}
+ggplot(Cellana, aes(Zone, Abundance)) + geom_boxplot()
+```
+###</code></pre>
+<p>You can find this sample file <a href="https://raw.githubusercontent.com/srvanderplas/unl-stat850/main/files/debugging_3.txt">here</a></p>
+<p><a href="https://stackoverflow.com/questions/44193367/inexplicable-error-when-trying-to-export-my-r-notebook">Link</a></p>
+</section>
+<section id="python-if-elif-else-statement" class="level1">
+<h1>Python if elif else statement</h1>
+<blockquote class="blockquote">
+<p>I’m trying to create a program with python that calculate the cost for shipping.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>However, I can’t run the program to where it works properly.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>What ever my total is the same amount comes out as $6 for US and $8 for Canada. I can’t seem to get pass that.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>Example:</p>
+</blockquote>
+<pre><code>total = raw_input('What is the total amount for your online shopping?')
+country = raw_input('Shipping within the US or Canada?')
+
+if country == "US":
+    if total &lt;= "50":
+        print "Shipping Costs $6.00"
+    elif total &lt;= "100":
+            print "Shipping Costs $9.00"
+    elif total &lt;= "150":
+            print "Shipping Costs $12.00"
+    else:
+        print "FREE"
+
+if country == "Canada":
+    if total &lt;= "50":
+        print "Shipping Costs $8.00"
+    elif total &lt;= "100":
+        print "Shipping Costs $12.00"
+    elif total &lt;= "150":
+        print "Shipping Costs $15.00"
+    else:
+        print "FREE"</code></pre>
+<p><a href="https://stackoverflow.com/questions/19371643/python-if-elif-else-statement">Link</a></p>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      let href = ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
