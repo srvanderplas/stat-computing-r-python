@@ -1,0 +1,1247 @@
+# Debugging {#sec-debugging}
+
+Now that you're writing functions, it's time to talk a bit about debugging techniques. 
+This is a lifelong topic - as you become a more advanced programmer, you will need to develop more advanced debugging skills as well (because you'll become more adept at screwing things up).
+
+## Objectives
+
+- Create reproducible examples of problems
+
+- Use built in debugging tools to trace errors
+
+- Use online resources to research errors
+
+
+![The faces of debugging (by Allison Horst)](../images/gen-prog/debugging.jpg){fig-alt="A cartoon of a fuzzy round monster face showing 10 different emotions experienced during the process of debugging code. The progression goes from (1) “I got this” - looking determined and optimistic; (2) “Huh. Really thought that was it.” - looking a bit baffled; (3) “...” - looking up at the ceiling in thought; (4) “Fine. Restarting.” - looking a bit annoyed; (5) “OH WTF.” Looking very frazzled and frustrated; (6) “Zombie meltdown.” - looking like a full meltdown; (7) (blank) - sleeping; (8) “A NEW HOPE!” - a happy looking monster with a lightbulb above; (9) “insert awesome theme song” - looking determined and typing away; (10) “I love coding” - arms raised in victory with a big smile, with confetti falling."}
+
+## Avoiding Errors: Defensive Programming
+
+One of the best debugging strategies (that isn't a debugging strategy at all, really) is to code defensively [@DefensiveProgramming2022]. By that, I mean, code in a way that you will make debugging things easier later. 
+
+- **Modularize your code**. Each function should do only one task, ideally in the least-complex way possible.
+
+- **Make your code readable**. If you can read the code easily, you'll be able to narrow down the location of the bug more quickly.
+
+- **Comment your code**. This makes it more likely that you will be able to locate the spot where the bug is likely to have occurred, and will remind you how things are calculated. Remember, comments aren't just for your collaborators or others who see the code. They're for future you.
+
+- **Don't duplicate code**. If you have the same code (or essentially the same code) in two or three different places, put that code in a function and call the function instead. This will save you trouble when updating the code in the future, but also makes narrowing down the source of the bug less complex.
+
+- **Reduce the number of dependencies** you have on outside software packages. Often bugs are introduced when a dependency is updated and the functionality changes slightly. The `tidyverse` [@tidyverse] is *notorious* for this.     
+
+::: callout-note
+It's ok to write code using lots of dependencies, but as you transition from "experimental" code to "production" code (you're using the code without tinkering with it) you should work to reduce the dependencies, where possible. In addition, if you do need packages with lots of dependencies, try to make sure those packages are relatively popular, used by a lot of people, and currently maintained. (The tidyverse is a bit better from this perspective, because the constituent packages are some of the most installed R packages on CRAN.)
+:::
+    
+Another way to handle dependency management is to use the `renv` package [@renv], which creates a local package library with the appropriate versions of your packages stored in the same directory as your project. `renv` was inspired by the python concept of virtual environments, and it does also work with python if you're using both R and python inside a project (e.g. this book uses `renv`). `renv` will at the very least help you minimize issues with code not working after unintentional package updates.
+
+- **Add safeguards against unexpected inputs**. Check to make sure inputs to the function are valid. Check to make sure intermediate results are reasonable (e.g. you don't compute the derivative of a function and come up with "a".)
+
+- **Don't reinvent the wheel**. If you have working, tested code for a task, use that! If someone else has working code that's used by the community, don't write your own unless you have a very good reason. The implementation of `lm` has been better tested than your homegrown linear regression.
+
+- Collect your often-reused code in packages that you can easily load and make available to "future you". The process of making a package often encourages you to document your code better than you would a script. A good resource for getting started making R packages is @wickhamPackagesOrganizeTest2015, and a similar python book is @beuzenPythonPackages2022.
+
+## Working through Errors
+
+### First steps
+
+#### Get into the right mindset
+You can't debug something effectively if you're upset. You have to be in a puzzle-solving, detective mindset to actually solve a problem. If you're already stressed out, try to relieve that stress before you tackle the problem: take a shower, go for a walk, pet a puppy.
+
+
+![A debugging manifesto [@evansDebuggingManifestoHttps2022]](../images/gen-prog/b0rk-debugging-manifesto.jpeg){fig-alt="a debugging manifesto.
+1. inspect, dont squash. try to fix the bug (crossed out). understand what happened (yes, smiley faces and stars)
+2. check your assumptions. person (thinking): \"wait, how do I know thats true?\"
+3. being stuck is temporary. person (thinking): \"I will never figure this out!\" ... 2 minutes later.... person (thinking): \"well, I havent tried X...\"
+4. dont go it alone. person (speaking to other person): \"hey, have you seen this problem before?\"
+5. trust nobody and nothing. person (thinking): this library cant be buggy... OR CAN IT???
+6. there's always a reason. computer: \"computers are always logical, even when it doesnt feel that way\"
+7. build your toolkit. person (holding toolkit): \"wow, the CSS inspector makes debugging SO MUCH EASIER\"
+8. it can be an adventure. person (talking, with cute bug next to them): \"you wouldnt BELIEVE the weird bug I found\". by @b0rk @omarieclaire, more like this at https://wizardzines.com"}
+
+
+
+#### Check your spelling
+
+I'll guess that 80% of my personal debugging comes down to spelling errors and misplaced punctuation. 
+
+![Title: user.fist_name [@nasserUserFistName2020]](../images/gen-prog/nasser_junior-misspelled.jpeg){fig-alt="A programmer clutches a laptop and says 'I hate this job'... 'and I hate my life' (while pulling at its face). The programmer screams 'WHY IS THIS HAPPENING TO MEEEE'. In the final frame, a calm programmer resumes typing and says 'nevermind, misspelled a variable.'"
+width="60%"}
+
+### General Debugging Strategies
+
+::: column-margin
+> Debugging: Being the detective in a crime movie where you are also the murderer. - some t-shirt I saw once
+:::
+
+While defensive programming is a nice idea, if you're already at the point where you have an error you can't diagnose, then... it doesn't help that much. At that point, you'll need some general debugging strategies to work with. The overall process is well described in @advr; I've added some steps that are commonly overlooked and modified the context from the original package development to introductory programming. I've also integrated some lovely illustrations from [Julia Evans (\@b0rk)](https://twitter.com/b0rk) to lighten the mood.
+
+0. Realize that you have a bug
+
+1. Read the error message
+
+![Debugging strategy: Reread the error message[@evansDebuggingStrategyReread2022]](../images/gen-prog/b0rk-reread_error_message.jpeg){fig-alt="Image description title: reread the error message. After I've read the error message, I sometimes run into one of these 2 problems: 1. misreading the message. person (thinking): ok, it says the error is in file X. spoiler: it actually said file Y. 2. disregarding what the message is saying. person (thinking): well, the message says X, but that's impossible... spoiler: it was possible. Rereading the message can feel pointless (I already read it!!) but it's fast and it can REALLY help."}
+
+2. **Google!** Seriously, just google the whole error message.    
+In R you can automate this with the `errorist` and `searcher` packages. Python is so commonly used that you'll likely be able to find help for your issue if you are specific enough.
+
+::: column-margin
+![Debugging strategy: Shorten your feedback loop [@evansDebuggingStrategyShorten2022]](../images/gen-prog/b0rk-shorten_feedback_loop.jpeg){fig-alt="strategy: shorten your feedback loop. When I'm debugging, I: 1. come up with a question 2. run the buggy code to answer my question 3. repeat dozens of times. If step 2 is slow, everything takes FOREVER. Some ways to speed it up: * use a browser automation tool! * write a unit test! * write a tiny program!"}
+:::
+
+3. **Make the error repeatable**: This makes it easier to figure out what the error is, faster to iterate, and easier to ask for help.
+    - Use binary search (remove 1/2 of the code, see if the error occurs, if not go to the other 1/2 of the code. Repeat until you've isolated the error.)
+    - Generate the error faster - use a minimal test dataset, if possible, so that you can ask for help easily and run code faster. This is worth the investment if you've been debugging the same error for a while. 
+    ![Debugging strategy: Write a tiny program [@evansDebuggingStrategyWrite2022a]](../images/gen-prog/b0rk-tiny_program.jpeg){fig-alt="strategy: write a tiny program. Does your bug involve a library you don't understand? illustration: person (thought bubble): UGH, `requests` is NOT working how I expected it to! I like to convert my code using that library into a tiny standalone program which has the same bug: illustration: giant buggy program (squiggly mess) -> 20 lines of buggy code (simple) I find this makes it WAY EASIER to experiment and ask for help."}
+    
+    - Note which inputs *don't* generate the bug -- this negative "data" is helpful when asking for help.
+    
+    ![Debugging strategy: Change working code into broken code [@evansDebuggingStrategyChange2022]](../images/gen-prog/b0rk-break_code.jpeg){fig-alt="strategy: change working code into broken code . If I have a working version of the program, I like to: * go back to the working code * slowly start changing it to be more like my broken code * test if it's still working after every single tiny change. I like this because it puts me back on solid ground: with every change I make that DOESN'T cause the bug to come back, I know that wasn't the problem."}
+
+
+
+4. **Figure out where it is**. Debuggers may help with this, but you can also use the [scientific method](http://web.mit.edu/6.031/www/fa17/classes/13-debugging/#find_the_bug_using_the_scientific_method) to explore the code, or the tried-and-true method of using lots of `print()` statements.
+
+5. **Come up with one question**. If you're stuck, it can be helpful to break it down a bit and ask one tiny question about the bug.
+
+![Debugging strategy: Come up with one question [@evansDebuggingStrategyCome2022]](../images/gen-prog/b0rk-one_question.jpeg){fig-alt="debugging strategy: come up with one question. Debugging can feel huge and impossible. But all you have to do to make progress is: 1. find ONE QUESTION about the bug you don't know the answer to, and 2. figure out the answer to that question. illustration: person: I'm stuck! question they're asking: where is the code that's responsible for doing X? side note: ignore all these other questions for now! one at a time!"}
+
+
+6. **Fix it and test it**. The goal with tests is to ensure that the same error doesn't pop back up in a future version of your code. Generate an example that will test for the error, and add it to your documentation. If you're developing a package, unit test suites offer a more formalized way to test errors and you can automate your testing so that every time your code is changed, tests are run and checked.
+
+::: column-margin
+![Debugging strategy: Write a unit test [@evansDebuggingStrategyWrite2022]](../images/gen-prog/b0rk-unit-test.jpeg){fig-alt="Image description
+strategy: write a unit test. If your program already has tests, adding a failing test can be a great way to work on your bug! person (thinking): \"this function should return X, but it's returning Y\". * it forces you to pinpoint what exactly the bug is * it's easy to tell when you've fixed it (the test passes!) * you can keep the test to make sure the bug doesn't come back"}
+:::
+
+There are several other general strategies for debugging:
+
+- Retype (from scratch) your code    
+This works well if it's a short function or a couple of lines of code, but it's less useful if you have a big script full of code to debug. However, it does sometimes fix really silly typos that are hard to spot, like having typed `<--` instead of `<-` in R and then wondering why your answers are negative. 
+
+- Visualize your data as it moves through the program. This may be done using `print()` statements, or the debugger, or some other strategy depending on your application.
+
+- Tracing statements. Again, this is part of `print()` debugging, but these messages indicate progress - "got into function x", "returning from function y", and so on. 
+
+- Rubber ducking. Have you ever tried to explain a problem you're having to someone else, only to have a moment of insight and "oh, never mind"? Rubber ducking outsources the problem to a nonjudgmental entity, such as a rubber duck^[Some people use cats, but I find that they don't meet the nonjudgmental criteria. Of course, they're equally judgmental whether your code works or not, so maybe that works if you're a cat person, which I am not. Dogs, in my experience, can work, but often will try to comfort you when they realize you're upset, which both helps and lessens your motivation to fix the problem. A rubber duck is the perfect dispassionate listener.]. You simply explain, in terms simple enough for your rubber duck to understand, exactly what your code does, line by line, until you've found the problem. [See @monteiroImproveHowYou2019a for a more thorough explanation]. 
+
+Do not be surprised if, in the process of debugging, you encounter new bugs. 
+This is a problem that's well-known enough that it has its [own xkcd comic](https://xkcd.com/1739/). 
+At some point, getting up and going for a walk may help. 
+Redesigning your code to be more modular and more organized is also a good idea. 
+
+
+## Dividing Problems into Smaller Parts
+
+> “Divide each difficulty into as many parts as is feasible and necessary to resolve it.” -René Descartes, Discourse on Method 
+
+In programming, as in life, big, general problems are very hard to solve effectively. 
+Instead, the goal is to break a problem down into smaller pieces that may actually be solvable. 
+
+::: callout-caution
+### Example: Exhaustion
+
+This example inspired by @grimesThis500YearOldPiece2019. 
+
+::: panel-tabset
+
+#### General problem
+
+"I'm exhausted all the time"    
+Ok, so this is a problem that many of us have from time to time (or all the time). 
+If we get a little bit more specific at outlining the problem, though, we can sometimes get a bit more insight into how to solve it.
+
+#### Specific problem
+
+"I wake up in the morning and I don't have any energy to do anything. 
+I want to go back to sleep, but I have too much to do to actually give in and sleep. 
+I spend my days worrying about how I'm going to get all of the things on my to-do list done, and then I lie awake at night thinking about how many things there are to do tomorrow. 
+I don't have time for hobbies or exercise, so I drink a lot of coffee instead to make it through the day."    
+This is a much more specific list of issues, and some of these issues are actually things we can approach separately.
+
+#### Subproblems
+
+Moving through the list in the previous tab, we can isolate a few issues. 
+Some of these issues are undoubtedly related to each other, but we can approach them separately (for the most part).
+
+1. Poor quality sleep (tired in the morning, lying awake at night)
+2. Too many things to do (to-do list)
+3. Chemical solutions to low energy (coffee during the day)
+4. Anxiety about completing tasks (worrying, insomnia)
+5. Lack of personal time for hobbies or exercise
+
+
+#### Brainstorm
+
+1. Get a check-up to rule out any other issues that could cause sleep quality degradation - depression, anxiety, sleep apnea, thyroid conditions, etc.
+    - Ask the doctor about taking melatonin supplements for a short time to ensure that sleep starts off well (note, don't take medical advice from a stats textbook!)
+2. Reformat your to-do list:
+    - Set time limits for things on the to-do list 
+    - Break the to-do list into smaller, manageable tasks that can be accomplished within a relatively short interval - such as an hour
+    - Sort the to-do list by priority and level of "fun" so that each day has a few hard tasks and a couple of easy/fun tasks. 
+    Do the hard tasks first, and use the easy/fun tasks as a reward.
+3. Set a time limit for caffeine (e.g. no coffee after noon) so that caffeine doesn't contribute to poor quality sleep
+4. Address anxiety with medication (from 1), scheduled time for mindfulness meditation, and/or self-care activities
+5. Scheduling time for exercise/hobbies
+    - scheduling exercise in the morning to take advantage of the endorphins generated by working out
+    - scheduling hobbies in the evening to reward yourself for a day's work and wind down work well before bedtime
+        
+#### Subproblem solutions
+When the sub-problem has a viable solution, move on to the next sub-problem. 
+Don't try to tackle everything at once. 
+Here, that might look like this list, where each step is taken separately and you give each thing a few days to see how it affects your sleep quality.
+In programming, of course, this list would perhaps be a bit more sequential, but real life is messy and the results take a while to populate.
+
+  - [1] Make the doctor's appointment.
+  - [5] While waiting for the appointment, schedule exercise early in the day and hobbies later in the day to create a "no-work" period before bedtime.
+  - [1] Go to the doctor's appointment, follow up with any concerns.
+      - [1] If doctor approves, start taking melatonin according to directions
+  - [2] Work on reformatting the to-do list into manageable chunks. Schedule time to complete chunks using your favorite planning method.
+  - [4] If anxiety is still an issue after following up with the doctor, add some mindfullness meditation or self-care to the schedule in the mornings or evenings.
+  - [3] If sleep quality is still an issue, set a time limit for caffeine
+  - [2] Revise your to-do list and try a different tactic if what you were trying didn't work.
+
+:::
+:::
+
+
+## Minimal Working (or Reproducible) Examples
+
+::: column-margin
+![The reprex R package will help you make a reproducible example (drawing by Allison Horst)](../images/gen-prog/reprex.png)
+:::
+
+If all else has failed, and you can't figure out what is causing your error, it's probably time to ask for help. 
+If you have a friend or buddy that knows the language you're working in, by all means ask for help sooner - use them as a rubber duck if you have to. 
+But when you ask for help online, often you're asking people who are much more knowledgeable about the topic - members of R core and really famous python developers browse stackoverflow and may drop in and help you out. 
+Under those circumstances, it's better to make the task of helping you as easy as possible because it shows respect for their time. 
+The same thing goes for your supervisors and professors. 
+
+
+
+There are numerous resources for writing what's called a "minimal working example", "reproducible example" (commonly abbreviated reprex), or MCVE (minimal complete verifiable example). 
+Much of this is lifted directly from the StackOverflow post describing a [minimal reproducible example](https://stackoverflow.com/help/minimal-reproducible-example).
+
+The goal is to reproduce the error message with information that is 
+
+- **minimal** - as little code as possible to still reproduce the problem
+- **complete** - everything necessary to reproduce the issue is contained in the description/question
+- **reproducible** - test the code you provide to reproduce the problem. 
+
+You should format your question to make it as easy as possible to help you. 
+Make it so that code can be copied from your post directly and pasted into a terminal. 
+Describe what you see and what you'd hope to see if the code were working. 
+
+::: callout-note
+### Other Minimum Working Example/Reprex resources
+
+- [reprex package: Do's and Don'ts](https://reprex.tidyverse.org/articles/reprex-dos-and-donts.html)
+- [How to use the reprex package](https://reprex.tidyverse.org/articles/articles/learn-reprex.html) - vignette with videos from Jenny Bryan
+- [reprex magic - Vignette adapted from a blog post by Nick Tierney](https://reprex.tidyverse.org/articles/articles/magic-reprex.html)
+:::
+
+::: callout-caution
+### Example: MWEs 
+
+Note: You don't need to know anything about SAS to understand this example.
+
+::: panel-tabset
+
+#### SAS markdown
+A long time ago, when this book covered R and SAS, I had issues with SAS graphs rendering in black and white most of the time. 
+
+I started debugging the issue with the following code chunk: 
+
+```{{r sas-cat-aes-map-07, engine="sashtml", engine.path="sas", fig.path = "image/"}}
+libname classdat "sas/";
+
+PROC SGPLOT data=classdat.fbiwide; 
+SCATTER x = Population y = Assault /
+  markerattrs=(size=8pt symbol=circlefilled) 
+  group = Abb; /* maps to point color by default */
+RUN;
+QUIT; 
+  
+PROC SGPLOT data=classdat.fbiwide NOAUTOLEGEND; /* dont generate a legend */
+SCATTER x = Population y = Assault /
+  markercharattrs=(size=8) 
+  markerchar = Abb /* specify marker character variable */
+    group = Abb
+  ; 
+RUN;
+QUIT; 
+```
+
+
+After running the code separately in SAS and getting a figure that looked like what I'd expected, I set out to construct a reproducible example so that I could post to the [SASmarkdown github issues page](https://github.com/Hemken/SASmarkdown/issues/14) and ask for help.
+
+The first thing I did was strip out all of the extra stuff that didn't need to be in the chunk - this chunk generates 2 pictures; I only need one. 
+This chunk requires the fbiwide data from the `classdata` R package (that I exported to CSV); I replaced it with a dataset in the `sashelp` library.
+
+When I was done, the chunk looked like this:
+
+```
+PROC SGPLOT data=sashelp.snacks;
+SCATTER x = date y = QtySold /
+  markerattrs=(size=8pt symbol=circlefilled)
+  group = product; /* maps to point color by default */
+RUN;
+QUIT;
+```
+
+Then, I started constructing my reproducible example. 
+I ran `?sas_enginesetup` to get to a SASmarkdown help page, because I remembered it had a nice way to generate and run markdown files from R directly (without saving the Rmd file). 
+
+I copied the example from that page:
+```
+indoc <- '
+---
+title: "Basic SASmarkdown Doc"
+author: "Doug Hemken"
+output: html_document
+---
+
+# I've deleted the intermediate chunks because they screw 
+# everything up when I print this chunk out
+'
+knitr::knit(text=indoc, output="test.md")
+rmarkdown::render("test.md")
+```
+
+Then, I created several chunks which would do the following:
+1. Write the minimal example SAS code above to a [file](files/reprex.sas)
+2. Call that file in a SASmarkdown chunk using the `%include` macro, which dumps the listed file into the SAS program. This generates the [plot](files/SASmarkdown-reprex/unnamed-chunk-1.png) using SASmarkdown.
+3. Call the file using SAS batch mode    
+(this runs the code and produces a [plot](files/SASmarkdown-reprex/SGPlot.png) outside of SASmarkdown, to prove that the issue is SASmarkdown itself)
+
+Finally, I included the image generated from the batch mode call manually.
+
+You can see the resulting code [here](https://github.com/Hemken/SASmarkdown/issues/14).
+
+I pasted my example into the issues page, and then included some additional information: 
+
+1. A screenshot of the rendered page
+2. The image files themselves
+3. A description of what happened
+4. My suspicions (some obvious option I'm missing?)
+5. An additional line of R code that would delete any files created if someone ran my example. Because file clutter sucks.
+
+This process took me about 45 minutes, but that was still much shorter than the time I'd spent rerunning code trying to get it to work with no success. 
+
+In less than 24 hours, the package maintainer responded with a (admittedly terse) explanation of what he thought caused the problem. 
+I had to do some additional research to figure out what that meant, but once I had my reproducible example working in color, I posted that code (so that anyone else with the same problem would know what to do).
+
+Then, I had to tinker with the book a bit to figure out if there were easier ways to get the same result.
+The end result, though, was that I got what I wanted - color figures throughout the book!
+
+#### Python/Quarto
+
+While converting the book from Rmarkdown to quarto, I ran into an issue setting up GitHub Actions (basically, when I push changes, GitHub rebuilds the book from scratch automatically). 
+
+
+I found an issue describing the same segfault issue I had been getting, and so I made a [post there](https://github.com/rstudio/reticulate/issues/1133) with a new github repository containing a [minimal working example](https://github.com/srvanderplas/test-quarto) that I set up to test the problem. 
+
+Within 24h, I had gotten replies from people working at RStudio, and one of them had [diagnosed the problem](https://github.com/rstudio/reticulate/issues/1133#issuecomment-1021783041). 
+After I asked a few more questions, one of them submitted a pull request to my repository with a solution.
+
+I didn't know enough python or enough about GitHub Actions to diagnose the problem myself, but because I managed to create a reproducible example, I got the answers I needed from people with more experience.
+
+:::
+
+:::
+
+::: callout-tip
+### Try It Out 
+
+Use [this list of StackOverflow posts](files/Debugging_exercise.html) to try out your new debugging techniques. 
+Can you figure out what's wrong? 
+What information would you need from the poster in order to come up with a solution?
+How much time did you spend trying to figure out what the poster was actually asking?
+:::
+
+
+
+## Debugging Tools
+
+Now that we've discussed general strategies for debugging that will work in any language, lets get down to the dirty details of debugging. 
+
+### Low tech debugging with print() and other tools
+Sometimes called "tracing" techniques, the most common, universal, and low tech strategy for debugging involves scattering messages throughout your code. 
+When the code is executed, you get a window into what the variables look like during execution.
+
+This is called **print debugging** and it is an incredibly useful tool.
+
+::: callout-caution
+#### Example: Nested Functions
+
+::: panel-tabset
+#### R
+Imagine we start with this:
+
+```{r print-debugging-r}
+x = 1
+y = 2
+z = 0
+
+aa <- function(x) {
+  bb <- function(y) {
+    cc <- function(z) {
+      z + y
+    }
+    cc(3) + 2
+  }
+  x + bb(4)
+}
+
+aa(5)
+```
+
+and the goal is to understand what's happening in the code. We might add some lines:
+
+```{r print-debugging-r2}
+x = 1
+y = 2
+z = 0
+
+aa <- function(x) {
+  print(paste("Entering aa(). x = ", x))
+  bb <- function(y) {
+    print(paste("Entering bb(). x = ", x, "y = ", y))
+    cc <- function(z) {
+      print(paste("Entering cc(). x = ", x, "y = ", y, "z = ", z))
+      cres <- z + y
+      print(paste("Returning", cres, "from cc()"))
+      cres
+    }
+    bres <- cc(3) + 2
+    print(paste("Returning", bres, "from bb()"))
+    bres
+  }
+  ares <- x + bb(4)
+  print(paste("Returning",ares, "from aa()"))
+  ares
+}
+
+aa(5)
+```
+
+#### Python
+Imagine we start with this:
+
+```{python print-debugging-py}
+x = 1
+y = 2
+z = 0
+
+def aa(x):
+  def bb(y):
+    def cc(z):
+      return z + y
+    return cc(3) + 2
+  return x + bb(4)
+
+aa(5)
+```
+
+
+and the goal is to understand what's happening in the code. We might add some lines:
+
+```{python print-debugging-py2}
+x = 1
+y = 2
+z = 0
+
+def aa(x):
+  print("Entering aa(). x = " + str(x))
+  def bb(y):
+    print("Entering bb(). x = " + str(x) + ", y = " + str(y))
+    def cc(z):
+      print("Entering cc(). x = " + str(x) + ", y = " + str(y) + ", z = " + str(z))
+      cres = z + y
+      print("Returning " + str(cres) + " from cc()")
+      return cres
+    bres = cc(3) + 2
+    print("Returning " + str(bres) + " from bb()")
+    return bres
+  ares = x + bb(4)
+  print("Returning " + str(ares) + " from aa()")
+  return ares
+
+aa(5)
+
+```
+:::
+
+:::
+
+For more complex data structures, it can be useful to add `str()`, `head()`, or `summary()` functions. 
+
+::: callout-caution
+#### Real world example: Web Scraping
+
+In fall 2020, I wrote a webscraper to get election polling data from the RealClearPolitics site as part of the [`electionViz` package](github.com/heike/electionViz).
+I wrote the function `search_for_parent()` to get the parent HTML tag which matched the "tag" argument, that had the "node" argument as a descendant. 
+I used print debugging to show the sequence of tags on the page.
+
+I was assuming that the order of the parents would be "html", "body", "div", "table", "tbody", "tr" - descending from outer to inner (if you know anything about HTML/XML structure). 
+
+To prevent the site from changing on me (as websites tend to do...), I've saved the HTML file [here](../files/realclearpolitics_frag.html).
+
+::: panel-tabset
+##### R
+
+```{r real-world-debugging-r}
+library(xml2) # read html
+
+search_for_parent <- function(node, tag) {
+  # Get all of the parent nodes 
+  parents <- xml2::xml_parents(node)
+  # Get the tags of every parent node
+  tags <- purrr::map_chr(parents, rvest::html_name)
+  print(tags)
+  
+  # Find matching tags
+  matches <- which(tags == tag)
+  print(matches)
+  
+  # Take the minimum matching tag
+  min_match <- min(matches)
+  if (length(matches) == 1) return(parents[min_match]) else return(NULL)
+}
+
+page <- read_html("shorturl.at/jkS59")
+# find all poll results in any table
+poll_results <- xml_find_all(page, "//td[@class='lp-results']") 
+# find the table that contains it
+search_for_parent(poll_results[1], "table") 
+```
+
+##### Python
+
+You may need to `pip install lxml requests bs4` to run this code. 
+
+```{python real-world-debugging-py}
+# !pip install lxml requests bs4
+from bs4 import BeautifulSoup
+import requests as req
+import numpy as np
+
+
+def search_for_parent(node, tag):
+  # Get all of the parent nodes
+  parents = node.find_parents()
+  # get tag type for each parent node
+  tags = [x.name for x in parents]
+  print(tags)
+  
+  # Find matching tags
+  matches = np.array([i for i, val in enumerate(tags) if val == tag])
+  print(matches)
+  
+  # Take the minimum matching tag
+  min_match = np.min(matches)
+  if matches.size == 1:
+    ret = parents[min_match]
+  
+  return ret
+
+
+html_file = open('shorturl.at/jkS59', 'r')
+page = html_file.read() 
+# Read the page as HTML
+soup = BeautifulSoup(page, 'html')
+# Find all poll results in any table
+poll_results = soup.findAll('td', {'class': 'lp-results'})
+# Find the table that contains the first poll result
+search_for_parent(poll_results[0], 'table')
+```
+:::
+
+By printing out all of the tags that contain `node`, I could see the order -- inner to outer. 
+I asked the function to return the location of the first table node, so the index (2nd value printed out) should match table in the character vector that was printed out first. 
+I could then see that the HTML node that is returned is in fact the table node. 
+
+:::
+
+::: callout-tip
+#### Try it out: Hurricanes in R
+
+Not all bugs result in error messages, unfortunately, which makes higher-level techniques like `traceback()` less useful. 
+The low-tech debugging tools, however, still work wonderfully. 
+
+::: panel-tabset
+
+##### Setup
+```{r setup-debug-code, message = F, warning = F}
+library(ggplot2)
+library(dplyr)
+library(magrittr)
+library(maps)
+library(ggthemes)
+worldmap <- map_data("world")
+
+# Load the data
+data(storms, package = "dplyr")
+```
+
+##### Buggy code
+
+The code below is supposed to print out a map of the tracks of all hurricanes of a specific category, 1 to 5, in 2013. Use print statements to figure out what's wrong with my code. 
+
+```{r map-hurricane-tracks, message = F, warning = F, out.width = "18%"}
+# Make base map to be used for each iteration
+basemap <-  ggplot() + 
+  # Country shapes
+  geom_polygon(aes(x = long, y = lat, group = group), 
+               data = worldmap, fill = "white", color = "black") + 
+  # Zoom in 
+  coord_quickmap(xlim = c(-100, -10), ylim = c(10, 50)) + 
+  # Don't need scales b/c maps provide their own geographic context...
+  theme_map()
+
+for (i in 1:5) {
+  # Subset the data
+  subdata <- storms %>%
+    filter(year == 2013) %>%
+    filter(status == i)
+  
+  # Plot the data - path + points to show the observations
+  plot <- basemap +
+    geom_path(aes(x = long, y = lat, color = name), data = subdata) + 
+    geom_point(aes(x = long, y = lat, color = name), data = subdata) + 
+    ggtitle(paste0("Category ", i, " storms in 2013"))
+  print(plot)
+}
+
+
+```
+
+##### Solution 1: Identification
+
+First, lets split the setup from the loop. 
+
+```{r map-hurricane-tracks-setup, error = T}
+# Make base map to be used for each iteration
+basemap <-  ggplot() + 
+  # Country shapes
+  geom_polygon(aes(x = long, y = lat, group = group), 
+               data = worldmap, fill = "white", color = "black") + 
+  # Zoom in 
+  coord_quickmap(xlim = c(-100, -10), ylim = c(10, 50)) + 
+  # Don't need scales b/c maps provide their own geographic context...
+  theme_map()
+
+print(basemap) # make sure the basemap is fine
+
+# Load the data
+data(storms, package = "dplyr")
+
+str(storms) # make sure the data exists and is formatted as expected
+```
+
+Everything looks ok in the setup chunk...
+
+```{r map-hurricane-tracks-loop}
+for (i in 1:5) {
+  print(paste0("Category ", i, " storms"))
+  # Subset the data
+  subdata <- storms %>%
+    filter(year == 2013) %>%
+    filter(status == i)
+  
+  print(paste0("subdata dims: nrow ", nrow(subdata), " ncol ", ncol(subdata)))
+        # str(subdata) works too, but produces more clutter. I started
+        # with str() and moved to dim() when I saw the problem
+  
+  # Plot the data - path + points to show the observations
+  plot <- basemap +
+    geom_path(aes(x = long, y = lat, color = name), data = subdata) + 
+    geom_point(aes(x = long, y = lat, color = name), data = subdata) + 
+    ggtitle(paste0("Category ", i, " storms in 2013"))
+  # print(plot) # Don't print plots - clutters up output at the moment
+}
+```
+
+Ok, so from this we can see that something is going wrong with our filter statement - we have no rows of data.
+
+##### Solution 2: Fixing
+
+```{r hurricane-tracks-debugging-head}
+head(storms)
+```
+
+Whoops. I meant "category" when I typed "status". 
+
+```{r hurricane-tracks-debugging-loop2, error = T}
+for (i in 1:5) {
+  print(paste0("Category ", i, " storms"))
+  # Subset the data
+  subdata <- storms %>%
+    filter(year == 2013) %>%
+    filter(category == i)
+  
+  print(paste0("subdata dims: nrow ", nrow(subdata), " ncol ", ncol(subdata)))
+        # str(subdata) works too, but produces more clutter. I started
+        # with str() and moved to dim() when I saw the problem
+  
+  # Plot the data - path + points to show the observations
+  plot <- basemap +
+    geom_path(aes(x = long, y = lat, color = name), data = subdata) + 
+    geom_point(aes(x = long, y = lat, color = name), data = subdata) + 
+    ggtitle(paste0("Category ", i, " storms in 2013"))
+  # print(plot) # Don't print plots - clutters up output at the moment
+}
+```
+
+Ok, that's something, at least. 
+We now have some data for category 1 storms...
+
+```{r hurricane-tracks-debugging-3}
+filter(storms, year == 2013) %>%
+  # Get max category for each named storm
+  group_by(name) %>%
+  filter(category == max(category)) %>%
+  ungroup() %>%
+  # See what categories exist
+  select(name, category) %>%
+  unique()
+```
+
+It looks like 2013 was just an incredibly quiet year for tropical activity. 
+
+##### Solution 3: Verifying
+
+2013 may have been a quiet year for tropical activity in the Atlantic, but 2004 was not. 
+So let's just make sure our code works by checking out 2004. 
+
+```{r hurricane-tracks-debugging-4, error = T}
+for (i in 1:5) {
+  print(paste0("Category ", i, " storms"))
+  # Subset the data
+  subdata <- storms %>%
+    filter(year == 2004) %>%
+    filter(category == i)
+  
+  print(paste0("subdata dims: nrow ", nrow(subdata), " ncol ", ncol(subdata)))
+        # str(subdata) works too, but produces more clutter. I started
+        # with str() and moved to dim() when I saw the problem
+  
+  # Plot the data - path + points to show the observations
+  plot <- basemap +
+    geom_path(aes(x = long, y = lat, color = name), data = subdata) + 
+    geom_point(aes(x = long, y = lat, color = name), data = subdata) + 
+    ggtitle(paste0("Category ", i, " storms in 2013"))
+  print(plot) # Don't print plots - clutters up output at the moment
+}
+```
+
+If we want to only print informative plots, we could add an if statement. 
+Now that the code works, we can also comment out our print() statements (we could delete them, too, depending on whether we anticipate future problems with the code). 
+
+
+```{r hurricane-tracks-debugging-5, error = T}
+for (i in 1:5) {
+  # print(paste0("Category ", i, " storms"))
+  
+  # Subset the data
+  subdata <- storms %>%
+    filter(year == 2013) %>%
+    filter(category == i)
+  
+  # print(paste0("subdata dims: nrow ", nrow(subdata), " ncol ", ncol(subdata)))
+  #       # str(subdata) works too, but produces more clutter. I started
+  #       # with str() and moved to dim() when I saw the problem
+  
+  # Plot the data - path + points to show the observations
+  plot <- basemap +
+    geom_path(aes(x = long, y = lat, color = name), data = subdata) + 
+    geom_point(aes(x = long, y = lat, color = name), data = subdata) + 
+    ggtitle(paste0("Category ", i, " storms in 2013"))
+  
+  if (nrow(subdata) > 0) print(plot) 
+}
+```
+:::
+
+:::
+
+Once you've found your problem, go back and delete or comment out your print statements, as they're no longer necessary. 
+If you think you may need them again, comment them out, otherwise, just delete them so that your code is neat, clean, and concise.
+
+
+### After an error has occurred - `traceback()`
+
+`traceback()` can help you narrow down where an error occurs by taking you through the series of function calls that led up to the error. 
+This may help you identify which function is actually causing the problem, which is especially useful when you have nested functions or are using package functions that depend on other packages.
+
+::: callout-caution
+#### Demo: Using traceback
+
+::: panel-tabset
+##### R
+
+```{r traceback-demo, error = T}
+aa <- function(x) {
+  bb <- function(y) {
+    cc <- function(z) {
+     stop('there was a problem')  # This generates an error
+    }
+    cc()
+  }
+  bb()
+}
+
+aa()
+```
+
+For more information, you could run traceback
+```{r traceback-demo2, eval = F}
+traceback()
+```
+
+Which will provide the following output:
+```
+4: stop("there was a problem") at #4
+3: c() at #6
+2: b() at #8
+1: a()
+```
+
+Reading through this, we see that a() was called, b() was called, c() was called, and then there was an error. It's even kind enough to tell us that the error occurred at line 4 of the code. 
+
+If you are running this code interactively in RStudio, it's even easier to run `traceback()` by clicking on the "Show Traceback" option that appears when there is an error.
+
+![Both Show Traceback and Rerun with Debug are useful tools](../images/gen-prog/Rstudio_rerun_traceback.png){fig-width="50%"
+fig-alt="A screenshot from RStudio reading 'Error in c(): there was a problem', with buttons 'Show Traceback' and 'Rerun with Debug'"}
+
+If you are using `source()` to run the code in Rstudio, it will even provide a link to the file and line location of the error. 
+![The output of `source("code/07_debug_ex.R")` as run in RStudio. The traceback() function information contains links to the files of the functions causing the error. For instance, 07_debug_ex.R#4 text is a link to line 4 of the file.](../images/gen-prog/Rstudio_rerun_traceback_source.png)
+
+
+##### Python
+
+```{python traceback-demo-py, error = T}
+import sys,traceback
+
+def aa(x):
+  def bb(y):
+    def cc(z):
+      try: 
+        return y + z + tuple()[0] # This generates an error
+      except IndexError:
+        exc_type, exc_value, exc_tb = sys.exc_info()
+        traceback.print_exception(exc_type, exc_value, exc_tb, file = sys.stdout)
+    return cc(3) + 2
+  return x + bb(4)
+
+aa(5)
+```
+
+Python's [traceback](https://docs.python.org/3/library/traceback.html) information is a bit more low-level and requires a bit more from the programmer than R's version.
+
+:::
+
+:::
+
+### Interactive Debugging
+
+::: youtube-video-container
+<iframe width="100%" height="auto" src="https://www.youtube.com/embed/dA2ce5SA3C8" title="Using debug() in R" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+:::
+
+::: panel-tabset
+
+#### R `browser()`
+
+The `browser()` function is useful for debugging your own code. 
+If you're writing a function and something isn't working quite right, you can insert a call to `browser()` in that function, and examine what's going on. 
+
+::: callout-caution
+##### Example of using browser()
+
+Suppose that I want to write a function that will plot an xkcd comic in R. 
+
+I start with 
+```{r browser-demo, error = T}
+library(png)
+library(xml2)
+library(dplyr)
+
+# get the most current xkcd
+get_xkcd <- function() {
+  url <- "http://xkcd.com"
+  page <- read_html(url)
+  # Find the comic
+  image <- xml_find_first(page, "//div[@id='comic']/img") %>%
+    # pull the address out of the tag
+    xml_attr("src")
+  
+  
+  readPNG(source = image)
+}
+
+get_xkcd() %>%
+  as.raster() %>%
+  plot()
+```
+
+Here's the final function
+
+```{r browser-demo-2}
+library(png)
+library(xml2)
+
+# get the most current xkcd
+get_xkcd <- function() {
+  
+  url <- "http://xkcd.com"
+  page <- read_html(url)
+  # Find the comic
+  image <- xml_find_first(page, "//div[@id='comic']/img") %>%
+    # pull the address out of the tag
+    xml_attr("src")
+  
+  # Fix image address so that we can access the image
+  image <- substr(image, 3, nchar(image))
+  
+  # Download the file to a temp file and read from there
+  file_location <- tempfile(fileext = ".png")
+  download.file(image, destfile = file_location, quiet = T)
+  
+  readPNG(source = file_location)
+}
+
+get_xkcd() %>%
+  as.raster() %>%
+  plot()
+```
+:::
+
+
+#### Python
+
+In python, the equivalent interactive debugger is `ipdb`. You can install it with `pip install ipdb`.
+
+If you want to run Python in the interactive ipython console, then you can invoke the ipdb debugging with `%debug get_xkcd()`. 
+This is similar to `browser()` in R. 
+If you're working in Python in RStudio, though, you have to get into debug mode in a more involved way.
+
+To run code using `ipdb` when your code hits an error, add `from ipdb import launch_ipdb_on_exception` to the top of your python code chunk. 
+Then, at the bottom, put any lines that may trigger the error after these two lines:
+
+```
+if __name__ == "__main__":
+  with launch_ipdb_on_exception():
+    <your properly indented code goes here>
+```
+
+This ensures that ipdb is launched when an error is reached.
+
+
+::: callout-caution
+##### Example using `ipdb`
+Suppose that I want to write a function that will plot an xkcd comic in python. 
+
+I start with 
+```{python browser-demo-py, error = T}
+from bs4 import BeautifulSoup
+import urllib.request # work with html
+from PIL import Image # work with images
+import numpy as np
+
+# importing pyplot and image from matplotlib
+import matplotlib.pyplot as plt
+import matplotlib.image as img
+
+# get the most current xkcd
+def get_xkcd():
+  url = "http://xkcd.com"
+  
+  # Get the URL
+  html_file = urllib.request.urlopen(url)
+  page = html_file.read() 
+  decode_page = page.decode("utf8")
+  
+  # Read the page as HTML
+  soup = BeautifulSoup(decode_page, 'html')
+  
+  # Get the comic src from the img tag
+  imlink = soup.select('#comic > img')[0].get('src')
+  # Format as a numpy array
+  image = np.array(Image.open(urllib.request.urlopen(imlink)))
+  
+  return image
+
+plt.imshow(get_xkcd())
+plt.show()
+
+```
+
+Here's the final function
+
+```{python browser-demo-py2, error = T}
+from bs4 import BeautifulSoup
+import urllib.request # work with html
+from PIL import Image # work with images
+import numpy as np
+
+# importing pyplot and image from matplotlib
+import matplotlib.pyplot as plt
+import matplotlib.image as img
+
+# get the most current xkcd
+def get_xkcd():
+  url = "http://xkcd.com"
+  
+  # Get the URL
+  html_file = urllib.request.urlopen(url)
+  page = html_file.read() 
+  decode_page = page.decode("utf8")
+  
+  # Read the page as HTML
+  soup = BeautifulSoup(decode_page, 'html')
+  
+  # Get the comic src from the img tag
+  imlink = soup.select('#comic > img')[0].get('src')
+  # Format as a numpy array
+  image = np.array(Image.open(urllib.request.urlopen('https:' + imlink)))
+  
+  return image
+
+plt.imshow(get_xkcd())
+plt.show()
+```
+
+
+::: youtube-video-container
+<iframe width="100%" height="auto" src="https://www.youtube.com/embed/zGRsLLWGVR0" title="Using ipdb in python" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+:::
+
+:::
+
+:::
+
+::: callout-tip
+#### Try it out 
+
+::: panel-tabset
+
+##### Problem
+Each xkcd has a corresponding ID number (ordered sequentially from 1 to 2722 at the time this was written). 
+Modify the XKCD functions above to make use of the id parameter, so that you can pass in an ID number and get the relevant comic. 
+
+Use interactive debugging tools to help you figure out what logic you need to add. 
+You should not need to change the web scraping code - the only change should be to the URL. 
+
+What things might you add to make this function "defensive programming" compatible? 
+
+##### R Solution
+
+```{r xkcd-tryitout-solution}
+# get the most current xkcd or the specified number
+get_xkcd <- function(id = NULL) {
+  if (is.null(id)) {
+    # Have to get the location of the image ourselves
+    url <- "http://xkcd.com"
+  } else if (is.numeric(id)) {
+    url <- paste0("http://xkcd.com/", id, "/")
+  } else {
+    # only allow numeric or null input
+    stop("To get current xkcd, pass in NULL, otherwise, pass in a valid comic number")
+  }
+
+  page <- read_html(url)
+  # Find the comic
+  image <- xml_find_first(page, "//div[@id='comic']/img") %>%
+    # pull the address out of the tag
+    xml_attr("src")
+  # Fix image address so that we can access the image
+  image <- substr(image, 3, nchar(image)) # cut the first 2 characters off
+
+  # make temp file
+  location <- tempfile(fileext = "png")
+  download.file(image, destfile = location, quiet = T)
+
+  # This checks to make sure we saved the file correctly
+  if (file.exists(location)) {
+    readPNG(source = location)
+  } else {
+    # Give a good informative error message
+    stop(paste("Something went wrong saving the image at ", image, " to ", location))
+  }
+}
+
+get_xkcd(2259) %>%
+  as.raster() %>% 
+  plot()
+```
+
+##### Python Solution
+
+
+```{python tryitout-xkcd-solution-py, error = T}
+from bs4 import BeautifulSoup
+import urllib.request # work with html
+from PIL import Image # work with images
+import numpy as np
+
+# importing pyplot and image from matplotlib
+import matplotlib.pyplot as plt
+import matplotlib.image as img
+
+# get the most current xkcd
+def get_xkcd(id=''):
+  image = 0 # Defining a placeholder
+  
+  if id == '':
+    # Have to get the location of the image ourselves
+    url = "http://xkcd.com"
+  elif id.isnumeric():
+    url = "http://xkcd.com/" + id + "/"
+  else:
+    # only allow numeric or null input
+    raise TypeError("To get current xkcd, pass in an empty string, otherwise, pass in a valid integer comic number")
+  
+  # Print debugging left in for your amusement
+  # print(type(id))
+  
+  # Get the URL
+  html_file = urllib.request.urlopen(url)
+  page = html_file.read() 
+  decode_page = page.decode("utf8")
+  
+  # Read the page as HTML
+  soup = BeautifulSoup(decode_page, 'html')
+  
+  # Get the comic src from the img tag
+  imnode = soup.select('#comic > img')
+  
+  try:
+    imlink = imnode[0].get('src')
+  except:
+    raise Exception("No comic could be found with number " + id + " (url = "+ url+ " )")
+  
+  try: 
+    # Format as a numpy array
+    image = np.array(Image.open(urllib.request.urlopen('https:' + imlink)))
+    return image
+  except: 
+    raise Exception("Reading the image failed. Check to make sure an image exists at " + url)
+    return(None)
+
+```
+
+```{python tryitout-xkcd-py2, collapse = F}
+res = get_xkcd('')
+plt.imshow(res)
+plt.show()
+
+res = get_xkcd('3000')
+
+res = get_xkcd('abcd')
+```
+
+
+:::
+
+:::
+
+### R `debug()`
+
+In the `traceback()` Rstudio output, the other option is "rerun with debug". 
+In short, debug mode opens up a new interactive session inside the function evaluation environment. 
+This lets you observe what's going on in the function, pinpoint the error (and what causes it), and potentially fix the error, all in one neat workflow. 
+
+`debug()` is most useful when you're working with code that you didn't write yourself. 
+So, if you can't change the code in the function causing the error, `debug()` is the way to go. Otherwise, using `browser()` is generally easier. 
+Essentially, `debug()` places a `browser()` statement at the first line of a function, but without having to actually alter the function's source code. 
+
+::: {.callout-caution collapse="true"}
+#### `debug()` example
+
+```{r debug-demo, error = T}
+data(iris)
+
+tmp <- lm(Species ~ ., data = iris)
+summary(tmp)
+```
+We get this weird warning, and then an error about factors when we use summary() to look at the coefficients. 
+
+```{r debug-demo2, eval = F}
+debug(lm) # turn debugging on
+
+
+tmp <- lm(Species ~ ., data = iris)
+summary(tmp)
+
+undebug(lm) # turn debugging off
+```
+
+![The first thing I see when I run lm after turning on debug (screenshot)](../images/gen-prog/debug_init.png)
+
+![The variables passed into the lm function are available as named and used in the function. In addition, we have some handy buttons in the console window that will let us 'drive' through the function](../images/gen-prog/debug_console.png)
+
+After pressing "next" a few times, you can see that I've stepped through the first few lines of the lm function.
+
+![Stepping through the function. The arrow on the left side in the editor window shows which line of code we're currently at.](../images/gen-prog/debug_console2.png)
+
+We can see that once we're at line 21, we get a warning about using type with a factor response, and that the warning occurs during a call to the `model.response` function. 
+So, we've narrowed our problem down - we passed in a numeric variable as the response (y) variable, but it's a factor, so our results aren't going to mean much. We were using the function wrong.
+
+We probably could have gotten there from reading the error message carefully, but this has allowed us to figure out exactly what happened, where it happened, and why it happened. 
+
+![I can hit "Stop" or type "Q" to exit the debug environment.](../images/gen-prog/debug_console_exit.png)
+
+But, until I run `undebug(lm)`, every call to `lm` will take me into the debug window. 
+
+:::
+
+`undebug(f)` will remove the debug flag on the function `f`. `debugonce(f)` will only debug f the first time it is run. 
+
+
+::: callout-tip
+#### Try it out: `debug` in R
+
+::: panel-tabset
+
+##### Problem
+`larger(x, y)` is supposed to return the elementwise maximum of two vectors. 
+
+```{r debug-demo-tryitout}
+larger <- function(x, y) { 
+  y.is.bigger <- y > x 
+  x[y.is.bigger] <- y[y.is.bigger] 
+  x
+} 
+
+larger(c(1, 5, 10), c(2, 4, 11))
+```
+```{r}
+larger(c(1, 5, 10), 6)
+```
+Why is there an NA in the second example? It should be a 6. Figure out why this happens, then try to fix it. 
+
+##### Solution
+
+I'll replicate "debug" in non-interactive mode by setting up an environment where x and y are defined
+```{r debug-demo-tryitout-solution}
+
+x <- c(1, 5, 10)
+y <- 6
+
+# Inside of larger() with x = c(1, 5, 10), y = 6
+(y.is.bigger <- y > x ) # putting something in () prints it out
+y[y.is.bigger] # This isn't quite what we were going for, but it's what's causing the issue
+x[y.is.bigger] # What gets replaced
+
+
+# Better option
+larger <- function(x, y) { 
+  y.is.bigger <- y > x 
+  ifelse(y.is.bigger, y, x)
+} 
+
+```
+
+:::
+
+:::
