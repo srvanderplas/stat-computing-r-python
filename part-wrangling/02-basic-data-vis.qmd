@@ -1,1 +1,92 @@
 # Data Visualization Basics {#sec-basic-data-vis}
+
+This section is intended as a very light overview of how you might create charts in R and python. @sec-data-vis will be much more in depth.
+
+## {{< fa bullseye >}} Objectives 
+
+- Use ggplot2/plotnine to create a chart
+- Begin to identify issues with data formatting
+
+## First Steps
+
+Now that you can read data in to R and python and define new variables, you can create plots! 
+Data visualization is a skill that takes a lifetime to learn, but for now, let's start out easy:  let's talk about how to make (basic) plots in R (with `ggplot2`) and in python (with `plotnine`, which is a ggplot2 clone).
+
+::: callout-demo
+### Graphing HBCU Enrollment
+Let's work with Historically Black College and University enrollment. 
+
+::: panel-tabset
+
+#### Loading Libraries
+
+```{r plotting-data-r}
+hbcu_all <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-02-02/hbcu_all.csv')
+
+library(ggplot2)
+```
+
+```{python plotting-data-python}
+import pandas as pd
+from plotnine import *
+
+hbcu_all = pd.read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-02-02/hbcu_all.csv')
+
+```
+
+#### Line Chart
+
+ggplot2 and plotnine work with data frames. 
+If you pass a data frame in as the data argument, you can refer to columns in that data with "bare" column names (you don't have to reference the full data object using `df$name` or `df.name`; you can instead use `name` or `"name"`):
+
+```{r line-graph-r}
+
+ggplot(hbcu_all, aes(x = Year, y = `4-year`)) + geom_line() +
+  ggtitle("4-year HBCU College Enrollment")
+
+```
+
+```{python line-graph-python}
+
+ggplot(hbcu_all, aes(x = "Year", y = "4-year")) + geom_line() + \
+  ggtitle("4-year HBCU College Enrollment")
+
+```
+
+#### Data Formatting
+
+If your data is in the right format, ggplot2 is very easy to use; if your data aren't formatted neatly, it can be a real pain. 
+If you want to plot multiple lines, you need to either list each variable you want to plot, one by one, or (more likely) you want to get your data into "long form". 
+You don't need to know exactly how this works, but it is helpful to see the difference in the two datasets:
+
+```{r pivot-operation-r}
+library(tidyr)
+hbcu_long <- pivot_longer(hbcu_all, -Year, names_to = "type", values_to = "value")
+
+head(hbcu_all)
+head(hbcu_long)
+```
+
+```{python pivot-operation-python}
+hbcu_long = pd.melt(hbcu_all, id_vars = ['Year'], value_vars = hbcu_all.columns[1:11])
+```
+
+In the long form of the data, we have a row for each data point (year x measurement type), not for each year.
+
+#### Long Form Plot
+
+```{r long-form-demo-r}
+
+ggplot(hbcu_long, aes(x = Year, y = value, color = type)) + geom_line() +
+  ggtitle("HBCU College Enrollment")
+```
+
+```{python long-form-demo-python}
+
+ggplot(hbcu_long, aes(x = "Year", y = "value", color = "variable")) + geom_line() + \
+  ggtitle("HBCU College Enrollment") + \
+  theme(subplots_adjust={'right':0.75}) # This moves the key so it takes up 25% of the area
+```
+
+:::
+:::
