@@ -577,21 +577,113 @@ np.array([[[1,2],[3,4]],[[5,6], [7,8]]])
 :::
 
 
+
 ## Data Frames
 
-A data frame is a special type of list - one in which each element in the list is a vector of the same length. 
-If you put these vectors side-by-side, you get a table of data that looks like a spreadsheet. 
-In Python, a DataFrame is a dict of Series. 
+In the previous sections, we talked about homogeneous structures: arrangements of data, like vectors and matrices, where every entry in the larger structure has the same type. 
+In the rest of this chapter, we'll be talking about the root of most data science analysis projects: the data frame.
 
-The lego version of a data frame looks like this:
+Like an excel spreadsheet, data frames are arrangements of data in columns and rows.
 
-![A data frame with 4 columns. A data frame is essentially a list where all of the components are vectors or lists, and are constrained to have the same length.](../images/gen-prog/lego-data-frame.png){width=50%}
+This format has two main restrictions:
+
+-   Every entry in each column must have the same data type
+-   Every column must have the same number of rows
+
+![A lego data frame of 4 columns and 12 rows. Each column is a separate color hue (data type), with slight variations in the hue of each individual bricks.](../images/gen-prog/lego-data-frame.png)
+
+The picture above shows a data frame of 4 columns, each with a different data type (brick size/hue). 
+The data frame has 12 rows. 
+This picture may look similar to one that we used to show logical indexing in the last chapter, and that is not a coincidence. 
+You can get everything from a data frame that you would get from a collection of 4 separate vectors... but there are advantages to keeping things in a data frame instead.
 
 
+::: callout-caution
+### Motivating Data Frames: Working with Multiple Vectors
+
+Consider for a moment https://worldpopulationreview.com/states, which lists the population of each state. 
+You can find this dataset in CSV form [here](https://raw.githubusercontent.com/srvanderplas/Stat151/main/data/population2022.csv).
+
+In the previous sections, we learned how to make different vectors in R, numpy, and pandas.
+Let's see what happens when we work with the data above as a set of vectors/Series compared to what happens when we work with data frames.
 
 ::: panel-tabset
+#### Python
 
-### R {- .unnumbered}
+(I'm going to cheat and read this in using pandas functions we haven't learned yet to demonstrate why this stuff matters.)
+
+```{python read-state-pops, cache = T}
+import pandas as pd
+
+data = pd.read_html("https://worldpopulationreview.com/states")[0]
+list(data.columns) # get names
+
+# Create a few population series
+population2022 = pd.Series(data['2022 Population'].values, index = data['State'].values)
+population2021 = pd.Series(data['2021 Population'].values, index = data['State'].values)
+population2010 = pd.Series(data['2010 Census'].values, index = data['State'].values)
+```
+
+Suppose that we want to sort each population vector by the population in that year.
+
+```{python vector-analysis-python, dependson = 'read-state-pops'}
+import pandas as pd
+data = pd.read_html("https://worldpopulationreview.com/states")[0]
+
+population2022 = pd.Series(data['2022 Population'].values, index = data['State'].values).sort_values()
+population2021 = pd.Series(data['2021 Population'].values, index = data['State'].values).sort_values()
+population2010 = pd.Series(data['2010 Census'].values, index = data['State'].values).sort_values()
+
+population2022.head()
+population2021.head()
+population2010.head()
+```
+
+The only problem is that by doing this, we've now lost the ordering that matched across all 3 vectors. 
+Pandas Series are great for this, because they use labels that allow us to reconstitute which value corresponds to which label, but in R or even in numpy arrays, vectors don't inherently come with labels. 
+In these situations, sorting by one value can actually destroy the connection between two vectors!
+
+#### R
+
+```{r vector-analysis-r}
+df <- read.csv("https://raw.githubusercontent.com/srvanderplas/Stat151/main/data/population2022.csv")
+
+# Use vectors instead of the data frame
+state <- df$State
+pop2022 <- df$Pop
+pop2021 <- df$Pop2021
+pop2010 <- df$Pop2010
+
+# Create a vector to index population in 2022 in order
+order2022 <- order(pop2022)
+
+# To keep variables together, we have to do things like this:
+head(state[order2022])
+head(pop2022[order2022])
+
+# It makes more sense just to reorder the whole data frame:
+head(df[order2022,])
+```
+
+:::
+
+:::
+
+The primary advantage to data frames is that rows of data are kept together. 
+Since we often think of a row of data as a single observation in a sample, this is an extremely important feature that makes data frames a huge improvement on a collection of vectors of the same length: it's much harder for observations in a single row to get shuffled around and mismatched!
+
+### Data Frame Basics
+
+In R, data frames are built in as type `data.frame`, though there are packages that provide other implementations of data frames that have additional features, such as the `tibble` package used in many other common packages. 
+We will cover functions from both base R and the `tibble` package in this chapter.
+
+In Python, we will use the `pandas` library, which is conventionally abbreviated `pd`. So before you use any data frames in python, you will need to add the following line to your code: `import pandas as pd`.
+
+::: callout-demo
+#### Examining Data Frames
+::: panel-tabset
+
+##### R {- .unnumbered}
 
 When you examine the structure of a data frame, as shown below, you get each column shown in a row, with its type and the first few values in the column. The `head(n)` command shows the first $n$ rows of a data frame (enough to see what's there, not enough to overflow your screen).
 
@@ -624,7 +716,7 @@ ncol(mtcars)
 
 Missing variables in an R data frame are indicated with `NA`.
 
-### Python {- .unnumbered}
+##### Python {- .unnumbered}
 
 When you examine the structure of a data frame, as shown below, you get each column shown in a row, with its type and the first few values in the column. 
 The `df.head(n)` command shows the first $n$ rows of a data frame (enough to see what's there, not enough to overflow your screen).
@@ -662,14 +754,15 @@ Missing variables in a pandas data frame are indicated with `nan` or `NULL`.
 
 
 :::
+:::
 
 
 :::{.callout-tip}
-### Try it out: Data Frames {.unnumbered}
+#### Try it out {.unnumbered}
 
 ::: panel-tabset
 
-#### Setup {- .unnumbered}
+##### Setup {- .unnumbered}
 
 The dataset `state.x77` contains information on US state statistics in the 1970s. By default, it is a matrix, but we can easily convert it to a data frame, as shown below.
 
@@ -697,7 +790,7 @@ state_facts = pd.read_csv("https://raw.githubusercontent.com/srvanderplas/unl-st
 ```
 
 
-#### Problem {- .unnumbered}
+##### Problem {- .unnumbered}
 
 1. How many rows and columns does it have? Can you find different ways to get that information?
 
@@ -705,7 +798,7 @@ state_facts = pd.read_csv("https://raw.githubusercontent.com/srvanderplas/unl-st
 
 3. Calculate the average population density of each state (population per square mile) and store it in a new column `PopDensity`. Using the R reference card, can you find functions that you can combine to get the state with the minimum population density?
 
-#### R Solution {- .unnumbered}
+##### R Solution {- .unnumbered}
 
 ```{r state-facts-tryitout-solutions}
 # 3 ways to get rows and columns
@@ -726,7 +819,7 @@ state_facts$state[which.min(state_facts$PopDensity)]
 ```
 
 
-#### Python Solution {- .unnumbered}
+##### Python Solution {- .unnumbered}
 
 ```{python state-facts-tryitout-solutions-py}
 # Ways to get rows and columns
@@ -755,12 +848,15 @@ state_facts.state[loc_min_dens]
 
 ### Creating Data Frames
 
-It is also possible to create data frames from scratch by building them out of simpler components, such as vectors or dicts of lists. 
+It is possible to create data frames from scratch by building them out of simpler components, such as lists of vectors or dicts of Series. 
 This tends to be useful for small data sets, but it is more common to read data in from e.g. CSV files, which I've used several times already but haven't yet shown you how to do (see @sec-data-input for the full how-to).
+
+::: callout-demo
+#### Data Frames from Scratch
 
 ::: panel-tabset
 
-#### R {- .unnumbered}
+##### R {- .unnumbered}
 
 
 ```{r math-lsd-r}
@@ -776,7 +872,7 @@ math_and_lsd
 ```
 
 
-#### Python {- .unnumbered}
+##### Python {- .unnumbered}
 
 ```{python math-lsd-py}
 math_and_lsd = pd.DataFrame({
@@ -792,6 +888,88 @@ math_and_lsd
 
 :::
 
+:::
+
+While it's not *so* hard to create data frames from scratch for small data sets, it's very tedious if you have a lot of data (or if you can't type accurately). 
+An easier way to create a data frame (rather than typing the whole thing in) is to read in data from somewhere else - a file, a table on a webpage, etc. 
+We're not going to go into the finer points of this (you'll get into that in @sec-data-input), but it is useful to know how to read neatly formatted data.
+
+One source of (relatively neat) data is the [TidyTuesday github repository](https://github.com/rfordatascience/tidytuesday)^[Tidy Tuesday is a collaborative project where the R community gets together and explores a dataset, cleaning it, visualizing it, and generally working to collectively hone R skills together. You can find some very nice YouTube livestreams, as well as lots of examples using the [#tidytuesday twitter tag](https://twitter.com/search?q=%23tidytuesday).]
+
+::: callout-demo
+#### Reading in Data
+
+::: panel-tabset
+##### Base R
+In Base R, we can read the data in using the `read.csv` function
+
+```{r read-airmen-r-base}
+airmen <- read.csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2022/2022-02-08/airmen.csv')
+head(airmen)
+```
+
+##### `readR` package
+If we want instead to create a tibble, we can use the `readr` package's `read_csv` function, which is a bit more robust and has a few additional features.
+
+```{r read-airmen-r-readr}
+library(readr)
+airmen <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2022/2022-02-08/airmen.csv')
+head(airmen)
+```
+
+##### Pandas
+In `pandas`, we can read the csv using `pd.read_csv`
+
+```{python read-airmen-python}
+import pandas as pd
+
+airmen = pd.read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2022/2022-02-08/airmen.csv")
+airmen.head()
+```
+
+:::
+:::
+
+### Working with Data Frames
+
+Often, we want to know what a data frame contains. 
+R and pandas both have easy summary methods for data frames.
+
+::: callout-demo
+#### Data Frame Summaries
+
+Notice that the type of summary depends on the data type.
+
+::: panel-tabset
+##### R
+
+```{r summary-airmen-r}
+summary(airmen)
+
+library(skimr) # Fancier summaries
+skim(airmen)
+```
+
+##### Python
+
+
+```{python summary-airmen-python}
+# All variables - strings are summarized with NaNs
+airmen.describe(include = 'all')
+
+# Only summarize numeric variables
+airmen.describe(include = [np.number])
+
+# Only summarize string variables (objects)
+airmen.describe(include = ['O'])
+
+# Get counts of how many NAs in each column
+airmen.info(show_counts=True)
+```
+
+In pandas, you will typically want to separate out .describe() calls for numeric and non-numeric columns. Another handy function in pandas is .info(), which you can use to show the number of non-NA values. This is particularly useful in sparse datasets where there may be a LOT of missing values and you may want to find out which columns have useful information for more than just a few rows.
+:::
+:::
 
 
 ## References  {#sec-data-struct-refs}
