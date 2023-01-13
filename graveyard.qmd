@@ -152,4 +152,72 @@ In the meantime, check out @datamentorRecursion2017 (R) and @parewalabspvtPython
 
 
 
+## Text Encoding {#sec-text-encoding}
+
+
+I've left this section in because it's a useful set of tricks, even though it does primarily deal with SAS. 
+
+Don't know what UTF-8 is? [Watch this excellent YouTube video explaining the history of file encoding!](https://www.youtube.com/watch?v=MijmeoH9LT4)
+
+SAS also has procs to accommodate CSV and other delimited files. 
+PROC IMPORT may be the simplest way to do this, but of course a DATA step will work as well. 
+We do have to tell SAS to treat the data file as a UTF-8 file (because of the japanese characters). 
+
+
+While writing this code, I got an error of "Invalid logical name" because originally the filename was pokemonloc. Let this be a friendly reminder that your dataset names in SAS are limited to 8 characters in SAS. 
+
+```
+/* x "curl https://raw.githubusercontent.com/shahinrostami/pokemon_dataset/master/pokemon_gen_1_to_8.csv > ../data/pokemon_gen_1-8.csv";
+only run this once to download the file... */
+filename pokeloc '../data/pokemon_gen_1-8.csv' encoding="utf-8";
+
+
+proc import datafile = pokeloc out=poke
+  DBMS = csv; /* comma delimited file */
+  GETNAMES = YES
+  ;
+proc print data=poke (obs=10); /* print the first 10 observations */
+  run;
+```
+
+Alternately (because UTF-8 is finicky depending on your OS and the OS the data file was created under), you can convert the UTF-8 file to ASCII or some other safer encoding before trying to read it in.
+
+If I fix the file in R (because I know how to fix it there... another option is to fix it manually), 
+
+```{r csv-sas-via-r, eval = F}
+library(readr)
+library(dplyr)
+tmp <- read_csv("https://raw.githubusercontent.com/shahinrostami/pokemon_dataset/master/pokemon_gen_1_to_8.csv")[,-1]
+write_csv(tmp, "../data/pokemon_gen_1-8.csv")
+
+tmp <- select(tmp, -japanese_name) %>%
+  # iconv converts strings from UTF8 to ASCII by transliteration - 
+  # changing the characters to their closest A-Z equivalents.
+  # mutate_all applies the function to every column
+  mutate_all(iconv, from="UTF-8", to = "ASCII//TRANSLIT")
+
+write_csv(tmp, "../data/pokemon_gen_1-8_ascii.csv", na='.')
+```
+
+Then, reading in the new file allows us to actually see the output.
+```
+libname classdat "sas/";
+/* Create a library of class data */
+
+filename pokeloc  "../data/pokemon_gen_1-8_ascii.csv";
+
+proc import datafile = pokeloc out=classdat.poke
+  DBMS = csv /* comma delimited file */
+  replace;
+  GETNAMES = YES;
+  GUESSINGROWS = 1028 /* use all data for guessing the variable type */
+  ;
+proc print data=classdat.poke (obs=10); /* print the first 10 observations */
+  run; 
+```
+
+This trick works in so many different situations. It's very common to read and do initial processing in one language, then do the modeling in another language, and even move to a different language for visualization. Each programming language has its strengths and weaknesses; if you know enough of each of them, you can use each tool where it is most appropriate. 
+
+
+
 ## References {#sec-other-topics-refs}
