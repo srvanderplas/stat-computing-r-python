@@ -1,0 +1,77 @@
+# .github/workflows/quarto-render.yml
+name: Render and deploy Quarto files
+on:
+  push:
+  pull_request:
+
+jobs:
+  quarto-render-and-deploy:
+    runs-on: ubuntu-latest
+    container: rocker/verse:latest
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GH_PAT: ${{ secrets.GH_PAT }}
+      GITHUB_PAT: ${{ secrets.GH_PAT }}
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Install Python and system dependencies 1
+      if: runner.os == 'Linux'
+      run: |
+        sudo apt update
+        sudo apt upgrade
+        sudo apt install -y python3-virtualenv python3-dev python3-venv
+        sudo apt install -y libudunits2-dev libgdal-dev
+        # sudo update-alternatives --config libblas.so.3-x86_64-linux-gnu
+      shell: /bin/bash {0}
+
+    - name: Set RENV_PATHS_ROOT
+      shell: bash
+      run: |
+        echo "RENV_PATHS_ROOT=${{ runner.temp }}/renv" >> $GITHUB_ENV
+
+    - name: Install R dependencies
+      if: runner.os == 'Linux'
+      shell: Rscript {0}
+      run: |
+        pkgs <- c("rmarkdown", "jsonlite", "reticulate", "renv", "fontawesome", "downlit", "xml2")
+        pkgs <- setdiff(pkgs, installed.packages())
+        if (length(pkgs) > 0) install.packages(pkgs)
+        options(renv.download.override = utils::download.file)
+        renv::restore()
+
+    - name: Setup python virtualenv
+      run: |
+        reticulate::virtualenv_create("testbook", packages = c("matplotlib", "numpy"))
+        reticulate::virtualenv_install("testbook", "numpy",
+          pip_options = c("--no-binary=numpy",  "--force-reinstall"))
+      shell: Rscript {0}
+
+    - name: Restore Renv package cache
+      uses: actions/cache@v3
+      with:
+        path: ${{ env.RENV_PATHS_ROOT }}
+        key: ${{ steps.get-version.outputs.os-version }}-${{ steps.get-version.outputs.r-version }}-${{ inputs.cache-version }}-${{ hashFiles('renv.lock') }}
+        restore-keys: ${{ steps.get-version.outputs.os-version }}-${{ steps.get-version.outputs.r-version }}-${{inputs.cache-version }}-
+
+    - name: "Download Quarto"
+      shell: /bin/bash {0}
+      run: |
+        # Hardcoding versions for now to make sure new versions don't break things
+        quarto_version="1.1.149"
+        quarto_file_name="quarto-${quarto_version}-linux-amd64.deb"
+        quarto_url="https://github.com/quarto-dev/quarto-cli/releases/download/v${quarto_version}/${quarto_file_name}"
+        wget -q "${quarto_url}"
+        sudo dpkg -i "${quarto_file_name}"
+
+    - name: "Quarto render"
+      shell: /bin/bash {0}
+      run: |
+        quarto render --execute-debug
+
+    - name: "Deploy to gh-pages"
+      uses: peaceiris/actions-gh-pages@v3
+      if: github.ref == 'refs/heads/main'
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./docs
