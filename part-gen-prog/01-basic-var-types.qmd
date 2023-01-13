@@ -57,8 +57,10 @@ In R, `<-` is used for assigning a value to a variable. So `x <- "R is awesome"`
 
 In Python, `=` is used for assigning a value to a variable. This tends to be much easier to say out loud, but lacks any indication of directionality.
 
+::: callout-demo
+#### Demo: Assignment
 ::: panel-tabset
-#### R {.unnumbered}
+##### R {.unnumbered}
 
 ```{r assign-value-r, results='hold'}
 message <- "So long and thanks for all the fish"
@@ -67,7 +69,7 @@ the_answer <- 42L
 earth_demolished <- FALSE
 ```
 
-#### Python {.unnumbered}
+##### Python {.unnumbered}
 
 ```{python assign-value-py, results='hold'}
 message = "So long and thanks for all the fish"
@@ -76,6 +78,7 @@ the_answer = 42
 earth_demolished = False
 ```
 :::
+:::
 
 ::: callout-note
 Note that in R, we assign variables values using the `<-` operator, where in Python, we assign variables values using the `=` operator. Technically, `=` will work for assignment in both languages, but `<-` is more common than `=` in R by convention.
@@ -83,7 +86,7 @@ Note that in R, we assign variables values using the `<-` operator, where in Pyt
 
 We can then use the variables - do numerical computations, evaluate whether a proposition is true or false, and even manipulate the content of strings, all by referencing the variable by name.
 
-### Valid Names
+### Naming Variables
 
 > There are only two hard things in Computer Science: cache invalidation and naming things.\
 > -- Phil Karlton
@@ -94,14 +97,16 @@ What happens if we try to create a variable name that isn't valid?
 
 In both languages, starting a variable name with a number will get you an error message that lets you know that something isn't right - "unexpected symbol" in R and "invalid syntax" in python.
 
+::: callout-demo
+#### Invalid Names
 ::: panel-tabset
-#### R {.unnumbered}
+##### R {.unnumbered}
 
 ```{r invalid-variable-name-r, error = T}
 1st_thing <- "check your variable names!"
 ```
 
-#### Python {.unnumbered}
+##### Python {.unnumbered}
 
 ```{python invalid-variable-name-py, eval = F}
 1st_thing <- "check your variable names!"
@@ -115,10 +120,11 @@ second.thing <- "this isn't valid"
 
 In python, trying to have a `.` in a variable name gets a more interesting error: "<first part> is not defined". This is because in python, some objects have components and methods that can be accessed with `.`. We'll get into this more later, but there is a good reason for python's restriction about not using `.` in variable names.
 :::
+:::
 
 Naming things is difficult! When you name variables, try to make the names descriptive - what does the variable hold? What are you going to do with it? The more (concise) information you can pack into your variable names, the more readable your code will be.
 
-::: callout-note
+::: callout-learnmore
 #### Learn More
 
 [Why is naming things hard?](https://neilkakkar.com/why-is-naming-things-hard.html) - Blog post by Neil Kakkar
@@ -135,7 +141,11 @@ As long as you pick ONE naming convention and don't mix-and-match, you'll be fin
 
 ## Types
 
-You can use different functions to test whether a variable has a specific type as well:
+
+::: callout-demo
+### Testing Types
+
+You can use different functions to test whether a variable has a specific type.
 
 ::: panel-tabset
 #### R {- .unnumbered}
@@ -172,7 +182,7 @@ callable(print)
 
 This is glossing over some much more technical information about differences between functions and classes (that we haven't covered) [@ryanAnswerHowDetect2009]. 
 :::
-
+:::
 
 ::: callout-caution
 ### Example: Assignment and Testing Types
@@ -293,11 +303,14 @@ The general case of this property of a language is called **implicit type conver
 
 ## Type Conversions {#sec-type-conversions}
 
-Programming languages will generally work hard to seamlessly convert variables to different types. So, for instance,
+Programming languages will generally work hard to seamlessly convert variables to different types. 
+This is called **implicit** type casting - the computer implicitly changes the variable type to avoid a conflict.
 
+::: callout-demo
+### Implicit Type Conversion
 ::: panel-tabset
 
-### R {- .unnumbered}
+#### R {- .unnumbered}
 
 ```{r, error = T, collapse = T, hold = T}
 TRUE + 2
@@ -307,7 +320,7 @@ TRUE + 2
 "abcd" + 3
 ```
 
-### Python {- .unnumbered}
+#### Python {- .unnumbered}
 
 ```{python, error = T, collapse = T, hold = T}
 True + 2
@@ -318,13 +331,19 @@ int(2) + 3.1415
 ```
 :::
 
-This conversion doesn't always work - there's no clear way to make "abcd" into a number we could use in addition. So instead, R or python will issue an error. This error pops up frequently when something went wrong with data import and all of a sudden you just tried to take the mean of a set of string/character variables. Whoops.
+
+This conversion doesn't always work - there's no clear way to make "abcd" into a number we could use in addition. 
+So instead, R or python will issue an error. 
+This error pops up frequently when something went wrong with data import and all of a sudden you just tried to take the mean of a set of string/character variables. Whoops.
+:::
 
 When you want to, you can also use `as.xxx()` to make the type conversion **explicit**. So, the analogue of the code above, with explicit conversions would be:
 
+::: callout-demo
+### Explicit Type Conversion
 ::: panel-tabset
 
-### R {- .unnumbered}
+#### R {- .unnumbered}
 
 ```{r, error = T, collapse = T, hold = T}
 as.double(TRUE) + 2
@@ -334,7 +353,7 @@ as.double(2L) + 3.1415
 as.numeric("abcd") + 3
 ```
 
-### Python {- .unnumbered}
+#### Python {- .unnumbered}
 
 ```{python, error = T, collapse = T, hold = T}
 int(True) + 2
@@ -348,17 +367,21 @@ pd.to_numeric("abcd", errors = 'coerce') + 3
 ```
 :::
 
+
 When we make our intent explicit (convert "abcd" to a numeric variable) we get an NA - a missing value - in R. In Python, we get a more descriptive error by default, but we can use the `pandas` library (which adds some statistical functionality) to get a similar result to the result we get in R.
 
 There's still no easy way to figure out where "abcd" is on a number line, but our math will still have a result - `NA + 3` is `NA`.
+:::
 
-## Determining a Variable's Type
+## What Type is it?
 
 If you don't know what type a value is, both R and python have functions to help you with that.
 
+::: callout-demo
+### Determining Variable Types
 ::: panel-tabset
 
-### R {- .unnumbered}
+#### R {- .unnumbered}
 
 If you are unsure what the type of a variable is, use the `typeof()` function to find out.
 
@@ -375,7 +398,7 @@ typeof(z)
 
 ```
 
-### Python {- .unnumbered}
+#### Python {- .unnumbered}
 
 If you are unsure what the type of a variable is, use the `type()` function to find out.
 
@@ -393,10 +416,10 @@ type(z)
 ```
 
 :::
+:::
 
 ::: callout-tip
-
-## Try It Out: Variables and Types {-}
+## Try It Out: Variables and Types 
 
 ::: panel-tabset
 
