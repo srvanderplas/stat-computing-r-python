@@ -1,0 +1,1942 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.313">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<meta name="dcterms.date" content="2023-01-13">
+<title>Statistical Computing using R and Python - 11&nbsp; Debugging</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../part-gen-prog/07-matrix-calcs.html" rel="next">
+<link href="../part-gen-prog/05-functions.html" rel="prev">
+<link href="../build_deps/favicon.ico" rel="icon">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light"><script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script><link rel="stylesheet" href="../build_deps/style.css">
+</head>
+<body class="nav-sidebar floating slimcontent">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top"><nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }"><div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Debugging</span></h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav></header><!-- content --><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto"><div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Statistical Computing using R and Python</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/srvanderplas/stat-computing-r-python/" title="Source Code" class="sidebar-tool px-1"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">Preface</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../how-to-use.html" class="sidebar-item-text sidebar-link">How to Use This Book</a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../part-tools/00-tools-intro.html" class="sidebar-item-text sidebar-link">Part I: Tools</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-tools/01-computer-basics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Computer Basics</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-tools/02-setting-up-computer.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Setting Up Your Computer</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-tools/03-scripts-notebooks.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Scripts and Notebooks</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-tools/04-Rstudio-interface.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">RStudio’s Interface</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-tools/05-git-and-github.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Version Control with Git</span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../part-gen-prog/00-gen-prog.html" class="sidebar-item-text sidebar-link">Part II: General Programming</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-gen-prog/01-basic-var-types.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Variables and Basic Data Types</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-gen-prog/02-prog-functions.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Using Functions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-gen-prog/03-data-struct.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Vectors, Matrices, Arrays, and Control Structures</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-gen-prog/04-control-struct.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Control Structures</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-gen-prog/05-functions.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Writing Functions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-gen-prog/06-debugging.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Debugging</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-gen-prog/07-matrix-calcs.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Matrix Calculations</span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../part-wrangling/00-wrangling.html" class="sidebar-item-text sidebar-link">Part III: Data Wrangling</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-wrangling/01-data-input.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Data Input</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-wrangling/02-basic-data-vis.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Data Visualization Basics</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-wrangling/03-data-cleaning.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Data Cleaning</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-wrangling/04-strings.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Working with Strings</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-wrangling/05-data-reshape.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Reshaping Data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-wrangling/06-data-join.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Joining Data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-wrangling/07-datetime.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Dates and Times</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-wrangling/08-functional-prog.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">List data structures</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-wrangling/09-spatial-formats.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Spatial data</span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../graveyard.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Other Topics</span></a>
+  </div>
+</li>
+    </ul>
+</div>
+</nav><!-- margin-sidebar --><div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active"><h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+<li><a href="#objectives" id="toc-objectives" class="nav-link active" data-scroll-target="#objectives"><span class="toc-section-number">11.1</span>  Objectives</a></li>
+  <li><a href="#avoiding-errors-defensive-programming" id="toc-avoiding-errors-defensive-programming" class="nav-link" data-scroll-target="#avoiding-errors-defensive-programming"><span class="toc-section-number">11.2</span>  Avoiding Errors: Defensive Programming</a></li>
+  <li>
+<a href="#working-through-errors" id="toc-working-through-errors" class="nav-link" data-scroll-target="#working-through-errors"><span class="toc-section-number">11.3</span>  Working through Errors</a>
+  <ul class="collapse">
+<li><a href="#first-steps" id="toc-first-steps" class="nav-link" data-scroll-target="#first-steps"><span class="toc-section-number">11.3.1</span>  First steps</a></li>
+  <li><a href="#general-debugging-strategies" id="toc-general-debugging-strategies" class="nav-link" data-scroll-target="#general-debugging-strategies"><span class="toc-section-number">11.3.2</span>  General Debugging Strategies</a></li>
+  </ul>
+</li>
+  <li><a href="#dividing-problems-into-smaller-parts" id="toc-dividing-problems-into-smaller-parts" class="nav-link" data-scroll-target="#dividing-problems-into-smaller-parts"><span class="toc-section-number">11.4</span>  Dividing Problems into Smaller Parts</a></li>
+  <li>
+<a href="#minimal-working-or-reproducible-examples" id="toc-minimal-working-or-reproducible-examples" class="nav-link" data-scroll-target="#minimal-working-or-reproducible-examples"><span class="toc-section-number">11.5</span>  Minimal Working (or Reproducible) Examples</a>
+  <ul class="collapse">
+<li><a href="#after-an-error-has-occurred---traceback" id="toc-after-an-error-has-occurred---traceback" class="nav-link" data-scroll-target="#after-an-error-has-occurred---traceback"><span class="toc-section-number">13.0.1</span>  After an error has occurred - <code>traceback()</code></a></li>
+  <li><a href="#interactive-debugging" id="toc-interactive-debugging" class="nav-link" data-scroll-target="#interactive-debugging"><span class="toc-section-number">13.0.2</span>  Interactive Debugging</a></li>
+  <li><a href="#r-debug" id="toc-r-debug" class="nav-link" data-scroll-target="#r-debug"><span class="toc-section-number">13.0.3</span>  R <code>debug()</code></a></li>
+  </ul>
+</li>
+  </ul><div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/srvanderplas/stat-computing-r-python/edit/main/part-gen-prog/06-debugging.qmd" class="toc-action">Edit this page</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content page-columns page-full" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><div class="quarto-title">
+<h1 class="title"><span id="sec-debugging" class="quarto-section-identifier d-none d-lg-block"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Debugging</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">January 13, 2023</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+</header><p>Now that you’re writing functions, it’s time to talk a bit about debugging techniques. This is a lifelong topic - as you become a more advanced programmer, you will need to develop more advanced debugging skills as well (because you’ll become more adept at screwing things up).</p>
+<section id="objectives" class="level2" data-number="11.1"><h2 data-number="11.1" class="anchored" data-anchor-id="objectives">
+<span class="header-section-number">11.1</span> Objectives</h2>
+<ul>
+<li><p>Create reproducible examples of problems</p></li>
+<li><p>Use built in debugging tools to trace errors</p></li>
+<li><p>Use online resources to research errors</p></li>
+</ul>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="../images/gen-prog/debugging.jpg" class="img-fluid figure-img" alt="A cartoon of a fuzzy round monster face showing 10 different emotions experienced during the process of debugging code. The progression goes from (1) “I got this” - looking determined and optimistic; (2) “Huh. Really thought that was it.” - looking a bit baffled; (3) “...” - looking up at the ceiling in thought; (4) “Fine. Restarting.” - looking a bit annoyed; (5) “OH WTF.” Looking very frazzled and frustrated; (6) “Zombie meltdown.” - looking like a full meltdown; (7) (blank) - sleeping; (8) “A NEW HOPE!” - a happy looking monster with a lightbulb above; (9) “insert awesome theme song” - looking determined and typing away; (10) “I love coding” - arms raised in victory with a big smile, with confetti falling."></p>
+<p></p><figcaption class="figure-caption">The faces of debugging (by Allison Horst)</figcaption><p></p>
+</figure>
+</div>
+</section><section id="avoiding-errors-defensive-programming" class="level2" data-number="11.2"><h2 data-number="11.2" class="anchored" data-anchor-id="avoiding-errors-defensive-programming">
+<span class="header-section-number">11.2</span> Avoiding Errors: Defensive Programming</h2>
+<p>One of the best debugging strategies (that isn’t a debugging strategy at all, really) is to code defensively <span class="citation" data-cites="DefensiveProgramming2022"><a href="#ref-DefensiveProgramming2022" role="doc-biblioref">[1]</a></span>. By that, I mean, code in a way that you will make debugging things easier later.</p>
+<ul>
+<li><p><strong>Modularize your code</strong>. Each function should do only one task, ideally in the least-complex way possible.</p></li>
+<li><p><strong>Make your code readable</strong>. If you can read the code easily, you’ll be able to narrow down the location of the bug more quickly.</p></li>
+<li><p><strong>Comment your code</strong>. This makes it more likely that you will be able to locate the spot where the bug is likely to have occurred, and will remind you how things are calculated. Remember, comments aren’t just for your collaborators or others who see the code. They’re for future you.</p></li>
+<li><p><strong>Don’t duplicate code</strong>. If you have the same code (or essentially the same code) in two or three different places, put that code in a function and call the function instead. This will save you trouble when updating the code in the future, but also makes narrowing down the source of the bug less complex.</p></li>
+<li><p><strong>Reduce the number of dependencies</strong> you have on outside software packages. Often bugs are introduced when a dependency is updated and the functionality changes slightly. The <code>tidyverse</code> <span class="citation" data-cites="tidyverse"><a href="#ref-tidyverse" role="doc-biblioref">[2]</a></span> is <em>notorious</em> for this.</p></li>
+</ul>
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>It’s ok to write code using lots of dependencies, but as you transition from “experimental” code to “production” code (you’re using the code without tinkering with it) you should work to reduce the dependencies, where possible. In addition, if you do need packages with lots of dependencies, try to make sure those packages are relatively popular, used by a lot of people, and currently maintained. (The tidyverse is a bit better from this perspective, because the constituent packages are some of the most installed R packages on CRAN.)</p>
+</div>
+</div>
+<p>Another way to handle dependency management is to use the <code>renv</code> package <span class="citation" data-cites="renv"><a href="#ref-renv" role="doc-biblioref">[3]</a></span>, which creates a local package library with the appropriate versions of your packages stored in the same directory as your project. <code>renv</code> was inspired by the python concept of virtual environments, and it does also work with python if you’re using both R and python inside a project (e.g.&nbsp;this book uses <code>renv</code>). <code>renv</code> will at the very least help you minimize issues with code not working after unintentional package updates.</p>
+<ul>
+<li><p><strong>Add safeguards against unexpected inputs</strong>. Check to make sure inputs to the function are valid. Check to make sure intermediate results are reasonable (e.g.&nbsp;you don’t compute the derivative of a function and come up with “a”.)</p></li>
+<li><p><strong>Don’t reinvent the wheel</strong>. If you have working, tested code for a task, use that! If someone else has working code that’s used by the community, don’t write your own unless you have a very good reason. The implementation of <code>lm</code> has been better tested than your homegrown linear regression.</p></li>
+<li><p>Collect your often-reused code in packages that you can easily load and make available to “future you”. The process of making a package often encourages you to document your code better than you would a script. A good resource for getting started making R packages is <span class="citation" data-cites="wickhamPackagesOrganizeTest2015"><a href="#ref-wickhamPackagesOrganizeTest2015" role="doc-biblioref">[4]</a></span>, and a similar python book is <span class="citation" data-cites="beuzenPythonPackages2022"><a href="#ref-beuzenPythonPackages2022" role="doc-biblioref">[5]</a></span>.</p></li>
+</ul></section><section id="working-through-errors" class="level2 page-columns page-full" data-number="11.3"><h2 data-number="11.3" class="anchored" data-anchor-id="working-through-errors">
+<span class="header-section-number">11.3</span> Working through Errors</h2>
+<section id="first-steps" class="level3" data-number="11.3.1"><h3 data-number="11.3.1" class="anchored" data-anchor-id="first-steps">
+<span class="header-section-number">11.3.1</span> First steps</h3>
+<section id="get-into-the-right-mindset" class="level4" data-number="11.3.1.1"><h4 data-number="11.3.1.1" class="anchored" data-anchor-id="get-into-the-right-mindset">
+<span class="header-section-number">11.3.1.1</span> Get into the right mindset</h4>
+<p>You can’t debug something effectively if you’re upset. You have to be in a puzzle-solving, detective mindset to actually solve a problem. If you’re already stressed out, try to relieve that stress before you tackle the problem: take a shower, go for a walk, pet a puppy.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="../images/gen-prog/b0rk-debugging-manifesto.jpeg" class="img-fluid figure-img" alt="a debugging manifesto. 1. inspect, dont squash. try to fix the bug (crossed out). understand what happened (yes, smiley faces and stars) 2. check your assumptions. person (thinking): &quot;wait, how do I know thats true?&quot; 3. being stuck is temporary. person (thinking): &quot;I will never figure this out!&quot; ... 2 minutes later.... person (thinking): &quot;well, I havent tried X...&quot; 4. dont go it alone. person (speaking to other person): &quot;hey, have you seen this problem before?&quot; 5. trust nobody and nothing. person (thinking): this library cant be buggy... OR CAN IT??? 6. there's always a reason. computer: &quot;computers are always logical, even when it doesnt feel that way&quot; 7. build your toolkit. person (holding toolkit): &quot;wow, the CSS inspector makes debugging SO MUCH EASIER&quot; 8. it can be an adventure. person (talking, with cute bug next to them): &quot;you wouldnt BELIEVE the weird bug I found&quot;. by @b0rk @omarieclaire, more like this at https://wizardzines.com"></p>
+<p></p><figcaption class="figure-caption">A debugging manifesto <span class="citation" data-cites="evansDebuggingManifestoHttps2022"><a href="#ref-evansDebuggingManifestoHttps2022" role="doc-biblioref">[6]</a></span></figcaption><p></p>
+</figure>
+</div>
+</section><section id="check-your-spelling" class="level4" data-number="11.3.1.2"><h4 data-number="11.3.1.2" class="anchored" data-anchor-id="check-your-spelling">
+<span class="header-section-number">11.3.1.2</span> Check your spelling</h4>
+<p>I’ll guess that 80% of my personal debugging comes down to spelling errors and misplaced punctuation.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="../images/gen-prog/nasser_junior-misspelled.jpeg" class="img-fluid figure-img" style="width:60.0%" alt="A programmer clutches a laptop and says 'I hate this job'... 'and I hate my life' (while pulling at its face). The programmer screams 'WHY IS THIS HAPPENING TO MEEEE'. In the final frame, a calm programmer resumes typing and says 'nevermind, misspelled a variable.'"></p>
+<p></p><figcaption class="figure-caption">Title: user.fist_name <span class="citation" data-cites="nasserUserFistName2020"><a href="#ref-nasserUserFistName2020" role="doc-biblioref">[7]</a></span></figcaption><p></p>
+</figure>
+</div>
+</section></section><section id="general-debugging-strategies" class="level3 page-columns page-full" data-number="11.3.2"><h3 data-number="11.3.2" class="anchored" data-anchor-id="general-debugging-strategies">
+<span class="header-section-number">11.3.2</span> General Debugging Strategies</h3>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<blockquote class="blockquote">
+<p>Debugging: Being the detective in a crime movie where you are also the murderer. - some t-shirt I saw once</p>
+</blockquote>
+</div></div><p>While defensive programming is a nice idea, if you’re already at the point where you have an error you can’t diagnose, then… it doesn’t help that much. At that point, you’ll need some general debugging strategies to work with. The overall process is well described in <span class="citation" data-cites="advr"><a href="#ref-advr" role="doc-biblioref">[8]</a></span>; I’ve added some steps that are commonly overlooked and modified the context from the original package development to introductory programming. I’ve also integrated some lovely illustrations from <a href="https://twitter.com/b0rk">Julia Evans (@b0rk)</a> to lighten the mood.</p>
+<ol start="0" type="1">
+<li><p>Realize that you have a bug</p></li>
+<li><p>Read the error message</p></li>
+</ol>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="../images/gen-prog/b0rk-reread_error_message.jpeg" class="img-fluid figure-img" alt="Image description title: reread the error message. After I've read the error message, I sometimes run into one of these 2 problems: 1. misreading the message. person (thinking): ok, it says the error is in file X. spoiler: it actually said file Y. 2. disregarding what the message is saying. person (thinking): well, the message says X, but that's impossible... spoiler: it was possible. Rereading the message can feel pointless (I already read it!!) but it's fast and it can REALLY help."></p>
+<p></p><figcaption class="figure-caption">Debugging strategy: Reread the error message<span class="citation" data-cites="evansDebuggingStrategyReread2022"><a href="#ref-evansDebuggingStrategyReread2022" role="doc-biblioref">[9]</a></span></figcaption><p></p>
+</figure>
+</div>
+<ol start="2" type="1">
+<li>
+<strong>Google!</strong> Seriously, just google the whole error message.<br>
+In R you can automate this with the <code>errorist</code> and <code>searcher</code> packages. Python is so commonly used that you’ll likely be able to find help for your issue if you are specific enough.</li>
+</ol>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="../images/gen-prog/b0rk-shorten_feedback_loop.jpeg" class="img-fluid figure-img" alt="strategy: shorten your feedback loop. When I'm debugging, I: 1. come up with a question 2. run the buggy code to answer my question 3. repeat dozens of times. If step 2 is slow, everything takes FOREVER. Some ways to speed it up: * use a browser automation tool! * write a unit test! * write a tiny program!"></p>
+<p></p><figcaption class="figure-caption">Debugging strategy: Shorten your feedback loop <span class="citation" data-cites="evansDebuggingStrategyShorten2022"><a href="#ref-evansDebuggingStrategyShorten2022" role="doc-biblioref">[10]</a></span></figcaption><p></p>
+</figure>
+</div>
+</div></div><ol start="3" type="1">
+<li>
+<p><strong>Make the error repeatable</strong>: This makes it easier to figure out what the error is, faster to iterate, and easier to ask for help.</p>
+<ul>
+<li><p>Use binary search (remove 1/2 of the code, see if the error occurs, if not go to the other 1/2 of the code. Repeat until you’ve isolated the error.)</p></li>
+<li><p>Generate the error faster - use a minimal test dataset, if possible, so that you can ask for help easily and run code faster. This is worth the investment if you’ve been debugging the same error for a while. <img src="../images/gen-prog/b0rk-tiny_program.jpeg" class="img-fluid" alt="strategy: write a tiny program. Does your bug involve a library you don't understand? illustration: person (thought bubble): UGH, `requests` is NOT working how I expected it to! I like to convert my code using that library into a tiny standalone program which has the same bug: illustration: giant buggy program (squiggly mess) -> 20 lines of buggy code (simple) I find this makes it WAY EASIER to experiment and ask for help."></p></li>
+<li><p>Note which inputs <em>don’t</em> generate the bug – this negative “data” is helpful when asking for help.</p></li>
+</ul>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="../images/gen-prog/b0rk-break_code.jpeg" class="img-fluid figure-img" alt="strategy: change working code into broken code . If I have a working version of the program, I like to: * go back to the working code * slowly start changing it to be more like my broken code * test if it's still working after every single tiny change. I like this because it puts me back on solid ground: with every change I make that DOESN'T cause the bug to come back, I know that wasn't the problem."></p>
+<p></p><figcaption class="figure-caption">Debugging strategy: Change working code into broken code <span class="citation" data-cites="evansDebuggingStrategyChange2022"><a href="#ref-evansDebuggingStrategyChange2022" role="doc-biblioref">[12]</a></span></figcaption><p></p>
+</figure>
+</div>
+</li>
+<li><p><strong>Figure out where it is</strong>. Debuggers may help with this, but you can also use the <a href="http://web.mit.edu/6.031/www/fa17/classes/13-debugging/#find_the_bug_using_the_scientific_method">scientific method</a> to explore the code, or the tried-and-true method of using lots of <code><a href="https://rdrr.io/r/base/print.html">print()</a></code> statements.</p></li>
+<li><p><strong>Come up with one question</strong>. If you’re stuck, it can be helpful to break it down a bit and ask one tiny question about the bug.</p></li>
+</ol>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="../images/gen-prog/b0rk-one_question.jpeg" class="img-fluid figure-img" alt="debugging strategy: come up with one question. Debugging can feel huge and impossible. But all you have to do to make progress is: 1. find ONE QUESTION about the bug you don't know the answer to, and 2. figure out the answer to that question. illustration: person: I'm stuck! question they're asking: where is the code that's responsible for doing X? side note: ignore all these other questions for now! one at a time!"></p>
+<p></p><figcaption class="figure-caption">Debugging strategy: Come up with one question <span class="citation" data-cites="evansDebuggingStrategyCome2022"><a href="#ref-evansDebuggingStrategyCome2022" role="doc-biblioref">[13]</a></span></figcaption><p></p>
+</figure>
+</div>
+<ol start="6" type="1">
+<li>
+<strong>Fix it and test it</strong>. The goal with tests is to ensure that the same error doesn’t pop back up in a future version of your code. Generate an example that will test for the error, and add it to your documentation. If you’re developing a package, unit test suites offer a more formalized way to test errors and you can automate your testing so that every time your code is changed, tests are run and checked.</li>
+</ol>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="../images/gen-prog/b0rk-unit-test.jpeg" class="img-fluid figure-img" alt="Image description strategy: write a unit test. If your program already has tests, adding a failing test can be a great way to work on your bug! person (thinking): &quot;this function should return X, but it's returning Y&quot;. * it forces you to pinpoint what exactly the bug is * it's easy to tell when you've fixed it (the test passes!) * you can keep the test to make sure the bug doesn't come back"></p>
+<p></p><figcaption class="figure-caption">Debugging strategy: Write a unit test <span class="citation" data-cites="evansDebuggingStrategyWrite2022"><a href="#ref-evansDebuggingStrategyWrite2022" role="doc-biblioref">[14]</a></span></figcaption><p></p>
+</figure>
+</div>
+</div></div><p>There are several other general strategies for debugging:</p>
+<ul>
+<li><p>Retype (from scratch) your code<br>
+This works well if it’s a short function or a couple of lines of code, but it’s less useful if you have a big script full of code to debug. However, it does sometimes fix really silly typos that are hard to spot, like having typed <code>&lt;--</code> instead of <code>&lt;-</code> in R and then wondering why your answers are negative.</p></li>
+<li><p>Visualize your data as it moves through the program. This may be done using <code><a href="https://rdrr.io/r/base/print.html">print()</a></code> statements, or the debugger, or some other strategy depending on your application.</p></li>
+<li><p>Tracing statements. Again, this is part of <code><a href="https://rdrr.io/r/base/print.html">print()</a></code> debugging, but these messages indicate progress - “got into function x”, “returning from function y”, and so on.</p></li>
+<li><p>Rubber ducking. Have you ever tried to explain a problem you’re having to someone else, only to have a moment of insight and “oh, never mind”? Rubber ducking outsources the problem to a nonjudgmental entity, such as a rubber duck<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>. You simply explain, in terms simple enough for your rubber duck to understand, exactly what your code does, line by line, until you’ve found the problem. <span class="citation" data-cites="monteiroImproveHowYou2019a">See <a href="#ref-monteiroImproveHowYou2019a" role="doc-biblioref">[15]</a> for a more thorough explanation</span>.</p></li>
+</ul>
+<p>Do not be surprised if, in the process of debugging, you encounter new bugs. This is a problem that’s well-known enough that it has its <a href="https://xkcd.com/1739/">own xkcd comic</a>. At some point, getting up and going for a walk may help. Redesigning your code to be more modular and more organized is also a good idea.</p>
+</section></section><section id="dividing-problems-into-smaller-parts" class="level2" data-number="11.4"><h2 data-number="11.4" class="anchored" data-anchor-id="dividing-problems-into-smaller-parts">
+<span class="header-section-number">11.4</span> Dividing Problems into Smaller Parts</h2>
+<blockquote class="blockquote">
+<p>“Divide each difficulty into as many parts as is feasible and necessary to resolve it.” -René Descartes, Discourse on Method</p>
+</blockquote>
+<p>In programming, as in life, big, general problems are very hard to solve effectively. Instead, the goal is to break a problem down into smaller pieces that may actually be solvable.</p>
+<div class="callout-caution callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Example: Exhaustion
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>This example inspired by <span class="citation" data-cites="grimesThis500YearOldPiece2019"><a href="#ref-grimesThis500YearOldPiece2019" role="doc-biblioref">[16]</a></span>.</p>
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist">
+<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" aria-current="page">General problem</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Specific problem</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false">Subproblems</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" role="tab" aria-controls="tabset-1-4" aria-selected="false">Brainstorm</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-5" role="tab" aria-controls="tabset-1-5" aria-selected="false">Subproblem solutions</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<p>“I’m exhausted all the time”<br>
+Ok, so this is a problem that many of us have from time to time (or all the time). If we get a little bit more specific at outlining the problem, though, we can sometimes get a bit more insight into how to solve it.</p>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<p>“I wake up in the morning and I don’t have any energy to do anything. I want to go back to sleep, but I have too much to do to actually give in and sleep. I spend my days worrying about how I’m going to get all of the things on my to-do list done, and then I lie awake at night thinking about how many things there are to do tomorrow. I don’t have time for hobbies or exercise, so I drink a lot of coffee instead to make it through the day.”<br>
+This is a much more specific list of issues, and some of these issues are actually things we can approach separately.</p>
+</div>
+<div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
+<p>Moving through the list in the previous tab, we can isolate a few issues. Some of these issues are undoubtedly related to each other, but we can approach them separately (for the most part).</p>
+<ol type="1">
+<li>Poor quality sleep (tired in the morning, lying awake at night)</li>
+<li>Too many things to do (to-do list)</li>
+<li>Chemical solutions to low energy (coffee during the day)</li>
+<li>Anxiety about completing tasks (worrying, insomnia)</li>
+<li>Lack of personal time for hobbies or exercise</li>
+</ol>
+</div>
+<div id="tabset-1-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-4-tab">
+<ol type="1">
+<li>Get a check-up to rule out any other issues that could cause sleep quality degradation - depression, anxiety, sleep apnea, thyroid conditions, etc.
+<ul>
+<li>Ask the doctor about taking melatonin supplements for a short time to ensure that sleep starts off well (note, don’t take medical advice from a stats textbook!)</li>
+</ul>
+</li>
+<li>Reformat your to-do list:
+<ul>
+<li>Set time limits for things on the to-do list</li>
+<li>Break the to-do list into smaller, manageable tasks that can be accomplished within a relatively short interval - such as an hour</li>
+<li>Sort the to-do list by priority and level of “fun” so that each day has a few hard tasks and a couple of easy/fun tasks. Do the hard tasks first, and use the easy/fun tasks as a reward.</li>
+</ul>
+</li>
+<li>Set a time limit for caffeine (e.g.&nbsp;no coffee after noon) so that caffeine doesn’t contribute to poor quality sleep</li>
+<li>Address anxiety with medication (from 1), scheduled time for mindfulness meditation, and/or self-care activities</li>
+<li>Scheduling time for exercise/hobbies
+<ul>
+<li>scheduling exercise in the morning to take advantage of the endorphins generated by working out</li>
+<li>scheduling hobbies in the evening to reward yourself for a day’s work and wind down work well before bedtime</li>
+</ul>
+</li>
+</ol>
+</div>
+<div id="tabset-1-5" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-5-tab">
+<p>When the sub-problem has a viable solution, move on to the next sub-problem. Don’t try to tackle everything at once. Here, that might look like this list, where each step is taken separately and you give each thing a few days to see how it affects your sleep quality. In programming, of course, this list would perhaps be a bit more sequential, but real life is messy and the results take a while to populate.</p>
+<ul>
+<li>[1] Make the doctor’s appointment.</li>
+<li>[5] While waiting for the appointment, schedule exercise early in the day and hobbies later in the day to create a “no-work” period before bedtime.</li>
+<li>[1] Go to the doctor’s appointment, follow up with any concerns.
+<ul>
+<li>[1] If doctor approves, start taking melatonin according to directions</li>
+</ul>
+</li>
+<li>[2] Work on reformatting the to-do list into manageable chunks. Schedule time to complete chunks using your favorite planning method.</li>
+<li>[4] If anxiety is still an issue after following up with the doctor, add some mindfullness meditation or self-care to the schedule in the mornings or evenings.</li>
+<li>[3] If sleep quality is still an issue, set a time limit for caffeine</li>
+<li>[2] Revise your to-do list and try a different tactic if what you were trying didn’t work.</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section><section id="minimal-working-or-reproducible-examples" class="level2 page-columns page-full" data-number="11.5"><h2 data-number="11.5" class="anchored" data-anchor-id="minimal-working-or-reproducible-examples">
+<span class="header-section-number">11.5</span> Minimal Working (or Reproducible) Examples</h2>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="../images/gen-prog/reprex.png" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">The reprex R package will help you make a reproducible example (drawing by Allison Horst)</figcaption><p></p>
+</figure>
+</div>
+</div></div><p>If all else has failed, and you can’t figure out what is causing your error, it’s probably time to ask for help. If you have a friend or buddy that knows the language you’re working in, by all means ask for help sooner - use them as a rubber duck if you have to. But when you ask for help online, often you’re asking people who are much more knowledgeable about the topic - members of R core and really famous python developers browse stackoverflow and may drop in and help you out. Under those circumstances, it’s better to make the task of helping you as easy as possible because it shows respect for their time. The same thing goes for your supervisors and professors.</p>
+<p>There are numerous resources for writing what’s called a “minimal working example”, “reproducible example” (commonly abbreviated reprex), or MCVE (minimal complete verifiable example). Much of this is lifted directly from the StackOverflow post describing a <a href="https://stackoverflow.com/help/minimal-reproducible-example">minimal reproducible example</a>.</p>
+<p>The goal is to reproduce the error message with information that is</p>
+<ul>
+<li>
+<strong>minimal</strong> - as little code as possible to still reproduce the problem</li>
+<li>
+<strong>complete</strong> - everything necessary to reproduce the issue is contained in the description/question</li>
+<li>
+<strong>reproducible</strong> - test the code you provide to reproduce the problem.</li>
+</ul>
+<p>You should format your question to make it as easy as possible to help you. Make it so that code can be copied from your post directly and pasted into a terminal. Describe what you see and what you’d hope to see if the code were working.</p>
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Other Minimum Working Example/Reprex resources
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><a href="https://reprex.tidyverse.org/articles/reprex-dos-and-donts.html">reprex package: Do’s and Don’ts</a></li>
+<li>
+<a href="https://reprex.tidyverse.org/articles/articles/learn-reprex.html">How to use the reprex package</a> - vignette with videos from Jenny Bryan</li>
+<li><a href="https://reprex.tidyverse.org/articles/articles/magic-reprex.html">reprex magic - Vignette adapted from a blog post by Nick Tierney</a></li>
+</ul>
+</div>
+</div>
+<div class="callout-caution callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Example: MWEs
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Note: You don’t need to know anything about SAS to understand this example.</p>
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">SAS markdown</a></li></ul>
+<div class="tab-content">
+<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
+<p>A long time ago, when this book covered R and SAS, I had issues with SAS graphs rendering in black and white most of the time.</p>
+<p>I started debugging the issue with the following code chunk:</p>
+<p>```{{r sas-cat-aes-map-07, engine=“sashtml”, engine.path=“sas”, fig.path = “image/”}} libname classdat “sas/”;</p>
+<p>PROC SGPLOT data=classdat.fbiwide; SCATTER x = Population y = Assault / markerattrs=(size=8pt symbol=circlefilled) group = Abb; /* maps to point color by default */ RUN; QUIT;</p>
+<p>PROC SGPLOT data=classdat.fbiwide NOAUTOLEGEND; /* dont generate a legend <em>/ SCATTER x = Population y = Assault / markercharattrs=(size=8) markerchar = Abb /</em> specify marker character variable */ group = Abb ; RUN; QUIT;</p>
+<pre><code>
+
+After running the code separately in SAS and getting a figure that looked like what I'd expected, I set out to construct a reproducible example so that I could post to the [SASmarkdown github issues page](https://github.com/Hemken/SASmarkdown/issues/14) and ask for help.
+
+The first thing I did was strip out all of the extra stuff that didn't need to be in the chunk - this chunk generates 2 pictures; I only need one. 
+This chunk requires the fbiwide data from the `classdata` R package (that I exported to CSV); I replaced it with a dataset in the `sashelp` library.
+
+When I was done, the chunk looked like this:
+</code></pre>
+<p>PROC SGPLOT data=sashelp.snacks; SCATTER x = date y = QtySold / markerattrs=(size=8pt symbol=circlefilled) group = product; /* maps to point color by default */ RUN; QUIT;</p>
+<pre><code>
+Then, I started constructing my reproducible example. 
+I ran `?sas_enginesetup` to get to a SASmarkdown help page, because I remembered it had a nice way to generate and run markdown files from R directly (without saving the Rmd file). 
+
+I copied the example from that page:</code></pre>
+<section id="indoc--" class="level2" data-number="11.6"><h2 data-number="11.6" class="anchored" data-anchor-id="indoc--">
+<span class="header-section-number">11.6</span> indoc &lt;- ’</h2>
+<p>title: “Basic SASmarkdown Doc” author: “Doug Hemken” output: html_document —</p>
+</section><section id="ive-deleted-the-intermediate-chunks-because-they-screw" class="level1" data-number="12"><h1 data-number="12">
+<span class="header-section-number">12</span> I’ve deleted the intermediate chunks because they screw</h1>
+</section><section id="everything-up-when-i-print-this-chunk-out" class="level1" data-number="13"><h1 data-number="13">
+<span class="header-section-number">13</span> everything up when I print this chunk out</h1>
+<p>’ knitr::knit(text=indoc, output=“test.md”) rmarkdown::render(“test.md”)</p>
+<pre><code>
+Then, I created several chunks which would do the following:
+1. Write the minimal example SAS code above to a [file](files/reprex.sas)
+2. Call that file in a SASmarkdown chunk using the `%include` macro, which dumps the listed file into the SAS program. This generates the [plot](files/SASmarkdown-reprex/unnamed-chunk-1.png) using SASmarkdown.
+3. Call the file using SAS batch mode    
+(this runs the code and produces a [plot](files/SASmarkdown-reprex/SGPlot.png) outside of SASmarkdown, to prove that the issue is SASmarkdown itself)
+
+Finally, I included the image generated from the batch mode call manually.
+
+You can see the resulting code [here](https://github.com/Hemken/SASmarkdown/issues/14).
+
+I pasted my example into the issues page, and then included some additional information: 
+
+1. A screenshot of the rendered page
+2. The image files themselves
+3. A description of what happened
+4. My suspicions (some obvious option I'm missing?)
+5. An additional line of R code that would delete any files created if someone ran my example. Because file clutter sucks.
+
+This process took me about 45 minutes, but that was still much shorter than the time I'd spent rerunning code trying to get it to work with no success. 
+
+In less than 24 hours, the package maintainer responded with a (admittedly terse) explanation of what he thought caused the problem. 
+I had to do some additional research to figure out what that meant, but once I had my reproducible example working in color, I posted that code (so that anyone else with the same problem would know what to do).
+
+Then, I had to tinker with the book a bit to figure out if there were easier ways to get the same result.
+The end result, though, was that I got what I wanted - color figures throughout the book!
+
+#### Python/Quarto
+
+While converting the book from Rmarkdown to quarto, I ran into an issue setting up GitHub Actions (basically, when I push changes, GitHub rebuilds the book from scratch automatically). 
+
+
+I found an issue describing the same segfault issue I had been getting, and so I made a [post there](https://github.com/rstudio/reticulate/issues/1133) with a new github repository containing a [minimal working example](https://github.com/srvanderplas/test-quarto) that I set up to test the problem. 
+
+Within 24h, I had gotten replies from people working at RStudio, and one of them had [diagnosed the problem](https://github.com/rstudio/reticulate/issues/1133#issuecomment-1021783041). 
+After I asked a few more questions, one of them submitted a pull request to my repository with a solution.
+
+I didn't know enough python or enough about GitHub Actions to diagnose the problem myself, but because I managed to create a reproducible example, I got the answers I needed from people with more experience.
+
+:::
+
+:::
+
+::: callout-tip
+### Try It Out 
+
+Use [this list of StackOverflow posts](files/Debugging_exercise.html) to try out your new debugging techniques. 
+Can you figure out what's wrong? 
+What information would you need from the poster in order to come up with a solution?
+How much time did you spend trying to figure out what the poster was actually asking?
+:::
+
+
+
+## Debugging Tools
+
+Now that we've discussed general strategies for debugging that will work in any language, lets get down to the dirty details of debugging. 
+
+### Low tech debugging with print() and other tools
+Sometimes called "tracing" techniques, the most common, universal, and low tech strategy for debugging involves scattering messages throughout your code. 
+When the code is executed, you get a window into what the variables look like during execution.
+
+This is called **print debugging** and it is an incredibly useful tool.
+
+::: callout-caution
+#### Example: Nested Functions
+
+::: panel-tabset
+#### R
+Imagine we start with this:
+
+
+::: {.cell}
+
+```{.r .cell-code}
+x = 1
+y = 2
+z = 0
+
+aa &lt;- function(x) {
+  bb &lt;- function(y) {
+    cc &lt;- function(z) {
+      z + y
+    }
+    cc(3) + 2
+  }
+  x + bb(4)
+}
+
+aa(5)
+## [1] 14</code></pre>
+</section>
+</div>
+</div>
+</div>
+<p>and the goal is to understand what’s happening in the code. We might add some lines:</p>
+<div class="cell">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">x</span> <span class="op">=</span> <span class="fl">1</span></span>
+<span><span class="va">y</span> <span class="op">=</span> <span class="fl">2</span></span>
+<span><span class="va">z</span> <span class="op">=</span> <span class="fl">0</span></span>
+<span></span>
+<span><span class="va">aa</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"Entering aa(). x = "</span>, <span class="va">x</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="va">bb</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">y</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"Entering bb(). x = "</span>, <span class="va">x</span>, <span class="st">"y = "</span>, <span class="va">y</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="va">cc</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">z</span><span class="op">)</span> <span class="op">{</span></span>
+<span>      <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"Entering cc(). x = "</span>, <span class="va">x</span>, <span class="st">"y = "</span>, <span class="va">y</span>, <span class="st">"z = "</span>, <span class="va">z</span><span class="op">)</span><span class="op">)</span></span>
+<span>      <span class="va">cres</span> <span class="op">&lt;-</span> <span class="va">z</span> <span class="op">+</span> <span class="va">y</span></span>
+<span>      <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"Returning"</span>, <span class="va">cres</span>, <span class="st">"from cc()"</span><span class="op">)</span><span class="op">)</span></span>
+<span>      <span class="va">cres</span></span>
+<span>    <span class="op">}</span></span>
+<span>    <span class="va">bres</span> <span class="op">&lt;-</span> <span class="fu">cc</span><span class="op">(</span><span class="fl">3</span><span class="op">)</span> <span class="op">+</span> <span class="fl">2</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"Returning"</span>, <span class="va">bres</span>, <span class="st">"from bb()"</span><span class="op">)</span><span class="op">)</span></span>
+<span>    <span class="va">bres</span></span>
+<span>  <span class="op">}</span></span>
+<span>  <span class="va">ares</span> <span class="op">&lt;-</span> <span class="va">x</span> <span class="op">+</span> <span class="fu">bb</span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"Returning"</span>,<span class="va">ares</span>, <span class="st">"from aa()"</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="va">ares</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="fu">aa</span><span class="op">(</span><span class="fl">5</span><span class="op">)</span></span>
+<span><span class="co">## [1] "Entering aa(). x =  5"</span></span>
+<span><span class="co">## [1] "Entering bb(). x =  5 y =  4"</span></span>
+<span><span class="co">## [1] "Entering cc(). x =  5 y =  4 z =  3"</span></span>
+<span><span class="co">## [1] "Returning 7 from cc()"</span></span>
+<span><span class="co">## [1] "Returning 9 from bb()"</span></span>
+<span><span class="co">## [1] "Returning 14 from aa()"</span></span>
+<span><span class="co">## [1] 14</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="python" class="level4" data-number="13.0.0.1"><h4 data-number="13.0.0.1" class="anchored" data-anchor-id="python">
+<span class="header-section-number">13.0.0.1</span> Python</h4>
+<p>Imagine we start with this:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> <span class="dv">2</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>z <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> aa(x):</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> bb(y):</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> cc(z):</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>      <span class="cf">return</span> z <span class="op">+</span> y</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> cc(<span class="dv">3</span>) <span class="op">+</span> <span class="dv">2</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> x <span class="op">+</span> bb(<span class="dv">4</span>)</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>aa(<span class="dv">5</span>)</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co">## 14</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>and the goal is to understand what’s happening in the code. We might add some lines:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> <span class="dv">2</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>z <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> aa(x):</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="bu">print</span>(<span class="st">"Entering aa(). x = "</span> <span class="op">+</span> <span class="bu">str</span>(x))</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> bb(y):</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Entering bb(). x = "</span> <span class="op">+</span> <span class="bu">str</span>(x) <span class="op">+</span> <span class="st">", y = "</span> <span class="op">+</span> <span class="bu">str</span>(y))</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> cc(z):</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>      <span class="bu">print</span>(<span class="st">"Entering cc(). x = "</span> <span class="op">+</span> <span class="bu">str</span>(x) <span class="op">+</span> <span class="st">", y = "</span> <span class="op">+</span> <span class="bu">str</span>(y) <span class="op">+</span> <span class="st">", z = "</span> <span class="op">+</span> <span class="bu">str</span>(z))</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>      cres <span class="op">=</span> z <span class="op">+</span> y</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>      <span class="bu">print</span>(<span class="st">"Returning "</span> <span class="op">+</span> <span class="bu">str</span>(cres) <span class="op">+</span> <span class="st">" from cc()"</span>)</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>      <span class="cf">return</span> cres</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    bres <span class="op">=</span> cc(<span class="dv">3</span>) <span class="op">+</span> <span class="dv">2</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Returning "</span> <span class="op">+</span> <span class="bu">str</span>(bres) <span class="op">+</span> <span class="st">" from bb()"</span>)</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> bres</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>  ares <span class="op">=</span> x <span class="op">+</span> bb(<span class="dv">4</span>)</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>  <span class="bu">print</span>(<span class="st">"Returning "</span> <span class="op">+</span> <span class="bu">str</span>(ares) <span class="op">+</span> <span class="st">" from aa()"</span>)</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> ares</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>aa(<span class="dv">5</span>)</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a><span class="co">## Entering aa(). x = 5</span></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a><span class="co">## Entering bb(). x = 5, y = 4</span></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a><span class="co">## Entering cc(). x = 5, y = 4, z = 3</span></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a><span class="co">## Returning 7 from cc()</span></span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a><span class="co">## Returning 9 from bb()</span></span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a><span class="co">## Returning 14 from aa()</span></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a><span class="co">## 14</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</div>
+</div>
+<p>:::</p>
+<p>For more complex data structures, it can be useful to add <code><a href="https://rdrr.io/r/utils/str.html">str()</a></code>, <code><a href="https://rdrr.io/r/utils/head.html">head()</a></code>, or <code><a href="https://rdrr.io/r/base/summary.html">summary()</a></code> functions.</p>
+<div class="callout-caution callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Real world example: Web Scraping
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In fall 2020, I wrote a webscraper to get election polling data from the RealClearPolitics site as part of the <a href="github.com/heike/electionViz"><code>electionViz</code> package</a>. I wrote the function <code>search_for_parent()</code> to get the parent HTML tag which matched the “tag” argument, that had the “node” argument as a descendant. I used print debugging to show the sequence of tags on the page.</p>
+<p>I was assuming that the order of the parents would be “html”, “body”, “div”, “table”, “tbody”, “tr” - descending from outer to inner (if you know anything about HTML/XML structure).</p>
+<p>To prevent the site from changing on me (as websites tend to do…), I’ve saved the HTML file <a href="../files/realclearpolitics_frag.html">here</a>.</p>
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist">
+<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">R</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">Python</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
+<div class="cell">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://xml2.r-lib.org/">xml2</a></span><span class="op">)</span> <span class="co"># read html</span></span>
+<span></span>
+<span><span class="va">search_for_parent</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">node</span>, <span class="va">tag</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="co"># Get all of the parent nodes </span></span>
+<span>  <span class="va">parents</span> <span class="op">&lt;-</span> <span class="fu">xml2</span><span class="fu">::</span><span class="fu"><a href="http://xml2.r-lib.org/reference/xml_children.html">xml_parents</a></span><span class="op">(</span><span class="va">node</span><span class="op">)</span></span>
+<span>  <span class="co"># Get the tags of every parent node</span></span>
+<span>  <span class="va">tags</span> <span class="op">&lt;-</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu">map_chr</span><span class="op">(</span><span class="va">parents</span>, <span class="fu">rvest</span><span class="fu">::</span><span class="va">html_name</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">tags</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co"># Find matching tags</span></span>
+<span>  <span class="va">matches</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/which.html">which</a></span><span class="op">(</span><span class="va">tags</span> <span class="op">==</span> <span class="va">tag</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">matches</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co"># Take the minimum matching tag</span></span>
+<span>  <span class="va">min_match</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">matches</span><span class="op">)</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">matches</span><span class="op">)</span> <span class="op">==</span> <span class="fl">1</span><span class="op">)</span> <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="va">parents</span><span class="op">[</span><span class="va">min_match</span><span class="op">]</span><span class="op">)</span> <span class="kw">else</span> <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="cn">NULL</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="va">page</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://xml2.r-lib.org/reference/read_xml.html">read_html</a></span><span class="op">(</span><span class="st">"shorturl.at/jkS59"</span><span class="op">)</span></span>
+<span><span class="co">## Error: 'shorturl.at/jkS59' does not exist in current working directory ('/__w/stat-computing-r-python/stat-computing-r-python/part-gen-prog').</span></span>
+<span><span class="co"># find all poll results in any table</span></span>
+<span><span class="va">poll_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://xml2.r-lib.org/reference/xml_find_all.html">xml_find_all</a></span><span class="op">(</span><span class="va">page</span>, <span class="st">"//td[@class='lp-results']"</span><span class="op">)</span> </span>
+<span><span class="co">## Error in UseMethod("xml_find_all"): no applicable method for 'xml_find_all' applied to an object of class "function"</span></span>
+<span><span class="co"># find the table that contains it</span></span>
+<span><span class="fu">search_for_parent</span><span class="op">(</span><span class="va">poll_results</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="st">"table"</span><span class="op">)</span> </span>
+<span><span class="co">## Error in nodeset_apply(x, function(x) .Call(node_parents, x)): object 'poll_results' not found</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
+<p>You may need to <code>pip install lxml requests bs4</code> to run this code.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># !pip install lxml requests bs4</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> bs4 <span class="im">import</span> BeautifulSoup</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): ModuleNotFoundError: No module named 'bs4'</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> requests <span class="im">as</span> req</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): ModuleNotFoundError: No module named 'requests'</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> search_for_parent(node, tag):</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Get all of the parent nodes</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  parents <span class="op">=</span> node.find_parents()</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  <span class="co"># get tag type for each parent node</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  tags <span class="op">=</span> [x.name <span class="cf">for</span> x <span class="kw">in</span> parents]</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>  <span class="bu">print</span>(tags)</span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Find matching tags</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>  matches <span class="op">=</span> np.array([i <span class="cf">for</span> i, val <span class="kw">in</span> <span class="bu">enumerate</span>(tags) <span class="cf">if</span> val <span class="op">==</span> tag])</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>  <span class="bu">print</span>(matches)</span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Take the minimum matching tag</span></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>  min_match <span class="op">=</span> np.<span class="bu">min</span>(matches)</span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> matches.size <span class="op">==</span> <span class="dv">1</span>:</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>    ret <span class="op">=</span> parents[min_match]</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> ret</span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>html_file <span class="op">=</span> <span class="bu">open</span>(<span class="st">'shorturl.at/jkS59'</span>, <span class="st">'r'</span>)</span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): FileNotFoundError: [Errno 2] No such file or directory: 'shorturl.at/jkS59'</span></span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>page <span class="op">=</span> html_file.read() </span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Read the page as HTML</span></span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'html_file' is not defined</span></span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>soup <span class="op">=</span> BeautifulSoup(page, <span class="st">'html'</span>)</span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a><span class="co"># Find all poll results in any table</span></span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'BeautifulSoup' is not defined</span></span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>poll_results <span class="op">=</span> soup.findAll(<span class="st">'td'</span>, {<span class="st">'class'</span>: <span class="st">'lp-results'</span>})</span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a><span class="co"># Find the table that contains the first poll result</span></span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'soup' is not defined</span></span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a>search_for_parent(poll_results[<span class="dv">0</span>], <span class="st">'table'</span>)</span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'poll_results' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
+<p>By printing out all of the tags that contain <code>node</code>, I could see the order – inner to outer. I asked the function to return the location of the first table node, so the index (2nd value printed out) should match table in the character vector that was printed out first. I could then see that the HTML node that is returned is in fact the table node.</p>
+</div>
+</div>
+<div class="callout-tip callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Try it out: Hurricanes in R
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Not all bugs result in error messages, unfortunately, which makes higher-level techniques like <code><a href="https://rdrr.io/r/base/traceback.html">traceback()</a></code> less useful. The low-tech debugging tools, however, still work wonderfully.</p>
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist">
+<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true">Setup</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false">Buggy code</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-3" role="tab" aria-controls="tabset-4-3" aria-selected="false">Solution 1: Identification</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-4" role="tab" aria-controls="tabset-4-4" aria-selected="false">Solution 2: Fixing</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-5" role="tab" aria-controls="tabset-4-5" aria-selected="false">Solution 3: Verifying</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
+<div class="cell">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span></span>
+<span><span class="co">## Error in library(ggplot2): there is no package called 'ggplot2'</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span></span>
+<span><span class="co">## Error in library(dplyr): there is no package called 'dplyr'</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://magrittr.tidyverse.org">magrittr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">maps</span><span class="op">)</span></span>
+<span><span class="co">## Error in library(maps): there is no package called 'maps'</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jrnold/ggthemes">ggthemes</a></span><span class="op">)</span></span>
+<span><span class="co">## Error in library(ggthemes): there is no package called 'ggthemes'</span></span>
+<span><span class="va">worldmap</span> <span class="op">&lt;-</span> <span class="fu">map_data</span><span class="op">(</span><span class="st">"world"</span><span class="op">)</span></span>
+<span><span class="co">## Error in map_data("world"): could not find function "map_data"</span></span>
+<span></span>
+<span><span class="co"># Load the data</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">storms</span>, package <span class="op">=</span> <span class="st">"dplyr"</span><span class="op">)</span></span>
+<span><span class="co">## Error in find.package(package, lib.loc, verbose = verbose): there is no package called 'dplyr'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
+<p>The code below is supposed to print out a map of the tracks of all hurricanes of a specific category, 1 to 5, in 2013. Use print statements to figure out what’s wrong with my code.</p>
+<div class="cell">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Make base map to be used for each iteration</span></span>
+<span><span class="va">basemap</span> <span class="op">&lt;-</span>  <span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="co"># Country shapes</span></span>
+<span>  <span class="fu">geom_polygon</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">long</span>, y <span class="op">=</span> <span class="va">lat</span>, group <span class="op">=</span> <span class="va">group</span><span class="op">)</span>, </span>
+<span>               data <span class="op">=</span> <span class="va">worldmap</span>, fill <span class="op">=</span> <span class="st">"white"</span>, color <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="co"># Zoom in </span></span>
+<span>  <span class="fu">coord_quickmap</span><span class="op">(</span>xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">100</span>, <span class="op">-</span><span class="fl">10</span><span class="op">)</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">50</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="co"># Don't need scales b/c maps provide their own geographic context...</span></span>
+<span>  <span class="fu">theme_map</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">## Error in ggplot(): could not find function "ggplot"</span></span>
+<span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="co"># Subset the data</span></span>
+<span>  <span class="va">subdata</span> <span class="op">&lt;-</span> <span class="va">storms</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">year</span> <span class="op">==</span> <span class="fl">2013</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">status</span> <span class="op">==</span> <span class="va">i</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co"># Plot the data - path + points to show the observations</span></span>
+<span>  <span class="va">plot</span> <span class="op">&lt;-</span> <span class="va">basemap</span> <span class="op">+</span></span>
+<span>    <span class="fu">geom_path</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">long</span>, y <span class="op">=</span> <span class="va">lat</span>, color <span class="op">=</span> <span class="va">name</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">subdata</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>    <span class="fu">geom_point</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">long</span>, y <span class="op">=</span> <span class="va">lat</span>, color <span class="op">=</span> <span class="va">name</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">subdata</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>    <span class="fu">ggtitle</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"Category "</span>, <span class="va">i</span>, <span class="st">" storms in 2013"</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">plot</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="co">## Error in as.ts(x): object 'storms' not found</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-4-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-3-tab">
+<p>First, lets split the setup from the loop.</p>
+<div class="cell">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Make base map to be used for each iteration</span></span>
+<span><span class="va">basemap</span> <span class="op">&lt;-</span>  <span class="fu">ggplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="co"># Country shapes</span></span>
+<span>  <span class="fu">geom_polygon</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">long</span>, y <span class="op">=</span> <span class="va">lat</span>, group <span class="op">=</span> <span class="va">group</span><span class="op">)</span>, </span>
+<span>               data <span class="op">=</span> <span class="va">worldmap</span>, fill <span class="op">=</span> <span class="st">"white"</span>, color <span class="op">=</span> <span class="st">"black"</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="co"># Zoom in </span></span>
+<span>  <span class="fu">coord_quickmap</span><span class="op">(</span>xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">100</span>, <span class="op">-</span><span class="fl">10</span><span class="op">)</span>, ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">10</span>, <span class="fl">50</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="co"># Don't need scales b/c maps provide their own geographic context...</span></span>
+<span>  <span class="fu">theme_map</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">## Error in ggplot(): could not find function "ggplot"</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">basemap</span><span class="op">)</span> <span class="co"># make sure the basemap is fine</span></span>
+<span><span class="co">## Error in print(basemap): object 'basemap' not found</span></span>
+<span></span>
+<span><span class="co"># Load the data</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">storms</span>, package <span class="op">=</span> <span class="st">"dplyr"</span><span class="op">)</span></span>
+<span><span class="co">## Error in find.package(package, lib.loc, verbose = verbose): there is no package called 'dplyr'</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">storms</span><span class="op">)</span> <span class="co"># make sure the data exists and is formatted as expected</span></span>
+<span><span class="co">## Error in str(storms): object 'storms' not found</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Everything looks ok in the setup chunk…</p>
+<div class="cell">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"Category "</span>, <span class="va">i</span>, <span class="st">" storms"</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="co"># Subset the data</span></span>
+<span>  <span class="va">subdata</span> <span class="op">&lt;-</span> <span class="va">storms</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">year</span> <span class="op">==</span> <span class="fl">2013</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">status</span> <span class="op">==</span> <span class="va">i</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"subdata dims: nrow "</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">subdata</span><span class="op">)</span>, <span class="st">" ncol "</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span><span class="op">(</span><span class="va">subdata</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span>        <span class="co"># str(subdata) works too, but produces more clutter. I started</span></span>
+<span>        <span class="co"># with str() and moved to dim() when I saw the problem</span></span>
+<span>  </span>
+<span>  <span class="co"># Plot the data - path + points to show the observations</span></span>
+<span>  <span class="va">plot</span> <span class="op">&lt;-</span> <span class="va">basemap</span> <span class="op">+</span></span>
+<span>    <span class="fu">geom_path</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">long</span>, y <span class="op">=</span> <span class="va">lat</span>, color <span class="op">=</span> <span class="va">name</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">subdata</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>    <span class="fu">geom_point</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">long</span>, y <span class="op">=</span> <span class="va">lat</span>, color <span class="op">=</span> <span class="va">name</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">subdata</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>    <span class="fu">ggtitle</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"Category "</span>, <span class="va">i</span>, <span class="st">" storms in 2013"</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="co"># print(plot) # Don't print plots - clutters up output at the moment</span></span>
+<span><span class="op">}</span></span>
+<span><span class="co">## [1] "Category 1 storms"</span></span>
+<span><span class="co">## Error in as.ts(x): object 'storms' not found</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Ok, so from this we can see that something is going wrong with our filter statement - we have no rows of data.</p>
+</div>
+<div id="tabset-4-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-4-tab">
+<div class="cell">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">storms</span><span class="op">)</span></span>
+<span><span class="co">## Error in head(storms): object 'storms' not found</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Whoops. I meant “category” when I typed “status”.</p>
+<div class="cell">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"Category "</span>, <span class="va">i</span>, <span class="st">" storms"</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="co"># Subset the data</span></span>
+<span>  <span class="va">subdata</span> <span class="op">&lt;-</span> <span class="va">storms</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">year</span> <span class="op">==</span> <span class="fl">2013</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">category</span> <span class="op">==</span> <span class="va">i</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"subdata dims: nrow "</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">subdata</span><span class="op">)</span>, <span class="st">" ncol "</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span><span class="op">(</span><span class="va">subdata</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span>        <span class="co"># str(subdata) works too, but produces more clutter. I started</span></span>
+<span>        <span class="co"># with str() and moved to dim() when I saw the problem</span></span>
+<span>  </span>
+<span>  <span class="co"># Plot the data - path + points to show the observations</span></span>
+<span>  <span class="va">plot</span> <span class="op">&lt;-</span> <span class="va">basemap</span> <span class="op">+</span></span>
+<span>    <span class="fu">geom_path</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">long</span>, y <span class="op">=</span> <span class="va">lat</span>, color <span class="op">=</span> <span class="va">name</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">subdata</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>    <span class="fu">geom_point</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">long</span>, y <span class="op">=</span> <span class="va">lat</span>, color <span class="op">=</span> <span class="va">name</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">subdata</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>    <span class="fu">ggtitle</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"Category "</span>, <span class="va">i</span>, <span class="st">" storms in 2013"</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="co"># print(plot) # Don't print plots - clutters up output at the moment</span></span>
+<span><span class="op">}</span></span>
+<span><span class="co">## [1] "Category 1 storms"</span></span>
+<span><span class="co">## Error in as.ts(x): object 'storms' not found</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Ok, that’s something, at least. We now have some data for category 1 storms…</p>
+<div class="cell">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">storms</span>, <span class="va">year</span> <span class="op">==</span> <span class="fl">2013</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="co"># Get max category for each named storm</span></span>
+<span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">name</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">category</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">category</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu">ungroup</span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="co"># See what categories exist</span></span>
+<span>  <span class="fu">select</span><span class="op">(</span><span class="va">name</span>, <span class="va">category</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">## Error in select(., name, category): could not find function "select"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>It looks like 2013 was just an incredibly quiet year for tropical activity.</p>
+</div>
+<div id="tabset-4-5" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-5-tab">
+<p>2013 may have been a quiet year for tropical activity in the Atlantic, but 2004 was not. So let’s just make sure our code works by checking out 2004.</p>
+<div class="cell">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"Category "</span>, <span class="va">i</span>, <span class="st">" storms"</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="co"># Subset the data</span></span>
+<span>  <span class="va">subdata</span> <span class="op">&lt;-</span> <span class="va">storms</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">year</span> <span class="op">==</span> <span class="fl">2004</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">category</span> <span class="op">==</span> <span class="va">i</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"subdata dims: nrow "</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">subdata</span><span class="op">)</span>, <span class="st">" ncol "</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span><span class="op">(</span><span class="va">subdata</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span>        <span class="co"># str(subdata) works too, but produces more clutter. I started</span></span>
+<span>        <span class="co"># with str() and moved to dim() when I saw the problem</span></span>
+<span>  </span>
+<span>  <span class="co"># Plot the data - path + points to show the observations</span></span>
+<span>  <span class="va">plot</span> <span class="op">&lt;-</span> <span class="va">basemap</span> <span class="op">+</span></span>
+<span>    <span class="fu">geom_path</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">long</span>, y <span class="op">=</span> <span class="va">lat</span>, color <span class="op">=</span> <span class="va">name</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">subdata</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>    <span class="fu">geom_point</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">long</span>, y <span class="op">=</span> <span class="va">lat</span>, color <span class="op">=</span> <span class="va">name</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">subdata</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>    <span class="fu">ggtitle</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"Category "</span>, <span class="va">i</span>, <span class="st">" storms in 2013"</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">plot</span><span class="op">)</span> <span class="co"># Don't print plots - clutters up output at the moment</span></span>
+<span><span class="op">}</span></span>
+<span><span class="co">## [1] "Category 1 storms"</span></span>
+<span><span class="co">## Error in as.ts(x): object 'storms' not found</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>If we want to only print informative plots, we could add an if statement. Now that the code works, we can also comment out our print() statements (we could delete them, too, depending on whether we anticipate future problems with the code).</p>
+<div class="cell">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="co"># print(paste0("Category ", i, " storms"))</span></span>
+<span>  </span>
+<span>  <span class="co"># Subset the data</span></span>
+<span>  <span class="va">subdata</span> <span class="op">&lt;-</span> <span class="va">storms</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">year</span> <span class="op">==</span> <span class="fl">2013</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">category</span> <span class="op">==</span> <span class="va">i</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co"># print(paste0("subdata dims: nrow ", nrow(subdata), " ncol ", ncol(subdata)))</span></span>
+<span>  <span class="co">#       # str(subdata) works too, but produces more clutter. I started</span></span>
+<span>  <span class="co">#       # with str() and moved to dim() when I saw the problem</span></span>
+<span>  </span>
+<span>  <span class="co"># Plot the data - path + points to show the observations</span></span>
+<span>  <span class="va">plot</span> <span class="op">&lt;-</span> <span class="va">basemap</span> <span class="op">+</span></span>
+<span>    <span class="fu">geom_path</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">long</span>, y <span class="op">=</span> <span class="va">lat</span>, color <span class="op">=</span> <span class="va">name</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">subdata</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>    <span class="fu">geom_point</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">long</span>, y <span class="op">=</span> <span class="va">lat</span>, color <span class="op">=</span> <span class="va">name</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">subdata</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>    <span class="fu">ggtitle</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"Category "</span>, <span class="va">i</span>, <span class="st">" storms in 2013"</span><span class="op">)</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">subdata</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">plot</span><span class="op">)</span> </span>
+<span><span class="op">}</span></span>
+<span><span class="co">## Error in as.ts(x): object 'storms' not found</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p>Once you’ve found your problem, go back and delete or comment out your print statements, as they’re no longer necessary. If you think you may need them again, comment them out, otherwise, just delete them so that your code is neat, clean, and concise.</p>
+<section id="after-an-error-has-occurred---traceback" class="level3" data-number="13.0.1"><h3 data-number="13.0.1" class="anchored" data-anchor-id="after-an-error-has-occurred---traceback">
+<span class="header-section-number">13.0.1</span> After an error has occurred - <code>traceback()</code>
+</h3>
+<p><code><a href="https://rdrr.io/r/base/traceback.html">traceback()</a></code> can help you narrow down where an error occurs by taking you through the series of function calls that led up to the error. This may help you identify which function is actually causing the problem, which is especially useful when you have nested functions or are using package functions that depend on other packages.</p>
+<div class="callout-caution callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Demo: Using traceback
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist">
+<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-5-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-1" role="tab" aria-controls="tabset-5-1" aria-selected="true">R</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-2" role="tab" aria-controls="tabset-5-2" aria-selected="false">Python</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-5-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-5-1-tab">
+<div class="cell">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">aa</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">bb</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">y</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">cc</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">z</span><span class="op">)</span> <span class="op">{</span></span>
+<span>     <span class="kw"><a href="https://rdrr.io/r/base/stop.html">stop</a></span><span class="op">(</span><span class="st">'there was a problem'</span><span class="op">)</span>  <span class="co"># This generates an error</span></span>
+<span>    <span class="op">}</span></span>
+<span>    <span class="fu">cc</span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span>  <span class="fu">bb</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="fu">aa</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">## Error in cc(): there was a problem</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>For more information, you could run traceback</p>
+<div class="cell">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/traceback.html">traceback</a></span><span class="op">(</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Which will provide the following output:</p>
+<pre><code>4: stop("there was a problem") at #4
+3: c() at #6
+2: b() at #8
+1: a()</code></pre>
+<p>Reading through this, we see that a() was called, b() was called, c() was called, and then there was an error. It’s even kind enough to tell us that the error occurred at line 4 of the code.</p>
+<p>If you are running this code interactively in RStudio, it’s even easier to run <code><a href="https://rdrr.io/r/base/traceback.html">traceback()</a></code> by clicking on the “Show Traceback” option that appears when there is an error.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="../images/gen-prog/Rstudio_rerun_traceback.png" class="img-fluid figure-img" alt="A screenshot from RStudio reading 'Error in c(): there was a problem', with buttons 'Show Traceback' and 'Rerun with Debug'"></p>
+<p></p><figcaption class="figure-caption">Both Show Traceback and Rerun with Debug are useful tools</figcaption><p></p>
+</figure>
+</div>
+<p>If you are using <code><a href="https://rdrr.io/r/base/source.html">source()</a></code> to run the code in Rstudio, it will even provide a link to the file and line location of the error. <img src="../images/gen-prog/Rstudio_rerun_traceback_source.png" class="img-fluid" alt="The output of source(&quot;code/07_debug_ex.R&quot;) as run in RStudio. The traceback() function information contains links to the files of the functions causing the error. For instance, 07_debug_ex.R#4 text is a link to line 4 of the file."></p>
+</div>
+<div id="tabset-5-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-2-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sys,traceback</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> aa(x):</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> bb(y):</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> cc(z):</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>      <span class="cf">try</span>: </span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> y <span class="op">+</span> z <span class="op">+</span> <span class="bu">tuple</span>()[<span class="dv">0</span>] <span class="co"># This generates an error</span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>      <span class="cf">except</span> <span class="pp">IndexError</span>:</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>        exc_type, exc_value, exc_tb <span class="op">=</span> sys.exc_info()</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>        traceback.print_exception(exc_type, exc_value, exc_tb, <span class="bu">file</span> <span class="op">=</span> sys.stdout)</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> cc(<span class="dv">3</span>) <span class="op">+</span> <span class="dv">2</span></span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> x <span class="op">+</span> bb(<span class="dv">4</span>)</span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>aa(<span class="dv">5</span>)</span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): TypeError: unsupported operand type(s) for +: 'NoneType' and 'int'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Python’s <a href="https://docs.python.org/3/library/traceback.html">traceback</a> information is a bit more low-level and requires a bit more from the programmer than R’s version.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section><section id="interactive-debugging" class="level3" data-number="13.0.2"><h3 data-number="13.0.2" class="anchored" data-anchor-id="interactive-debugging">
+<span class="header-section-number">13.0.2</span> Interactive Debugging</h3>
+<div class="youtube-video-container">
+<iframe width="100%" height="auto" src="https://www.youtube.com/embed/dA2ce5SA3C8" title="Using debug() in R" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="">
+</iframe>
+</div>
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist">
+<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-6-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-1" role="tab" aria-controls="tabset-6-1" aria-selected="true">R <code>browser()</code></a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-2" role="tab" aria-controls="tabset-6-2" aria-selected="false">Python</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-6-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-6-1-tab">
+<p>The <code><a href="https://rdrr.io/r/base/browser.html">browser()</a></code> function is useful for debugging your own code. If you’re writing a function and something isn’t working quite right, you can insert a call to <code><a href="https://rdrr.io/r/base/browser.html">browser()</a></code> in that function, and examine what’s going on.</p>
+<div class="callout-caution callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Example of using browser()
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Suppose that I want to write a function that will plot an xkcd comic in R.</p>
+<p>I start with</p>
+<div class="cell">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://www.rforge.net/png/">png</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://xml2.r-lib.org/">xml2</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span></span>
+<span><span class="co">## Error in library(dplyr): there is no package called 'dplyr'</span></span>
+<span></span>
+<span><span class="co"># get the most current xkcd</span></span>
+<span><span class="va">get_xkcd</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">url</span> <span class="op">&lt;-</span> <span class="st">"http://xkcd.com"</span></span>
+<span>  <span class="va">page</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://xml2.r-lib.org/reference/read_xml.html">read_html</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span></span>
+<span>  <span class="co"># Find the comic</span></span>
+<span>  <span class="va">image</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://xml2.r-lib.org/reference/xml_find_all.html">xml_find_first</a></span><span class="op">(</span><span class="va">page</span>, <span class="st">"//div[@id='comic']/img"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="co"># pull the address out of the tag</span></span>
+<span>    <span class="fu"><a href="http://xml2.r-lib.org/reference/xml_attr.html">xml_attr</a></span><span class="op">(</span><span class="st">"src"</span><span class="op">)</span></span>
+<span>  </span>
+<span>  </span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/png/man/readPNG.html">readPNG</a></span><span class="op">(</span>source <span class="op">=</span> <span class="va">image</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="fu">get_xkcd</span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/grDevices/as.raster.html">as.raster</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">## Error in readPNG(source = image): unable to open //imgs.xkcd.com/comics/washing_machine_settings.png</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Here’s the final function</p>
+<div class="cell">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://www.rforge.net/png/">png</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://xml2.r-lib.org/">xml2</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># get the most current xkcd</span></span>
+<span><span class="va">get_xkcd</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  </span>
+<span>  <span class="va">url</span> <span class="op">&lt;-</span> <span class="st">"http://xkcd.com"</span></span>
+<span>  <span class="va">page</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://xml2.r-lib.org/reference/read_xml.html">read_html</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span></span>
+<span>  <span class="co"># Find the comic</span></span>
+<span>  <span class="va">image</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://xml2.r-lib.org/reference/xml_find_all.html">xml_find_first</a></span><span class="op">(</span><span class="va">page</span>, <span class="st">"//div[@id='comic']/img"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="co"># pull the address out of the tag</span></span>
+<span>    <span class="fu"><a href="http://xml2.r-lib.org/reference/xml_attr.html">xml_attr</a></span><span class="op">(</span><span class="st">"src"</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co"># Fix image address so that we can access the image</span></span>
+<span>  <span class="va">image</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/substr.html">substr</a></span><span class="op">(</span><span class="va">image</span>, <span class="fl">3</span>, <span class="fu"><a href="https://rdrr.io/r/base/nchar.html">nchar</a></span><span class="op">(</span><span class="va">image</span><span class="op">)</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="co"># Download the file to a temp file and read from there</span></span>
+<span>  <span class="va">file_location</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html">tempfile</a></span><span class="op">(</span>fileext <span class="op">=</span> <span class="st">".png"</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/download.file.html">download.file</a></span><span class="op">(</span><span class="va">image</span>, destfile <span class="op">=</span> <span class="va">file_location</span>, quiet <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="fu"><a href="https://rdrr.io/pkg/png/man/readPNG.html">readPNG</a></span><span class="op">(</span>source <span class="op">=</span> <span class="va">file_location</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="fu">get_xkcd</span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/grDevices/as.raster.html">as.raster</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="06-debugging_files/figure-html/browser-demo-2-1.png" class="img-fluid" width="2100"></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-6-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-2-tab">
+<p>In python, the equivalent interactive debugger is <code>ipdb</code>. You can install it with <code>pip install ipdb</code>.</p>
+<p>If you want to run Python in the interactive ipython console, then you can invoke the ipdb debugging with <code>%debug get_xkcd()</code>. This is similar to <code><a href="https://rdrr.io/r/base/browser.html">browser()</a></code> in R. If you’re working in Python in RStudio, though, you have to get into debug mode in a more involved way.</p>
+<p>To run code using <code>ipdb</code> when your code hits an error, add <code>from ipdb import launch_ipdb_on_exception</code> to the top of your python code chunk. Then, at the bottom, put any lines that may trigger the error after these two lines:</p>
+<pre><code>if __name__ == "__main__":
+  with launch_ipdb_on_exception():
+    &lt;your properly indented code goes here&gt;</code></pre>
+<p>This ensures that ipdb is launched when an error is reached.</p>
+<div class="callout-caution callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Example using <code>ipdb</code>
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Suppose that I want to write a function that will plot an xkcd comic in python.</p>
+<p>I start with</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> bs4 <span class="im">import</span> BeautifulSoup</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): ModuleNotFoundError: No module named 'bs4'</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> urllib.request <span class="co"># work with html</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> PIL <span class="im">import</span> Image <span class="co"># work with images</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a><span class="co"># importing pyplot and image from matplotlib</span></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.image <span class="im">as</span> img</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a><span class="co"># get the most current xkcd</span></span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_xkcd():</span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>  url <span class="op">=</span> <span class="st">"http://xkcd.com"</span></span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Get the URL</span></span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a>  html_file <span class="op">=</span> urllib.request.urlopen(url)</span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a>  page <span class="op">=</span> html_file.read() </span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a>  decode_page <span class="op">=</span> page.decode(<span class="st">"utf8"</span>)</span>
+<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Read the page as HTML</span></span>
+<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a>  soup <span class="op">=</span> BeautifulSoup(decode_page, <span class="st">'html'</span>)</span>
+<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Get the comic src from the img tag</span></span>
+<span id="cb25-24"><a href="#cb25-24" aria-hidden="true" tabindex="-1"></a>  imlink <span class="op">=</span> soup.select(<span class="st">'#comic &gt; img'</span>)[<span class="dv">0</span>].get(<span class="st">'src'</span>)</span>
+<span id="cb25-25"><a href="#cb25-25" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Format as a numpy array</span></span>
+<span id="cb25-26"><a href="#cb25-26" aria-hidden="true" tabindex="-1"></a>  image <span class="op">=</span> np.array(Image.<span class="bu">open</span>(urllib.request.urlopen(imlink)))</span>
+<span id="cb25-27"><a href="#cb25-27" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb25-28"><a href="#cb25-28" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> image</span>
+<span id="cb25-29"><a href="#cb25-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-30"><a href="#cb25-30" aria-hidden="true" tabindex="-1"></a>plt.imshow(get_xkcd())</span>
+<span id="cb25-31"><a href="#cb25-31" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'BeautifulSoup' is not defined</span></span>
+<span id="cb25-32"><a href="#cb25-32" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="06-debugging_files/figure-html/browser-demo-py-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Here’s the final function</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> bs4 <span class="im">import</span> BeautifulSoup</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): ModuleNotFoundError: No module named 'bs4'</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> urllib.request <span class="co"># work with html</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> PIL <span class="im">import</span> Image <span class="co"># work with images</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="co"># importing pyplot and image from matplotlib</span></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.image <span class="im">as</span> img</span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a><span class="co"># get the most current xkcd</span></span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_xkcd():</span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>  url <span class="op">=</span> <span class="st">"http://xkcd.com"</span></span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Get the URL</span></span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a>  html_file <span class="op">=</span> urllib.request.urlopen(url)</span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a>  page <span class="op">=</span> html_file.read() </span>
+<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a>  decode_page <span class="op">=</span> page.decode(<span class="st">"utf8"</span>)</span>
+<span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Read the page as HTML</span></span>
+<span id="cb26-21"><a href="#cb26-21" aria-hidden="true" tabindex="-1"></a>  soup <span class="op">=</span> BeautifulSoup(decode_page, <span class="st">'html'</span>)</span>
+<span id="cb26-22"><a href="#cb26-22" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb26-23"><a href="#cb26-23" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Get the comic src from the img tag</span></span>
+<span id="cb26-24"><a href="#cb26-24" aria-hidden="true" tabindex="-1"></a>  imlink <span class="op">=</span> soup.select(<span class="st">'#comic &gt; img'</span>)[<span class="dv">0</span>].get(<span class="st">'src'</span>)</span>
+<span id="cb26-25"><a href="#cb26-25" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Format as a numpy array</span></span>
+<span id="cb26-26"><a href="#cb26-26" aria-hidden="true" tabindex="-1"></a>  image <span class="op">=</span> np.array(Image.<span class="bu">open</span>(urllib.request.urlopen(<span class="st">'https:'</span> <span class="op">+</span> imlink)))</span>
+<span id="cb26-27"><a href="#cb26-27" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb26-28"><a href="#cb26-28" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> image</span>
+<span id="cb26-29"><a href="#cb26-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-30"><a href="#cb26-30" aria-hidden="true" tabindex="-1"></a>plt.imshow(get_xkcd())</span>
+<span id="cb26-31"><a href="#cb26-31" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'BeautifulSoup' is not defined</span></span>
+<span id="cb26-32"><a href="#cb26-32" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="06-debugging_files/figure-html/browser-demo-py2-3.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<div class="youtube-video-container">
+<iframe width="100%" height="auto" src="https://www.youtube.com/embed/zGRsLLWGVR0" title="Using ipdb in python" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="">
+</iframe>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout-tip callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Try it out
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist">
+<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-7-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-1" role="tab" aria-controls="tabset-7-1" aria-selected="true">Problem</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-2" role="tab" aria-controls="tabset-7-2" aria-selected="false">R Solution</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-3" role="tab" aria-controls="tabset-7-3" aria-selected="false">Python Solution</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-7-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-7-1-tab">
+<p>Each xkcd has a corresponding ID number (ordered sequentially from 1 to 2722 at the time this was written). Modify the XKCD functions above to make use of the id parameter, so that you can pass in an ID number and get the relevant comic.</p>
+<p>Use interactive debugging tools to help you figure out what logic you need to add. You should not need to change the web scraping code - the only change should be to the URL.</p>
+<p>What things might you add to make this function “defensive programming” compatible?</p>
+</div>
+<div id="tabset-7-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-2-tab">
+<div class="cell">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># get the most current xkcd or the specified number</span></span>
+<span><span class="va">get_xkcd</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">id</span> <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html">is.null</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="co"># Have to get the location of the image ourselves</span></span>
+<span>    <span class="va">url</span> <span class="op">&lt;-</span> <span class="st">"http://xkcd.com"</span></span>
+<span>  <span class="op">}</span> <span class="kw">else</span> <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/numeric.html">is.numeric</a></span><span class="op">(</span><span class="va">id</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">url</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"http://xkcd.com/"</span>, <span class="va">id</span>, <span class="st">"/"</span><span class="op">)</span></span>
+<span>  <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
+<span>    <span class="co"># only allow numeric or null input</span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/stop.html">stop</a></span><span class="op">(</span><span class="st">"To get current xkcd, pass in NULL, otherwise, pass in a valid comic number"</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span></span>
+<span>  <span class="va">page</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://xml2.r-lib.org/reference/read_xml.html">read_html</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span></span>
+<span>  <span class="co"># Find the comic</span></span>
+<span>  <span class="va">image</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://xml2.r-lib.org/reference/xml_find_all.html">xml_find_first</a></span><span class="op">(</span><span class="va">page</span>, <span class="st">"//div[@id='comic']/img"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="co"># pull the address out of the tag</span></span>
+<span>    <span class="fu"><a href="http://xml2.r-lib.org/reference/xml_attr.html">xml_attr</a></span><span class="op">(</span><span class="st">"src"</span><span class="op">)</span></span>
+<span>  <span class="co"># Fix image address so that we can access the image</span></span>
+<span>  <span class="va">image</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/substr.html">substr</a></span><span class="op">(</span><span class="va">image</span>, <span class="fl">3</span>, <span class="fu"><a href="https://rdrr.io/r/base/nchar.html">nchar</a></span><span class="op">(</span><span class="va">image</span><span class="op">)</span><span class="op">)</span> <span class="co"># cut the first 2 characters off</span></span>
+<span></span>
+<span>  <span class="co"># make temp file</span></span>
+<span>  <span class="va">location</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html">tempfile</a></span><span class="op">(</span>fileext <span class="op">=</span> <span class="st">"png"</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/download.file.html">download.file</a></span><span class="op">(</span><span class="va">image</span>, destfile <span class="op">=</span> <span class="va">location</span>, quiet <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
+<span></span>
+<span>  <span class="co"># This checks to make sure we saved the file correctly</span></span>
+<span>  <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/files.html">file.exists</a></span><span class="op">(</span><span class="va">location</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/pkg/png/man/readPNG.html">readPNG</a></span><span class="op">(</span>source <span class="op">=</span> <span class="va">location</span><span class="op">)</span></span>
+<span>  <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
+<span>    <span class="co"># Give a good informative error message</span></span>
+<span>    <span class="kw"><a href="https://rdrr.io/r/base/stop.html">stop</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"Something went wrong saving the image at "</span>, <span class="va">image</span>, <span class="st">" to "</span>, <span class="va">location</span><span class="op">)</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="fu">get_xkcd</span><span class="op">(</span><span class="fl">2259</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/grDevices/as.raster.html">as.raster</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="06-debugging_files/figure-html/xkcd-tryitout-solution-5.png" class="img-fluid" width="2100"></p>
+</div>
+</div>
+</div>
+<div id="tabset-7-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-3-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> bs4 <span class="im">import</span> BeautifulSoup</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): ModuleNotFoundError: No module named 'bs4'</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> urllib.request <span class="co"># work with html</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> PIL <span class="im">import</span> Image <span class="co"># work with images</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a><span class="co"># importing pyplot and image from matplotlib</span></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.image <span class="im">as</span> img</span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a><span class="co"># get the most current xkcd</span></span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_xkcd(<span class="bu">id</span><span class="op">=</span><span class="st">''</span>):</span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>  image <span class="op">=</span> <span class="dv">0</span> <span class="co"># Defining a placeholder</span></span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> <span class="bu">id</span> <span class="op">==</span> <span class="st">''</span>:</span>
+<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Have to get the location of the image ourselves</span></span>
+<span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a>    url <span class="op">=</span> <span class="st">"http://xkcd.com"</span></span>
+<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a>  <span class="cf">elif</span> <span class="bu">id</span>.isnumeric():</span>
+<span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a>    url <span class="op">=</span> <span class="st">"http://xkcd.com/"</span> <span class="op">+</span> <span class="bu">id</span> <span class="op">+</span> <span class="st">"/"</span></span>
+<span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span>:</span>
+<span id="cb28-21"><a href="#cb28-21" aria-hidden="true" tabindex="-1"></a>    <span class="co"># only allow numeric or null input</span></span>
+<span id="cb28-22"><a href="#cb28-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">raise</span> <span class="pp">TypeError</span>(<span class="st">"To get current xkcd, pass in an empty string, otherwise, pass in a valid integer comic number"</span>)</span>
+<span id="cb28-23"><a href="#cb28-23" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb28-24"><a href="#cb28-24" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Print debugging left in for your amusement</span></span>
+<span id="cb28-25"><a href="#cb28-25" aria-hidden="true" tabindex="-1"></a>  <span class="co"># print(type(id))</span></span>
+<span id="cb28-26"><a href="#cb28-26" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb28-27"><a href="#cb28-27" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Get the URL</span></span>
+<span id="cb28-28"><a href="#cb28-28" aria-hidden="true" tabindex="-1"></a>  html_file <span class="op">=</span> urllib.request.urlopen(url)</span>
+<span id="cb28-29"><a href="#cb28-29" aria-hidden="true" tabindex="-1"></a>  page <span class="op">=</span> html_file.read() </span>
+<span id="cb28-30"><a href="#cb28-30" aria-hidden="true" tabindex="-1"></a>  decode_page <span class="op">=</span> page.decode(<span class="st">"utf8"</span>)</span>
+<span id="cb28-31"><a href="#cb28-31" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb28-32"><a href="#cb28-32" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Read the page as HTML</span></span>
+<span id="cb28-33"><a href="#cb28-33" aria-hidden="true" tabindex="-1"></a>  soup <span class="op">=</span> BeautifulSoup(decode_page, <span class="st">'html'</span>)</span>
+<span id="cb28-34"><a href="#cb28-34" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb28-35"><a href="#cb28-35" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Get the comic src from the img tag</span></span>
+<span id="cb28-36"><a href="#cb28-36" aria-hidden="true" tabindex="-1"></a>  imnode <span class="op">=</span> soup.select(<span class="st">'#comic &gt; img'</span>)</span>
+<span id="cb28-37"><a href="#cb28-37" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb28-38"><a href="#cb28-38" aria-hidden="true" tabindex="-1"></a>  <span class="cf">try</span>:</span>
+<span id="cb28-39"><a href="#cb28-39" aria-hidden="true" tabindex="-1"></a>    imlink <span class="op">=</span> imnode[<span class="dv">0</span>].get(<span class="st">'src'</span>)</span>
+<span id="cb28-40"><a href="#cb28-40" aria-hidden="true" tabindex="-1"></a>  <span class="cf">except</span>:</span>
+<span id="cb28-41"><a href="#cb28-41" aria-hidden="true" tabindex="-1"></a>    <span class="cf">raise</span> <span class="pp">Exception</span>(<span class="st">"No comic could be found with number "</span> <span class="op">+</span> <span class="bu">id</span> <span class="op">+</span> <span class="st">" (url = "</span><span class="op">+</span> url<span class="op">+</span> <span class="st">" )"</span>)</span>
+<span id="cb28-42"><a href="#cb28-42" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb28-43"><a href="#cb28-43" aria-hidden="true" tabindex="-1"></a>  <span class="cf">try</span>: </span>
+<span id="cb28-44"><a href="#cb28-44" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Format as a numpy array</span></span>
+<span id="cb28-45"><a href="#cb28-45" aria-hidden="true" tabindex="-1"></a>    image <span class="op">=</span> np.array(Image.<span class="bu">open</span>(urllib.request.urlopen(<span class="st">'https:'</span> <span class="op">+</span> imlink)))</span>
+<span id="cb28-46"><a href="#cb28-46" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> image</span>
+<span id="cb28-47"><a href="#cb28-47" aria-hidden="true" tabindex="-1"></a>  <span class="cf">except</span>: </span>
+<span id="cb28-48"><a href="#cb28-48" aria-hidden="true" tabindex="-1"></a>    <span class="cf">raise</span> <span class="pp">Exception</span>(<span class="st">"Reading the image failed. Check to make sure an image exists at "</span> <span class="op">+</span> url)</span>
+<span id="cb28-49"><a href="#cb28-49" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span>(<span class="va">None</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>res <span class="op">=</span> get_xkcd(<span class="st">''</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-error">
+<pre><code>Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'BeautifulSoup' is not defined</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>plt.imshow(res)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-error">
+<pre><code>Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'res' is not defined</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="06-debugging_files/figure-html/tryitout-xkcd-py2-1.png" class="img-fluid" width="672"></p>
+</div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>res <span class="op">=</span> get_xkcd(<span class="st">'3000'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-error">
+<pre><code>Error in py_call_impl(callable, dots$args, dots$keywords): urllib.error.HTTPError: HTTP Error 404: Not Found</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>res <span class="op">=</span> get_xkcd(<span class="st">'abcd'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-error">
+<pre><code>Error in py_call_impl(callable, dots$args, dots$keywords): TypeError: To get current xkcd, pass in an empty string, otherwise, pass in a valid integer comic number</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section><section id="r-debug" class="level3" data-number="13.0.3"><h3 data-number="13.0.3" class="anchored" data-anchor-id="r-debug">
+<span class="header-section-number">13.0.3</span> R <code>debug()</code>
+</h3>
+<p>In the <code><a href="https://rdrr.io/r/base/traceback.html">traceback()</a></code> Rstudio output, the other option is “rerun with debug”. In short, debug mode opens up a new interactive session inside the function evaluation environment. This lets you observe what’s going on in the function, pinpoint the error (and what causes it), and potentially fix the error, all in one neat workflow.</p>
+<p><code><a href="https://rdrr.io/r/base/debug.html">debug()</a></code> is most useful when you’re working with code that you didn’t write yourself. So, if you can’t change the code in the function causing the error, <code><a href="https://rdrr.io/r/base/debug.html">debug()</a></code> is the way to go. Otherwise, using <code><a href="https://rdrr.io/r/base/browser.html">browser()</a></code> is generally easier. Essentially, <code><a href="https://rdrr.io/r/base/debug.html">debug()</a></code> places a <code><a href="https://rdrr.io/r/base/browser.html">browser()</a></code> statement at the first line of a function, but without having to actually alter the function’s source code.</p>
+<div class="callout-caution callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+<code><a href="https://rdrr.io/r/base/debug.html">debug()</a></code> example
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-11" class="callout-11-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="cell">
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">iris</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">Species</span> <span class="op">~</span> <span class="va">.</span>, data <span class="op">=</span> <span class="va">iris</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">tmp</span><span class="op">)</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Call:</span></span>
+<span><span class="co">## lm(formula = Species ~ ., data = iris)</span></span>
+<span><span class="co">## </span></span>
+<span><span class="co">## Residuals:</span></span>
+<span><span class="co">## Error in quantile.default(resid): (unordered) factors are not allowed</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>We get this weird warning, and then an error about factors when we use summary() to look at the coefficients.</p>
+<div class="cell">
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/debug.html">debug</a></span><span class="op">(</span><span class="va">lm</span><span class="op">)</span> <span class="co"># turn debugging on</span></span>
+<span></span>
+<span></span>
+<span><span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/lm.html">lm</a></span><span class="op">(</span><span class="va">Species</span> <span class="op">~</span> <span class="va">.</span>, data <span class="op">=</span> <span class="va">iris</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">tmp</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/debug.html">undebug</a></span><span class="op">(</span><span class="va">lm</span><span class="op">)</span> <span class="co"># turn debugging off</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="../images/gen-prog/debug_init.png" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">The first thing I see when I run lm after turning on debug (screenshot)</figcaption><p></p>
+</figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="../images/gen-prog/debug_console.png" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">The variables passed into the lm function are available as named and used in the function. In addition, we have some handy buttons in the console window that will let us ‘drive’ through the function</figcaption><p></p>
+</figure>
+</div>
+<p>After pressing “next” a few times, you can see that I’ve stepped through the first few lines of the lm function.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="../images/gen-prog/debug_console2.png" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">Stepping through the function. The arrow on the left side in the editor window shows which line of code we’re currently at.</figcaption><p></p>
+</figure>
+</div>
+<p>We can see that once we’re at line 21, we get a warning about using type with a factor response, and that the warning occurs during a call to the <code>model.response</code> function. So, we’ve narrowed our problem down - we passed in a numeric variable as the response (y) variable, but it’s a factor, so our results aren’t going to mean much. We were using the function wrong.</p>
+<p>We probably could have gotten there from reading the error message carefully, but this has allowed us to figure out exactly what happened, where it happened, and why it happened.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="../images/gen-prog/debug_console_exit.png" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">I can hit “Stop” or type “Q” to exit the debug environment.</figcaption><p></p>
+</figure>
+</div>
+<p>But, until I run <code>undebug(lm)</code>, every call to <code>lm</code> will take me into the debug window.</p>
+</div>
+</div>
+</div>
+<p><code>undebug(f)</code> will remove the debug flag on the function <code>f</code>. <code>debugonce(f)</code> will only debug f the first time it is run.</p>
+<div class="callout-tip callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Try it out: <code>debug</code> in R
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist">
+<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-8-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-1" role="tab" aria-controls="tabset-8-1" aria-selected="true">Problem</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-8-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-2" role="tab" aria-controls="tabset-8-2" aria-selected="false">Solution</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-8-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-8-1-tab">
+<p><code>larger(x, y)</code> is supposed to return the elementwise maximum of two vectors.</p>
+<div class="cell">
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">larger</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span> <span class="op">{</span> </span>
+<span>  <span class="va">y.is.bigger</span> <span class="op">&lt;-</span> <span class="va">y</span> <span class="op">&gt;</span> <span class="va">x</span> </span>
+<span>  <span class="va">x</span><span class="op">[</span><span class="va">y.is.bigger</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="va">y</span><span class="op">[</span><span class="va">y.is.bigger</span><span class="op">]</span> </span>
+<span>  <span class="va">x</span></span>
+<span><span class="op">}</span> </span>
+<span></span>
+<span><span class="fu">larger</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">5</span>, <span class="fl">10</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">4</span>, <span class="fl">11</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">## [1]  2  5 11</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">larger</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">5</span>, <span class="fl">10</span><span class="op">)</span>, <span class="fl">6</span><span class="op">)</span></span>
+<span><span class="co">## [1]  6 NA 10</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Why is there an NA in the second example? It should be a 6. Figure out why this happens, then try to fix it.</p>
+</div>
+<div id="tabset-8-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-8-2-tab">
+<p>I’ll replicate “debug” in non-interactive mode by setting up an environment where x and y are defined</p>
+<div class="cell">
+<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span></span>
+<span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">5</span>, <span class="fl">10</span><span class="op">)</span></span>
+<span><span class="va">y</span> <span class="op">&lt;-</span> <span class="fl">6</span></span>
+<span></span>
+<span><span class="co"># Inside of larger() with x = c(1, 5, 10), y = 6</span></span>
+<span><span class="op">(</span><span class="va">y.is.bigger</span> <span class="op">&lt;-</span> <span class="va">y</span> <span class="op">&gt;</span> <span class="va">x</span> <span class="op">)</span> <span class="co"># putting something in () prints it out</span></span>
+<span><span class="co">## [1]  TRUE  TRUE FALSE</span></span>
+<span><span class="va">y</span><span class="op">[</span><span class="va">y.is.bigger</span><span class="op">]</span> <span class="co"># This isn't quite what we were going for, but it's what's causing the issue</span></span>
+<span><span class="co">## [1]  6 NA</span></span>
+<span><span class="va">x</span><span class="op">[</span><span class="va">y.is.bigger</span><span class="op">]</span> <span class="co"># What gets replaced</span></span>
+<span><span class="co">## [1] 1 5</span></span>
+<span></span>
+<span></span>
+<span><span class="co"># Better option</span></span>
+<span><span class="va">larger</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span> <span class="op">{</span> </span>
+<span>  <span class="va">y.is.bigger</span> <span class="op">&lt;-</span> <span class="va">y</span> <span class="op">&gt;</span> <span class="va">x</span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">y.is.bigger</span>, <span class="va">y</span>, <span class="va">x</span><span class="op">)</span></span>
+<span><span class="op">}</span> </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+<div id="refs" class="references csl-bib-body" role="doc-bibliography">
+<div id="ref-DefensiveProgramming2022" class="csl-entry" role="doc-biblioentry">
+<div class="csl-left-margin">[1] </div>
+<div class="csl-right-inline">Wikipedia Contributors, <span>“Defensive programming,”</span> <em>Wikipedia</em>. Wikimedia Foundation, Apr. 2022 [Online]. Available: <a href="https://en.wikipedia.org/w/index.php?title=Defensive_programming&amp;oldid=1084121123">https://en.wikipedia.org/w/index.php?title=Defensive_programming&amp;oldid=1084121123</a>. [Accessed: May 31, 2022]</div>
+</div>
+<div id="ref-tidyverse" class="csl-entry" role="doc-biblioentry">
+<div class="csl-left-margin">[2] </div>
+<div class="csl-right-inline">H. Wickham <em>et al.</em>, <span>“Welcome to the <span class="nocase">tidyverse</span>,”</span> <em>Journal of Open Source Software</em>, vol. 4, no. 43, p. 1686, 2019, doi: <a href="https://doi.org/10.21105/joss.01686">10.21105/joss.01686</a>. </div>
+</div>
+<div id="ref-renv" class="csl-entry" role="doc-biblioentry">
+<div class="csl-left-margin">[3] </div>
+<div class="csl-right-inline">K. Ushey, <em>Renv: Project environments</em>. 2022 [Online]. Available: <a href="https://CRAN.R-project.org/package=renv">https://CRAN.R-project.org/package=renv</a>
+</div>
+</div>
+<div id="ref-wickhamPackagesOrganizeTest2015" class="csl-entry" role="doc-biblioentry">
+<div class="csl-left-margin">[4] </div>
+<div class="csl-right-inline">H. Wickham and J. Bryan, <em>R <span>Packages</span>: <span>Organize</span>, <span>Test</span>, <span>Document</span>, and <span>Share</span> <span>Your</span> <span>Code</span></em>, 1st ed. Sebastopol, CA: O’Reilly, 2015 [Online]. Available: <a href="https://r-pkgs.org/">https://r-pkgs.org/</a>. [Accessed: Sep. 23, 2022]</div>
+</div>
+<div id="ref-beuzenPythonPackages2022" class="csl-entry" role="doc-biblioentry">
+<div class="csl-left-margin">[5] </div>
+<div class="csl-right-inline">T. Beuzen and T. Timbers, <em>Python <span>Packages</span></em>, 1st edition. Boca Raton: Chapman; Hall/CRC, 2022 [Online]. Available: <a href="https://py-pkgs.org/">https://py-pkgs.org/</a>
+</div>
+</div>
+<div id="ref-evansDebuggingManifestoHttps2022" class="csl-entry" role="doc-biblioentry">
+<div class="csl-left-margin">[6] </div>
+<div class="csl-right-inline">J. Evans, <span>“A debugging manifesto https://t.co/<span>3eSOFQj1e1</span>,”</span> <em>Twitter</em>. Sep. 2022 [Online]. Available: <a href="https://twitter.com/b0rk/status/1570060516839641092">https://twitter.com/b0rk/status/1570060516839641092</a>. [Accessed: Sep. 21, 2022]</div>
+</div>
+<div id="ref-nasserUserFistName2020" class="csl-entry" role="doc-biblioentry">
+<div class="csl-left-margin">[7] </div>
+<div class="csl-right-inline">Nasser_Junior, <span>“User.fist_name https://t.co/<span class="nocase">lxrf3IFO4x</span>,”</span> <em>Twitter</em>. Aug. 2020 [Online]. Available: <a href="https://twitter.com/Nasser_Junior/status/1295805928315531264">https://twitter.com/Nasser_Junior/status/1295805928315531264</a>. [Accessed: Sep. 21, 2022]</div>
+</div>
+<div id="ref-advr" class="csl-entry" role="doc-biblioentry">
+<div class="csl-left-margin">[8] </div>
+<div class="csl-right-inline">H. Wickham, <em>Advanced <span>R</span></em>, 2nd ed. CRC Press, 2019 [Online]. Available: <a href="http://adv-r.had.co.nz/">http://adv-r.had.co.nz/</a>. [Accessed: May 09, 2022]</div>
+</div>
+<div id="ref-evansDebuggingStrategyReread2022" class="csl-entry" role="doc-biblioentry">
+<div class="csl-left-margin">[9] </div>
+<div class="csl-right-inline">J. Evans, <span>“Debugging strategy: Reread the error message https://t.co/<span>2BZHhPg04h</span>,”</span> <em>Twitter</em>. Sep. 2022 [Online]. Available: <a href="https://twitter.com/b0rk/status/1570463473011920897">https://twitter.com/b0rk/status/1570463473011920897</a>. [Accessed: Sep. 21, 2022]</div>
+</div>
+<div id="ref-evansDebuggingStrategyShorten2022" class="csl-entry" role="doc-biblioentry">
+<div class="csl-left-margin">[10] </div>
+<div class="csl-right-inline">J. Evans, <span>“Debugging strategy: Shorten your feedback loop https://t.co/<span>1cByDlafsK</span>,”</span> <em>Twitter</em>. Jul. 2022 [Online]. Available: <a href="https://twitter.com/b0rk/status/1549164800978059264">https://twitter.com/b0rk/status/1549164800978059264</a>. [Accessed: Sep. 21, 2022]</div>
+</div>
+<div id="ref-evansDebuggingStrategyWrite2022a" class="csl-entry" role="doc-biblioentry">
+<div class="csl-left-margin">[11] </div>
+<div class="csl-right-inline">J. Evans, <span>“Debugging strategy: Write a tiny program https://t.co/<span>Kajr5ZyeIp</span>,”</span> <em>Twitter</em>. Jul. 2022 [Online]. Available: <a href="https://twitter.com/b0rk/status/1547247776001654786">https://twitter.com/b0rk/status/1547247776001654786</a>. [Accessed: Sep. 21, 2022]</div>
+</div>
+<div id="ref-evansDebuggingStrategyChange2022" class="csl-entry" role="doc-biblioentry">
+<div class="csl-left-margin">[12] </div>
+<div class="csl-right-inline">J. Evans, <span>“Debugging strategy: Change working code into broken code https://t.co/<span>1T5uNDDFs0</span>,”</span> <em>Twitter</em>. Jul. 2022 [Online]. Available: <a href="https://twitter.com/b0rk/status/1545099244238946304">https://twitter.com/b0rk/status/1545099244238946304</a>. [Accessed: Sep. 21, 2022]</div>
+</div>
+<div id="ref-evansDebuggingStrategyCome2022" class="csl-entry" role="doc-biblioentry">
+<div class="csl-left-margin">[13] </div>
+<div class="csl-right-inline">J. Evans, <span>“Debugging strategy: Come up with one question https://t.co/<span>2Lytzl4laQ</span>,”</span> <em>Twitter</em>. Aug. 2022 [Online]. Available: <a href="https://twitter.com/b0rk/status/1554120424602193921">https://twitter.com/b0rk/status/1554120424602193921</a>. [Accessed: Sep. 21, 2022]</div>
+</div>
+<div id="ref-evansDebuggingStrategyWrite2022" class="csl-entry" role="doc-biblioentry">
+<div class="csl-left-margin">[14] </div>
+<div class="csl-right-inline">J. Evans, <span>“Debugging strategy: Write a unit test https://t.co/<span class="nocase">mC01DBNyM3</span>,”</span> <em>Twitter</em>. Aug. 2022 [Online]. Available: <a href="https://twitter.com/b0rk/status/1561718747504803842">https://twitter.com/b0rk/status/1561718747504803842</a>. [Accessed: Sep. 21, 2022]</div>
+</div>
+<div id="ref-monteiroImproveHowYou2019a" class="csl-entry" role="doc-biblioentry">
+<div class="csl-left-margin">[15] </div>
+<div class="csl-right-inline">T. Monteiro, <span>“Improve how you code: Understanding rubber duck debugging. Duckly blog,”</span> Oct. 31, 2019. [Online]. Available: <a href="https://duckly.com/blog/improve-how-to-code-with-rubber-duck-debugging/">https://duckly.com/blog/improve-how-to-code-with-rubber-duck-debugging/</a>. [Accessed: Jan. 11, 2023]</div>
+</div>
+<div id="ref-grimesThis500YearOldPiece2019" class="csl-entry" role="doc-biblioentry">
+<div class="csl-left-margin">[16] </div>
+<div class="csl-right-inline">S. Grimes, <span>“This 500-<span>Year</span>-<span>Old</span> <span>Piece</span> of <span>Advice</span> <span>Can</span> <span>Help</span> <span>You</span> <span>Solve</span> <span>Your</span> <span>Modern</span> <span>Problems</span>,”</span> <em>Forge</em>. Dec. 2019 [Online]. Available: <a href="https://forge.medium.com/the-500-year-old-piece-of-advice-that-will-change-your-life-1e580f115731">https://forge.medium.com/the-500-year-old-piece-of-advice-that-will-change-your-life-1e580f115731</a>. [Accessed: Sep. 21, 2022]</div>
+</div>
+</div>
+</section></section><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><hr>
+<ol>
+<li id="fn1"><p>Some people use cats, but I find that they don’t meet the nonjudgmental criteria. Of course, they’re equally judgmental whether your code works or not, so maybe that works if you’re a cat person, which I am not. Dogs, in my experience, can work, but often will try to comfort you when they realize you’re upset, which both helps and lessens your motivation to fix the problem. A rubber duck is the perfect dispassionate listener.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol></section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script><script src="https://giscus.app/client.js" data-repo="srvanderplas/stat-computing-r-python" data-repo-id="R_kgDOIvwd2g" data-category="General" data-category-id="DIC_kwDOIvwd2s4CTksR" data-mapping="pathname" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="light" data-lang="en" crossorigin="anonymous" async="">
+</script><nav class="page-navigation"><div class="nav-page nav-page-previous">
+      <a href="../part-gen-prog/05-functions.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Writing Functions</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../part-gen-prog/07-matrix-calcs.html" class="pagination-link">
+        <span class="nav-page-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Matrix Calculations</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer"><div class="nav-footer">
+    <div class="nav-footer-left">Copyright 2023, Susan Vanderplas</div>   
+    <div class="nav-footer-right">
+      <ul class="footer-items list-unstyled">
+<li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/srvanderplas">
+      <i class="bi bi-github" role="img">
+</i> 
+    </a>
+  </li>  
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/srvanderplas">
+      <i class="bi bi-twitter" role="img">
+</i> 
+    </a>
+  </li>  
+</ul>
+</div>
+  </div>
+</footer>
+
+
+</body></html>

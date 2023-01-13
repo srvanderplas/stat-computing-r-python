@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.313">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<meta name="dcterms.date" content="2023-01-13">
+<title>Statistical Computing using R and Python - 5&nbsp; Version Control with Git</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
+</style>
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../part-gen-prog/00-gen-prog.html" rel="next">
+<link href="../part-tools/04-Rstudio-interface.html" rel="prev">
+<link href="../build_deps/favicon.ico" rel="icon">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/quarto-contrib/fontawesome6-0.1.0/all.css" rel="stylesheet">
+<link href="../site_libs/quarto-contrib/fontawesome6-0.1.0/latex-fontsize.css" rel="stylesheet"><script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script><link rel="stylesheet" href="../build_deps/style.css">
+</head>
+<body class="nav-sidebar floating">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top"><nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }"><div class="container-fluid d-flex justify-content-between">
+      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Version Control with Git</span></h1>
+      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+    </div>
+  </nav></header><!-- content --><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto"><div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Statistical Computing using R and Python</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/srvanderplas/stat-computing-r-python/" title="Source Code" class="sidebar-tool px-1"><i class="bi bi-github"></i></a>
+</div>
+    </div>
+      </div>
+      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+      </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">Preface</a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../how-to-use.html" class="sidebar-item-text sidebar-link">How to Use This Book</a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../part-tools/00-tools-intro.html" class="sidebar-item-text sidebar-link">Part I: Tools</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-tools/01-computer-basics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Computer Basics</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-tools/02-setting-up-computer.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Setting Up Your Computer</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-tools/03-scripts-notebooks.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Scripts and Notebooks</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-tools/04-Rstudio-interface.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">RStudio’s Interface</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-tools/05-git-and-github.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Version Control with Git</span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../part-gen-prog/00-gen-prog.html" class="sidebar-item-text sidebar-link">Part II: General Programming</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-gen-prog/01-basic-var-types.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Variables and Basic Data Types</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-gen-prog/02-prog-functions.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Using Functions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-gen-prog/03-data-struct.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Vectors, Matrices, Arrays, and Control Structures</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-gen-prog/04-control-struct.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Control Structures</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-gen-prog/05-functions.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Writing Functions</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-gen-prog/06-debugging.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Debugging</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-gen-prog/07-matrix-calcs.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Matrix Calculations</span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../part-wrangling/00-wrangling.html" class="sidebar-item-text sidebar-link">Part III: Data Wrangling</a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-wrangling/01-data-input.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Data Input</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-wrangling/02-basic-data-vis.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Data Visualization Basics</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-wrangling/03-data-cleaning.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Data Cleaning</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-wrangling/04-strings.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Working with Strings</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-wrangling/05-data-reshape.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Reshaping Data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-wrangling/06-data-join.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Joining Data</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-wrangling/07-datetime.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Dates and Times</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-wrangling/08-functional-prog.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">List data structures</span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-wrangling/09-spatial-formats.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Spatial data</span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../graveyard.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Other Topics</span></a>
+  </div>
+</li>
+    </ul>
+</div>
+</nav><!-- margin-sidebar --><div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active"><h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+<li><a href="#objectives" id="toc-objectives" class="nav-link active" data-scroll-target="#objectives"><span class="toc-section-number">5.1</span>  Objectives</a></li>
+  <li>
+<a href="#installation" id="toc-installation" class="nav-link" data-scroll-target="#installation"><span class="toc-section-number">5.2</span>  Installation</a>
+  <ul class="collapse">
+<li><a href="#optional-install-a-git-client" id="toc-optional-install-a-git-client" class="nav-link" data-scroll-target="#optional-install-a-git-client"><span class="toc-section-number">5.2.1</span>  Optional: Install a git client</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#what-is-version-control" id="toc-what-is-version-control" class="nav-link" data-scroll-target="#what-is-version-control"><span class="toc-section-number">5.3</span>  What is Version Control ?</a>
+  <ul class="collapse">
+<li><a href="#git-basics" id="toc-git-basics" class="nav-link" data-scroll-target="#git-basics"><span class="toc-section-number">5.3.1</span>  Git Basics</a></li>
+  <li><a href="#setting-up-github" id="toc-setting-up-github" class="nav-link" data-scroll-target="#setting-up-github"><span class="toc-section-number">5.3.2</span>  GitHub: Git on the Web</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#using-version-control-with-rstudio" id="toc-using-version-control-with-rstudio" class="nav-link" data-scroll-target="#using-version-control-with-rstudio"><span class="toc-section-number">5.4</span>  Using Version Control (with RStudio)</a>
+  <ul class="collapse">
+<li><a href="#introduce-yourself-to-git-and-set-up-ssh-authentication" id="toc-introduce-yourself-to-git-and-set-up-ssh-authentication" class="nav-link" data-scroll-target="#introduce-yourself-to-git-and-set-up-ssh-authentication"><span class="toc-section-number">5.4.1</span>  Introduce yourself to git and set up SSH authentication</a></li>
+  <li><a href="#create-a-repository" id="toc-create-a-repository" class="nav-link" data-scroll-target="#create-a-repository"><span class="toc-section-number">5.4.2</span>  Create a Repository</a></li>
+  <li><a href="#adding-files" id="toc-adding-files" class="nav-link" data-scroll-target="#adding-files"><span class="toc-section-number">5.4.3</span>  Adding files</a></li>
+  <li><a href="#staging-your-changes" id="toc-staging-your-changes" class="nav-link" data-scroll-target="#staging-your-changes"><span class="toc-section-number">5.4.4</span>  Staging your changes</a></li>
+  <li><a href="#committing-your-changes" id="toc-committing-your-changes" class="nav-link" data-scroll-target="#committing-your-changes"><span class="toc-section-number">5.4.5</span>  Committing your changes</a></li>
+  <li><a href="#pushing-and-pulling" id="toc-pushing-and-pulling" class="nav-link" data-scroll-target="#pushing-and-pulling"><span class="toc-section-number">5.4.6</span>  Pushing and Pulling</a></li>
+  </ul>
+</li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references"><span class="toc-section-number">5.5</span>  References</a></li>
+  </ul><div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/srvanderplas/stat-computing-r-python/edit/main/part-tools/05-git-and-github.qmd" class="toc-action">Edit this page</a></p></div></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><div class="quarto-title">
+<h1 class="title"><span id="sec-git" class="quarto-section-identifier d-none d-lg-block"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Version Control with Git</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">January 13, 2023</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+</header><p>There is an entire textbook on how to use git and GitHub with R, Happy Git and Github for the UseR <span class="citation" data-cites="bryanHappyGitGitHub2021"><a href="#ref-bryanHappyGitGitHub2021" role="doc-biblioref">[1]</a></span>. This chapter will liberally use chunks of that textbook, and rather than reproduce them here, I will simply link to the relevant sections.</p>
+<section id="objectives" class="level2" data-number="5.1"><h2 data-number="5.1" class="anchored" data-anchor-id="objectives">
+<span class="header-section-number">5.1</span> Objectives</h2>
+<ul>
+<li>Install git</li>
+<li>Create a github account</li>
+<li>Understand why version control is useful and what problems it can solve</li>
+<li>Understand the distinction between git and github, and what each is used for</li>
+<li>Use version control to track changes to a document (git add, commit, push, pull)</li>
+</ul></section><section id="installation" class="level2" data-number="5.2"><h2 data-number="5.2" class="anchored" data-anchor-id="installation">
+<span class="header-section-number">5.2</span> Installation</h2>
+<ol type="1">
+<li>Install git using the instructions <a href="https://happygitwithr.com/install-git.html">here</a>.<br>
+</li>
+<li>Consult the <a href="https://happygitwithr.com/troubleshooting.html">troubleshooting guide</a> if you have issues.</li>
+<li>If 1-2 fail, seek help in office hours.</li>
+</ol>
+<div class="callout-warning callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+<i class="fa-brands fa-apple" aria-label="apple"></i> Mac Warning
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>With each version upgrade, you may find that git breaks. To fix it, you will have to reinstall Mac command line tools. Once you do this, git will start working again. See <span class="citation" data-cites="dustbusterAnswerGitNot2018"><a href="#ref-dustbusterAnswerGitNot2018" role="doc-biblioref">[2]</a></span> for more information.</p>
+</div>
+</div>
+<section id="optional-install-a-git-client" class="level3" data-number="5.2.1"><h3 data-number="5.2.1" class="anchored" data-anchor-id="optional-install-a-git-client">
+<span class="header-section-number">5.2.1</span> Optional: Install a git client</h3>
+<p><a href="https://happygitwithr.com/git-client.html">Instructions</a></p>
+<p>I don’t personally use a git client other than RStudio, but you may prefer to have a client that allows you to use a point-and-click interface. It’s up to you.</p>
+</section></section><section id="what-is-version-control" class="level2" data-number="5.3"><h2 data-number="5.3" class="anchored" data-anchor-id="what-is-version-control">
+<span class="header-section-number">5.3</span> What is Version Control ?</h2>
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Most of this section is either heavily inspired by Happy Git and Github for the UseR <span class="citation" data-cites="bryanHappyGitGitHub2021"><a href="#ref-bryanHappyGitGitHub2021" role="doc-biblioref">[1]</a></span> or directly links to that book.</p>
+</div>
+</div>
+<!-- ::: callout-advanced -->
+<!-- We will be using git to track changes made to code in this class. As a bonus, this will also allow you to submit your homework via github, collaborate with group members easily, and I can even help you with your assignments and see what the problem(s) is (are) ... as long as you keep your homework repository up to date! -->
+<!-- ::: -->
+<p>Git is a <strong>version control system</strong> - a structured way for tracking changes to files over the course of a project that may also make it easy to have multiple people working on the same files at the same time.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="../images/tools/final.png" class="img-fluid figure-img" style="width:50.0%"></p>
+<p></p><figcaption class="figure-caption">Version control is the answer to this file naming problem. <a href="https://phdcomics.com/comics/archive.php?comicid=1531">Image Source</a> “Piled Higher and Deeper” by Jorge Cham www.phdcomics.com</figcaption><p></p>
+</figure>
+</div>
+<p>Git manages a collection of files in a structured way - rather like “track changes” in Microsoft Word or version history in Dropbox, but much more powerful.</p>
+<p>If you are working alone, you will benefit from adopting version control because it will remove the need to add _final.R to the end of your file names. However, most of us work in collaboration with other people (or will have to work with others eventually), so one of the goals of this program is to teach you how to use git because it is a useful tool that will make you a better collaborator.</p>
+<p>In data science programming, we use git for a similar, but slightly different purpose. We use it to keep track of changes not only to code files, but to data files, figures, reports, and other essential bits of information.</p>
+<p>Git itself is nice enough, but where git really becomes amazing is when you combine it with GitHub - an online service that makes it easy to use git across many computers, share information with collaborators, publish to the web, and more. Git is great, but GitHub is … essential. In this class, we’ll be using both git and github, and your homework will be managed with GitHub Classroom.</p>
+<section id="git-basics" class="level3" data-number="5.3.1"><h3 data-number="5.3.1" class="anchored" data-anchor-id="git-basics">
+<span class="header-section-number">5.3.1</span> Git Basics</h3>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="../images/tools/git.png" class="img-fluid figure-img" alt="Person 1: 'This is GIT. It tracks collaborative work on projects through a beautiful distributed graph theory tree model'. Person 2: 'Cool, How do we use it?' Person 1: 'No Idea. Just memorize these shell commands and type them to sync up. If you get errors, save your work elsewhere, delete the project, and download a fresh copy.'"></p>
+<p></p><figcaption class="figure-caption">If that doesn’t fix it, git.txt contains the phone number of a friend of mine who understands git. Just wait through a few minutes of ‘It’s really pretty simple, just think of branches as…’ and eventually you’ll learn the commands that will fix everything. Image by Randall Munroe (XKCD) CC-A-NC-2.5.</figcaption><p></p>
+</figure>
+</div>
+<p>Git tracks changes to each file that it is told to monitor, and as the files change, you provide short labels describing what the changes were and why they exist (called “<strong>commits</strong>”). The log of these changes (along with the file history) is called your <strong>git commit history</strong>.</p>
+<p>When writing papers, this means you can cut material out freely, so long as the paper is being tracked by git - you can always go back and get that paragraph you cut out if you need to. You also don’t have to rename files - you can confidently save over your old files, so long as you remember to commit frequently.</p>
+<div class="callout-important callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Essential Reading: Git
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The git material in this chapter is just going to link directly to the book “Happy Git with R” by Jenny Bryan. It’s amazing, amusing, and generally well written. I’m not going to try to do better.</p>
+<p><a href="https://happygitwithr.com/big-picture.html">Go read Chapter 1, if you haven’t already.</a></p>
+</div>
+</div>
+<p>Now that you have a general idea of how git works and why we might use it, let’s talk a bit about GitHub.</p>
+</section><section id="setting-up-github" class="level3" data-number="5.3.2"><h3 data-number="5.3.2" class="anchored" data-anchor-id="setting-up-github">
+<span class="header-section-number">5.3.2</span> GitHub: Git on the Web</h3>
+<div class="callout-important callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Set up a GitHub Account Now
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><a href="https://happygitwithr.com/github-acct.html">Instructions</a> for setting up a GitHub account.</p>
+<p>Be sure you remember your signup email, username, and password - you will need them later.</p>
+</div>
+</div>
+<p>Git is a program that runs on your machine and keeps track of changes to files that you tell it to monitor. GitHub is a website that hosts people’s git repositories. You can use git without GitHub, but you can’t use GitHub without git.</p>
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Git and Github: Slightly crude (but memorable) analogy
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Git is to GitHub what Porn is to PornHub. Specifically, GitHub hosts git repositories publicly, while PornHub hosts porn publicly. But it would be silly to equate porn and PornHub, and it’s similarly silly to think of GitHub as the only place you can use git repositories.</p>
+</div>
+</div>
+</div>
+<p>If you want, you can hook Git up to GitHub, and make a copy of your local git repository that lives in the cloud. Then, if you configure things correctly, your local repository will talk to GitHub without too much trouble. Using Github with Git allows you to <strong>easily make a cloud backup of your important code</strong>, so that even if your computer suddenly catches on fire, all of your important code files exist somewhere else.</p>
+<p>Remember: any data you don’t have in 3 different places is data you don’t care about.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a></p>
+</section></section><section id="using-version-control-with-rstudio" class="level2" data-number="5.4"><h2 data-number="5.4" class="anchored" data-anchor-id="using-version-control-with-rstudio">
+<span class="header-section-number">5.4</span> Using Version Control (with RStudio)</h2>
+<p>The first skill you need to actually practice in this class is using version control. By using version control from the very beginning, you will learn better habits for programming, but you’ll also get access to a platform for collaboration, hosting your work online, keeping track of features and necessary changes, and more.</p>
+<!-- ::: {.callout-advanced collapse="true"} -->
+<!-- ### Github Classroom -->
+<!-- I will be using github classroom to run this class. When you go to do your homework assignment, you'll have to complete the following steps: -->
+<!-- 1. Clone the template repository for the assignment. -->
+<!-- 2. Read the assignment instructions in the template repository. Complete the assignment, ensuring that you write fully reproducible code that can be run on any machine. -->
+<!-- 3. Commit your changes to the assignment to the local git repository on your computer -->
+<!-- 4. Push your changes from your local machine to GitHub -->
+<!-- 5. Submit a link to the GitHub repository so that I can grade your assignment. -->
+<!-- GitHub Classroom is FERPA compliant, which means that your repositories from this class won't show up under your user (because class enrollment is protected information). -->
+<!-- This workflow means that if you push your changes to GitHub but something isn't working, I can easily see what you've done so far and help you fix any errors that show up. You don't have to email me with a vague error message and then respond to my confused emails 10x as we narrow in on the problem - I can usually just find the problem in your file directly. This saves a lot of time! -->
+<!-- ::: -->
+<p>So, what does your typical git/GitHub workflow look like? I’ll go through this in (roughly) chronological order. This is based off of a relatively high-level understanding of git - I do not have any idea how it works under the hood, but I’m pretty comfortable with the clone/push/pull/commit/add workflows, and I’ve used a few of the more complicated features (branches, pull requests) on occasion.</p>
+<section id="introduce-yourself-to-git-and-set-up-ssh-authentication" class="level3" data-number="5.4.1"><h3 data-number="5.4.1" class="anchored" data-anchor-id="introduce-yourself-to-git-and-set-up-ssh-authentication">
+<span class="header-section-number">5.4.1</span> Introduce yourself to git and set up SSH authentication</h3>
+<p>You need to tell git what your name and email address are, because every “commit” you make will be signed. This needs to be done once on each computer you’re using.</p>
+<p>Follow the instructions <a href="https://happygitwithr.com/hello-git.html">here</a>, or run the lines below:</p>
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The lines of code below use <strong>interactive prompts</strong>. Click the copy button in the upper right corner of the box below, and then paste the <em>whole thing</em> into the R console. You will see a line that says “Your full name:” - type your name into the console. Similarly, the next line will ask you for an email address.)</p>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span></span>
+<span><span class="va">user_name</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readline.html">readline</a></span><span class="op">(</span>prompt <span class="op">=</span> <span class="st">"Your full name: "</span><span class="op">)</span></span>
+<span><span class="va">user_email</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readline.html">readline</a></span><span class="op">(</span>prompt <span class="op">=</span> <span class="st">"The address associated w your github account: "</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"usethis"</span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://usethis.r-lib.org">usethis</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">use_git_config</span><span class="op">(</span>user.name <span class="op">=</span> <span class="va">user_name</span>, user.email <span class="op">=</span> <span class="va">user_email</span>, scope <span class="op">=</span> <span class="st">"user"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Tell git to ignore all files that are OS-dependent and don't have useful data.</span></span>
+<span><span class="fu">git_vaccinate</span><span class="op">(</span><span class="op">)</span> </span>
+<span></span>
+<span><span class="co"># Create a ssh key if one doesn't already exist</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/files.html">file.exists</a></span><span class="op">(</span><span class="fu">git2r</span><span class="fu">::</span><span class="fu">ssh_path</span><span class="op">(</span><span class="st">"id_rsa.pub"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="co"># Create an ssh key (with no password - less secure, but simpler)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/system.html">system</a></span><span class="op">(</span><span class="st">"ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa -q -N ''"</span><span class="op">)</span> </span>
+<span>  <span class="co"># Find the ssh-agent that will keep track of the password</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/system.html">system</a></span><span class="op">(</span><span class="st">"eval $(ssh-agent -s)"</span><span class="op">)</span></span>
+<span>  <span class="co"># Add the key</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/system.html">system</a></span><span class="op">(</span><span class="st">"ssh-add ~/.ssh/id_rsa"</span><span class="op">)</span></span>
+<span><span class="op">}</span> </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Then, in RStudio, go to Tools &gt; Global Options &gt; Git/SVN. View your public key, and copy it to the clipboard.</p>
+<p>Then, proceed to github. Make sure you’re signed into GitHub. Click on your profile pic in upper right corner and go Settings, then SSH and GPG keys. Click “New SSH key”. Paste your public key in the “Key” box. Give it an informative title. For example, you might use <code>2022-laptop</code> to record the year and computer. Click “Add SSH key”.</p>
+</section><section id="create-a-repository" class="level3" data-number="5.4.2"><h3 data-number="5.4.2" class="anchored" data-anchor-id="create-a-repository">
+<span class="header-section-number">5.4.2</span> Create a Repository</h3>
+<p><strong>Repositories</strong> are single-project containers. You may have code, documentation, data, TODO lists, and more associated with a project. If you combine a git repository with an RStudio project, you get a very powerful combination that will make your life much easier, allowing you to focus on writing code instead of figuring out where all of your files are for each different project you start.</p>
+<p>To create a repository, you can start with your local computer first, or you can start with the online repository first.</p>
+<div class="callout-important callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Important
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Both methods are relatively simple, but the options you choose depend on which method you’re using, so be careful not to get them confused.</p>
+</div>
+</div>
+<section id="local-repository-first" class="level4" data-number="5.4.2.1"><h4 data-number="5.4.2.1" class="anchored" data-anchor-id="local-repository-first">
+<span class="header-section-number">5.4.2.1</span> Local repository first</h4>
+<p>Let’s suppose you already have a folder on your machine named <code>hello-world-1</code> (you may want to create this folder now). You’ve created a starter document, say, a text file named README with “hello world” written in it.</p>
+<p>If you want, you can use the following R code to set this up:</p>
+<div class="cell">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">dir</span> <span class="op">&lt;-</span> <span class="st">"./hello-world-1"</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/files2.html">dir.exists</a></span><span class="op">(</span><span class="va">dir</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/files2.html">dir.create</a></span><span class="op">(</span><span class="va">dir</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="va">file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html">file.path</a></span><span class="op">(</span><span class="va">dir</span>, <span class="st">"README"</span><span class="op">)</span></span>
+<span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/files.html">file.exists</a></span><span class="op">(</span><span class="va">file</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/writeLines.html">writeLines</a></span><span class="op">(</span><span class="st">"hello world"</span>, con <span class="op">=</span> <span class="va">file</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>To create a local git repository, we can go to the terminal (in Mac/Linux) or the git bash shell (in Windows), navigate to our repository folder (not shown, will be different on each computer), and type in</p>
+<pre><code>git init</code></pre>
+<p>Alternately, if you prefer a GUI (graphical user interface) approach, that will work too:</p>
+<ol type="1">
+<li>Open Rstudio</li>
+<li>Project (upper right corner) -&gt; New Project -&gt; Existing Directory. Navigate to the directory.</li>
+<li>(In your new project) Tools -&gt; Project options -&gt; Git/SVN -&gt; select git from the dropdown, initialize new repository. RStudio will need to restart.</li>
+<li>Navigate to your new Git tab on the top right.</li>
+</ol>
+<div class="youtube-video-container">
+<iframe width="1048" height="590" src="https://www.youtube.com/embed/uPcQkWi0lGg" title="Create a local git repository first (Repository creation)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="">
+</iframe>
+</div>
+<p>The next step is to add our file to the repository.</p>
+<p>Using the command line, you can type in <code>git add README</code> (this tells git to track the file) and then commit your changes (enter them into the record) using <code>git commit -m "Add readme file"</code>.</p>
+<p>Using the GUI, you navigate to the git pane, check the box next to the README file, click the Commit button, write a message (“Add readme file”), and click the commit button.</p>
+<div class="youtube-video-container">
+<iframe width="1048" height="590" src="https://www.youtube.com/embed/9wHd8BuPsBQ" title="Create a local repository first (add a file)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="">
+</iframe>
+</div>
+<p>The final step is to create a corresponding repository on GitHub. Navigate to your GitHub profile and make sure you’re logged in. Create a new repository using the “New” button. Name your repository whatever you want, fill in the description if you want (this can help you later, if you forget what exactly a certain repo was <em>for</em>), and DO NOT add a README, license file, or anything else (if you do, you will have a bad time).</p>
+<p>You’ll be taken to your empty repository, and git will provide you the lines to paste into your git shell (or terminal) – you can access this within RStudio, as shown below. Paste those lines in, and you’ll be good to go.</p>
+<div class="youtube-video-container">
+<iframe width="1048" height="590" src="https://www.youtube.com/embed/eHNw2w2sunc" title="Create a local repository first (push the local repo to Github)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="">
+</iframe>
+</div>
+</section><section id="github-repository-first" class="level4" data-number="5.4.2.2"><h4 data-number="5.4.2.2" class="anchored" data-anchor-id="github-repository-first">
+<span class="header-section-number">5.4.2.2</span> GitHub repository first</h4>
+<p>In the GitHub-first method, you’ll create a repository in GitHub and then clone it to your local machine (clone = create an exact copy locally).</p>
+<p>GUI method:</p>
+<ol type="1">
+<li>Log into GitHub and create a new repository</li>
+<li>Initialize your repository with a README</li>
+<li>Copy the repository location by clicking on the “Code” button on the repo homepage</li>
+<li>Open RStudio -&gt; Project -&gt; New Project -&gt; From version control. Paste your repository URL into the box. Hit enter.</li>
+<li>Make a change to the README file</li>
+<li>Click commit, then push your changes</li>
+<li>Check that the remote repository (Github) updated</li>
+</ol>
+<div class="youtube-video-container">
+<iframe width="1048" height="590" src="https://www.youtube.com/embed/xIBBiXMV1Ag" title="Create the github repository first, using RStudio as a git interface" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="">
+</iframe>
+</div>
+<p>Command line method:</p>
+<ol type="1">
+<li>Log into GitHub and create a new repository</li>
+<li>Initialize your repository with a README</li>
+<li>Copy the repository location by clicking on the “Code” button on the repo homepage</li>
+<li>Navigate to the location you want your repository to live on your machine.</li>
+<li>Clone the repository by using the git shell or terminal: <code>git clone &lt;your repo url here&gt;</code>. In my case, this looks like <code>git clone git@github.com:stat850-unl/hello-world-2.git</code>
+</li>
+<li>Make a change to your README file and save the change</li>
+<li>Commit your changes: <code>git commit -a -m "change readme"</code> (-a = all, that is, any changed file git is already tracking).</li>
+<li>Push your changes to the remote (GitHub) repository and check that the repo has updated: <code>git push</code>
+</li>
+</ol>
+<div class="youtube-video-container">
+<iframe width="1048" height="590" src="https://www.youtube.com/embed/y4cpJ_VaRMg" title="Create the github repository first, using the command line to work with git" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="">
+</iframe>
+</div>
+</section></section><section id="adding-files" class="level3" data-number="5.4.3"><h3 data-number="5.4.3" class="anchored" data-anchor-id="adding-files">
+<span class="header-section-number">5.4.3</span> Adding files</h3>
+<p><code>git add</code> tells git that you want it to track a particular file.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="../images/tools/git-add.png" class="img-fluid figure-img" style="width:50.0%"></p>
+<p></p><figcaption class="figure-caption">git add diagram: add tells git to add the file to the index of files git monitors.</figcaption><p></p>
+</figure>
+</div>
+<p>You don’t need to understand exactly what git is doing on the backend, but it is important to know that the actual <strong>contents</strong> of the file aren’t logged by <code>git add</code> - you have to <strong>commit</strong> your changes for the contents to change. <code>git add</code> deals solely with the index of files that git “knows about”, and what it thinks belongs in each commit.</p>
+<p>If you use the RStudio GUI for your git interface, you generally won’t have to do much with git add; it’s (sort-of, kind-of) equivalent to clicking the check box.</p>
+<section id="what-files-should-i-add-to-git" class="level4" data-number="5.4.3.1"><h4 data-number="5.4.3.1" class="anchored" data-anchor-id="what-files-should-i-add-to-git">
+<span class="header-section-number">5.4.3.1</span> What files should I add to git?</h4>
+<p>Git is built for tracking text files. It will (begrudgingly) deal with small binary files (e.g.&nbsp;images, PDFs) without complaining too much, but it is NOT meant for storing large files, and GitHub will not allow you to push anything that has a file larger than 100MB<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>. Larger files can be handled with git-lfs (large file storage), but storing large files online is not something you can get for free.</p>
+<p>In general, you should <strong>only add a file to git if you created it by hand</strong>. If you compiled the result, that should not be in the git repository under normal conditions (there are exceptions to this rule – this book is hosted on GitHub, which means I’ve pushed the compiled book to the GitHub repository).</p>
+<p>You should also be cautious about adding files like .Rprog, .directory, .DS_Store, etc. These files are used by your operating system or by RStudio, and pushing them may cause problems for your collaborators (if you’re collaborating). Tracking changes to these files also doesn’t really do much good.</p>
+<p>I <strong>highly</strong> recommend that you make a point to only add and commit files which you consciously want to track.</p>
+</section></section><section id="staging-your-changes" class="level3" data-number="5.4.4"><h3 data-number="5.4.4" class="anchored" data-anchor-id="staging-your-changes">
+<span class="header-section-number">5.4.4</span> Staging your changes</h3>
+<p>In RStudio, when you check a box next to the file name in the git tab, you are effectively adding the file (if it is not already added) AND staging all of the changes you’ve made to the file. In practice, <code>git add</code> will both add and stage all of the changes to any given file, but it is also useful in some cases to stage only certain lines from a file.</p>
+<p>More formally, <strong>staging</strong> is saying “I’d like these changes to be added to the current version, I think”. Before you <strong>commit</strong> your changes, you have to first <strong>stage</strong> them. You can think of this like going to the grocery store: you have items in your cart, but you can put them back at any point before checkout. Staging changes is like adding items to your cart; committing those changes is like checking out.</p>
+<p>Individually staging lines of a file is most useful in situations where you’ve made changes which should be part of multiple commits. To stage individual lines of a file, you can use <code>git add -i</code> at the command line, or you can attempt to use RStudio’s “stage selection” interface. Both will work, though git can’t always separate changes quite as finely as you might want (and as a result, RStudio’s interface sometimes seems unresponsive, even though the underlying issue is with what git can do).</p>
+</section><section id="committing-your-changes" class="level3" data-number="5.4.5"><h3 data-number="5.4.5" class="anchored" data-anchor-id="committing-your-changes">
+<span class="header-section-number">5.4.5</span> Committing your changes</h3>
+<p>A git <strong>commit</strong> is the equivalent of a log entry - it tells git to record the state of the file, along with a message about what that state means. On the back end, git will save a copy of the file in its current state to its cache.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="../images/tools/git-commit.png" class="img-fluid figure-img" style="width:50.0%"></p>
+<p></p><figcaption class="figure-caption">Here, we commit the red line as a change to our file.</figcaption><p></p>
+</figure>
+</div>
+<p>In general, you want your commit message to be relatively short, but also informative. The best way to do this is to commit <strong>small</strong> blocks of changes. Work to commit every time you’ve accomplished a small task. This will do two things:</p>
+<ol type="1">
+<li>You’ll have small, bite-sized changes that are briefly described to serve as a record of what you’ve done (and what still needs doing)</li>
+<li>When you mess up (or end up in a merge conflict) you will have a much easier time pinpointing the spot where things went bad, what code was there before, and (because you have nice, descriptive commit messages) how the error occurred.</li>
+</ol></section><section id="pushing-and-pulling" class="level3" data-number="5.4.6"><h3 data-number="5.4.6" class="anchored" data-anchor-id="pushing-and-pulling">
+<span class="header-section-number">5.4.6</span> Pushing and Pulling</h3>
+<p>When you’re working alone, you generally won’t need to worry about having to update your local copy of the repository (unless you’re using multiple machines). However, statistics is collaborative, and one of the most powerful parts of git is that you can use it to keep track of changes when multiple people are working on the same document.</p>
+<div class=".watch-out">
+<p>If you are working collaboratively and you and your collaborator are working on the same file, git will be able to resolve the change you make SO LONG AS YOU’RE NOT EDITING THE SAME LINE. Git works based on lines of text - it detects when there is a change in any line of a text document.</p>
+<p>For this reason, I find it makes my life easier to put each sentence on a separate line, so that I can tweak things with fewer merge conflicts. Merge conflicts aren’t a huge deal, but they slow the workflow down, and are best avoided where possible.</p>
+</div>
+<p><strong>Pulling</strong> describes the process of updating your local copy of the repository (the copy on your computer) with the files that are “in the cloud” (on GitHub). <code>git pull</code> (or using the Pull button in RStudio) will perform this update for you. If you are working with collaborators in real time, it is good practice to pull, commit, and push often, because this vastly reduces the merge conflict potential (and the scope of any conflicts that do pop up).</p>
+<p><strong>Pushing</strong> describes the process of updating the copy of the repository on another machine (e.g.&nbsp;on GitHub) so that it has the most recent changes you’ve made to your machine.</p>
+<div id="fig-git-push-pull" class="quarto-layout-panel">
+<figure class="figure"><div class="quarto-layout-row quarto-layout-valign-top">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="../images/tools/git_push_diagram.png" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">git push copies the version of the project on your computer to GitHub</figcaption><p></p>
+</figure>
+</div>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="../images/tools/git_pull_diagram.png" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">git pull copies the version of the project on GitHub to your computer</figcaption><p></p>
+</figure>
+</div>
+</div>
+</div>
+<p></p><figcaption class="figure-caption">Figure&nbsp;5.1: Git push and git pull are used to sync your computer with the remote repository (usually hosted on GitHub)</figcaption><p></p>
+</figure>
+</div>
+<p>In general, your workflow will be</p>
+<ol type="1">
+<li>Clone the project or create a new repository</li>
+<li>Make some changes</li>
+<li>Stage the changes with git add</li>
+<li>Commit the changes with git commit</li>
+<li>Pull any changes from the remote repository</li>
+<li>Resolve any merge conflicts</li>
+<li>Push the changes (and merged files) with git push</li>
+</ol>
+<p>If you’re working alone, steps 5 and 6 are not likely to be necessary, but it is good practice to just pull before you push anyways.</p>
+</section></section><section id="references" class="level2" data-number="5.5"><h2 data-number="5.5" class="anchored" data-anchor-id="references">
+<span class="header-section-number">5.5</span> References</h2>
+
+
+<div id="refs" class="references csl-bib-body" role="doc-bibliography">
+<div id="ref-bryanHappyGitGitHub2021" class="csl-entry" role="doc-biblioentry">
+<div class="csl-left-margin">[1] </div>
+<div class="csl-right-inline">J. Bryan, J. Hester, and {The Stat 545 TAs}, <em>Happy git and <span>GitHub</span> for the <span class="nocase">useR</span></em>. 2021 [Online]. Available: <a href="https://happygitwithr.com/">https://happygitwithr.com/</a>. [Accessed: May 09, 2022]</div>
+</div>
+<div id="ref-dustbusterAnswerGitNot2018" class="csl-entry" role="doc-biblioentry">
+<div class="csl-left-margin">[2] </div>
+<div class="csl-right-inline">dustbuster, <span>“Answer to "git is not working after <span class="nocase">macOS</span> update (xcrun: Error: Invalid active developer path (/library/developer/<span>CommandLineTools</span>)". Stack overflow,”</span> Sep. 26, 2018. [Online]. Available: <a href="https://stackoverflow.com/a/52522566/2859168">https://stackoverflow.com/a/52522566/2859168</a>. [Accessed: Jan. 13, 2023]</div>
+</div>
+</div>
+</section><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><hr>
+<ol>
+<li id="fn1"><p>Yes, I’m aware that this sounds paranoid. It’s been a very rare occasion that I’ve needed to restore something from another backup. You don’t want to take chances. I knew a guy who had to retype his entire masters thesis from the printed out version the night before it was due because he had stored it on a network drive that was decommissioned. You don’t want to be that person.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>Yes, I’m seriously pushing it with this book; several of the datasets are ~30 MB<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol></section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script><script src="https://giscus.app/client.js" data-repo="srvanderplas/stat-computing-r-python" data-repo-id="R_kgDOIvwd2g" data-category="General" data-category-id="DIC_kwDOIvwd2s4CTksR" data-mapping="pathname" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="light" data-lang="en" crossorigin="anonymous" async="">
+</script><nav class="page-navigation"><div class="nav-page nav-page-previous">
+      <a href="../part-tools/04-Rstudio-interface.html" class="pagination-link">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">RStudio’s Interface</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../part-gen-prog/00-gen-prog.html" class="pagination-link">
+        <span class="nav-page-text">Part II: General Programming</span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer"><div class="nav-footer">
+    <div class="nav-footer-left">Copyright 2023, Susan Vanderplas</div>   
+    <div class="nav-footer-right">
+      <ul class="footer-items list-unstyled">
+<li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/srvanderplas">
+      <i class="bi bi-github" role="img">
+</i> 
+    </a>
+  </li>  
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/srvanderplas">
+      <i class="bi bi-twitter" role="img">
+</i> 
+    </a>
+  </li>  
+</ul>
+</div>
+  </div>
+</footer>
+
+
+</body></html>
