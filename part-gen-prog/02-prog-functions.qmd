@@ -1,8 +1,16 @@
-# Using Functions {#sec-calculator}
+# Using Functions and Libraries {#sec-calculator}
 
 In addition to variables, **functions** are extremely important in programming. 
 Functions allow you to repeat a series of steps using different information and get the result.
 In a way, a function is to a variable as a verb is to a noun - functions are a concise way of performing an action. 
+
+## {{< fa bullseye >}} Objectives
+
+- Understand how functions are used in R and python
+- Understand how to install packages in R and python
+- Understand how to load packages in R and python
+- Use pipes to restructure code so that it is more readable
+
 
 ## Mathematical Operators
 Let's first start with a special class of functions that you're probably familiar with from your math classes - mathematical operators. 
@@ -276,6 +284,79 @@ I measured the length of side $c$ as 407 pixels.
 :::
 
 Congratulations, if you used a TI-83 in high school to do this sort of stuff, you're now just about as proficient with R and python as you were with that!
+
+## Pipes {.unnumbered}
+
+Pipes are useful items for moving things from one place to another. In programming, and in particular, in data programming, pipes are operators that let us move data around. 
+In R, we have two primary pipes that are similar (you may see both used if you google for code online). 
+Any R version after 4.1 has a built-in pipe, `|>`; the `tidyverse` libraries use a pipe from the `magrittr` package, `%>%`.
+
+For right now, it's ok to think of the two pipes as essentially the same (but you can read about the differences @machlisUseNewPipe2021).
+
+Fundamentally, a pipe allows you to take a function `b()` and apply it to `x`, like `b(x)`, but write it as `x |> b()` or `x %>% b()`. 
+This is particularly useful in cases where there are multiple sequential analysis steps, because where in regular notation you have to read the functions from the inside out to understand the sequential steps, with pipes, you have a clear step-by-step list of the order of operations.
+
+In Python, there is a `pipe` function in the Pandas library that works using `.pipe(function)` notation @shadowtalkerAnswerFunctionalPipes2015. 
+From what I've seen reading code online, however, pipes are less commonly used in Python code than they are in R code. 
+That's ok - languages have different conventions, and it is usually best to adopt the convention of the language you're working in so that your code can be read, run, and maintained by others more easily.
+
+::: callout-tip
+### Try it out
+::: panel-tabset
+#### Problem
+
+Generate 100 draws from a standard normal distribution and calculate the mean. 
+
+In R, simulate from a normal distribution with `rnorm`. 
+In python, use `np.random.normal` - you'll have to `import numpy as np` first.
+
+
+Use 3 approaches:
+1. Store the data in a variable, then calculate the mean of the variable
+2. Calculate the mean of the data by nesting the two functions (e.g. `mean(generate_normal(100))` in pseudocode)
+3. Calculate the mean of the data using the pipe (e.g. `generate_normal(100) |> mean()`)
+
+**Consider**: What are the advantages and disadvantages of each approach? Would your answer change if there were more steps/functions required to get to the right answer?
+
+
+#### R solution
+
+```{r pipe-intro}
+data <- rnorm(100)
+mean(data)
+
+mean(rnorm(100))
+
+library(magrittr) # load the pipe %>%
+
+rnorm(100) %>%
+  mean()
+
+rnorm(100) |> mean()
+```
+
+#### Python solution
+In python, task 3 isn't really possible, because of the way Python function chaining works, but task 2 is basically the equivalent.
+
+```{python pipe-not-necessary-py, collapse = T}
+import numpy as np
+import pandas as pd
+
+nums = pd.Series(np.random.normal(size = 100))
+nums.mean()
+
+np.random.normal(size=100).mean()
+```
+
+The conclusion here is that it's far easier to not use the pipe in python because the `.function` notation that python uses mimics the step-by-step approach of pipes in R even without using the actual pipe function. 
+When you use data frames instead of Series, you *might* start using the pipe, but only in some circumstances - with user-defined functions, instead of **methods**. 
+Methods are functions that are attached to a data type (technically, a class) and only work if they are defined for that class - for instance, `.mean()` is defined for both Pandas series and numpy arrays.
+
+:::
+:::
+
+## Libraries
+
 
 
 <!-- ## References  {#sec-using-functions-refs} -->
