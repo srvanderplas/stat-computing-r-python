@@ -1,6 +1,6 @@
 /*-- scss:defaults --*/
 
-$theme: "custom" !default;
+$theme: "cosmo" !default;
 
 //
 // Color system
@@ -37,10 +37,14 @@ $warning:       $yellow !default;
 $danger:        $orange !default;
 $light:         $gray-100 !default;
 $dark:          $gray-600 !default;
-$advanced:      $indigo !default;
 $demo:          $cyan !default;
 
 $min-contrast-ratio:   2.6 !default;
+
+$advanced:      $indigo !default;
+$advanced-title: $white !default;
+$advanced-icon: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Pro 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d="M320 32c-8.1 0-16.1 1.4-23.7 4.1L15.8 137.4C6.3 140.9 0 149.9 0 160s6.3 19.1 15.8 22.6l57.9 20.9C57.3 229.3 48 259.8 48 291.9v28.1c0 28.4-10.8 57.7-22.3 80.8c-6.5 13-13.9 25.8-22.5 37.6C0 442.7-.9 448.3 .9 453.4s6 8.9 11.2 10.2l64 16c4.2 1.1 8.7 .3 12.4-2s6.3-6.1 7.1-10.4c8.6-42.8 4.3-81.2-2.1-108.7C90.3 344.3 86 329.8 80 316.5V291.9c0-30.2 10.2-58.7 27.9-81.5c12.9-15.5 29.6-28 49.2-35.7l157-61.7c8.2-3.2 17.5 .8 20.7 9s-.8 17.5-9 20.7l-157 61.7c-12.4 4.9-23.3 12.4-32.2 21.6l159.6 57.6c7.6 2.7 15.6 4.1 23.7 4.1s16.1-1.4 23.7-4.1L624.2 182.6c9.5-3.4 15.8-12.5 15.8-22.6s-6.3-19.1-15.8-22.6L343.7 36.1C336.1 33.4 328.1 32 320 32zM128 408c0 35.3 86 72 192 72s192-36.7 192-72L496.7 262.6 354.5 314c-11.1 4-22.8 6-34.5 6s-23.5-2-34.5-6L143.3 262.6 128 408z"/></svg>') !default;
+
 
 // Options
 
@@ -51,28 +55,8 @@ $enable-rounded: false !default;
 $body-color:    $gray-800 !default;
 
 
-// Fonts
-
-// stylelint-disable-next-line value-keyword-case
-$font-family-sans-serif:    "Source Sans Pro", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol" !default;
-$headings-font-weight:      400 !default;
-
-
-// Navbar
-
-$navbar-dark-hover-color:       rgba($white, 1) !default;
-$navbar-light-hover-color:      rgba($black, .9) !default;
-
-// Alerts
-
-$alert-border-width:            0 !default;
-
-// Progress bars
-
-$progress-height:               .5rem !default;
 
 /*-- scss:variables --*/
-
 
 $colors: (
   "pink":       $pink,
@@ -98,88 +82,32 @@ $theme-colors: (
   "warning":    $warning,
   "danger":     $danger,
   "light":      $light,
-  "dark":       $dark,
-  "advanced":   $advanced,
-  "demo":       $demo
+  "dark":       $dark
 );
 
 /*-- scss:rules --*/
 
 
-// Variables
-
-$web-font-path: "https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400;700&display=swap" !default;
-@if $web-font-path {
-  @import url($web-font-path);
+div.callout-advanced.callout.callout-style-default.callout-captioned {
+  border-left-color: $advanced;
 }
 
-// Typography
-
-body {
-  -webkit-font-smoothing: antialiased;
+div.callout-advanced.callout-style-default > .callout-header {
+  background-color: $advanced;
+}
+div.callout-advanced > .callout-header > .callout-caption-container {
+  color: $advanced-title;
 }
 
-// Indicators
-
-.badge {
-  &.bg-light {
-    color: $dark;
-  }
+.callout-advanced.icon .callout-icon {
+  display: unset !important;
 }
 
-// Progress bars
-
-.progress {
-  @include box-shadow(none);
-
-  .progress-bar {
-    font-size: 8px;
-    line-height: 8px;
-  }
+div.callout-advanced.icon.callout-header .callout-icon-container::before {
+  background-image: $advanced-icon;
 }
 
-
-// Content of _callout.scss
-//https://www.esthermakes.tech/blog/2020-04-02-custom-callout-styles-based-on-bootstrap
-// Callout component based off the Bootstrap Callout
-// See: https://github.com/twbs/bootstrap/blob/master/site/assets/scss/_callouts.scss
-
-.callout {
-    padding: 1.25rem;
-    margin-top: 1.25rem;
-    margin-bottom: 1.25rem;
-    border: 1px solid $gray-200;
-    border-left-width: .25rem;
-    @include border-radius();
-
-    h4 {
-      margin-bottom: .25rem;
-    }
-
-    p:last-child {
-      margin-bottom: 0;
-    }
-
-    code {
-      @include border-radius();
-    }
-
-    + .callout {
-      margin-top: -.25rem;
-    }
-}
-
-/* -- scss:mixins --*/
-// Callout color variant
-@mixin callout-variant($color) {
-    border-left-color: $color;
-
-    h4 { color: $color; }
-}
-
-// Create the color variant classes, e.g. .callout-primary
-@each $color, $value in $colors {
-    .callout-#{$color} {
-        @include callout-variant(theme-color-level($color));
-    }
+.callout-advanced.icon.callout-style-default div.callout-icon-container {
+  padding-top: 0.1em;
+  padding-right: 0.35em;
 }
