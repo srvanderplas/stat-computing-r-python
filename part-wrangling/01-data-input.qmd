@@ -78,7 +78,7 @@ In base R (no extra packages), you can read fixed-width files in using `read.fwf
 
 ```{r read-fwf-colbreaks, error = T, eval = -1, echo = -2}
 url <- "https://www.mesonet.org/index.php/dataMdfMts/dataController/getFile/202206070000/mdf/TEXT/"
-url <- "data/mesodata.txt"
+url <- "../data/mesodata.txt"
 data <- read.fwf(url, 
          skip = 3, # Skip the first 2 lines (useless) + header line
          widths = c(5, 6, 6, 7, 7, 7, 7, 6, 7, 7, 7, 8, 9, 6, 7, 7, 7, 7, 7, 7, 
@@ -176,7 +176,7 @@ Delimited text files are files where fields are separated by a specific characte
 ##### Base R {-}
 
 ```{r delimited-text-files-r, collapse = F}
-url <- "https://raw.githubusercontent.com/shahinrostami/pokemon_dataset/master/pokemon_gen_1_to_8.csv"
+url <- "https://raw.githubusercontent.com/srvanderplas/datasets/main/clean/pokemon_gen_1-9.csv"
 
 pokemon_info <- read.csv(url, header = T, stringsAsFactors = F)
 pokemon_info[1:6, 1:6] # Show only the first 6 lines & cols
@@ -190,8 +190,7 @@ The most common delimited text format is CSV: comma-separated value.
 
 ```{r delimited-text-files-r3, collapse = F}
 library(readr)
-
-url <- "https://raw.githubusercontent.com/shahinrostami/pokemon_dataset/master/pokemon_gen_1_to_8.csv"
+url <- "https://raw.githubusercontent.com/srvanderplas/datasets/main/clean/pokemon_gen_1-9.csv"
 pokemon_info <- read_csv(url)
 pokemon_info[1:6, 1:6] # Show only the first 6 lines & cols
 ```
@@ -204,7 +203,7 @@ There is a family of `read_xxx` functions in `pandas` including functions to rea
 ```{python delimited-text-files-py, collapse = F}
 import pandas as pd
 
-url = "https://raw.githubusercontent.com/shahinrostami/pokemon_dataset/master/pokemon_gen_1_to_8.csv"
+url <- "https://raw.githubusercontent.com/srvanderplas/datasets/main/clean/pokemon_gen_1-9.csv"
 
 pokemon_info = pd.read_csv(url)
 pokemon_info.iloc[:,2:51]
@@ -227,11 +226,11 @@ Sometimes, data is available in files that use other characters as delimiters. T
 
 ```{r delimited-text-files-r2}
 # Download from web
-download.file("https://geonames.usgs.gov/docs/stategaz/NE_Features.zip", destfile = 'data/NE_Features.zip')
+download.file("https://geonames.usgs.gov/docs/stategaz/NE_Features.zip", destfile = '../data/NE_Features.zip')
 # Unzip to `data/` folder
-unzip('data/NE_Features.zip', exdir = 'data/')
+unzip('../data/NE_Features.zip', exdir = '../data/')
 # List files matching the file type and pick the first one
-fname <- list.files("data/", 'NE_Features_20', full.names = T)[1]
+fname <- list.files("../data/", 'NE_Features_20', full.names = T)[1]
 
 # see that the file is delimited with |
 readLines(fname, n = 5)
@@ -247,11 +246,11 @@ There is a family of `read_xxx` functions in `readr` to read files delimited wit
 
 ```{r delimited-text-files-r4}
 # Download from web
-download.file("https://geonames.usgs.gov/docs/stategaz/NE_Features.zip", destfile = 'data/NE_Features.zip')
+download.file("https://geonames.usgs.gov/docs/stategaz/NE_Features.zip", destfile = '../data/NE_Features.zip')
 # Unzip to `data/` folder
-unzip('data/NE_Features.zip', exdir = 'data/')
+unzip('../data/NE_Features.zip', exdir = '../data/')
 # List files matching the file type and pick the first one
-fname <- list.files("data/", 'NE_Features_20', full.names = T)[1]
+fname <- list.files("../data/", 'NE_Features_20', full.names = T)[1]
 
 # see that the file is delimited with |
 readLines(fname, n = 5)
@@ -264,7 +263,7 @@ We can actually read in the file without unzipping it, so long as we download it
 If we know ahead of time what our delimiter is, this is the best choice as it reduces the amount of file clutter we have in our working directory.
 
 ```{r delimited-text-files-r5}
-nebraska_locations <- read_delim("data/NE_Features.zip", delim = "|")
+nebraska_locations <- read_delim("../data/NE_Features.zip", delim = "|")
 nebraska_locations[1:6, 1:6]
 ```
 
@@ -286,69 +285,6 @@ nebraska_locations
 
 :::
 
-::: {.callout-advanced collapse="true"}
-#### Tricks for UTF8 files 
-
-I've left this section in because it's a useful set of tricks, even though it does primarily deal with SAS. 
-
-Don't know what UTF-8 is? [Watch this excellent YouTube video explaining the history of file encoding!](https://www.youtube.com/watch?v=MijmeoH9LT4)
-
-SAS also has procs to accommodate CSV and other delimited files. 
-PROC IMPORT may be the simplest way to do this, but of course a DATA step will work as well. 
-We do have to tell SAS to treat the data file as a UTF-8 file (because of the japanese characters). 
-
-
-While writing this code, I got an error of "Invalid logical name" because originally the filename was pokemonloc. Let this be a friendly reminder that your dataset names in SAS are limited to 8 characters in SAS. 
-
-```
-/* x "curl https://raw.githubusercontent.com/shahinrostami/pokemon_dataset/master/pokemon_gen_1_to_8.csv > data/pokemon.csv";
-only run this once to download the file... */
-filename pokeloc 'data/pokemon.csv' encoding="utf-8";
-
-
-proc import datafile = pokeloc out=poke
-  DBMS = csv; /* comma delimited file */
-  GETNAMES = YES
-  ;
-proc print data=poke (obs=10); /* print the first 10 observations */
-  run;
-```
-
-Alternately (because UTF-8 is finicky depending on your OS and the OS the data file was created under), you can convert the UTF-8 file to ASCII or some other safer encoding before trying to read it in.
-
-If I fix the file in R (because I know how to fix it there... another option is to fix it manually), 
-
-```{r csv-sas-via-r, eval = F}
-library(readr)
-library(dplyr)
-tmp <- read_csv("data/pokemon.csv")[,-1]
-# You'll learn how to do this later
-tmp <- select(tmp, -japanese_name) %>%
-  mutate_all(iconv, from="UTF-8", to = "ASCII//TRANSLIT")
-write_csv(tmp, "data/pokemon_ascii.csv", na='.')
-```
-
-Then, reading in the new file allows us to actually see the output.
-```
-libname classdat "sas/";
-/* Create a library of class data */
-
-filename pokeloc  "data/pokemon_ascii.csv";
-
-proc import datafile = pokeloc out=classdat.poke
-  DBMS = csv /* comma delimited file */
-  replace;
-  GETNAMES = YES;
-  GUESSINGROWS = 1028 /* use all data for guessing the variable type */
-  ;
-proc print data=classdat.poke (obs=10); /* print the first 10 observations */
-  run; 
-```
-
-This trick works in so many different situations. It's very common to read and do initial processing in one language, then do the modeling in another language, and even move to a different language for visualization. Each programming language has its strengths and weaknesses; if you know enough of each of them, you can use each tool where it is most appropriate. 
-
-:::
-
 
 ::: callout-tip
 
@@ -360,9 +296,9 @@ Because these data sets are comparatively large, they are available as compresse
 ```{r rebrickable-lego-data-once, eval = T, include = F}
 # Download the data if it doesn't exist, as it's used later
 library(readr)
-if (!file.exists("data/lego_sets.csv")) {
+if (!file.exists("../data/lego_sets.csv")) {
   legosets <- read_csv("https://cdn.rebrickable.com/media/downloads/sets.csv.gz")
-  write_csv(legosets, "data/lego_sets.csv")
+  write_csv(legosets, "../data/lego_sets.csv")
 }
 ```
 
@@ -374,10 +310,10 @@ The `readr` package and `pandas` can handle .csv.gz files with no problems. Try 
 
 #### R Solution {-}
 
-```{r rebrickable-lego-data, eval = F}
+```{r rebrickable-lego-data, eval = T}
 library(readr)
 legosets <- read_csv("https://cdn.rebrickable.com/media/downloads/sets.csv.gz")
-write_csv(legosets, "data/lego_sets.csv")
+write_csv(legosets, "../data/lego_sets.csv")
 ```
 
 
@@ -386,7 +322,7 @@ write_csv(legosets, "data/lego_sets.csv")
 import pandas as pd
 
 legosets = pd.read_csv("https://cdn.rebrickable.com/media/downloads/sets.csv.gz")
-legosets.to_csv("data/lego_sets_py.csv")
+legosets.to_csv("../data/lego_sets_py.csv")
 ```
 
 :::
@@ -394,23 +330,32 @@ legosets.to_csv("data/lego_sets_py.csv")
 :::
 
 ## Spreadsheets
-
-This example uses data downloaded from ["Mapping Police Violence"](https://mappingpoliceviolence.org/s/MPVDatasetDownload.xlsx), which now links to a google sheet that has to be downloaded manually. Save that file to a path that you can find again - in the code below it lives in `data/police_violence.xlsx`. 
-
 ::: callout-demo
 ### Spreadsheet IO
+
+This example uses from [NYC SLice](https://www.instagram.com/nycslice/). The author maintains a google sheet of the slices he has photographed, which we can download as an excel sheet and import.
+
 ::: panel-tabset
 
 #### R `readxl` {-}
 
-In R, the easiest way to read Excel data in is to use the `readxl` package. There are many other packages with different features, however - I have used `openxlsx` in the past to format spreadsheets to send to clients, for instance. By far and away you are more likely to have problems with the arcane format of the Excel spreadsheet than with the package used to read the data in. It is usually helpful to open the spreadsheet up in a graphical program first to make sure the formatting is as you expected it to be.
+In R, the easiest way to read Excel data in is to use the `readxl` package. There are many other packages with different features, however - I have used `openxlsx` in the past to format spreadsheets to send to clients, for instance. 
+By far and away you are more likely to have problems with the arcane format of the Excel spreadsheet than with the package used to read the data in. 
+It is usually helpful to open the spreadsheet up in a graphical program first to make sure the formatting is as you expected it to be.
 
 ```{r spreadsheet-readin, warning = F}
 if (!"readxl" %in% installed.packages()) install.packages("readxl")
 library(readxl)
 
-police_violence <- read_xlsx("data/police_violence.xlsx", sheet = 1, skip = 1)
-police_violence[1:10, 1:6]
+url <- "https://docs.google.com/spreadsheets/d/1EY3oi9ttxybG0A0Obtwey6BFu7QLqdHe02JApijgztg/export?format=xlsx"
+# Only download the data if it doesn't exist in the data folder
+if (!file.exists("../data/nyc_slice.xlsx")) {
+  download.file(url, destfile = "../data/nyc_slice.xlsx", mode = "wb")
+}
+
+# Read in the downloaded data
+pizza_data <- read_xlsx("../data/nyc_slice.xlsx", sheet = 1)
+pizza_data[1:10, 1:6]
 ```
 
 
@@ -419,8 +364,8 @@ police_violence[1:10, 1:6]
 ```{python spreadsheet-readin-py}
 import pandas as pd
 
-police_violence = pd.read_excel("data/police_violence.xlsx", skiprows = 1)
-police_violence
+pizza_data = pd.read_excel("../data/nyc_slice.xlsx")
+pizza_data
 ```
 
 
@@ -443,9 +388,9 @@ Read in the data using your language(s) of choice. Be sure to look at the struct
 
 ```{r tryitout-dmv-solution-r}
 url <- "https://dmv.nebraska.gov/sites/dmv.nebraska.gov/files/doc/data/ld-totals/NE_Licensed_Drivers_by_Type_2021.xls"
-download.file(url, destfile = "data/NE_Licensed_Drivers_by_Type_2021.xls", mode = "wb")
+download.file(url, destfile = "../data/NE_Licensed_Drivers_by_Type_2021.xls", mode = "wb")
 library(readxl)
-ne_plates <- read_xls(path = "data/NE_Licensed_Drivers_by_Type_2021.xls", skip = 2)
+ne_plates <- read_xls(path = "../data/NE_Licensed_Drivers_by_Type_2021.xls", skip = 2)
 ne_plates[1:10,1:6]
 ```
 
@@ -468,7 +413,7 @@ ne_plates
 
 Of course, some spreadsheets are available online via Google sheets. There are specific R and python packages to interface with Google sheets, and these can do more than just read data in - they can create, format, and otherwise manipulate Google sheets programmatically. We're not going to get into the power of these packages just now, but it's worth a look if you're working with collaborators who use Google sheets.
 
-::: callout-note
+::: callout-advanced
 This section is provided for reference, but the details of API authentication are a bit too complicated to require of anyone who is just learning to program. 
 Feel free to skip it and come back later if you need it.
 
@@ -560,9 +505,9 @@ If you are interested in reading binary data in Python, see @maierleLoadingBinar
 `.Rdata` is perhaps the most common R binary data format, and can store several objects (along with their names) in the same file.
 
 ```{r rdata-demo}
-legos <- read_csv("data/lego_sets.csv")
+legos <- read_csv("../data/lego_sets.csv")
 my_var <- "This variable contains a string"
-save(legos, my_var, file = "data/R_binary.Rdata")
+save(legos, my_var, file = "../data/R_binary.Rdata")
 ```
 
 If we look at the file sizes of `lego_sets.csv` (619 KB) and `R_binary.Rdata`(227.8 KB), the size difference between binary and flat file formats is obvious. 
@@ -573,7 +518,7 @@ rm(legos, my_var) # clear the files out
 
 ls() # all objects in the working environment
 
-load("data/R_binary.Rdata")
+load("../data/R_binary.Rdata")
 
 ls() # all objects in the working environment
 ```
@@ -581,9 +526,9 @@ ls() # all objects in the working environment
 Another (less common) binary format used in R is the RDS format. Unlike Rdata, the RDS format does not save the object name - it only saves its contents (which also means you can save only one object at a time). As a result, when you read from an RDS file, you need to store the result of that function into a variable.
 
 ```{r rds-demo}
-saveRDS(legos, "data/RDSlego.rds")
+saveRDS(legos, "../data/RDSlego.rds")
 
-other_lego <- readRDS("data/RDSlego.rds")
+other_lego <- readRDS("../data/RDSlego.rds")
 ```
 
 Because RDS formats don't save the object name, you can be sure that you're not over-writing some object in your workspace by loading a different file. The downside to this is that you have to save each object to its own RDS file separately. 
@@ -595,11 +540,11 @@ We first need to install the `pyreadr` package by running `pip install pyreadr` 
 ```{python rbinary-py}
 import pyreadr
 
-rdata_result = pyreadr.read_r('data/R_binary.Rdata')
+rdata_result = pyreadr.read_r('../data/R_binary.Rdata')
 rdata_result["legos"] # Access the variables using the variable name as a key
 rdata_result["my_var"]
 
-rds_result = pyreadr.read_r('data/RDSlego.rds')
+rds_result = pyreadr.read_r('../data/RDSlego.rds')
 rds_result[None] # for RDS files, access the data using None as the key since RDS files have no object name.
 ```
 
@@ -611,7 +556,7 @@ First, let's download the NHTS data.
 library(httr)
 # Download the file and write to disk
 res <- GET("https://query.data.world/s/y7jo2qmjqfcnmublmwjvkn7wl4xeax", 
-           write_disk("data/cen10pub.sas7bdat", overwrite = T))
+           write_disk("../data/cen10pub.sas7bdat", overwrite = T))
 ```
 
 You can see more information about this data [here](https://data.world/dot/national-household-travel-survey-nhts-2009) [@usdepartmentoftransportationNationalHouseholdTravel2018].
@@ -620,7 +565,7 @@ You can see more information about this data [here](https://data.world/dot/natio
 if (!"sas7bdat" %in% installed.packages()) install.packages("sas7bdat")
 
 library(sas7bdat)
-data <- read.sas7bdat("data/cen10pub.sas7bdat")
+data <- read.sas7bdat("../data/cen10pub.sas7bdat")
 head(data)
 ```
 
@@ -643,7 +588,7 @@ def download_file(url, local_filename):
         f.write(chunk)
   return local_filename
 
-download_file("https://query.data.world/s/y7jo2qmjqfcnmublmwjvkn7wl4xeax", "data/cen10pub.sas7bdat")
+download_file("https://query.data.world/s/y7jo2qmjqfcnmublmwjvkn7wl4xeax", "../data/cen10pub.sas7bdat")
 ```
 
 You can see more information about this data [here](https://data.world/dot/national-household-travel-survey-nhts-2009) [@usdepartmentoftransportationNationalHouseholdTravel2018].
@@ -653,7 +598,7 @@ To read SAS files, we use the `read_sas` function in Pandas.
 ```{python nhts-sas7bdat-demo-py}
 import pandas as pd
 
-data = pd.read_sas("data/cen10pub.sas7bdat")
+data = pd.read_sas("../data/cen10pub.sas7bdat")
 data
 ```
 
@@ -683,22 +628,22 @@ Then, load the two RDS files and the Rdata file in Python. Are the objects the s
 ```{r tryitout-readin-data-saved}
 library(readxl)
 library(readr)
-police_violence <- read_xlsx("data/police_violence.xlsx", sheet = 1, guess_max = 7000)
-legos <- read_csv("data/lego_sets.csv")
+pizza <- read_xlsx("../data/nyc_slice.xlsx", sheet = 1, guess_max = 7000)
+legos <- read_csv("../data/lego_sets.csv")
 
-save(police_violence, legos, file = "data/04_Try_Binary.Rdata")
-saveRDS(police_violence, "data/04_Try_Binary1.rds")
-saveRDS(legos, "data/04_Try_Binary2.rds")
+save(pizza, legos, file = "../data/04_Try_Binary.Rdata")
+saveRDS(pizza, "../data/04_Try_Binary1.rds")
+saveRDS(legos, "../data/04_Try_Binary2.rds")
 
-rm(police_violence, legos) # Limited clearing of workspace... 
+rm(pizza, legos) # Limited clearing of workspace... 
 
 
-load("data/04_Try_Binary.Rdata")
+load("../data/04_Try_Binary.Rdata")
 
-pv_compare <- readRDS("data/04_Try_Binary1.rds")
-lego_compare <- readRDS("data/04_Try_Binary2.rds")
+pizza_compare <- readRDS("../data/04_Try_Binary1.rds")
+lego_compare <- readRDS("../data/04_Try_Binary2.rds")
 
-all.equal(police_violence, pv_compare)
+all.equal(pizza, pizza_compare)
 all.equal(legos, lego_compare)
 ```
 
@@ -709,13 +654,13 @@ all.equal(legos, lego_compare)
 import pyreadr
 
 robjs = pyreadr.read_r('data/04_Try_Binary.Rdata')
-police = robjs["police_violence"]
+pizza = robjs["pizza"]
 legos = robjs["legos"] # Access the variables using the variable name as a key
 
-police_compare = pyreadr.read_r('data/04_Try_Binary1.rds')[None]
+pizza_compare = pyreadr.read_r('data/04_Try_Binary1.rds')[None]
 lego_compare = pyreadr.read_r('data/04_Try_Binary2.rds')[None]
 
-police.equals(police_compare)
+pizza.equals(pizza_compare)
 legos.equals(lego_compare)
 ```
 
