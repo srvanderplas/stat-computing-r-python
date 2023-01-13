@@ -1,1 +1,732 @@
 # Data Input {#sec-data-input}
+
+## {{< fa bullseye >}} Objectives 
+
+- Read in data from common formats into R or Python
+- Identify delimiters, headers, and other essential components of files
+
+::: callout-note
+### Cheatsheets!
+These may be worth printing off as you work through this module.
+
+[R - tidyverse](https://github.com/rstudio/cheatsheets/raw/main/data-import.pdf) 
+[Python](http://datacamp-community-prod.s3.amazonaws.com/72e88aa1-b4f2-4658-9d86-15becf8263df)
+:::
+
+## Overview: Data Formats
+
+In order to use statistical software to do anything interesting, we need to be able to get data into the program so that we can work with it effectively. 
+For the moment, we'll focus on tabular data - data that is stored in a rectangular shape, with rows indicating observations and columns that show variables. 
+This type of data can be stored on the computer in multiple ways:
+
+- **as raw text**, usually in a file that ends with .txt, .tsv, .csv, .dat, or sometimes, there will be no file extension at all. These types of files are human-readable. If part of a text file gets corrupted, the rest of the file may be recoverable. 
+
+- **as a binary file**. Binary files are compressed files that are readable by computers but not by humans. They generally take less space to store on disk (but the same amount of space when read into computer memory). If part of a binary file is corrupted, the entire file is usually affected.
+  - R, SAS, Stata, SPSS, and Minitab all have their own formats for storing binary data. Packages such as `foreign` in R will let you read data from other programs, and packages such as `haven` in R will let you write data into binary formats used by other programs. 
+  - @betterexplainedLittleDiddyBinary2017 describes why binary file formats exist, and why they're not necessarily optimal.
+
+- **in a spreadsheet**. Spreadsheets, such as those created by MS Excel, Google Sheets, or LibreOffice Calc, are not binary formats, but they're also not raw text files either.
+They're a hybrid - a special type of markup that is specific to the filetype and the program it's designed to work with. 
+Practically, they may function like a poorly laid-out database, a text file, or a total nightmare, depending on who designed the spreadsheet.     
+
+::: callout-note
+There is a collection of spreadsheet horror stories [here](https://github.com/jennybc/scary-excel-stories) and a series of even more horrifying tweets [here](https://twitter.com/JennyBryan/status/722954354198597632).    
+Also, there's this amazing comic:    
+[![](https://imgs.xkcd.com/comics/algorithms.png)](https://xkcd.com/1667/)
+:::
+
+- **in a database**. Databases are typically composed of a set of one or more tables, with information that may be related across tables. Data stored in a database may be easier to access, and may not require that the entire data set be stored in computer memory at the same time, but you may have to join several tables together to get the full set of data you want to work with. 
+
+There are, of course, many other non-tabular data formats -- some open and easy to work with, some inpenetrable. A few which you may come across:
+
+- **Web data structures**: XML (eXtensible markup language), JSON (JavaScript Object Notation), YAML. These structures have their own formats and field delimiters, but more importantly, are not necessarily easily converted to tabular structures. 
+They are, however, useful for handling nested objects, such as trees. When read into R or SAS, these file formats are usually treated as lists, and may be restructured afterwards into a format useful for statistical analysis. 
+See @sec-lists for some tools to work with these files.
+
+- **Spatial files**: Shapefiles are the most common version of spatial files, though there are a seemingly infinite number of different formats, and new formats pop up at the most inconvenient times. 
+Spatial files often include structured encodings of geographic information plus corresponding tabular format data that goes with the geographic information. 
+@sec-spatial covers some of the tools available for working with spatial data.
+
+To be minimally functional in R and Python, it's important to know how to read in text files (CSV, tab-delimited, etc.). 
+It can be helpful to also know how to read in XLSX files. 
+We will briefly discuss binary files and databases, but it is less critical to remember how to read these in without consulting an online reference. 
+
+
+## Text Files
+
+There are several different variants of text data which are relatively common, but for the most part, text data files can be broken down into fixed-width and delimited formats. 
+What's the difference, you say?
+
+### Fixed-width files
+
+```
+Col1    Col2    Col3
+ 3.4     4.2     5.4
+27.3    -2.4    15.9
+```
+
+In a fixed-width text file, the position of the data indicates which field (variable/column) it belongs to. 
+These files are fairly common outputs from older FORTRAN-based programs, but may be found elsewhere as well - if you have a very large amount of data, a fixed-width format may be more efficient to read, because you can select only the portions of the file which matter for a particular analysis (and so you don't have to read the whole thing into memory). 
+
+::: callout-demo
+#### Fixed Width File IO
+::: panel-tabset
+
+##### Base R {.unnumbered}
+
+In base R (no extra packages), you can read fixed-width files in using `read.fwf`, but you must specify the column breaks yourself, which can be painful.
+
+```{r read-fwf-colbreaks, error = T, eval = -1, echo = -2}
+url <- "https://www.mesonet.org/index.php/dataMdfMts/dataController/getFile/202206070000/mdf/TEXT/"
+url <- "data/mesodata.txt"
+data <- read.fwf(url, 
+         skip = 3, # Skip the first 2 lines (useless) + header line
+         widths = c(5, 6, 6, 7, 7, 7, 7, 6, 7, 7, 7, 8, 9, 6, 7, 7, 7, 7, 7, 7, 
+7, 8, 8, 8)) # There is a row with the column names specified
+
+data[1:6,] # first 6 rows
+```
+
+You can count all of those spaces by hand (not shown), you can use a different function, or you can write code to do it for you. 
+
+::: {.callout-warning collapse=true}
+##### Code for counting field width {-}
+
+```{r fixed-width-demo}
+
+# I like to cheat a bit....
+# Read the first few lines in
+tmp <- readLines(url, n = 20)[-c(1:2)]
+
+# split each line into a series of single characters
+tmp_chars <- strsplit(tmp, '') 
+
+# Bind the lines together into a character matrix
+# do.call applies a function to an entire list - so instead of doing 18 rbinds, 
+# one command will put all 18 rows together
+tmp_chars <- do.call("rbind", tmp_chars) # (it's ok if you don't get this line)
+
+# Make into a logical matrix where T = space, F = not space
+tmp_chars_space <- tmp_chars == " "
+
+# Add up the number of rows where there is a non-space character
+# space columns would have 0s/FALSE
+tmp_space <- colSums(!tmp_chars_space)
+
+# We need a nonzero column followed by a zero column
+breaks <- which(tmp_space != 0 & c(tmp_space[-1], 0) == 0)
+
+# Then, we need to get the widths between the columns
+widths <- diff(c(0, breaks))
+
+# Now we're ready to go
+mesodata <- read.fwf(url, skip = 3, widths = widths, header = F)
+# read header separately - if you use header = T, it errors for some reason.
+# It's easier just to work around the error than to fix it :)
+mesodata_names <- read.fwf(url, skip = 2, n = 1, widths = widths, header = F, 
+                           stringsAsFactors = F)
+names(mesodata) <- as.character(mesodata_names)
+
+mesodata[1:6,] # first 6 rows
+```
+
+:::
+
+You can also write fixed-width files if you *really* want to:
+
+
+```{r gdata-demo, message = F}
+if (!"gdata" %in% installed.packages()) install.packages("gdata")
+library(gdata)
+write.fwf(mtcars, file = tempfile())
+```
+
+##### `readr` {-}
+
+The `readr` package creates data-frame like objects called tibbles (a souped-up data frame), but it is *much* friendlier to use. 
+
+```{r readr-demo, message = F}
+library(readr) # Better data importing in R
+
+read_table(url, skip = 2) # Gosh, that was much easier!
+```
+
+##### Python {-}
+
+By default, pandas' `read_fwf` will guess at the format of your fixed-width file. 
+```{python readfwf}
+import pandas as pd
+url = "https://www.mesonet.org/index.php/dataMdfMts/dataController/getFile/202006070000/mdf/TEXT/"
+data = pd.read_fwf(url, skiprows = 2) # Skip the first 2 lines (useless)
+```
+
+:::
+:::
+
+### Delimited Text Files
+
+Delimited text files are files where fields are separated by a specific character, such as space, comma, semicolon, tabs, etc. Often, delimited text files will have the column names as the first row in the file. 
+
+::: callout-demo
+
+#### Comma Delimited Files
+
+::: panel-tabset
+
+##### Base R {-}
+
+```{r delimited-text-files-r, collapse = F}
+url <- "https://raw.githubusercontent.com/shahinrostami/pokemon_dataset/master/pokemon_gen_1_to_8.csv"
+
+pokemon_info <- read.csv(url, header = T, stringsAsFactors = F)
+pokemon_info[1:6, 1:6] # Show only the first 6 lines & cols
+```
+
+##### `readr` {-}
+
+There is a family of `read_xxx` functions in `readr` to read files delimited with commas (`read_csv`), tabs (`read_tsv`), or generic delimited files (`read_delim`).
+
+The most common delimited text format is CSV: comma-separated value. 
+
+```{r delimited-text-files-r3, collapse = F}
+library(readr)
+
+url <- "https://raw.githubusercontent.com/shahinrostami/pokemon_dataset/master/pokemon_gen_1_to_8.csv"
+pokemon_info <- read_csv(url)
+pokemon_info[1:6, 1:6] # Show only the first 6 lines & cols
+```
+
+
+##### Python {-}
+
+There is a family of `read_xxx` functions in `pandas` including functions to read files delimited with commas (`read_csv`) as well as generic delimited files (`read_table`).
+
+```{python delimited-text-files-py, collapse = F}
+import pandas as pd
+
+url = "https://raw.githubusercontent.com/shahinrostami/pokemon_dataset/master/pokemon_gen_1_to_8.csv"
+
+pokemon_info = pd.read_csv(url)
+pokemon_info.iloc[:,2:51]
+```
+
+
+:::
+
+:::
+
+Sometimes, data is available in files that use other characters as delimiters. This can happen when commas are an important part of the data stored in the file, but can also just be a choice made by the person generating the file. Either way, we can't let it keep us from accessing the data.
+
+::: callout-demo
+
+#### Other Character Delimited Files
+
+::: panel-tabset
+
+##### Base R {-}
+
+```{r delimited-text-files-r2}
+# Download from web
+download.file("https://geonames.usgs.gov/docs/stategaz/NE_Features.zip", destfile = 'data/NE_Features.zip')
+# Unzip to `data/` folder
+unzip('data/NE_Features.zip', exdir = 'data/')
+# List files matching the file type and pick the first one
+fname <- list.files("data/", 'NE_Features_20', full.names = T)[1]
+
+# see that the file is delimited with |
+readLines(fname, n = 5)
+
+# a file delimited with |
+nebraska_locations <- read.delim(fname, sep = "|", header = T)
+nebraska_locations[1:6, 1:6]
+```
+
+##### `readr` {-}
+
+There is a family of `read_xxx` functions in `readr` to read files delimited with commas (`read_csv`), tabs (`read_tsv`), or generic delimited files (`read_delim`).
+
+```{r delimited-text-files-r4}
+# Download from web
+download.file("https://geonames.usgs.gov/docs/stategaz/NE_Features.zip", destfile = 'data/NE_Features.zip')
+# Unzip to `data/` folder
+unzip('data/NE_Features.zip', exdir = 'data/')
+# List files matching the file type and pick the first one
+fname <- list.files("data/", 'NE_Features_20', full.names = T)[1]
+
+# see that the file is delimited with |
+readLines(fname, n = 5)
+
+nebraska_locations <- read_delim(fname, delim = "|")
+nebraska_locations[1:6, 1:6]
+```
+
+We can actually read in the file without unzipping it, so long as we download it first - `readr` does not support reading remote zipped files, but it does support reading zipped files locally.
+If we know ahead of time what our delimiter is, this is the best choice as it reduces the amount of file clutter we have in our working directory.
+
+```{r delimited-text-files-r5}
+nebraska_locations <- read_delim("data/NE_Features.zip", delim = "|")
+nebraska_locations[1:6, 1:6]
+```
+
+
+##### Python {-}
+
+There is a family of `read_xxx` functions in `pandas` including functions to read files delimited with commas (`read_csv`) as well as generic delimited files (`read_table`).
+
+Pandas can access zipped data files and unzip them while reading the data in, so we don't have to download the file and unzip it first.
+
+```{python delimited-text-files-py2}
+# a file delimited with |
+
+url = "https://geonames.usgs.gov/docs/stategaz/NE_Features.zip"
+nebraska_locations = pd.read_table(url, delimiter = "|")
+nebraska_locations
+```
+:::
+
+:::
+
+::: {.callout-advanced collapse="true"}
+#### Tricks for UTF8 files 
+
+I've left this section in because it's a useful set of tricks, even though it does primarily deal with SAS. 
+
+Don't know what UTF-8 is? [Watch this excellent YouTube video explaining the history of file encoding!](https://www.youtube.com/watch?v=MijmeoH9LT4)
+
+SAS also has procs to accommodate CSV and other delimited files. 
+PROC IMPORT may be the simplest way to do this, but of course a DATA step will work as well. 
+We do have to tell SAS to treat the data file as a UTF-8 file (because of the japanese characters). 
+
+
+While writing this code, I got an error of "Invalid logical name" because originally the filename was pokemonloc. Let this be a friendly reminder that your dataset names in SAS are limited to 8 characters in SAS. 
+
+```
+/* x "curl https://raw.githubusercontent.com/shahinrostami/pokemon_dataset/master/pokemon_gen_1_to_8.csv > data/pokemon.csv";
+only run this once to download the file... */
+filename pokeloc 'data/pokemon.csv' encoding="utf-8";
+
+
+proc import datafile = pokeloc out=poke
+  DBMS = csv; /* comma delimited file */
+  GETNAMES = YES
+  ;
+proc print data=poke (obs=10); /* print the first 10 observations */
+  run;
+```
+
+Alternately (because UTF-8 is finicky depending on your OS and the OS the data file was created under), you can convert the UTF-8 file to ASCII or some other safer encoding before trying to read it in.
+
+If I fix the file in R (because I know how to fix it there... another option is to fix it manually), 
+
+```{r csv-sas-via-r, eval = F}
+library(readr)
+library(dplyr)
+tmp <- read_csv("data/pokemon.csv")[,-1]
+# You'll learn how to do this later
+tmp <- select(tmp, -japanese_name) %>%
+  mutate_all(iconv, from="UTF-8", to = "ASCII//TRANSLIT")
+write_csv(tmp, "data/pokemon_ascii.csv", na='.')
+```
+
+Then, reading in the new file allows us to actually see the output.
+```
+libname classdat "sas/";
+/* Create a library of class data */
+
+filename pokeloc  "data/pokemon_ascii.csv";
+
+proc import datafile = pokeloc out=classdat.poke
+  DBMS = csv /* comma delimited file */
+  replace;
+  GETNAMES = YES;
+  GUESSINGROWS = 1028 /* use all data for guessing the variable type */
+  ;
+proc print data=classdat.poke (obs=10); /* print the first 10 observations */
+  run; 
+```
+
+This trick works in so many different situations. It's very common to read and do initial processing in one language, then do the modeling in another language, and even move to a different language for visualization. Each programming language has its strengths and weaknesses; if you know enough of each of them, you can use each tool where it is most appropriate. 
+
+:::
+
+
+::: callout-tip
+
+### Try it out: Reading CSV files
+
+Rebrickable.com contains tables of almost any information imaginable concerning Lego sets, conveniently available at their [download page](https://rebrickable.com/downloads/). 
+Because these data sets are comparatively large, they are available as compressed CSV files - that is, the .gz extension is a gzip compression applied to the CSV. 
+
+```{r rebrickable-lego-data-once, eval = T, include = F}
+# Download the data if it doesn't exist, as it's used later
+library(readr)
+if (!file.exists("data/lego_sets.csv")) {
+  legosets <- read_csv("https://cdn.rebrickable.com/media/downloads/sets.csv.gz")
+  write_csv(legosets, "data/lego_sets.csv")
+}
+```
+
+::: panel-tabset
+
+#### Problem {-}
+
+The `readr` package and `pandas` can handle .csv.gz files with no problems. Try reading in the data using the appropriate function from that package. Can you save the data as an uncompressed csv?
+
+#### R Solution {-}
+
+```{r rebrickable-lego-data, eval = F}
+library(readr)
+legosets <- read_csv("https://cdn.rebrickable.com/media/downloads/sets.csv.gz")
+write_csv(legosets, "data/lego_sets.csv")
+```
+
+
+#### Python Solution {-}
+```{python rebrickable-lego-data-py, eval = F}
+import pandas as pd
+
+legosets = pd.read_csv("https://cdn.rebrickable.com/media/downloads/sets.csv.gz")
+legosets.to_csv("data/lego_sets_py.csv")
+```
+
+:::
+
+:::
+
+## Spreadsheets
+
+This example uses data downloaded from ["Mapping Police Violence"](https://mappingpoliceviolence.org/s/MPVDatasetDownload.xlsx), which now links to a google sheet that has to be downloaded manually. Save that file to a path that you can find again - in the code below it lives in `data/police_violence.xlsx`. 
+
+::: callout-demo
+### Spreadsheet IO
+::: panel-tabset
+
+#### R `readxl` {-}
+
+In R, the easiest way to read Excel data in is to use the `readxl` package. There are many other packages with different features, however - I have used `openxlsx` in the past to format spreadsheets to send to clients, for instance. By far and away you are more likely to have problems with the arcane format of the Excel spreadsheet than with the package used to read the data in. It is usually helpful to open the spreadsheet up in a graphical program first to make sure the formatting is as you expected it to be.
+
+```{r spreadsheet-readin, warning = F}
+if (!"readxl" %in% installed.packages()) install.packages("readxl")
+library(readxl)
+
+police_violence <- read_xlsx("data/police_violence.xlsx", sheet = 1, skip = 1)
+police_violence[1:10, 1:6]
+```
+
+
+#### Python {-}
+
+```{python spreadsheet-readin-py}
+import pandas as pd
+
+police_violence = pd.read_excel("data/police_violence.xlsx", skiprows = 1)
+police_violence
+```
+
+
+:::
+:::
+
+In general, it is better to avoid working in Excel, as it is not easy to reproduce the results (and Excel is horrible about dates and times, among other issues). Saving your data in more reproducible formats will make writing reproducible code much easier. 
+
+::: callout-tip
+### Try it out 
+
+::: panel-tabset
+
+#### Problem {-}
+The Nebraska Department of Motor Vehicles [publishes a database of vehicle registrations](https://dmv.nebraska.gov/about/dmv-searchable-data) by type of license plate. [Link](https://dmv.nebraska.gov/about/dmv-searchable-data)
+
+Read in the data using your language(s) of choice. Be sure to look at the structure of the excel file, so that you can read the data in properly!
+
+#### R Solution {-}
+
+```{r tryitout-dmv-solution-r}
+url <- "https://dmv.nebraska.gov/sites/dmv.nebraska.gov/files/doc/data/ld-totals/NE_Licensed_Drivers_by_Type_2021.xls"
+download.file(url, destfile = "data/NE_Licensed_Drivers_by_Type_2021.xls", mode = "wb")
+library(readxl)
+ne_plates <- read_xls(path = "data/NE_Licensed_Drivers_by_Type_2021.xls", skip = 2)
+ne_plates[1:10,1:6]
+```
+
+#### Python Solution {-}
+
+You may need to install `xlrd` via pip for this code to work.
+
+```{python tryitout-dmv-solution-py}
+import pandas as pd
+
+ne_plates = pd.read_excel("https://dmv.nebraska.gov/sites/dmv.nebraska.gov/files/doc/data/ld-totals/NE_Licensed_Drivers_by_Type_2021.xls", skiprows = 2)
+ne_plates
+```
+
+:::
+:::
+
+
+### Google Sheets
+
+Of course, some spreadsheets are available online via Google sheets. There are specific R and python packages to interface with Google sheets, and these can do more than just read data in - they can create, format, and otherwise manipulate Google sheets programmatically. We're not going to get into the power of these packages just now, but it's worth a look if you're working with collaborators who use Google sheets.
+
+::: callout-note
+This section is provided for reference, but the details of API authentication are a bit too complicated to require of anyone who is just learning to program. 
+Feel free to skip it and come back later if you need it.
+
+The first two tabs below show authentication-free options for publicly available spreadsheets. For anything that is privately available, you will have to use API authentication via `GSpread` or `googlesheets4` in python and R respectively.
+:::
+
+
+::: callout-demo
+#### Reading Google Sheets
+
+Let's demonstrate reading in data from google sheets in R and python using the [Data Is Plural](https://docs.google.com/spreadsheets/d/1wZhPLMCHKJvwOkP4juclhjFgqIY8fQFMemwKL2c64vk/edit#gid=0) archive.
+::: panel-tabset
+
+##### Python {-}
+
+One simple hack-ish way to read google sheets in Python (so long as the sheet is publicly available) is to modify the sheet url to export the data to CSV and then just read that into pandas as usual. This method is described in @schaferReadDataGoogle2020. 
+
+```{python google-sheets-py2, eval = T}
+import pandas as pd
+
+sheet_id = "1wZhPLMCHKJvwOkP4juclhjFgqIY8fQFMemwKL2c64vk"
+sheet_name = "Items"
+url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/gviz/tq?tqx=out:csv&sheet={sheet_name}"
+
+data_is_plural = pd.read_csv(url)
+```
+
+This method would likely work just as well in R and would not require the `googlesheets4` package.
+
+##### R {-}
+
+This method is described in @schaferReadDataGoogle2020 for Python, but I have adapted the code to use in R.
+
+```{R google-sheets-r2, eval = T}
+library(readr)
+sheet_id = "1wZhPLMCHKJvwOkP4juclhjFgqIY8fQFMemwKL2c64vk"
+sheet_name = "Items"
+url = sprintf("https://docs.google.com/spreadsheets/d/%s/gviz/tq?tqx=out:csv&sheet=%s", sheet_id, sheet_name)
+
+data_is_plural = read_csv(url)
+```
+
+
+##### R: `googlesheets4` {-}
+
+This code is set not to run when the textbook is compiled because it requires some interactive authentication.
+
+<!-- How to authenticate on google actions/rsconnect: https://gargle.r-lib.org/articles/non-interactive-auth.html -->
+
+```{r google-sheets-r, eval = F}
+library(googlesheets4)
+gs4_auth(scopes = "https://www.googleapis.com/auth/drive.readonly") # Read-only permissions
+data_is_plural <- read_sheet("https://docs.google.com/spreadsheets/d/1wZhPLMCHKJvwOkP4juclhjFgqIY8fQFMemwKL2c64vk/edit#gid=0")
+```
+
+##### Python: `GSpread` {-}
+
+These instructions are derived from [@clarkeHowReadGoogle2021]. 
+We will have to install the `GSpread` package: type `pip install gspread` into the terminal.
+
+Then, you will need to obtain a client token JSON file following [these instructions](https://towardsdatascience.com/how-to-import-google-sheets-data-into-a-pandas-dataframe-using-googles-api-v4-2020-f50e84ea4530). 
+
+```{python google-sheets-py, eval = F}
+import gspread as gs
+import pandas as pd
+
+```
+
+I've stopped here because I can't get the authentication working, but the method seems solid if you're willing to fiddle around with it.
+<!-- XXX TODO XXX -->
+:::
+:::
+
+## Binary Files
+
+R has binary file formats which store data in a more compact form. 
+It is relatively common for government websites, in particular, to provide SAS data in binary form. 
+Python, as a more general computing language, has many different ways to interact with binary data files, as each programmer and application might want to save their data in binary form in a different way. 
+As a result, there is not a general-purpose binary data format for Python data. 
+If you are interested in reading binary data in Python, see @maierleLoadingBinaryData2020.
+
+::: callout-demo
+### Binary File IO
+::: panel-tabset
+
+
+#### R formats in R {-}
+
+`.Rdata` is perhaps the most common R binary data format, and can store several objects (along with their names) in the same file.
+
+```{r rdata-demo}
+legos <- read_csv("data/lego_sets.csv")
+my_var <- "This variable contains a string"
+save(legos, my_var, file = "data/R_binary.Rdata")
+```
+
+If we look at the file sizes of `lego_sets.csv` (619 KB) and `R_binary.Rdata`(227.8 KB), the size difference between binary and flat file formats is obvious. 
+
+We can load the R binary file back in using the `load()` function.
+```{r load-demo}
+rm(legos, my_var) # clear the files out
+
+ls() # all objects in the working environment
+
+load("data/R_binary.Rdata")
+
+ls() # all objects in the working environment
+```
+
+Another (less common) binary format used in R is the RDS format. Unlike Rdata, the RDS format does not save the object name - it only saves its contents (which also means you can save only one object at a time). As a result, when you read from an RDS file, you need to store the result of that function into a variable.
+
+```{r rds-demo}
+saveRDS(legos, "data/RDSlego.rds")
+
+other_lego <- readRDS("data/RDSlego.rds")
+```
+
+Because RDS formats don't save the object name, you can be sure that you're not over-writing some object in your workspace by loading a different file. The downside to this is that you have to save each object to its own RDS file separately. 
+
+#### R formats in Python {-}
+
+We first need to install the `pyreadr` package by running `pip install pyreadr` in the terminal.
+
+```{python rbinary-py}
+import pyreadr
+
+rdata_result = pyreadr.read_r('data/R_binary.Rdata')
+rdata_result["legos"] # Access the variables using the variable name as a key
+rdata_result["my_var"]
+
+rds_result = pyreadr.read_r('data/RDSlego.rds')
+rds_result[None] # for RDS files, access the data using None as the key since RDS files have no object name.
+```
+
+#### SAS format in R {-}
+
+First, let's download the NHTS data. 
+
+```{r download-nhts}
+library(httr)
+# Download the file and write to disk
+res <- GET("https://query.data.world/s/y7jo2qmjqfcnmublmwjvkn7wl4xeax", 
+           write_disk("data/cen10pub.sas7bdat", overwrite = T))
+```
+
+You can see more information about this data [here](https://data.world/dot/national-household-travel-survey-nhts-2009) [@usdepartmentoftransportationNationalHouseholdTravel2018].
+
+```{r nhts-sas7bdat-demo}
+if (!"sas7bdat" %in% installed.packages()) install.packages("sas7bdat")
+
+library(sas7bdat)
+data <- read.sas7bdat("data/cen10pub.sas7bdat")
+head(data)
+```
+
+
+If you are curious about what this data means, then by all means, take a look at the [codebook](https://query.data.world/s/k4g2u42ltuqhkw56htbfheg5ouoyiu) (XLSX file). For now, it's enough that we can see roughly how it's structured.
+
+#### SAS format in Python {-}
+
+First, we need to download the SAS data file. This required writing a function to actually write the file downloaded from the URL, which is what this code chunk does.
+
+```{python nhts-sas7bdat-dl-py}
+# Source: https://stackoverflow.com/questions/16694907/download-large-file-in-python-with-requests
+import requests
+def download_file(url, local_filename):
+  # NOTE the stream=True parameter below
+  with requests.get(url, stream=True) as r:
+    r.raise_for_status()
+    with open(local_filename, 'wb') as f:
+      for chunk in r.iter_content(chunk_size=8192): 
+        f.write(chunk)
+  return local_filename
+
+download_file("https://query.data.world/s/y7jo2qmjqfcnmublmwjvkn7wl4xeax", "data/cen10pub.sas7bdat")
+```
+
+You can see more information about this data [here](https://data.world/dot/national-household-travel-survey-nhts-2009) [@usdepartmentoftransportationNationalHouseholdTravel2018].
+
+To read SAS files, we use the `read_sas` function in Pandas.
+
+```{python nhts-sas7bdat-demo-py}
+import pandas as pd
+
+data = pd.read_sas("data/cen10pub.sas7bdat")
+data
+```
+
+:::
+:::
+
+
+::: callout-tip
+### Try it out 
+
+::: panel-tabset
+
+#### Problem {-}
+
+Read in two of the files from an earlier example, and save the results as an Rdata file with two objects. Then save each one as an RDS file. (Obviously, use R for this)
+
+In RStudio, go to Session -> Clear Workspace. (This will clear your environment)
+
+Now, using your RDS files, load the objects back into R with different names. 
+
+Finally, load your Rdata file. Are the two objects the same? (You can actually test this with `all.equal()` if you're curious)
+
+Then, load the two RDS files and the Rdata file in Python. Are the objects the same?
+
+#### R Solution {-}
+
+```{r tryitout-readin-data-saved}
+library(readxl)
+library(readr)
+police_violence <- read_xlsx("data/police_violence.xlsx", sheet = 1, guess_max = 7000)
+legos <- read_csv("data/lego_sets.csv")
+
+save(police_violence, legos, file = "data/04_Try_Binary.Rdata")
+saveRDS(police_violence, "data/04_Try_Binary1.rds")
+saveRDS(legos, "data/04_Try_Binary2.rds")
+
+rm(police_violence, legos) # Limited clearing of workspace... 
+
+
+load("data/04_Try_Binary.Rdata")
+
+pv_compare <- readRDS("data/04_Try_Binary1.rds")
+lego_compare <- readRDS("data/04_Try_Binary2.rds")
+
+all.equal(police_violence, pv_compare)
+all.equal(legos, lego_compare)
+```
+
+
+#### Python Solution {-}
+
+```{python tryitout-readin-data-saved-py}
+import pyreadr
+
+robjs = pyreadr.read_r('data/04_Try_Binary.Rdata')
+police = robjs["police_violence"]
+legos = robjs["legos"] # Access the variables using the variable name as a key
+
+police_compare = pyreadr.read_r('data/04_Try_Binary1.rds')[None]
+lego_compare = pyreadr.read_r('data/04_Try_Binary2.rds')[None]
+
+police.equals(police_compare)
+legos.equals(lego_compare)
+```
+
+:::
+
+:::
+
+::: callout-learnmore
+## Learn more
+- [Slides from Jenny Bryan's talk on spreadsheets](https://speakerdeck.com/jennybc/spreadsheets) (sadly, no audio. It was a good talk.)
+- The [`vroom` package](https://www.tidyverse.org/blog/2019/05/vroom-1-0-0/) works like `read_csv` but allows you to read in and write to many files at incredible speeds. 
+:::
+
+## References
