@@ -1,0 +1,1069 @@
+# Data Visualization {#sec-data-vis}
+
+##  {{< fa bullseye >}} Objectives
+
+- Create charts designed to communicate specific aspects of the data
+- Describe charts using the grammar of graphics 
+- Create layered graphics that highlight multiple aspects of the data
+- Evaluate existing charts and develop new versions that improve accessibility and readability
+
+
+There are a lot of different types of charts, and equally many ways  to categorize and describe the different types of charts.
+I'm going to be opinionated on this one - while I will provide code for several different plotting programs, this chapter is organized based on the grammar of graphics specifically. 
+
+::: column-margin
+Visualization and statistical graphics are also my research area, so I'm more passionate about this material, which means there's going to be more to read. 
+Sorry about that in advance. 
+I'll do my best to indicate which content is actually mission-critical and which content you can skip if you're not that interested.
+:::
+
+This is going to be a fairly extensive chapter (in terms of content) because I want you to have a resource to access later, if you need it. 
+That's why I'm showing you code for many different plotting libraries - I want you to be able to make charts in any program you may need to use for your research.
+
+::: {.callout-note collapse=true}
+### Guides and Resources
+
+Graph galleries contain sample code to create many different types of charts. Similar galaries are available in [R](https://r-graph-gallery.com/) and [Python](https://www.python-graph-gallery.com/).
+
+Cheat Sheets:
+
+- [Python](https://www.python-graph-gallery.com/cheat-sheets/)
+- [Ggplot2](https://raw.githubusercontent.com/rstudio/cheatsheets/main/data-visualization.pdf)
+- [Base R](https://r-graph-gallery.com/134-general-plot-parameters-reminder.html)
+
+:::
+
+
+## Why do we create graphics?
+
+> The greatest possibilities of visual display lie in vividness and inescapability of the intended message. A visual display can stop your mental flow in its tracks and make you think. A visual display can force you to notice what you never expected to see. ("Why, that scatter diagram has a hole in the middle!") -- John W. Tukey [@tukeyDataBasedGraphicsVisual1990]
+
+
+Fundamentally, charts are easier to understand than raw data.
+
+When you think about it, data is a pretty artificial thing. 
+We exist in a world of tangible objects, but data are an abstraction - even when the data record information about the tangible world, the measurements are a way of removing the physical and transforming the "real world" into a virtual thing. 
+As a result, it can be hard to wrap our heads around what our data contain. 
+The solution to this is to transform our data back into something that is "tangible" in some way -- if not physical and literally touch-able, at least something we can view and "wrap our heads around".
+
+Consider this thought experiment: You have a simple data set - 2 variables, 500 observations. 
+You want to get a sense of how the variables relate to each other. 
+You can do one of the following options:
+
+1.  Print out the data set
+2.  Create some summary statistics of each variable and perhaps the covariance between the two variables
+3.  Draw a scatter plot of the two variables
+
+Which one would you rather use? Why?
+
+Our brains are very good at processing large amounts of visual information quickly.
+Evolution is good at optimizing for survival, and it's important to be able to survey a field and pick out the tiger that might eat you. 
+When we present information visually, in a format that can leverage our visual processing abilities, we offload some of the work of understanding the data to a chart that organizes it for us. 
+You could argue that printing out the data is a visual presentation, but it requires that you read that data in as text, which we're not nearly as equipped to process quickly (and in parallel).
+
+It's a lot easier to talk to non-experts about complicated statistics using visualizations.
+Moving the discussion from abstract concepts to concrete shapes and lines keeps people who are potentially already math or stat phobic from completely tuning out.
+
+## General approaches to creating graphics
+
+There are two general approaches to generating statistical graphics computationally: 
+  
+1. Manually specify the plot that you want, possibly doing the preprocessing and summarizing before you create the plot.    
+Base R, matplotlib, old-style SAS graphics
+
+2. Describe the relationship between the plot and the data, using sensible defaults that can be customized for common operations.    
+ggplot2, plotnine, seaborn (sort of)
+
+
+::: column-margin
+There is a difference between *low-level* plotting libraries (base R, matplotlib) and *high-level* plotting libraries (ggplot2, plotnine, seaborn). 
+Grammar of graphics libraries are usually high level, but it is entirely possible to have a high level library that does not follow the grammar of graphics. 
+In general, if you have to manually add a legend, it's probably a low level library.
+:::
+
+In the introduction to The Grammar of Graphics [@wilkinsonGrammarGraphics1999], Leland Wilkinson suggests that the first approach is what we would call "charts" - pie charts, line charts, bar charts - objects that are "instances of much more general objects". 
+His argument is that elegant graphical design means we have to think about an underlying theory of graphics, rather than how to create specific charts. 
+The 2nd approach is called the "grammar of graphics". 
+
+::: column-margin
+There are other graphics systems (namely, `lattice` in R, `seaborn` in Python, and some web-based rendering engines like `Observable` or `d3`) that you could explore, but it's far more important that you know how to functionally create plots in R and/or Python. 
+I don't recommend you try to become proficient in all of them. 
+**Pick one (two at most) and get familiar with those libraries, then google for the rest.**
+:::
+
+Before we delve into the grammar of graphics, let's motivate the philosophy using a simple task.
+Suppose we want to create a pie chart using some data. 
+Pie charts are terrible, and we've known it for 100 years[@croxtonBarChartsCircle1927a], so in the interests of showing that we know that pie charts are awful, we'll also create a stacked bar chart, which is the most commonly promoted alternative to a pie chart. 
+We'll talk about what makes pie charts terrible at the end of this module in [Creating Good charts](@sec-creating-good-charts).
+
+
+::: {.callout-caution}
+### Example: Generations of Pokemon
+
+::: column-margin
+[![Nintendo, Creatures, Game Freak, The Pokémon Company, Public domain, via Wikimedia Commons](../images/wrangling/International_Pokemon_logo.png){fig-alt="Pokemon logo"}](https://commons.wikimedia.org/wiki/File:International_Pok%C3%A9mon_logo.svg")
+:::
+
+Suppose we want to explore Pokemon. There's not just the original 150 (gotta catch 'em all!) - now there are over 1000! 
+Let's start out by looking at the proportion of Pokemon added in each of the 9 generations.
+
+::: panel-tabset
+
+#### R setup {-}
+```{r poke-read-data-r}
+#| message: false
+library(readr)
+library(dplyr)
+library(tidyr)
+library(stringr)
+
+# Setup the data
+poke <- read_csv("https://raw.githubusercontent.com/srvanderplas/datasets/main/clean/pokemon_gen_1-9.csv", na = '.') %>%
+  mutate(generation = factor(gen))
+```
+
+#### Python setup {-}
+```{python poke-read-data-py}
+import pandas as pd
+poke = pd.read_csv("https://raw.githubusercontent.com/srvanderplas/datasets/main/clean/pokemon_gen_1-9.csv")
+poke['generation'] = pd.Categorical(poke.gen)
+```
+:::
+
+Once the data is read in, we can start plotting:
+
+::: panel-tabset
+
+#### ggplot2 {-}
+In ggplot2, we start by specifying which variables we want to be mapped to which features of the data. 
+
+In a pie or stacked bar chart, we don't care about the x coordinate - the whole chart is centered at (0,0) or is contained in a single "stack". 
+So it's easiest to specify our x variable as a constant, "". 
+We care about the fill of the slices, though - we want each generation to have a different fill color, so we specify generation as our fill variable. 
+
+Then, we want to summarize our data by the number of objects in each category - this is basically a stacked bar chart. 
+Any variables specified in the plot statement are used to implicitly calculate the statistical summary we want -- that is, to count the rows (so if we had multiple x variables, the summary would be computed for both the x and fill variables). 
+`ggplot` is smart enough to know that when we use `geom_bar`, we generally want the y variable to be the count, so we can get away with leaving that part out. 
+We just have to specify that we want the bars to be stacked on top of one another (instead of next to each other, "dodge").
+
+```{r gg-bar}
+library(ggplot2)
+
+ggplot(aes(x = "", fill = generation), data = poke) + 
+  geom_bar(position = "stack") 
+```
+
+If we want a pie chart, we can get one very easily - we transform the coordinate plane from Cartesian coordinates to polar coordinates. 
+We specify that we want angle to correspond to the "y" coordinate, and that we want to start at $\theta = 0$. 
+
+```{r gg-pie, message = F}
+ggplot(aes(x = "", fill = generation), data = poke) + 
+  geom_bar(position = "stack") + 
+  coord_polar("y", start = 0)
+```
+
+Notice how the syntax and arguments to the functions didn't change much between the bar chart and the pie chart? 
+That's because the `ggplot` package uses what's called the **grammar of graphics**, which is a way to describe plots based on the underlying mathematical relationships between data and plotted objects. 
+In base R and in matplotlib in Python, different types of plots will have different syntax, arguments, etc., but in ggplot2, the arguments are consistently named, and for plots which require similar transformations and summary observations, it's very easy to switch between plot types by changing one word or adding one transformation.
+
+#### Base R {-}
+
+Let's start with what we want: for each generation, we want the total number of pokemon. 
+
+To get a pie chart, we want that information mapped to a circle, with each generation represented by an angle whose size is proportional to the number of pokemon in that generation.
+
+```{r base-pie}
+# Create summary of pokemon by type
+tmp <- poke %>%
+  group_by(generation) %>%
+  count() 
+
+pie(tmp$n, labels = tmp$generation)
+```
+
+We could alternately make a bar chart and stack the bars on top of each other. This also shows proportion (section vs. total) but does so in a linear fashion.
+
+```{r base-barplot}
+# Create summary of pokemon by type
+tmp <- poke %>%
+  group_by(generation) %>%
+  count() 
+
+# Matrix is necessary for a stacked bar chart
+matrix(tmp$n, nrow = 9, ncol = 1, dimnames = list(tmp$generation)) %>%
+barplot(beside = F, legend.text = T, main = "Generations of Pokemon")
+```
+
+There's not a huge amount of similarity between the code for a pie chart and a bar plot, even though the underlying statistics required to create the two charts are very similar. 
+The appearance of the two charts is also very different.
+
+
+#### Matplotlib {-}
+
+Let's start with what we want: for each generation, we want the total number of pokemon. 
+
+To get a pie chart, we want that information mapped to a circle, with each generation represented by an angle whose size is proportional to the number of Pokemon in that generation.
+
+```{python plt-pie}
+import matplotlib.pyplot as plt
+plt.cla() # clear out matplotlib buffer
+
+# Create summary of pokemon by type
+labels = list(set(poke.generation)) # create labels by getting unique values
+sizes = poke.generation.value_counts(normalize=True)*100
+
+# Draw the plot
+fig1, ax1 = plt.subplots()
+ax1.pie(sizes, labels = labels, autopct='%1.1f%%', startangle = 90)
+ax1.axis('equal')
+plt.show()
+```
+
+
+We could alternately make a bar chart and stack the bars on top of each other. 
+This also shows proportion (section vs. total) but does so in a linear fashion.
+
+```{python plt-bar}
+import matplotlib.pyplot as plt
+plt.cla() # clear out matplotlib buffer
+
+# Create summary of pokemon by type
+labels = list(set(poke.generation)) # create labels by getting unique values
+sizes = poke.generation.value_counts()
+sizes = sizes.sort_index()
+
+# Find location of bottom of the bar for each bar
+cumulative_sizes = sizes.cumsum() - sizes
+width = 1
+
+fig, ax = plt.subplots()
+
+for i in sizes.index:
+  ax.bar("Generation", sizes[i-1], width, label=i, bottom = cumulative_sizes[i-1])
+
+ax.set_ylabel('# Pokemon')
+ax.set_title('Pokemon Distribution by Generation')
+ax.legend()
+
+plt.show()
+```
+
+#### Plotnine {-}
+
+As of January 2023, pie charts are [still not supported in plotnine](https://github.com/has2k1/plotnine/issues/10). So this demo will fall a bit flat. 
+
+```{python gg-bar-py}
+from plotnine import *
+plt.cla() # clear out matplotlib buffer
+
+ggplot(poke, aes(x = "1", fill = "generation")) + geom_bar(position = "stack")
+```
+
+<!-- #### Seaborn {-} -->
+
+<!-- As with Plotnine, seaborn does not support pie charts due to the same underlying issue. The best option is to create a pie chart in matplotlib and use seaborn colors [@zachHowCreatePie2021].  -->
+
+<!-- ```{python seaborn-poke-pie} -->
+<!-- # Load the seaborn package -->
+<!-- # the alias "sns" stands for Samuel Norman Seaborn  -->
+<!-- # from "The West Wing" television show -->
+<!-- import seaborn as sns -->
+<!-- import matplotlib.pyplot as plt -->
+
+<!-- # Initialize seaborn styling; context -->
+<!-- sns.set_style('white') -->
+<!-- sns.set_context('notebook') -->
+
+<!-- plt.cla() # clear out matplotlib buffer -->
+
+<!-- # Create summary of pokemon by type -->
+<!-- labels = list(set(poke.generation)) # create labels by getting unique values -->
+<!-- sizes = poke.generation.value_counts(normalize=True)*100 -->
+
+<!-- #define Seaborn color palette to use -->
+<!-- colors = sns.color_palette('pastel')[0:5] -->
+
+<!-- # Draw the plot -->
+<!-- fig1, ax1 = plt.subplots() -->
+<!-- ax1.pie(sizes, labels = labels, colors = colors, autopct='%1.1f%%', startangle = 90) -->
+<!-- ax1.axis('equal') -->
+<!-- plt.show() -->
+<!-- ``` -->
+
+<!-- Seaborn doesn't have the `autopct` option that matplotlib uses, so we have to aggregate the data ourselves before creating a barchart. -->
+
+<!-- ```{python seaborn-poke-pie} -->
+<!-- poke['generation'] = pd.Categorical(poke['generation']) -->
+
+<!-- plt.cla() # clear out matplotlib buffer -->
+<!-- sns.countplot(data = poke, y = 'status') -->
+<!-- plt.show() -->
+<!-- ``` -->
+:::
+
+:::
+
+We'll talk first about the general idea behind the grammar of graphics. 
+For each concept, I'll provide you first with the ggplot grammar of graphics code, and then, where it is possible to replicate the chart easily in base R or Python graphics, I will provide code for that as well - so that you can compare the approaches, but also so that you get a sense for what is easy and what is possible in each plotting system. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+::: callout-note
+You're going to learn how to make graphics by finding sample code, changing that code to match your data set, and tweaking things as you go. 
+That's the best way to learn this, and while ggplot and plotnine do have a structure and some syntax to learn, once you're familiar with the principles, you'll still want to learn graphics by doing it.
+:::
+
+In this chapter, we're going to use the `ggplot2` package to create graphics in R, and the `plotnine` package to create graphics in python. 
+`plotnine` is a direct port of `ggplot2` to Python using the Python graphics engine. 
+For the most part, the syntax is extremely similar, with only minimal changes to account for the fact that some R syntax doesn't work in Python, and a few differences with the python rendering engine for graphics.
+
+## The Grammar of Graphics
+
+The grammar of graphics is an approach first introduced in Leland Wilkinson's book [@grammar].
+Unlike other graphics classification schemes, the grammar of graphics makes an attempt to describe how the dataset itself relates to the components of the chart.
+
+![Building a masterpiece, by Allison Horst](https://raw.githubusercontent.com/allisonhorst/stats-illustrations/master/rstats-artwork/ggplot2_masterpiece.png){fig-alt="A fuzzy monster in a beret and scarf, critiquing their own column graph on a canvas in front of them while other assistant monsters (also in berets) carry over boxes full of elements that can be used to customize a graph (like themes and geometric shapes). In the background is a wall with framed data visualizations. Stylized text reads “ggplot2: build a data masterpiece.”"}
+
+This has a few advantages:
+
+1.  It's relatively easy to represent the same dataset with different types of plots (and to find their strengths and weaknesses)
+2.  Grammar leads to a concise description of the plot and its contents
+3.  We can add layers to modify the graphics, each with their own basic grammar (just like we combine sentences and clauses to build a rich, descriptive paragraph)
+
+![A pyramid view of the major components of the grammar of graphics, with data as the base, aesthetics building on data, scales building on aesthetics, geometric objects, statistics, facets, and the coordinate system at the top of the pyramid. Source: [@sarkarComprehensiveGuideGrammar2018]](../images/wrangling/grammar-pyramid.png)
+
+::: callout-note
+I have turned off warnings for all of the code chunks in this chapter. 
+When you run the code you may get warnings about e.g. missing points - this is normal, I just didn't want to have to see them over and over again - I want you to focus on the changes in the code.
+:::
+
+### Exploratory Data Analysis with the grammar of graphics
+
+::: panel-tabset
+### Sketch
+
+![A Sketch of the mapping between a data frame and a scatterplot, showing the geoms, aesthetics, transformations, scales, coordinate systems, and statistics that are created by default.](../images/wrangling/grammar-graphics-dataset-mapping.png)
+
+### R {.unnumbered}
+
+```{r}
+library(ggplot2)
+data(txhousing)
+
+ggplot(data = txhousing, aes(x = date, y = median)) +
+  geom_point()
+```
+
+### Python {.unnumbered}
+
+```{python, warning = F}
+from plotnine import *
+from plotnine.data import txhousing
+
+ggplot(txhousing, aes(x = "date", y = "median")) + geom_point()
+```
+:::
+
+When creating a grammar of graphics chart, we start with the data (this is consistent with the data-first tidyverse philosophy).
+
+1.  Identify the dimensions of your dataset you want to visualize.
+
+2.  Decide what aesthetics you want to map to different variables. For instance, it may be natural to put time on the $x$ axis, or the experimental response variable on the $y$ axis. You may want to think about other aesthetics, such as color, size, shape, etc. at this step as well.
+
+    a.  It may be that your preferred representation requires some summary **statistics** in order to work. At this stage, you would want to determine what variables you feed in to those statistics, and then how the statistics relate to the geoms that you're envisioning. You may want to think in terms of layers - showing the raw data AND a summary geom.
+
+3.  In most cases, `ggplot` will determine the scale for you, but sometimes you want finer control over the scale - for instance, there may be specific, meaningful bounds for a variable that you want to directly set.
+
+4.  Coordinate system: Are you going to use a polar coordinate system? (Please say no, for reasons we'll get into later!)
+
+5.  Facets: Do you want to show subplots based on specific categorical variable values?
+
+(this list modified from @sarkarComprehensiveGuideGrammar2018).
+
+::: ex
+Let's explore the `txhousing` data a bit more thoroughly by adding some complexity to our chart. This example will give me an opportunity to show you how an exploratory data analysis might work in practice, while also demonstrating some of ggplot2's features.
+
+Before we start exploring, let's add a title and label our axes, so that we're creating good, informative charts.
+
+::: panel-tabset
+### R {.unnumbered}
+
+```{r}
+ggplot(data = txhousing, aes(x = date, y = median)) +
+  geom_point() +
+  xlab("Date") + ylab("Median Home Price") +
+  ggtitle("Texas Housing Prices")
+```
+
+### Python {.unnumbered}
+
+```{python, warning = F}
+ggplot(txhousing, aes(x = "date", y = "median")) +\
+geom_point() +\
+xlab("Date") + ylab("Median Home Price") +\
+ggtitle("Texas Housing Prices")
+```
+:::
+
+First, we may want to show some sort of overall trend line. We can start with a linear regression, but it may be better to use a loess smooth ([loess regression](https://en.wikipedia.org/wiki/Local_regression) is a fancy weighted average and can create curves without too much additional effort on your part).
+
+::: panel-tabset
+### Sketch
+
+![A Sketch of the mapping between a data frame and a scatterplot, showing the geoms, aesthetics, transformations, scales, coordinate systems, and statistics that are created by default. In this modification of the original image, we've added a summary smooth line which provides a linear trend on top of the original points.](../images/wrangling/grammar-graphics-dataset-mapping-smooth.png)
+
+### R {.unnumbered}
+
+```{r}
+ggplot(data = txhousing, aes(x = date, y = median)) +
+  geom_point() +
+  geom_smooth(method = "lm") +
+  xlab("Date") + ylab("Median Home Price") +
+  ggtitle("Texas Housing Prices")
+```
+
+We can also use a loess (locally weighted) smooth:
+
+```{r}
+ggplot(data = txhousing, aes(x = date, y = median)) +
+  geom_point() +
+  geom_smooth(method = "loess") +
+  xlab("Date") + ylab("Median Home Price") +
+  ggtitle("Texas Housing Prices")
+```
+
+### Python {.unnumbered}
+
+```{python, warning = F}
+ggplot(txhousing, aes(x = "date", y = "median")) + geom_point() +\
+geom_smooth(method = "lm", color = "blue") +\
+xlab("Date") + ylab("Median Home Price") +\
+ggtitle("Texas Housing Prices")
+# By default, geom_smooth in plotnine has a black line you can't see well
+```
+
+We can also use a loess (locally weighted) smooth:
+
+```{python}
+ggplot(txhousing, aes(x = "date", y = "median")) + geom_point() +\
+geom_smooth(method = "loess", color = "blue") +\
+xlab("Date") + ylab("Median Home Price") +\
+ggtitle("Texas Housing Prices")
+```
+:::
+
+Looking at the plots here, it's clear that there are small sub-groupings (see, for instance, the almost continuous line of points at the very top of the group between 2000 and 2005). Let's see if we can figure out what those additional variables are...
+
+As it happens, the best viable option is City.
+
+::: panel-tabset
+### Sketch
+
+![A Sketch of the mapping between a data frame and a scatterplot, showing the geoms, aesthetics, transformations, scales, coordinate systems, and statistics that are created by default. In this modification of the original image, we've added a summary smooth line which provides a linear trend on top of the original points.](../images/wrangling/grammar-graphics-dataset-mapping-color.png)
+
+### R {.unnumbered}
+
+```{r}
+ggplot(data = txhousing, aes(x = date, y = median, color = city)) +
+  geom_point() +
+  geom_smooth(method = "loess") +
+  xlab("Date") + ylab("Median Home Price") +
+  ggtitle("Texas Housing Prices")
+```
+
+That's a really crowded graph! It's slightly easier if we just take the points away and only show the statistics, but there are still way too many cities to be able to tell what shade matches which city.
+
+```{r}
+ggplot(data = txhousing, aes(x = date, y = median, color = city)) +
+  # geom_point() +
+  geom_smooth(method = "loess") +
+  xlab("Date") + ylab("Median Home Price") +
+  ggtitle("Texas Housing Prices")
+
+```
+
+### Python {.unnumbered}
+
+```{python, warning = F}
+ggplot(txhousing, aes(x = "date", y = "median", color = "city")) +\
+geom_point() +\
+geom_smooth(method = "loess") +\
+xlab("Date") + ylab("Median Home Price") +\
+ggtitle("Texas Housing Prices")
+```
+
+That's a really crowded graph! It's slightly easier if we just take the points away and only show the statistics, but there are still way too many cities to be able to tell what shade matches which city.
+
+```{python, warning = F}
+ggplot(txhousing, aes(x = "date", y = "median", color = "city")) +\
+geom_smooth(method = "loess") +\
+theme(subplots_adjust={'right': 0.5}) +\
+xlab("Date") + ylab("Median Home Price") +\
+ggtitle("Texas Housing Prices")
+```
+
+This is one of the first places we see differences in Python and R's graphs - python doesn't allocate sufficient space for the legend by default. In Python, you have to manually adjust the theme to show the legend (or plot the legend separately).
+:::
+
+In reality, though, you should not ever map color to something with more than about 7 categories if your goal is to allow people to trace the category back to the label. It just doesn't work well perceptually.
+
+So let's work with a smaller set of data: Houston, Dallas, Fort worth, Austin, and San Antonio (the major cities).
+
+Another way to show this data is to plot each city as its own subplot. In ggplot2 lingo, these subplots are called "facets". In visualization terms, we call this type of plot "small multiples" - we have many small charts, each showing the trend for a subset of the data.
+
+::: panel-tabset
+### R {.unnumbered}
+
+```{r}
+citylist <- c("Houston", "Austin", "Dallas", "Fort Worth", "San Antonio")
+housingsub <- dplyr::filter(txhousing, city %in% citylist)
+
+ggplot(data = housingsub, aes(x = date, y = median, color = city)) +
+  geom_point() +
+  geom_smooth(method = "loess") +
+  xlab("Date") + ylab("Median Home Price") +
+  ggtitle("Texas Housing Prices")
+```
+
+Here's the facetted version of the chart:
+
+```{r}
+ggplot(data = housingsub, aes(x = date, y = median)) +
+  geom_point() +
+  geom_smooth(method = "loess") +
+  facet_wrap(~city) +
+  xlab("Date") + ylab("Median Home Price") +
+  ggtitle("Texas Housing Prices")
+```
+
+Notice I've removed the aesthetic mapping to color as it's redundant now that each city is split out in its own plot.
+
+### Python {.unnumbered}
+
+```{python, warning = F}
+citylist = ["Houston", "Austin", "Dallas", "Fort Worth", "San Antonio"]
+housingsub = txhousing[txhousing['city'].isin(citylist)]
+
+ggplot(housingsub, aes(x = "date", y = "median", color = "city")) +\
+geom_point() +\
+geom_smooth(method = "loess") +\
+theme(subplots_adjust={'right': 0.75}) +\
+xlab("Date") + ylab("Median Home Price") +\
+ggtitle("Texas Housing Prices")
+```
+
+Here's the facetted version of the chart:
+
+```{python, warning = F}
+ggplot(housingsub, aes(x = "date", y = "median")) +\
+geom_point() +\
+geom_smooth(method = "loess", color = "blue") +\
+facet_wrap("city") +\
+xlab("Date") + ylab("Median Home Price") +\
+ggtitle("Texas Housing Prices")
+```
+:::
+
+Now that we've simplified our charts a bit, we can explore a couple of the other quantitative variables by mapping them to additional aesthetics:
+
+::: panel-tabset
+### R {.unnumbered}
+
+```{r}
+ggplot(data = housingsub, aes(x = date, y = median, size = sales)) +
+  geom_point(alpha = .15) + # Make points transparent
+  geom_smooth(method = "loess") +
+  facet_wrap(~city) +
+  # Remove extra information from the legend -
+  # line and error bands aren't what we want to show
+  # Also add a title
+  guides(size = guide_legend(title = 'Number of Sales',
+                             override.aes = list(linetype = NA,
+                                                 fill = 'transparent'))) +
+  # Move legend to bottom right of plot
+  theme(legend.position = c(1, 0), legend.justification = c(1, 0)) +
+  xlab("Date") + ylab("Median Home Price") +
+  ggtitle("Texas Housing Prices")
+```
+
+Notice I've removed the aesthetic mapping to color as it's redundant now that each city is split out in its own plot.
+
+### Python {.unnumbered}
+
+```{python, warning = F}
+citylist = ["Houston", "Austin", "Dallas", "Fort Worth", "San Antonio"]
+housingsub = txhousing[txhousing['city'].isin(citylist)]
+
+( # This is used to group lines together in python
+ggplot(housingsub, aes(x = "date", y = "median", size = "sales"))
++ geom_point(alpha = .15) # Make points transparent
++ geom_smooth(method = "loess")
++ facet_wrap("city")
++ guides(size = guide_legend(title = 'Number of Sales'))
++ xlab("Date") + ylab("Median Home Price")
++ ggtitle("Texas Housing Prices")
+)
+```
+
+Not all of the features we used in R are available in plotnine in Python (in part because of limitations of the underlying graphics interface that plotnine uses). This does somewhat limit the customization we can do with python, but for the most part we can still get the same basic information back out.
+:::
+
+Up to this point, we've used the same position information - date for the y axis, median sale price for the y axis. Let's switch that up a bit so that we can play with some transformations on the x and y axis and add variable mappings to a continuous variable.
+
+::: panel-tabset
+### R {.unnumbered}
+
+```{r}
+ggplot(data = housingsub, aes(x = listings, y = sales, color = city)) +
+  geom_point(alpha = .15) + # Make points transparent
+  geom_smooth(method = "loess") +
+  xlab("Number of Listings") + ylab("Number of Sales") +
+  ggtitle("Texas Housing Prices")
+```
+
+The points for Fort Worth are compressed pretty tightly relative to the points for Houston and Dallas. When we get this type of difference, it is sometimes common to use a log transformation[^10-graphics-1]. Here, I have transformed both the x and y axis, since the number of sales seems to be proportional to the number of listings.
+
+```{r}
+ggplot(data = housingsub, aes(x = listings, y = sales, color = city)) +
+  geom_point(alpha = .15) + # Make points transparent
+  geom_smooth(method = "loess") +
+  scale_x_log10() +
+  scale_y_log10() +
+  xlab("Number of Listings") + ylab("Number of Sales") +
+  ggtitle("Texas Housing Prices")
+```
+
+### Python {.unnumbered}
+
+```{python, warning = F}
+( # This is used to group lines together in python
+ggplot(housingsub, aes(x = "listings", y = "sales", color = "city"))
++ geom_point(alpha = .15) # Make points transparent
++ geom_smooth(method = "loess")
++ scale_x_log10()
++ scale_y_log10()
++ xlab("Date") + ylab("Median Home Price")
++ ggtitle("Texas Housing Prices")
+)
+```
+
+Notice that the gridlines included in python by default are different than those in ggplot2 by default (personally, I vastly prefer the python version - it makes it obvious that we're using a log scale).
+:::
+
+For the next demonstration, let's look at just Houston's data. We can examine the inventory's relationship to the number of sales by looking at the inventory-date relationship in x and y, and mapping the size or color of the point to number of sales.
+
+::: panel-tabset
+### R {.unnumbered}
+
+```{r}
+houston <- dplyr::filter(txhousing, city == "Houston")
+
+ggplot(data = houston, aes(x = date, y = inventory, size = sales)) +
+  geom_point(shape = 1) +
+  xlab("Date") + ylab("Months of Inventory") +
+  guides(size = guide_legend(title = "Number of Sales")) +
+  ggtitle("Houston Housing Data")
+```
+
+```{r}
+ggplot(data = houston, aes(x = date, y = inventory, color = sales)) +
+  geom_point() +
+  xlab("Date") + ylab("Months of Inventory") +
+  guides(size = guide_colorbar(title = "Number of Sales")) +
+  ggtitle("Houston Housing Data")
+```
+
+Which is easier to read?
+
+What happens if we move the variables around and map date to the point color?
+
+```{r}
+ggplot(data = houston, aes(x = sales, y = inventory, color = date)) +
+  geom_point() +
+  xlab("Number of Sales") + ylab("Months of Inventory") +
+  guides(size = guide_colorbar(title = "Date")) +
+  ggtitle("Houston Housing Data")
+```
+
+Is that easier or harder to read?
+
+### Python {.unnumbered}
+
+```{python, warning = F}
+houston = txhousing[txhousing.city=="Houston"]
+
+(
+  ggplot(houston, aes(x = "date", y = "inventory", size = "sales"))
+  + geom_point(shape = 'o', fill = 'none')
+  + xlab("Date") + ylab("Median Home Price")
+  + guides(size = guide_legend(title = "Number of Sales"))
+  + ggtitle("Houston Housing Data")
+)
+```
+
+In plotnine, we have to use [matplotlib marker syntax](https://matplotlib.org/stable/api/markers_api.html).
+
+```{python, warning = F}
+
+(
+  ggplot(houston, aes(x = "date", y = "inventory", color = "sales"))
+  + geom_point()
+  + xlab("Date") + ylab("Median Home Price")
+  + guides(size = guide_legend(title = "Number of Sales"))
+  + ggtitle("Houston Housing Data")
+)
+```
+
+Plotnine also defaults to different color schemes than ggplot2 -- just something to know if you want the plot to be exactly the same. Personally, I prefer the viridis color scheme (what plotnine uses) to the ggplot2 defaults.
+
+What happens if we move the variables around and map date to the point color?
+
+```{python, warning = F}
+(
+ggplot(houston, aes(x = "sales", y = "inventory", color = "date"))
+  + geom_point()
+  + xlab("Number of Sales") + ylab("Months of Inventory")
+  + guides(size = guide_colorbar(title = "Date"))
+  + ggtitle("Houston Housing Data")
+  + theme(subplots_adjust={'right': 0.75})
+)
+```
+
+Is that easier or harder to read?
+:::
+:::
+
+[^10-graphics-1]: This isn't necessarily a good thing, but you should know how to do it. The jury is still very much out on whether log transformations make data easier to read and understand
+
+### What type of chart to use?
+
+It can be hard to know what type of chart to use for a particular type of data. I recommend figuring out what you want to show first, and then thinking about how to show that data with an appropriate plot type. Consider the following factors:
+
+-   What type of variable is x? Categorical? Continuous? Discrete?
+
+-   What type of variable is y?
+
+-   How many observations do I have for each x/y variable?
+
+-   Are there any important moderating variables?
+
+-   Do I have data that might be best shown in small multiples? E.g. a categorical moderating variable and a lot of data, where the categorical variable might be important for showing different features of the data?
+
+Once you've thought through this, take a look through catalogues like the [R Graph Gallery](https://r-graph-gallery.com/) to see what visualizations match your data and use-case.
+
+## Creating Good Charts
+
+A chart is good if it allows the user to draw useful conclusions that are supported by data. Obviously, this definition depends on the purpose of the chart - a simple EDA chart is going to have a different purpose than a chart showing e.g. the predicted path of a hurricane, which people will use to make decisions about whether or not to evacuate.
+
+Unfortunately, while our visual system is *amazing*, it is not always as accurate as the computers we use to render graphics. We have physical limits in the number of colors we can perceive, our short term memory, attention, and our ability to accurately read information off of charts in different forms.
+
+### Perceptual and Cognitive Factors
+
+#### Color
+
+Our eyes are optimized for perceiving the yellow/green region of the color spectrum. Why? Well, our sun produces yellow light, and plants tend to be green. It's pretty important to be able to distinguish different shades of green (evolutionarily speaking) because it impacts your ability to feed yourself. There aren't that many purple or blue predators, so there is less selection pressure to improve perception of that part of the visual spectrum.
+
+![Sensitivity of the human eye to different wavelengths of visual light (Image from Wikimedia commons)](https://upload.wikimedia.org/wikipedia/commons/c/c0/Eyesensitivity.svg)
+
+Not everyone perceives color in the same way. Some individuals are [colorblind or color deficient](https://en.wikipedia.org/wiki/Color_blindness). We have 3 cones used for color detection, as well as cells called rods which detect light intensity (brightness/darkness). In about 5% of the population (10% of XY individuals, \<1% of XX individuals), one or more of the cones may be missing or malformed, leading to color blindness - a reduced ability to perceive different shades. The rods, however, function normally in almost all of the population, which means that light/dark contrasts are extremely safe, while contrasts based on the hue of the color are problematic in some instances.
+
+<details>
+
+<summary>You can take a test designed to screen for colorblindness [here](https://www.eyeque.com/color-blind-test/test/)</summary>
+
+Your monitor may affect how you score on these tests - I am colorblind, but on some monitors, I can pass the test, and on some, I perform worse than normal. A different test is available [here](https://www.color-blindness.com/farnsworth-munsell-100-hue-color-vision-test/).
+
+![My results on one monitor](../images/wrangling/colorblindness_monitorLG.png) ![My results on a monitor that has a different tech and supposedly higher color fidelity](../images/wrangling/colorblindness_monitorDell.png)
+
+![The Munsell colorblindness test](../images/wrangling/colorblind_munsell.png) In reality, I know that I have issues with perceiving some shades of red, green, and brown. I have particular trouble with very dark or very light colors, especially when they are close to grey or brown.
+
+</details>
+
+
+In addition to colorblindness, there are other factors than the actual color value which are important in how we experience color, such as context.
+
+```{r checker-shadow-fig, fig.cap = "The color constancy illusion. The squares marked A and B are actually the same color", out.width = "45%", echo = F}
+knitr::include_graphics("../images/wrangling/CheckerShadow.png")
+knitr::include_graphics("../images/wrangling/CheckerShadow2.png")
+```
+
+Our brains are extremely dependent on context and make excellent use of the large amounts of experience we have with the real world. As a result, we implicitly "remove" the effect of things like shadows as we make sense of the input to the visual system. This can result in odd things, like the checkerboard and shadow shown above - because we're correcting for the shadow, B looks lighter than A even though when the context is removed they are clearly the same shade.
+
+**Implications and Guidelines**
+
+-   Do not use rainbow color gradient schemes - because of the unequal perception of different wavelengths, these schemes are *misleading* - the color distance does not match the perceptual distance.
+-   Avoid any scheme that uses green-yellow-red signaling if you have a target audience that may include colorblind people.
+-   To "colorblind-proof" a graphic, you can use a couple of strategies:
+    -   double encoding - where you use color, use another aesthetic (line type, shape) as well to help your colorblind readers out
+    -   If you can print your chart out in black and white and still read it, it will be safe for colorblind users. This is the only foolproof way to do it!
+    -   If you are using a color gradient, use a monochromatic color scheme where possible. This is perceived as light -\> dark by colorblind people, so it will be correctly perceived no matter what color you use.
+    -   If you have a bidirectional scale (e.g. showing positive and negative values), the safest scheme to use is purple - white - orange. In any color scale that is multi-hue, it is important to transition through white, instead of from one color to another directly.
+-   Be conscious of what certain colors "mean"
+    -   Leveraging common associations can make it easier to read a color scale and remember what it stands for (e.g. blue for cold, orange/red for hot is a natural scale, red = Republican and blue = Democrat in the US, white -\> blue gradients for showing rainfall totals)
+    -   Some colors can can provoke emotional responses that may not be desirable.[^10-graphics-2]
+    -   It is also important to be conscious of the social baggage that certain color schemes may have - the pink/blue color scheme often used to denote gender can be unnecessarily polarizing, and it may be easier to use a colder color (blue or purple) for men and a warmer color (yellow, orange, lighter green) for women[^10-graphics-3].
+-   There are packages such as `RColorBrewer` and `dichromat` that have color palettes which are aesthetically pleasing, and, in many cases, colorblind friendly (`dichromat` is better for that than `RColorBrewer`). You can also take a look at other [ways to find nice color palettes](https://lisacharlotterost.de/2016/04/22/Colors-for-DataVis/).
+
+[^10-graphics-2]: When the COVID-19 outbreak started, many maps were using white-to-red gradients to show case counts and/or deaths. [The emotional association between red and blood, danger, and death may have caused people to become more frightened than what was reasonable given the available information.](https://www.esri.com/arcgis-blog/products/product/mapping/mapping-coronavirus-responsibly/)
+
+[^10-graphics-3]: Lisa Charlotte Rost. [What to consider when choosing colors for data visualization.](https://www.dataquest.io/blog/what-to-consider-when-choosing-colors-for-data-visualization/)
+
+#### Short Term Memory
+
+We have a limited amount of memory that we can instantaneously utilize. This mental space, called **short-term memory**, holds information for active use, but only for a limited amount of time.
+
+::: tryitout
+##### Try it out! {.unnumbered}
+
+<details>
+
+<summary>Click here, read the information, and then click to hide it.</summary>
+
+1 4 2 2 3 9 8 0 7 8
+
+</details>
+
+<details>
+
+<summary>Wait a few seconds, then expand this section</summary>
+
+What was the third number?
+
+</details>
+:::
+
+Without rehearsing the information (repeating it over and over to yourself), the try it out task may have been challenging. Short term memory has a capacity of between 3 and 9 "bits" of information.
+
+In charts and graphs, short term memory is important because we need to be able to associate information from e.g. a key, legend, or caption with information plotted on the graph. As a result, if you try to plot more than \~6 categories of information, your reader will have to shift between the legend and the graph repeatedly, increasing the amount of cognitive labor required to digest the information in the chart.
+
+Where possible, try to keep your legends to 6 or 7 characteristics.
+
+**Implications and Guidelines**
+
+-   Limit the number of categories in your legends to minimize the short term memory demands on your reader.
+
+    -   When using continuous color schemes, you may want to use a log scale to better show differences in value across orders of magnitude.
+
+-   Use colors and symbols which have implicit meaning to minimize the need to refer to the legend.
+
+-   Add annotations on the plot, where possible, to reduce the need to re-read captions.
+
+#### Grouping and Sense-making
+
+Imposing order on visual chaos.
+
+::: panel-tabset
+##### Ambiguous Images {.unnumbered}
+
+What does the figure below look like to you?
+
+![Is it a rabbit, or a duck?](../images/wrangling/DuckRabbitIllusion.jpg)
+
+When faced with ambiguity, our brains use available context and past experience to try to tip the balance between alternate interpretations of an image. When there is still some ambiguity, many times the brain will just decide to interpret an image as one of the possible options.
+
+##### Illusory Contours {.unnumbered}
+
+![Consider this image - what do you see?](../images/wrangling/IllusoryContour.png)
+
+Did you see something like "3 circles, a triangle with a black outline, and a white triangle on top of that"? In reality, there are 3 angles and 3 pac-man shapes. But, it's much more likely that we're seeing layers of information, where some of the information is obscured (like the "mouth" of the pac-man circles, or the middle segment of each side of the triangle). This explanation is simpler, and more consistent with our experience.
+
+##### Figure/Ground {.unnumbered}
+
+Now, look at the logo for the Pittsburgh Zoo.
+
+<img src="https://upload.wikimedia.org/wikipedia/en/5/5b/Pittsburgh_Zoo_%26_PPG_Aquarium_logo.svg" alt="What do you see?" width="80%"/>
+
+Do you see the gorilla and lionness? Or do you see a tree? Here, we're not entirely sure which part of the image is the figure and which is the background.
+:::
+
+The ambiguous figures shown above demonstrate that our brains are actively imposing order upon the visual stimuli we encounter. There are some heuristics for how this order is applied which impact our perception of statistical graphs.
+
+The catchphrase of Gestalt psychology is
+
+> The whole is greater than the sum of the parts
+
+That is, what we perceive and the meaning we derive from the visual scene is more than the individual components of that visual scene.
+
+![The Gestalt Heuristics help us to impose order on ambiguous visual stimuli](../images/wrangling/gestalt.jpg)
+
+You can read about the gestalt rules [here](https://en.wikipedia.org/wiki/Principles_of_grouping), but they are also demonstrated in the figure above.
+
+In graphics, we can leverage the gestalt principles of grouping to create order and meaning. If we color points by another variable, we are creating groups of similar points which assist with the perception of groups instead of individual observations. If we add a trend line, we create the perception that the points are moving "with" the line (in most cases), or occasionally, that the line is dividing up two groups of points. Depending on what features of the data you wish to emphasize, you might choose different aesthetics mappings, facet variables, and factor orders.
+
+::: ex
+Suppose I want to emphasize the change in the murder rate between 1980 and 2010.
+
+I could use a bar chart (showing only the first 4 states alphabetically for space)
+
+::: panel-tabset
+##### R {.unnumbered}
+
+```{r chart-emphasis-bar-r, fig.height = 4, fig.width = 6}
+fbiwide <- read.csv("https://github.com/srvanderplas/Stat151/raw/main/data/fbiwide.csv")
+library(dplyr)
+
+fbiwide %>%
+  filter(Year %in% c(1980, 2010)) %>%
+  filter(State %in% c("Alabama", "Alaska", "Arizona", "Arkansas")) %>%
+  ggplot(aes(x = State, y = Murder/Population*100000, fill = factor(Year))) +
+  geom_col(position = "dodge") +
+  coord_flip() +
+  ylab("Murders per 100,000 residents")
+```
+
+##### Python {.unnumbered}
+
+```{python chart-emphasis-bar-py, fig.height = 4, fig.width = 6}
+import pandas as pd
+fbiwide = r.fbiwide
+fbiwide = fbiwide.assign(YearFactor = pd.Categorical(fbiwide.Year))
+fbiwide = fbiwide.assign(Murder100k = fbiwide.Murder/fbiwide.Population * 100000)
+
+yr1980_2010 = fbiwide[fbiwide.Year.isin([1980,2010])]
+subdata = yr1980_2010[yr1980_2010.State.isin(["Alabama", "Alaska", "Arizona", "Arkansas"])]
+
+(
+ggplot(subdata, aes(x = "State", y = "Murder100k", fill = "YearFactor")) +
+  geom_col(stat='identity', position = "dodge") +
+  coord_flip() +
+  ylab("Murders per 100,000 residents")
+)
+```
+:::
+
+Or, I could use a line chart
+
+::: panel-tabset
+##### R {.unnumbered}
+
+```{r chart-emphasis-line-r, fig.height = 4, fig.width = 6}
+fbiwide %>%
+  filter(Year %in% c(1980, 2010)) %>%
+  ggplot(aes(x = Year, y = Murder/Population*100000, group = State)) +
+  geom_line() +
+  ylab("Murders per 100,000 residents")
+```
+
+##### Python {.unnumbered}
+
+```{python chart-emphasis-line-py, fig.height = 4, fig.width = 6}
+(
+ggplot(yr1980_2010, aes(x = "Year", y = "Murder100k", group = "State")) +
+  geom_line() +
+  ylab("Murders per 100,000 residents")
+)
+```
+:::
+
+Or, I could use a box plot
+
+::: panel-tabset
+##### R {.unnumbered}
+
+```{r chart-emphasis-boxplot-r, fig.height = 4, fig.width = 6}
+fbiwide %>%
+  filter(Year %in% c(1980, 2010)) %>%
+  ggplot(aes(x = factor(Year), y = Murder/Population*100000)) +
+  geom_boxplot() +
+  ylab("Murders per 100,000 residents")
+```
+
+##### Python {.unnumbered}
+
+```{python chart-emphasis-boxplot-py, fig.height = 4, fig.width = 6}
+
+(
+ggplot(yr1980_2010, aes(x = "YearFactor", y = "Murder100k")) +
+  geom_boxplot() +
+  ylab("Murders per 100,000 residents")
+)
+
+```
+:::
+
+Which one best demonstrates that in every state and region, the murder rate decreased?
+
+The line segment plot connects related observations (from the same state) but allows you to assess similarity between the lines (e.g. almost all states have negative slope). The same information goes into the creation of the other two plots, but the bar chart is extremely cluttered, and the boxplot doesn't allow you to connect single state observations over time. So while you can see an aggregate relationship (overall, the average number of murders in each state per 100k residents decreased) you can't see the individual relationships.
+:::
+
+The aesthetic mappings and choices you make when creating plots have a huge impact on the conclusions that you (and others) can easily make when examining those plots.[^10-graphics-4]
+
+[^10-graphics-4]: See [this paper](https://doi.org/10.1080/10618600.2016.1209116) for more details. This is the last chapter of my dissertation, for what it's worth. It was a lot of fun. (no sarcasm, seriously, it was fun!)
+
+### General guidelines for accuracy
+
+There are certain tasks which are easier for us relative to other, similar tasks.
+
+```{r accuracy-guidelines, echo = F, fig.cap = "Which of the lines is the longest? Shortest? It is much easier to determine the relative length of the line when the ends are aligned. In fact, the line lengths are the same in both panels."}
+segs <- bind_rows(
+  tibble(x = 1:3, y1 = 0, y2 = c(2.5, 2.75, 2.25), type = "Aligned scale"),
+  tibble(x = 1:3, y1 = c(1, 0, .5), y2 = c(1, 0, .5) + c(2.5, 2.75, 2.25), type = "Unaligned scale")
+)
+ggplot(segs, aes(x = x, xend = x, y = y1, yend = y2)) +
+  geom_segment() + facet_wrap(~type) + coord_fixed() +
+  theme(axis.text = element_blank(), axis.ticks = element_blank(), axis.title = element_blank())
+```
+
+When making judgments corresponding to numerical quantities, there is an order of tasks from easiest (1) to hardest (6), with equivalent tasks at the same level.[^10-graphics-5]
+
+[^10-graphics-5]: See [this paper](https://www.jstor.org/stable/2288400) for the major source of this ranking; other follow-up studies have been integrated, but the essential order is largely unchanged.
+
+1.  Position (common scale)
+2.  Position (non-aligned scale)
+3.  Length, Direction, Angle, Slope
+4.  Area
+5.  Volume, Density, Curvature
+6.  Shading, Color Saturation, Color Hue
+
+If we compare a pie chart and a stacked bar chart, the bar chart asks readers to make judgements of position on a non-aligned scale, while a pie chart asks readers to assess angle. This is one reason why pie charts are not preferable -- they make it harder on the reader, and as a result we are less accurate when reading information from pie charts.
+
+When creating a chart, it is helpful to consider which variables you want to show, and how accurate reader perception needs to be to get useful information from the chart. In many cases, less is more - you can easily overload someone, which may keep them from engaging with your chart at all. Variables which require the reader to notice small changes should be shown on position scales (x, y) rather than using color, alpha blending, etc.
+
+There is also a general increase in dimensionality from 1-3 to 4 (2d) to 5 (3d). In general, showing information in 3 dimensions when 2 will suffice is misleading - the addition of that extra dimension causes an increase in chart area allocated to the item that is disproportionate to the actual area.
+
+```{r disproportionate-pixels, include = F}
+imgs <- list.files("../images/wrangling", "3d_pie", full.names = T)
+tmp <- tibble(portfolio = c("Cash", "Bond", "Stocks"),
+              pct = c(.05, .35, .5),
+              img = purrr::map(imgs, ~png::readPNG(source = .)),
+              px = purrr::map_dbl(img, ~sum(.[,,4] != 0 ))) %>%
+  mutate(px_pct = px/sum(px))
+tmp
+```
+
+![Here, the area and height both encode the same variable, leading to a far disproportionate number of pixels allocated to "Stocks" than "Cash Investments" (h/t Junk Charts). In the first chart, stocks make up 60% of the portfolio, but have 67.5% of the pixels; Cash makes up 5% of the portfolio but those investments represent 2.3% of the pixels.](../images/wrangling/3d_graphs_suck.jpg).
+
+[Ted ED: How to spot a misleading graph - Lea Gaslowitz](https://youtu.be/E91bGT9BjYk)
+
+[Business Insider: The Worst Graphs Ever](https://www.businessinsider.com/the-27-worst-charts-of-all-time-2013-6)
+
+Extra dimensions and other annotations are sometimes called "chartjunk" and should only be used if they contribute to the overall numerical accuracy of the chart (e.g. they should not just be for decoration).
+
+## References {.unnumbered .learn-more}
+
+### R graphics {.unnumbered}
+
+-   [ggplot2 cheat sheet](https://github.com/rstudio/cheatsheets/raw/master/data-visualization-2.1.pdf)
+-   [ggplot2 aesthetics cheat sheet](https://drive.google.com/file/d/1Dvul1p6TYH6gWJzZRwpE0YX1dO0hDF-b/view) - aesthetic mapping one page cheatsheet
+-   [ggplot2 reference guide](https://ggplot2.tidyverse.org/reference/)
+-   [R graph cookbook](https://r-graphics.org/)
+-   [Data Visualization in R](https://ramnathv.github.io/pycon2014-r/visualize/base_graphics.html) (\@ramnathv)
+
+### Python graphics {.unnumbered}
+
+-   [Plotnine documentation](https://plotnine.readthedocs.io/en/stable/)
+-   [Matplotlib documentation](https://matplotlib.org/) - Matplotlib is the base that plotnine uses to replicate ggplot2 functionality
+    -   [Visualization with Matplotlib](https://www.oreilly.com/library/view/python-data-science/9781491912126/ch04.html) chapter of Python Data Science
+-   [Scientific Visualization with Python](https://github.com/rougier/scientific-visualization-book/blob/master/pdf/book.pdf)
