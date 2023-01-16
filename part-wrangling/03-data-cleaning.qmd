@@ -1,6 +1,5 @@
 # Data Cleaning {#sec-data-cleaning}
 
-
 ##{{< fa bullseye >}} Objectives 
 
 - Identify required sequence of steps for data cleaning
@@ -12,7 +11,9 @@
 
 ## Introduction
 
-In this section, we're going start learning how to work with data. Generally speaking, data doesn't come in a form suitable for analysis^[See [this twitter thread](https://twitter.com/JennyBryan/status/722954354198597632) for some horror stories. [This tweet](https://twitter.com/jengolbeck/status/1153064308483510272?s=20) is also pretty good at showing one type of messiness.] - you have to clean it up, create the variables you care about, get rid of those you don't care about, and so on. 
+In this section, we're going start learning how to work with data. 
+Generally speaking, data doesn't come in a form suitable for analysis^[See [this twitter thread](https://twitter.com/JennyBryan/status/722954354198597632) for some horror stories. 
+[This tweet](https://twitter.com/jengolbeck/status/1153064308483510272?s=20) is also pretty good at showing one type of messiness.] - you have to clean it up, create the variables you care about, get rid of those you don't care about, and so on. 
 
 Some people call the process of cleaning and organizing your data "data wrangling", which is a fantastic way to think about chasing down all of the issues in the data. 
 
@@ -70,7 +71,9 @@ We'll get more into how to work with different "messy" data configurations in @s
 
 ## Filter: Subset rows
 
-Filter allows us to work with a subset of a larger data frame, keeping only the rows we're interested in. We provide one or more logical conditions, and only those rows which meet the logical conditions are returned from `filter()`. Note that unless we store the result from `filter()` in the original object, we don't change the original. 
+Filter allows us to work with a subset of a larger data frame, keeping only the rows we're interested in. 
+We provide one or more logical conditions, and only those rows which meet the logical conditions are returned from `filter()`. 
+Note that unless we store the result from `filter()` in the original object, we don't change the original. 
 
 ![dplyr filter() by Allison Horst](https://github.com/allisonhorst/stats-illustrations/raw/main/rstats-artwork/dplyr_filter.jpg){fig-alt="Cartoon showing three fuzzy monsters either selecting or crossing out rows of a data table. If the type of animal in the table is “otter” and the site is “bay”, a monster is drawing a purple rectangle around the row. If those conditions are not met, another monster is putting a line through the column indicating it will be excluded. Stylized text reads “dplyr::filter() - keep rows that satisfy your conditions.”"}
 
@@ -85,7 +88,8 @@ In the interests of demonstrating the process on the same data, I've exported th
 ::: panel-tabset
 #### R {-}
 
-This data set is included in the `dplyr` package, so we load that package and then use the `data()` function to load dataset into memory. The loading isn't complete until we actually use the dataset though... so let's print the first few rows. 
+This data set is included in the `dplyr` package, so we load that package and then use the `data()` function to load dataset into memory. 
+The loading isn't complete until we actually use the dataset though... so let's print the first few rows. 
 
 ```{r starwars-data-explore}
 library(dplyr)
@@ -108,13 +112,16 @@ skim(starwars)
 :::
 
 
-Once the data is set up, filtering the data (selecting certain **rows**) is actually very simple. Of course, we've talked about how to use logical indexing before in @sec-indexing, but here we'll focus on using specific functions to perform the same operation. 
+Once the data is set up, filtering the data (selecting certain **rows**) is actually very simple. 
+Of course, we've talked about how to use logical indexing before in @sec-indexing, but here we'll focus on using specific functions to perform the same operation. 
 
 ::: panel-tabset
 
 #### R: `dplyr`
 
-The dplyr verb for selecting rows is `filter`. `filter` takes a set of one or more logical conditions, using bare column names and logical operators. Each provided condition is combined using AND.
+The dplyr verb for selecting rows is `filter`. 
+`filter` takes a set of one or more logical conditions, using bare column names and logical operators. 
+Each provided condition is combined using AND.
 
 ```{r r-filter-data}
 # Get only the people
@@ -158,7 +165,8 @@ Notice that with `subset`, you have to use `&` to join two logical statements; i
 
 ### Common Row Selection Tasks
 
-In `dplyr`, there are a few helper functions which may be useful when constructing filter statements. In base R or python, these tasks are still important, and so I'll do my best to show you easy ways to handle each task in each language.
+In `dplyr`, there are a few helper functions which may be useful when constructing filter statements.
+In base R or python, these tasks are still important, and so I'll do my best to show you easy ways to handle each task in each language.
 
 ::: {.callout-demo collapse="true"}
 #### Filtering by row number
@@ -167,7 +175,8 @@ In `dplyr`, there are a few helper functions which may be useful when constructi
 
 ##### R: `dplyr` {-}
 
-`row_number()` is a helper function that is only used inside of another dplyr function (e.g. filter). You might want to keep only even rows, or only the first 10 rows in a table. 
+`row_number()` is a helper function that is only used inside of another dplyr function (e.g. filter). 
+You might want to keep only even rows, or only the first 10 rows in a table. 
 
 ```{r filter-poke}
 poke <- read_csv("https://github.com/srvanderplas/datasets/raw/main/clean/pokemon_gen_1-9.csv")
@@ -178,7 +187,9 @@ filter(poke, (row_number() %% 2 == 0))
 
 ##### Python {-}
 
-In python, the easiest way to accomplish filtering by row number is by using `.iloc`. But, up until now, we've only talked about how Python creates slices using `start:(end+1)` notation. There is an additional option with slicing - `start:(end+1):by`. So if we want to get only even rows, we can use the index `[::2]`, which will give us row 0, 2, 4, 6, ... through the end of the dataset, because we didn't specify the start and end portions of the slice. 
+In python, the easiest way to accomplish filtering by row number is by using `.iloc`. 
+But, up until now, we've only talked about how Python creates slices using `start:(end+1)` notation. 
+There is an additional option with slicing - `start:(end+1):by`. So if we want to get only even rows, we can use the index `[::2]`, which will give us row 0, 2, 4, 6, ... through the end of the dataset, because we didn't specify the start and end portions of the slice. 
 
 Because Python is 0-indexed, using `::2` will give us the opposite set of rows from that returned in R, which is 1-indexed.
 
@@ -192,7 +203,8 @@ If we want to get only odd rows, we can use the index `[1::2]`, which will start
 
 ##### Base R {-}
 
-In base R, we'd use `seq()` to create an index vector instead of using the approach in filter and evaluating the whole index for a logical condition. Alternately, we can use `subset`, which requires a logical condition, and use `1:nrow(poke)` to create an index which we then use for deciding whether each row is even or odd.
+In base R, we'd use `seq()` to create an index vector instead of using the approach in filter and evaluating the whole index for a logical condition. 
+Alternately, we can use `subset`, which requires a logical condition, and use `1:nrow(poke)` to create an index which we then use for deciding whether each row is even or odd.
 
 ```{r base-r-filter}
 poke[seq(1, nrow(poke), 2),]
@@ -200,7 +212,8 @@ poke[seq(1, nrow(poke), 2),]
 subset(poke, 1:nrow(poke) %% 2 == 0)
 ```
 
-This is less fun than using `dplyr` because you have to repeat the name of the dataset at least twice using base R, but either option will get you where you're going. The real power of `dplyr` is in the collection of the full set of verbs with a consistent user interface; nothing done in `dplyr` is so special that it can't be done in base R as well.
+This is less fun than using `dplyr` because you have to repeat the name of the dataset at least twice using base R, but either option will get you where you're going. 
+The real power of `dplyr` is in the collection of the full set of verbs with a consistent user interface; nothing done in `dplyr` is so special that it can't be done in base R as well.
 
 :::
 :::
@@ -214,7 +227,9 @@ Another common operation is to sort your data frame by the values of one or more
 
 ##### R: `dplyr` {-}
 
-`arrange()` is a dplyr verb for sort rows in the table by one or more variables. It is often used with a helper function, `desc()`, which reverses the order of a variable, sorting it in descending order. Multiple arguments can be passed to `arrange` to sort the data frame by multiple columns hierarchically; each column can be modified with `desc()` separately.
+`arrange()` is a dplyr verb for sort rows in the table by one or more variables. 
+It is often used with a helper function, `desc()`, which reverses the order of a variable, sorting it in descending order. 
+Multiple arguments can be passed to `arrange` to sort the data frame by multiple columns hierarchically; each column can be modified with `desc()` separately.
 
 ```{r arrange-poke-dplyr}
 arrange(poke, desc(total))
@@ -231,7 +246,8 @@ poke.sort_values(['total'], ascending = False)
 
 ##### Base R {-}
 
-The `sort()` function in R can be used to sort a vector, but when sorting a data frame we usually want to use the `order()` function instead. This is because `sort()` orders the values of the argument directly, where `order()` returns a sorted index.
+The `sort()` function in R can be used to sort a vector, but when sorting a data frame we usually want to use the `order()` function instead. 
+This is because `sort()` orders the values of the argument directly, where `order()` returns a sorted index.
 
 ```{r base-r-sort}
 x <- c(32, 25, 98, 45, 31, 19, 5)
@@ -255,7 +271,9 @@ poke[order(poke$total, decreasing = T),]
 
 ##### R: `dplyr` {-}
 
-`slice_max()` will keep the top values of a specified variable. This is like a filter statement, but it's a shortcut built to handle a common task. You could write a filter statement that would do this, but it would take a few more lines of code.
+`slice_max()` will keep the top values of a specified variable. 
+This is like a filter statement, but it's a shortcut built to handle a common task. 
+You could write a filter statement that would do this, but it would take a few more lines of code.
 
 ```{r slice-poke-arrange}
 slice_max(poke, order_by = total, n = 5)
@@ -316,7 +334,8 @@ poke[order(poke$total, decreasing = T)[1:round(nrow(poke)*.01)],]
 
 #### Problem {-}
 
-Using the Pokemon data, can you create a new data frame that has only water type Pokemon? Can you write a filter statement that looks for any Pokemon which has water type for either type1 or type2?
+Using the Pokemon data, can you create a new data frame that has only water type Pokemon? 
+Can you write a filter statement that looks for any Pokemon which has water type for either type1 or type2?
 
 #### R: `dplyr` {-}
 
@@ -357,7 +376,8 @@ subset(poke, type_1 == "Water" | type_2 == "Water")
 
 ## Select: Pick columns
 
-Sometimes, we don't want to work with a set of 50 variables when we're only interested in 5. When that happens, we might be able to pick the variables we want by index (e.g. `df[, c(1, 3, 5)]`), but this can get tedious.
+Sometimes, we don't want to work with a set of 50 variables when we're only interested in 5.
+When that happens, we might be able to pick the variables we want by index (e.g. `df[, c(1, 3, 5)]`), but this can get tedious.
 
 ::: panel-tabset
 
@@ -367,7 +387,8 @@ In `dplyr`, the function to pick a few columns is `select()`. The syntax from th
 
 > select(.data, ...)
 
-So as with just about every other tidyverse function, the first argument in a select statement is the data. After that, though, you can put just about anything that R can interpret. `...` means something along the lines of "put in any additional arguments that make sense in context or might be passed on to other functions".
+So as with just about every other tidyverse function, the first argument in a select statement is the data. 
+After that, though, you can put just about anything that R can interpret. `...` means something along the lines of "put in any additional arguments that make sense in context or might be passed on to other functions".
 
 So what can go in there?
 
@@ -376,7 +397,8 @@ So what can go in there?
 #### Ways to select variables in `dplyr`
 
 First, dplyr aims to work with standard R syntax, making it intuitive (and also, making it work with variable names instead of just variable indices).^[It accomplishes this through the magic of quasiquotation, which we will not cover in this course because it's basically witchcraft.]  
-Most `dplyr` commands work with "bare" variable names - you don't need to put the variable name in quotes to reference it. There are a few exceptions to this rule, but they're very explicitly exceptions.
+Most `dplyr` commands work with "bare" variable names - you don't need to put the variable name in quotes to reference it. 
+There are a few exceptions to this rule, but they're very explicitly exceptions.
 
 - `var3:var5`: `select(df, var3:var5)` will give you a data frame with columns var3, anything between var3 and var 5, and var5
 
@@ -384,7 +406,8 @@ Most `dplyr` commands work with "bare" variable names - you don't need to put th
     - `(<set of vars 1>) & (<set of vars 2>)` will give you any variables that are in both set 1 and set 2. `(<set of vars 1>) | (<set of vars 2>)` will give you any variables that are in either set 1 or set 2.
     - `c()` combines sets of variables.
 
-`dplyr` also defines a lot of variable selection "helpers" that can be used inside `select()` statements. These statements work with bare column names (so you don't have to put quotes around the column names when you use them).
+`dplyr` also defines a lot of variable selection "helpers" that can be used inside `select()` statements. 
+These statements work with bare column names (so you don't have to put quotes around the column names when you use them).
 
 - `everything()` matches all variables
 - `last_col()` matches the last variable. `last_col(offset = n)` selects the n-th to last variable.
@@ -393,7 +416,8 @@ Most `dplyr` commands work with "bare" variable names - you don't need to put th
 - `matches(regex)` takes a regular expression as an argument and returns all columns matching that expression.
 - `num_range(prefix, range)` selects any columns that start with prefix and have numbers matching the provided numerical range.
 
-There are also selectors that deal with character vectors. These can be useful if you have a list of important variables and want to just keep those variables.
+There are also selectors that deal with character vectors. 
+These can be useful if you have a list of important variables and want to just keep those variables.
 
 - `all_of(char)` matches all variable names in the character vector `char`. If one of the variables doesn't exist, this will return an error.
 - `any_of(char)` matches the contents of the character vector `char`, but does not throw an error if the variable doesn't exist in the data set.
@@ -415,7 +439,7 @@ str(flights)
 We'll start out with the `nycflights13` package, which contains information on all flights that left a NYC airport to destinations in the US, Puerto Rico, and the US Virgin Islands.
 
 ::: {.callout-tip}
-You might want to try out your EDA skills from the previous module to see what you can find out about the dataset, before seeing how `select()` works.
+You might want to try out your EDA (Exploratory Data Analysis) skills to see what you can find out about the dataset, before seeing how `select()` works.
 :::
 
 
@@ -483,7 +507,9 @@ flights.loc[:,x]
 
 In Python, there are certain shorthands called "list comprehensions" [@pythonfoundationDataStructures2022] that can perform similar functions to e.g. the `matches()` function in dplyr. 
 
-Suppose we want to get all columns containing the word 'time'. We could iterate through the list of columns (`flights.columns`) and add the column name any time we detect the word 'time' within. That is essentially what the following code does: 
+Suppose we want to get all columns containing the word 'time'. 
+We could iterate through the list of columns (`flights.columns`) and add the column name any time we detect the word 'time' within. 
+That is essentially what the following code does: 
 
 ```{python select-cols-helpers-py}
 # This gets all columns that contain time
@@ -491,7 +517,10 @@ timecols = [col for col in flights.columns if 'time' in col]
 timecols
 ```
 
-`for col in flights.columns` iterates through the list of columns; `if 'time' in col` detects the presence of the word 'time', and the `col` out front adds the time-containing `col` to the array of columns to keep.
+Explaining the code:
+- `for col in flights.columns` iterates through the list of columns, storing each column name in the variable `col`
+- `if 'time' in col` detects the presence of the word 'time' in the column name stored in `col`
+- the `col` out front adds the column name in the variable `col` to the array of columns to keep
 
 #### Selecting columns in Python
 
@@ -520,9 +549,11 @@ flights.loc[:,selcols_fixed]
 
 ### Base R {-}
 
-In base R, we typically select columns by name or index directly. This is nowhere near as convenient, of course, but there are little shorthand ways to replicate the functionality of e.g. `matches` in `dplyr`.
+In base R, we typically select columns by name or index directly. 
+This is nowhere near as convenient, of course, but there are little shorthand ways to replicate the functionality of e.g. `matches` in `dplyr`.
 
-`grepl` is a shorthand function for `grep`, which searches for a pattern in a vector of strings. `grepl` returns a logical vector indicating whether the pattern (`"dep"`, in this case) was found in the vector (`names(flights)`, in this case). 
+`grepl` is a shorthand function for `grep`, which searches for a pattern in a vector of strings.
+`grepl` returns a logical vector indicating whether the pattern (`"dep"`, in this case) was found in the vector (`names(flights)`, in this case). 
 
 ```{r select-departure-base-r}
 
@@ -548,7 +579,8 @@ This is less convenient than `dplyr::everything` in part because it depends on u
 ::: {.callout-note callout-collapse=true}
 ### dplyr::relocate
 
-Another handy `dplyr` function is `relocate`; while you definitely can do this operation in many, many different ways, it may be simpler to do it using relocate. But, I'm covering relocate here mostly because it also comes with this amazing cartoon illustration.
+Another handy `dplyr` function is `relocate`; while you definitely can do this operation in many, many different ways, it may be simpler to do it using relocate. 
+But, I'm covering relocate here mostly because it also comes with this amazing cartoon illustration.
 
 ![relocate lets you rearrange columns (by Allison Horst)](../images/wrangling/dplyr_relocate.png){fig-alt="Cartoon of fuzzy monsters moving columns around in fork lifts, while one supervises. Stylized text reads “dplyr::relocate() - move columns around! Default: move to FRONT , or move to .before or .after a specified column."}
 
@@ -565,13 +597,16 @@ flights %>% relocate(where(is.numeric))
 
 ## Mutate: Add and transform variables
 
-Up to this point, we've been primarily focusing on how to decrease the dimensionality of our dataset in various ways. But frequently, we also need to add columns for derived measures (e.g. BMI from weight and height information), change units, and replace missing or erroneous observations. The tidyverse verb for this is `mutate`, but in base R and python, we'll simply use assignment to add columns to our data frames.
+Up to this point, we've been primarily focusing on how to decrease the dimensionality of our dataset in various ways. 
+But frequently, we also need to add columns for derived measures (e.g. BMI from weight and height information), change units, and replace missing or erroneous observations. 
+The tidyverse verb for this is `mutate`, but in base R and python, we'll simply use assignment to add columns to our data frames.
 
 
 ![Mutate (by Allison Horst)](../images/wrangling/dplyr_mutate.png){fig-alt="Cartoon of cute fuzzy monsters dressed up as different X-men characters, working together to add a new column to an existing data frame. Stylized title text reads “dplyr::mutate - add columns, keep existing.”"}
 
-Lets use the pokemon data to demonstrate. 
-Some pokemon have a single "type", which is usually elemental, such as Water, Ice, Fire, etc., but others have two. Let's add a column that indicates how many types a pokemon has.
+We'll use the Pokemon data to demonstrate. 
+Some Pokemon have a single "type", which is usually elemental, such as Water, Ice, Fire, etc., but others have two. 
+Let's add a column that indicates how many types a pokemon has.
 
 ::: panel-tabset
 
