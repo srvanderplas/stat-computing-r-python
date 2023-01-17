@@ -1,1 +1,787 @@
 # Joining Data {#sec-data-join}
+
+
+The final essential data tidying and transformation skill you need to acquire is joining tables. 
+It is common for data to be organized **relationally** - that is, certain aspects of the data apply to a group of data points, and certain aspects apply to individual data points, and there are relationships between the individual data points and the groups of data points that have to be documented.
+
+::: callout-demo
+## Relational Data Example: Primary School Records
+
+Each individual has certain characteristics:
+
+-   full_name
+-   gender
+-   birth date
+-   ID number
+
+Each student has specific characteristics:
+
+-   ID number
+-   parent name
+-   parent phone number
+-   medical information
+-   Class ID
+
+Teachers may also have additional information:
+
+-   ID number
+-   Class ID
+-   employment start date
+-   education level
+-   compensation level
+
+There are also fields like grades, which occur for each student in each class, but multiple times a year.
+
+-   ID number
+-   Student ID
+-   Class ID
+-   year
+-   term number
+-   subject
+-   grade
+-   comment
+
+And for teachers, there are employment records on a yearly basis
+
+-   ID number
+-   Employee ID
+-   year
+-   rating
+-   comment
+
+But each class also has characteristics that describe the whole class as a unit:
+
+-   location ID
+-   class ID
+-   meeting time
+-   grade level
+
+Each location might also have some logistical information attached:
+
+-   location ID
+-   room number
+-   building
+-   number of seats
+-   AV equipment
+
+![Primary School Database Schema](images/data-transformations/PrimarySchoolExample.png) <!-- <a href="https://dbdiagram.io/embed/5ef387179ea313663b3b048e">Link to diagram of the database</a> -->
+
+We could go on, but you can see that this data is hierarchical, but also relational: - each class has both a teacher and a set of students - each class is held in a specific location that has certain equipment
+
+It would be silly to store this information in a single table (though it probably can be done) because all of the teacher information would be duplicated for each student in each class; all of the student's individual info would be duplicated for each grade. There would be a lot of wasted storage space and the tables would be much more confusing as well.
+
+But, relational data also means we have to put in some work when we have a question that requires information from multiple tables. Suppose we want a list of all of the birthdays in a certain class. We would need to take the following steps:
+
+-   get the Class ID
+-   get any teachers that are assigned that Class ID - specifically, get their ID number
+-   get any students that are assigned that Class ID - specifically, get their ID number
+-   append the results from teachers and students so that there is a list of all individuals in the class
+-   look through the "individual data" table to find any individuals with matching ID numbers, and keep those individuals' birth days.
+
+It is helpful to develop the ability to lay out a set of tables in a schema (because often, database schemas aren't well documented) and mentally map out the steps that you need to combine tables to get the information you want from the information you have.
+:::
+
+Table joins allow us to combine information stored in different tables, keeping certain information (the stuff we need) while discarding extraneous information.
+
+**keys** are values that are found in multiple tables that can be used to connect the tables. A key (or set of keys) uniquely identify an observation. A **primary key** identifies an observation in its own table. A **foreign key** identifies an observation in another table.
+
+There are 3 main types of table joins:
+
+-   Mutating joins, which add columns from one table to matching rows in another table\
+    Ex: adding birthday to the table of all individuals in a class
+
+-   Filtering joins, which remove rows from a table based on whether or not there is a matching row in another table (but the columns in the original table don't change)\
+    Ex: finding all teachers or students who have class ClassID
+
+-   Set operations, which treat observations as set elements (e.g. union, intersection, etc.)\
+    Ex: taking the union of all student and teacher IDs to get a list of individual IDs
+
+### Animating Joins
+
+Note: all of these animations are stolen from https://github.com/gadenbuie/tidyexplain.
+
+If we start with two tables, x and y,
+
+![](https://raw.githubusercontent.com/gadenbuie/tidyexplain/master/images/static/png/original-dfs.png)
+
+#### Mutating Joins
+
+We're primarily going to focus on mutating joins, as filtering joins can be accomplished by ... filtering ... rather than by table joins.
+
+::: panel-tabset
+##### Inner Join
+
+We can do a filtering `inner_join` to keep only rows which are in both tables (but we keep all columns)
+
+![](https://raw.githubusercontent.com/gadenbuie/tidyexplain/master/images/inner-join.gif)
+
+##### Left Join
+
+But what if we want to keep all of the rows in x? We would do a `left_join`
+
+![](https://raw.githubusercontent.com/gadenbuie/tidyexplain/master/images/left-join.gif)
+
+If there are multiple matches in the y table, though, we might have to duplicate rows in x. This is still a left join, just a more complicated one.
+
+![](https://raw.githubusercontent.com/gadenbuie/tidyexplain/master/images/left-join-extra.gif)
+
+##### Right Join
+
+If we wanted to keep all of the rows in y, we would do a `right_join`:
+
+![](https://raw.githubusercontent.com/gadenbuie/tidyexplain/master/images/right-join.gif)
+
+(or, we could do a left join with y and x, but... either way is fine).
+
+##### Full Join
+
+And finally, if we want to keep all of the rows, we'd do a `full_join`:
+
+![](https://raw.githubusercontent.com/gadenbuie/tidyexplain/master/images/full-join.gif)
+
+You can find other animations corresponding to filtering joins and set operations [here](https://raw.githubusercontent.com/gadenbuie/tidyexplain/master/images/full-join.gif)
+:::
+
+Every join has a "left side" and a "right side" - so in `some_join(A, B)`, A is the left side, B is the right side.
+
+Joins are differentiated based on how they treat the rows and columns of each side. In mutating joins, the columns from both sides are always kept.
+
++-------+-----------+------------+----------+
+|       | Left Side | Right Side |          |
++-------+-----------+------------+----------+
+|       | Join Type | Rows       | Cols     |
++-------+-----------+------------+----------+
+| inner | matching  | all        | matching |
++-------+-----------+------------+----------+
+| left  | all       | all        | matching |
++-------+-----------+------------+----------+
+| right | matching  | all        | all      |
++-------+-----------+------------+----------+
+| outer | all       | all        | all      |
++-------+-----------+------------+----------+
+
+::: callout-caution
+##### Demonstration: Mutating Joins
+
+::: panel-tabset
+###### R
+
+```{r mutating-joins1-r}
+t1 <- tibble(x = c("A", "B", "D"), y = c(1, 2, 3))
+t2 <- tibble(x = c("B", "C", "D"), z = c(2, 4, 5))
+```
+
+An inner join keeps only rows that exist on both sides, but keeps all columns.
+
+```{r mutating-joins2-r}
+inner_join(t1, t2)
+```
+
+A left join keeps all of the rows in the left side, and adds any columns from the right side that match rows on the left. Rows on the left that don't match get filled in with NAs.
+
+```{r mutating-joins3-r}
+left_join(t1, t2)
+left_join(t2, t1)
+```
+
+There is a similar construct called a right join that is equivalent to flipping the arguments in a left join. The row and column ordering may be different, but all of the same values will be there
+
+```{r mutating-joins4-r}
+right_join(t1, t2)
+right_join(t2, t1)
+```
+
+An outer join keeps everything - all rows, all columns. In dplyr, it's known as a `full_join`.
+
+```{r mutating-joins5-r}
+full_join(t1, t2)
+```
+
+###### Python
+
+```{python mutating-joins1-py}
+# This works because I already created the objects in R
+# and have the reticulate package loaded
+t1 = r.t1
+t2 = r.t2
+```
+
+An inner join keeps only rows that exist on both sides, but keeps all columns.
+
+```{python mutating-joins2-py}
+import pandas as pd
+pd.merge(t1, t2, on = ['x']) # inner is default
+```
+
+A left join keeps all of the rows in the left side, and adds any columns from the right side that match rows on the left. Rows on the left that don't match get filled in with NAs.
+
+```{python mutating-joins3-py}
+pd.merge(t1, t2, on  = 'x', how = 'left')
+pd.merge(t2, t1, on = 'x', how = 'left')
+```
+
+There is a similar construct called a right join that is equivalent to flipping the arguments in a left join. The row and column ordering may be different, but all of the same values will be there
+
+```{python mutating-joins4-py}
+pd.merge(t1, t2, on  = 'x', how = 'right')
+pd.merge(t2, t1, on = 'x', how = 'right')
+```
+
+An outer join keeps everything - all rows, all columns.
+
+```{python mutating-joins5-py}
+pd.merge(t1, t2, on  = 'x', how = 'outer')
+```
+:::
+:::
+
+I've included the other types of joins as animations because the animations are so useful for understanding the concept, but feel free to read through more information on these types of joins [here](https://r4ds.had.co.nz/relational-data.html#filtering-joins) [@r4ds].
+
+#### Filtering Joins
+
+::: panel-tabset
+##### Semi Join
+
+A semi join keeps matching rows from x and y, discarding all other rows and keeping only the columns from x.
+
+![](https://github.com/gadenbuie/tidyexplain/raw/main/images/semi-join.gif)
+
+##### Anti Join
+
+An anti-join keeps rows in x that do not have a match in y, and only keeps columns in x.
+
+![](https://github.com/gadenbuie/tidyexplain/raw/main/images/anti-join.gif)
+:::
+
+#### Set Operations
+
+::: panel-tabset
+##### Union
+
+All unique rows from x and y
+
+![](https://github.com/gadenbuie/tidyexplain/raw/main/images/union.gif)
+
+Or, all unique rows from y and x.
+
+![](https://github.com/gadenbuie/tidyexplain/raw/main/images/union-rev.gif)
+
+##### Union All
+
+All rows from x and y, keeping duplicate rows.
+
+![](https://github.com/gadenbuie/tidyexplain/raw/main/images/union-all.gif)
+
+##### Intersection
+
+Common rows in x and y, keeping only unique rows.
+
+![](https://github.com/gadenbuie/tidyexplain/raw/main/images/intersect.gif)
+
+##### Set Difference
+
+All rows from x which are not also rows in y, keeping unique rows.
+
+![](https://github.com/gadenbuie/tidyexplain/raw/main/images/setdiff.gif)
+
+![](https://github.com/gadenbuie/tidyexplain/raw/main/images/setdiff-rev.gif)
+:::
+
+### Example: NYC Flights
+
+We'll use the `nycflights13` package in R. Unfortunately, the data in this package are too big for me to reasonably store on github (you'll recall, I had to use a small sample the last time we played with this data...). So before we can work with this data, we have to load the tables into Python.
+
+::: panel-tabset
+#### Loading Data: R
+
+```{r dataset-setup-demo}
+if (!"nycflights13" %in% installed.packages()) install.packages("nycflights13")
+if (!"dbplyr" %in% installed.packages()) install.packages("dbplyr")
+library(nycflights13)
+library(dbplyr)
+library(reticulate)
+# This saves the database to a sqlite db file.
+# You will want to specify your own path
+nycflights13_sqlite(path = "data/")
+```
+
+#### Python
+
+```{python, eval = F}
+import sqlite3
+con = sqlite3.connect("data/nycflights13.sqlite")
+cur = con.cursor()
+```
+:::
+
+[I am not going to cover SQLITE commands here - I'm just going to use the bare minimum, but you can find a very nice [introduction to python and SQLITE at datacarpentry](https://datacarpentry.org/python-ecology-lesson/09-working-with-sql/index.html) [@thecarpentriesAccessingSQLiteDatabases2022], and an [introduction to the dbplyr package](https://cran.r-project.org/web/packages/dbplyr/vignettes/dbplyr.html) for a nice R-SQLITE interface.]{.aside}
+
+::: callout-tip
+#### Try it out: Understanding Relational Data
+
+::: panel-tabset
+##### Problem
+
+Sketch a diagram of which fields in each table match fields in other tables. Use the [data documentation](https://nycflights13.tidyverse.org/reference/index.html) to help you with your sketch.
+
+##### Solution
+
+![The nycflights database schema](https://d33wubrfki0l68.cloudfront.net/245292d1ea724f6c3fd8a92063dcd7bfb9758d02/5751b/diagrams/relational-nycflights.png) [here](https://r4ds.had.co.nz/relational-data.html#nycflights13-relational) (scroll down a bit).
+:::
+:::
+
+::: callout-caution
+#### Mutating Joins
+
+These functions may become a bit more interesting once we try them out on real-world data. Using the flights data, let's determine whether there's a relationship between the age of a plane and its delays.
+
+::: panel-tabset
+##### R
+
+```{r flights-delay-age-R}
+#| fig-width: 6
+#| fig-height: 6
+#| out-width: "45%"
+#| fig-show: 'hold'
+#| layout-ncol: 2
+library(nycflights13)
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+
+plane_age <- planes %>%
+  mutate(age = 2013 - year) %>% # This gets us away from having to deal with 2 different year columns
+  select(tailnum, age, manufacturer)
+
+delays_by_plane <- flights %>%
+  select(dep_delay, arr_delay, carrier, flight, tailnum)
+
+# We only need to keep delays that have a plane age, so use inner join
+res <- inner_join(delays_by_plane, plane_age, by = "tailnum")
+
+ggplot(res, aes(x = age, y = dep_delay, group = cut_width(age, 1, center = 0))) + 
+  geom_boxplot() + 
+  ylab("Departure Delay (min)") + 
+  xlab("Plane age") + 
+  coord_cartesian(ylim = c(-20, 50))
+
+ggplot(res, aes(x = age, y = arr_delay, group = cut_width(age, 1, center = 0))) + 
+  geom_boxplot() + 
+  ylab("Arrival Delay (min)") + 
+  xlab("Plane age") + 
+  coord_cartesian(ylim = c(-30, 60))
+```
+
+It doesn't look like there's much of a relationship to me. If anything, older planes are more likely to be early, but I suspect there aren't enough of them to make that conclusion (`r sprintf("%.2f%%", mean(plane_age$age > 25, na.rm = T) * 100)` are over 25 years old, and `r sprintf("%.2f%%", mean(plane_age$age > 40, na.rm = T) * 100)` are over 40 years old).
+
+##### Python
+
+```{python flights-delay-age-py}
+#| fig-width: 6
+#| fig-height: 6
+#| out-width: "45%"
+#| fig-show: 'hold'
+#| layout-ncol: 2
+import pandas as pd
+import sqlite3
+from plotnine import *
+con = sqlite3.connect("data/nycflights13.sqlite")
+
+planes = pd.read_sql_query("SELECT * FROM planes", con)
+flights = pd.read_sql_query("SELECT * FROM flights", con)
+
+con.close() # close connection
+
+plane_age = planes.assign(age = lambda df: 2013 - df.year).loc[:,["tailnum", "age", "manufacturer"]]
+
+delays_by_plane = flights.loc[:, ["dep_delay", "arr_delay", "carrier", "flight", "tailnum"]]
+
+res = pd.merge(plane_age, delays_by_plane, on = "tailnum", how = "inner")
+
+# cut_width isn't in plotnine, so we have to create the bins ourselves first
+age_bins = [i for i in range(2 + int(max(res.age)))] 
+res = res.assign(agebin = pd.cut(res.age, age_bins))
+# res.agebin.value_counts(dropna=False)
+
+(
+ggplot(res, aes(x = "age", y = "dep_delay", group = "agebin")) + 
+  geom_boxplot() + 
+  ylab("Departure Delay (min)") + 
+  xlab("Plane age") + 
+  coord_cartesian(ylim = [-20, 50])
+)
+
+(
+ggplot(res, aes(x = "age", y = "arr_delay", group = "agebin")) + 
+  geom_boxplot() + 
+  ylab("Arrival Delay (min)") + 
+  xlab("Plane age") + 
+  coord_cartesian(ylim = (-30, 60))
+)
+```
+:::
+:::
+
+## Example: Gas Prices Data
+
+The US Energy Information Administration tracks gasoline prices, with data available on a weekly level since late 1994. You can go to [this site](https://www.eia.gov/dnav/pet/hist/LeafHandler.ashx?n=pet&s=emm_epm0u_pte_nus_dpg&f=w) to see a nice graph of gas prices, along with a corresponding table. <!-- (or you can look at the screenshot below, as I don't really trust that the site design will stay the same...) -->
+
+![Gas prices at US EIA site](images/data-transformations/06_gas_prices_screenshot.png)
+
+The data in the table is structured in a fairly easy to read form: each row is a month; each week in the month is a set of two columns: one for the date, one for the average gas price. While this data is definitely not tidy, it is readable.
+
+But looking at the chart at the top of the page, it's not clear how we might get that chart from the data in the format it's presented here: to get a chart like that, we would need a table where each row was a single date, and there were columns for date and price. That would be tidy form data, and so we have to get from the wide, human-readable form into the long, tidier form that we can graph.
+
+::: callout-tip
+### Try it out: Manual Formatting in Excel
+
+::: panel-tabset
+#### Problem
+
+An excel spreadsheet of the data as downloaded in July 2022 is available [here](data/gas_prices.xlsx). Can you manually format the data (or even just the first year or two of data) into a long, skinny format?
+
+What steps are involved?
+
+#### Solution
+
+1.  Copy the year-month column, creating one vertical copy for every set of columns
+
+2.  Move each block of two columns down to the corresponding vertical copy
+
+3.  Delete empty rows
+
+4.  Format dates
+
+5.  Delete empty columns
+
+#### Video
+
+::: {#fig-excel-demo-video}
+<iframe width="736" height="414" src="https://www.youtube.com/embed/n70eAKJmzRo" title="06 Tidying Gas Price Data (in Excel)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+
+</iframe>
+
+Here is a video of me doing most of the cleaning steps - I skipped out on cleaning up the dates because Excel is miserable for working with dates.
+:::
+:::
+:::
+
+### Setup: Gas Price Data Cleaning
+
+For the next two examples, we'll read the data in from the HTML table online and work to make it something we could e.g. plot. Before we can start cleaning, we have to read in the data:
+
+```{r web-gas-data-reading}
+library(rvest) # scrape data from the web
+library(xml2) # parse xml data
+url <- "https://www.eia.gov/dnav/pet/hist/LeafHandler.ashx?n=pet&s=emm_epm0u_pte_nus_dpg&f=w"
+
+htmldoc <- read_html(url)
+gas_prices_html <- html_table(htmldoc, fill = T, trim = T)[[5]]
+```
+
+```{r}
+#| echo: false
+knitr::kable(head(gas_prices_html), caption = "First 6 rows of gas prices data as read into R")
+```
+
+```{python web-gas-data-reading-py}
+import pandas as pd
+gas_prices_html = pd.read_html("https://www.eia.gov/dnav/pet/hist/LeafHandler.ashx?n=pet&s=emm_epm0u_pte_nus_dpg&f=w")[4]
+```
+
+```{python}
+#| results: "asis"
+#| echo: false
+
+import pandas as pd
+import numpy as np
+from IPython.display import Markdown
+from tabulate import tabulate
+print(tabulate(gas_prices_html.head(), headers = list(gas_prices_html.columns)))
+```
+
+::: callout-tip
+### Try it out: Formatting with Pivot Operations
+
+::: panel-tabset
+#### Problem
+
+Can you format the data in a long-skinny format for plotting using pivot operations without any database merges?
+
+Write out a list of steps, and for each step, sketch out what the data frame should look like.
+
+How do your steps compare to the steps you used for the manual approach?
+
+#### Sketch
+
+![Steps to work through the gas prices data cleaning process](images/data-transformations/gas-prices-steps.png){fig-alt="Step 1: set row names to be more descriptive and remove header row. Step 2: Remove empty columns and pivot to long form, with dates and values in the same column and a description column that indicates what type of data is in the value column. Step 3: separate the week and variable information into different columns, discarding the week label. Step 4: pivot wider, so that date and value information are each in a single column. Step 5: remove rows with no values and create a yyyy-mm-dd format date. Step 6: Convert date and value into appropriate types (date, numeric)."}
+
+#### R solution
+
+```{r tidyverse-gas-data}
+library(tidyverse)
+library(magrittr) # pipe friendly operations
+
+# Function to clean up column names
+# Written as an extra function because it makes the code a lot cleaner
+fix_gas_names <- function(x) {
+  # Add extra header row information
+  paste(x, c("", rep(c("Date", "Value"), times = 5))) %>%
+    # trim leading/trailing spaces
+    str_trim() %>%
+    # replace characters in names that aren't ok for variables in R
+    make.names()
+}
+
+# Clean up the table a bit
+gas_prices_raw <- gas_prices_html %>%
+  set_names(fix_gas_names(names(.))) %>%
+  # remove first row that is really an extra header row
+  filter(Year.Month != "Year-Month") %>%
+  # get rid of empty rows
+  filter(Year.Month != "")
+
+head(gas_prices_raw)
+```
+
+```{r gas-prices-solution-step2-r}
+gas_prices_raw <- select(gas_prices_raw, -c(X, Date))
+gas_prices_long <- pivot_longer(gas_prices_raw, -Year.Month,
+                                names_to = "variable", values_to = "value")
+
+head(gas_prices_long)
+```
+
+```{r gas-prices-solution-step3-r}
+gas_prices_sep <- separate(gas_prices_long, variable, into = c("extra", "week", "variable"), sep = "\\.") %>%
+  select(-extra)
+head(gas_prices_sep)
+```
+
+```{r gas-prices-solution-step4-r}
+gas_prices_wide <- pivot_wider(gas_prices_sep, id_cols = c("Year.Month", "week"), names_from = variable, values_from = value)
+head(gas_prices_wide)
+```
+
+```{r gas-prices-solution-step5-r}
+gas_prices_date <- gas_prices_wide %>%
+  filter(nchar(Value) > 0) %>%
+  separate(Year.Month, into = c("Year", "Month"), sep = "-") %>%
+  mutate(Date = paste(Year, Date, sep = "/")) %>%
+  select(-c(1:3))
+  
+head(gas_prices_date)
+```
+
+```{r gas-prices-solution-step6-r}
+library(lubridate)
+gas_prices <- gas_prices_date %>%
+  mutate(Date = ymd(Date),
+         Price.per.gallon = as.numeric(Value)) %>%
+  select(-Value)
+  
+head(gas_prices)
+```
+
+#### Python solution
+
+```{python gas-data-py}
+import numpy as np
+
+def fix_gas_names(x):
+  xx = pd.Series(x)
+  # add extra stuff to x
+  y = ["Date", "Value"]*5
+  y = ["", *y, "", ""]
+  names = xx + ' ' + y
+  names = names.str.strip()
+  names = names.str.replace(" ", ".")
+  return list(names)
+
+
+gas_prices_raw = gas_prices_html
+
+# What do column names look like?
+gas_prices_raw.columns # Multi-Index 
+# (https://stackoverflow.com/questions/25189575/pandas-dataframe-select-columns-in-multiindex)
+
+colnames = fix_gas_names(gas_prices_raw.columns.get_level_values(0))
+colnames
+
+# Set new column names
+gas_prices_raw.columns = colnames
+
+# Drop any rows with NaN in Year-Month
+gas_prices_raw = gas_prices_raw.dropna(axis = 0, subset = ['Year-Month'])
+
+gas_prices_raw.head()
+```
+
+```{python gas-prices-solution-step2-py}
+gas_prices_raw = gas_prices_raw.iloc[:,0:11]
+gas_prices_long = pd.melt(gas_prices_raw, id_vars = 'Year-Month', var_name = 'variable')
+gas_prices_long.head()
+```
+
+```{python gas-prices-solution-step3-py}
+gas_prices_sep = gas_prices_long
+gas_prices_sep[["extra", "week", "variable"]] = gas_prices_sep.variable.str.split(r'\.', expand = True)
+gas_prices_sep = gas_prices_sep.drop('extra', axis = 1)
+gas_prices_sep.head()
+```
+
+```{python gas-prices-solution-step4-py}
+gas_prices_wide = pd.pivot(gas_prices_sep, index=['Year-Month', 'week'], columns = 'variable', values = 'value')
+gas_prices_wide.head()
+```
+
+```{python gas-prices-solution-step5-py}
+gas_prices_date = gas_prices_wide.dropna(axis = 0, subset = ['Date', 'Value']).reset_index()
+gas_prices_date[['Year', 'Month']] = gas_prices_date['Year-Month'].str.split(r'-', expand = True)
+gas_prices_date['Date'] = gas_prices_date.Year + '/' + gas_prices_date.Date
+gas_prices_date['Date'] = pd.to_datetime(gas_prices_date.Date)
+
+gas_prices_date.head()
+```
+
+```{python gas-prices-solution-step6-py}
+
+gas_prices = gas_prices_date.drop(["Year-Month", "Year", "Month", "week"], axis = 1)
+gas_prices['Price_per_gallon'] = gas_prices.Value
+gas_prices = gas_prices.drop("Value", axis = 1)
+gas_prices.head()
+```
+:::
+:::
+
+::: callout-tip
+### Try it out: Formatting using merge + pivot
+
+::: panel-tabset
+#### Problem
+
+Can you format the data in a long-skinny format for plotting using pivot operations using wide-to-long pivot operation(s) and a database merge?
+
+You can start with the `gas_prices_raw`
+
+Write out a list of steps, and for each step, sketch out what the data frame should look like.
+
+How do your steps compare to the steps you used for the manual approach?
+
+#### Sketch
+
+![](images/data-transformations/gas-prices-steps2.png) \#### R solution
+
+We'll use the same data cleaning function as before:
+
+```{r gas-data-pivot-merge-r}
+# Clean up the table a bit
+gas_prices_raw <- gas_prices_html %>%
+  set_names(fix_gas_names(names(.))) %>%
+  # remove first row that is really an extra header row
+  filter(Year.Month != "Year-Month") %>%
+  # get rid of empty rows
+  filter(Year.Month != "")
+
+head(gas_prices_raw)
+```
+
+```{r gas-data-pivot-merge-2-r}
+gas_prices_dates <- select(gas_prices_raw, 1, matches("Week.[1-5].Date"))
+gas_prices_values <- select(gas_prices_raw, 1, matches("Week.[1-5].Value"))
+
+head(gas_prices_dates)
+head(gas_prices_values)
+```
+
+```{r gas-data-pivot-merge-3-r}
+gas_prices_dates_long <- pivot_longer(gas_prices_dates, -Year.Month, names_to = "week", values_to = "month_day")
+gas_prices_values_long <- pivot_longer(gas_prices_values, -Year.Month, names_to = "week", values_to = "price_per_gallon")
+
+head(gas_prices_dates_long)
+head(gas_prices_values_long)
+```
+
+```{r gas-data-pivot-merge-4-r}
+library(lubridate) # ymd function
+gas_prices_dates_long_clean <- gas_prices_dates_long %>%
+  filter(month_day != "") %>%
+  mutate(week = str_extract(week, "\\d") %>% as.numeric()) %>%
+  mutate(year = str_extract(Year.Month, "\\d{4}"), 
+         Date = paste(year, month_day, sep = "/") %>% 
+           ymd())
+
+gas_prices_values_long_clean <- gas_prices_values_long %>%
+  filter(price_per_gallon != "") %>%
+  mutate(week = str_extract(week, "\\d") %>% as.numeric()) %>%
+  mutate(price_per_gallon = as.numeric(price_per_gallon))
+
+head(gas_prices_dates_long_clean)
+head(gas_prices_values_long_clean)
+```
+
+```{r gas-data-pivot-merge-5-r}
+gas_prices <- left_join(gas_prices_dates_long_clean, gas_prices_values_long_clean, by = c("Year.Month", "week")) %>%
+  select(Date, price_per_gallon)
+head(gas_prices)
+```
+
+#### Python solution
+
+```{python gas-data-pivot-merge-1-py}
+gas_prices_raw = gas_prices_html
+
+# What do column names look like?
+gas_prices_raw.columns # Multi-Index 
+# (https://stackoverflow.com/questions/25189575/pandas-dataframe-select-columns-in-multiindex)
+
+colnames = fix_gas_names(gas_prices_raw.columns.get_level_values(0))
+colnames
+
+# Set new column names
+gas_prices_raw.columns = colnames
+
+# Drop any rows with NaN in Year-Month
+gas_prices_raw = gas_prices_raw.dropna(axis = 0, subset = ['Year-Month'])
+
+gas_prices_raw.head()
+```
+
+```{python gas-data-pivot-merge-2-py}
+gas_prices_dates = gas_prices_raw.filter(regex = 'Year-Month|Week.\d.Date', axis = 1)
+gas_prices_values = gas_prices_raw.filter(regex = 'Year-Month|Week.\d.Value', axis = 1)
+
+gas_prices_dates.head()
+gas_prices_values.head()
+```
+
+```{python gas-data-pivot-merge-3-py}
+gas_prices_dates_long = pd.melt(gas_prices_dates, id_vars = 'Year-Month', var_name = "week", value_name = "month_day")
+gas_prices_values_long = pd.melt(gas_prices_values, id_vars = 'Year-Month', var_name = "week", value_name = "price_per_gallon")
+
+gas_prices_dates_long.head()
+gas_prices_values_long.head()
+```
+
+```{python gas-data-pivot-merge-4-py}
+gas_prices_dates_long_clean = gas_prices_dates_long.dropna(subset = "month_day")
+gas_prices_dates_long_clean["week"] = gas_prices_dates_long_clean.week.str.extract(r"Week.(\d).Date")
+gas_prices_dates_long_clean["year"] = gas_prices_dates_long_clean["Year-Month"].str.extract(r"(\d{4})-[A-z]{3}")
+gas_prices_dates_long_clean["Date"] = gas_prices_dates_long_clean.year + "/" + gas_prices_dates_long_clean.month_day
+gas_prices_dates_long_clean["Date"] = pd.to_datetime(gas_prices_dates_long_clean.Date)
+
+
+gas_prices_values_long_clean = gas_prices_values_long.dropna(subset = "price_per_gallon")
+gas_prices_values_long_clean["week"] = gas_prices_values_long_clean.week.str.extract(r"Week.(\d).Value")
+gas_prices_values_long_clean["price_per_gallon"] = pd.to_numeric(gas_prices_values_long_clean["price_per_gallon"])
+
+gas_prices_dates_long_clean.head()
+gas_prices_values_long_clean.head()
+```
+
+```{python gas-data-pivot-merge-5-py}
+gas_prices = pd.merge(gas_prices_dates_long_clean, gas_prices_values_long_clean, on = ("Year-Month", "week")).loc[:,["Date", "price_per_gallon"]]
+gas_prices.head()
+```
+:::
+:::
