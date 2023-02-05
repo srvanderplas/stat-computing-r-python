@@ -1,0 +1,94 @@
+# Data Visualization {#sec-data-vis}
+
+##  {{< fa bullseye >}} Objectives
+
+- Create charts designed to communicate specific aspects of the data
+- Describe charts using the grammar of graphics 
+- Create layered graphics that highlight multiple aspects of the data
+- Evaluate existing charts and develop new versions that improve accessibility and readability
+
+
+
+There are a lot of different types of charts, and equally many ways  to categorize and describe the different types of charts.
+I'm going to be opinionated on this one - while I will provide code for several different plotting programs, this chapter is organized based on the grammar of graphics specifically. 
+
+::: column-margin
+Visualization and statistical graphics are also my research area, so I'm more passionate about this material, which means there's going to be more to read. 
+Sorry about that in advance. 
+I'll do my best to indicate which content is actually mission-critical and which content you can skip if you're not that interested.
+:::
+
+This is going to be a fairly extensive chapter (in terms of content) because I want you to have a resource to access later, if you need it. 
+That's why I'm showing you code for many different plotting libraries - I want you to be able to make charts in any program you may need to use for your research.
+
+::: {.callout-note collapse=true}
+### Guides and Resources
+
+Graph galleries contain sample code to create many different types of charts. Similar galaries are available in [R](https://r-graph-gallery.com/) and [Python](https://www.python-graph-gallery.com/).
+
+Cheat Sheets:
+
+- [Python](https://www.python-graph-gallery.com/cheat-sheets/)
+- [Ggplot2](https://raw.githubusercontent.com/rstudio/cheatsheets/main/data-visualization.pdf)
+- [Base R](https://r-graph-gallery.com/134-general-plot-parameters-reminder.html)
+
+:::
+
+
+## Why do we create graphics?
+
+> The greatest possibilities of visual display lie in vividness and inescapability of the intended message. A visual display can stop your mental flow in its tracks and make you think. A visual display can force you to notice what you never expected to see. ("Why, that scatter diagram has a hole in the middle!") -- John W. Tukey [@tukeyDataBasedGraphicsVisual1990]
+
+
+Fundamentally, charts are easier to understand than raw data.
+
+When you think about it, data is a pretty artificial thing. 
+We exist in a world of tangible objects, but data are an abstraction - even when the data record information about the tangible world, the measurements are a way of removing the physical and transforming the "real world" into a virtual thing. 
+As a result, it can be hard to wrap our heads around what our data contain. 
+The solution to this is to transform our data back into something that is "tangible" in some way -- if not physical and literally touch-able, at least something we can view and "wrap our heads around".
+
+Consider this thought experiment: You have a simple data set - 2 variables, 500 observations. 
+You want to get a sense of how the variables relate to each other. 
+You can do one of the following options:
+
+1.  Print out the data set
+2.  Create some summary statistics of each variable and perhaps the covariance between the two variables
+3.  Draw a scatter plot of the two variables
+
+Which one would you rather use? Why?
+
+Our brains are very good at processing large amounts of visual information quickly.
+Evolution is good at optimizing for survival, and it's important to be able to survey a field and pick out the tiger that might eat you. 
+When we present information visually, in a format that can leverage our visual processing abilities, we offload some of the work of understanding the data to a chart that organizes it for us. 
+You could argue that printing out the data is a visual presentation, but it requires that you read that data in as text, which we're not nearly as equipped to process quickly (and in parallel).
+
+It's a lot easier to talk to non-experts about complicated statistics using visualizations.
+Moving the discussion from abstract concepts to concrete shapes and lines keeps people who are potentially already math or stat phobic from completely tuning out.
+
+
+## Thinking Critically About Graphics
+
+When we create graphics, we want to enable people to think about **relationships** between the variables in our dataset. 
+
+For this example, let's consider the relationship between different physical measurements of penguins. We'll use the `palmerpenguins` package in R, which is also available in python.
+
+::: callout-tip
+### Load the data
+
+::: panel-tabset
+
+#### R
+```{r, eval = -1}
+install.packages("palmerpenguins")
+library(palmerpenguins)
+```
+
+#### Python
+```{python, eval = -1}
+!pip install palmerpenguins
+from palmerpenguins import load_penguins
+penguins = load_penguins()
+```
+
+:::
+:::
