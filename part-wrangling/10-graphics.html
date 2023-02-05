@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.2.313">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="dcterms.date" content="2023-02-02">
+<meta name="dcterms.date" content="2023-02-05">
 <title>Statistical Computing using R and Python - 16&nbsp; Data Visualization</title>
 <style>
 code{white-space: pre-wrap;}
@@ -362,7 +362,7 @@ div.csl-indent {
     </div>
 <!-- main -->
 <main class="content page-columns page-full" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><div class="quarto-title">
-<h1 class="title"><span id="sec-data-vis" class="quarto-section-identifier d-none d-lg-block"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Data Visualization</span></span></h1>
+<h1 class="title"><span id="sec-data-vis-old" class="quarto-section-identifier d-none d-lg-block"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Data Visualization</span></span></h1>
 </div>
 
 
@@ -373,7 +373,7 @@ div.csl-indent {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">February 2, 2023</p>
+      <p class="date">February 5, 2023</p>
     </div>
   </div>
   
@@ -482,8 +482,11 @@ Example: Generations of Pokemon
 <div id="tabset-1-2" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>poke <span class="op">=</span> pd.read_csv(<span class="st">"https://raw.githubusercontent.com/srvanderplas/datasets/main/clean/pokemon_gen_1-9.csv"</span>)</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>poke[<span class="st">'generation'</span>] <span class="op">=</span> pd.Categorical(poke.gen)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): ModuleNotFoundError: No module named 'pandas'</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>poke <span class="op">=</span> pd.read_csv(<span class="st">"https://raw.githubusercontent.com/srvanderplas/datasets/main/clean/pokemon_gen_1-9.csv"</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'pd' is not defined</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>poke[<span class="st">'generation'</span>] <span class="op">=</span> pd.Categorical(poke.gen)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'pd' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
@@ -560,15 +563,17 @@ Example: Generations of Pokemon
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Create summary of pokemon by type</span></span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>labels <span class="op">=</span> <span class="bu">list</span>(<span class="bu">set</span>(poke.generation)) <span class="co"># create labels by getting unique values</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>sizes <span class="op">=</span> poke.generation.value_counts(normalize<span class="op">=</span><span class="va">True</span>)<span class="op">*</span><span class="dv">100</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Draw the plot</span></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>fig1, ax1 <span class="op">=</span> plt.subplots()</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>ax1.pie(sizes, labels <span class="op">=</span> labels, autopct<span class="op">=</span><span class="st">'</span><span class="sc">%1.1f%%</span><span class="st">'</span>, startangle <span class="op">=</span> <span class="dv">90</span>)</span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="co">## ([&lt;matplotlib.patches.Wedge object at 0x7ffada29d330&gt;, &lt;matplotlib.patches.Wedge object at 0x7ffada29d090&gt;, &lt;matplotlib.patches.Wedge object at 0x7ffada29de10&gt;, &lt;matplotlib.patches.Wedge object at 0x7ffada29e530&gt;, &lt;matplotlib.patches.Wedge object at 0x7ffada29ec50&gt;, &lt;matplotlib.patches.Wedge object at 0x7ffada29f370&gt;, &lt;matplotlib.patches.Wedge object at 0x7ffada29fa90&gt;, &lt;matplotlib.patches.Wedge object at 0x7ffada0e01f0&gt;, &lt;matplotlib.patches.Wedge object at 0x7ffada0e0910&gt;], [Text(-0.6090072830464104, 0.9160295460280905, '1'), Text(-1.0954901625854225, -0.0995052947262842, '2'), Text(-0.6165300405105602, -0.9109833747923434, '3'), Text(0.18481484283490274, -1.0843631651194678, '4'), Text(0.7975738857504167, -0.7575459700697914, '5'), Text(1.0758366105622164, -0.22929367059298023, '6'), Text(1.044469949497543, 0.3450833589099894, '7'), Text(0.7443080435855409, 0.8099416869465756, '8'), Text(0.2667977873990754, 1.0671546001582704, '9')], [Text(-0.3321857907525874, 0.4996524796516857, '18.7%'), Text(-0.5975400886829577, -0.05427561530524592, '15.5%'), Text(-0.3362891130057601, -0.4969000226140054, '12.6%'), Text(0.10080809609176512, -0.5914708173378915, '11.7%'), Text(0.43504030131840904, -0.4132068927653407, '8.8%'), Text(0.5868199693975725, -0.1250692748688983, '8.7%'), Text(0.5697108815441142, 0.18822728667817604, '8.1%'), Text(0.40598620559211324, 0.44178637469813214, '8.1%'), Text(0.14552606585404113, 0.5820843273590565, '7.8%')])</span></span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>ax1.axis(<span class="st">'equal'</span>)</span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="co">## (-1.1114088153158663, 1.1045180850389171, -1.106683057272638, 1.1003182408225065)</span></span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'poke' is not defined</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>sizes <span class="op">=</span> poke.generation.value_counts(normalize<span class="op">=</span><span class="va">True</span>)<span class="op">*</span><span class="dv">100</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Draw the plot</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'poke' is not defined</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>fig1, ax1 <span class="op">=</span> plt.subplots()</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>ax1.pie(sizes, labels <span class="op">=</span> labels, autopct<span class="op">=</span><span class="st">'</span><span class="sc">%1.1f%%</span><span class="st">'</span>, startangle <span class="op">=</span> <span class="dv">90</span>)</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'sizes' is not defined</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>ax1.axis(<span class="st">'equal'</span>)</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="co">## (-0.05500000000000001, 0.05500000000000001, -0.05500000000000001, 0.05500000000000001)</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="10-graphics_files/figure-html/plt-pie-1.png" class="img-fluid" width="672"></p>
 </div>
@@ -580,31 +585,27 @@ Example: Generations of Pokemon
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Create summary of pokemon by type</span></span>
 <span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>labels <span class="op">=</span> <span class="bu">list</span>(<span class="bu">set</span>(poke.generation)) <span class="co"># create labels by getting unique values</span></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>sizes <span class="op">=</span> poke.generation.value_counts()</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>sizes <span class="op">=</span> sizes.sort_index()</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Find location of bottom of the bar for each bar</span></span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>cumulative_sizes <span class="op">=</span> sizes.cumsum() <span class="op">-</span> sizes</span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>width <span class="op">=</span> <span class="dv">1</span></span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> sizes.index:</span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>  ax.bar(<span class="st">"Generation"</span>, sizes[i<span class="op">-</span><span class="dv">1</span>], width, label<span class="op">=</span>i, bottom <span class="op">=</span> cumulative_sizes[i<span class="op">-</span><span class="dv">1</span>])</span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a><span class="co">## &lt;BarContainer object of 1 artists&gt;</span></span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="co">## &lt;BarContainer object of 1 artists&gt;</span></span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a><span class="co">## &lt;BarContainer object of 1 artists&gt;</span></span>
-<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a><span class="co">## &lt;BarContainer object of 1 artists&gt;</span></span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a><span class="co">## &lt;BarContainer object of 1 artists&gt;</span></span>
-<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a><span class="co">## &lt;BarContainer object of 1 artists&gt;</span></span>
-<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a><span class="co">## &lt;BarContainer object of 1 artists&gt;</span></span>
-<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a><span class="co">## &lt;BarContainer object of 1 artists&gt;</span></span>
-<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a><span class="co">## &lt;BarContainer object of 1 artists&gt;</span></span>
-<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">'# Pokemon'</span>)</span>
-<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Pokemon Distribution by Generation'</span>)</span>
-<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
-<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'poke' is not defined</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>sizes <span class="op">=</span> poke.generation.value_counts()</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'poke' is not defined</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>sizes <span class="op">=</span> sizes.sort_index()</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Find location of bottom of the bar for each bar</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'sizes' is not defined</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>cumulative_sizes <span class="op">=</span> sizes.cumsum() <span class="op">-</span> sizes</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'sizes' is not defined</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>width <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> sizes.index:</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>  ax.bar(<span class="st">"Generation"</span>, sizes[i<span class="op">-</span><span class="dv">1</span>], width, label<span class="op">=</span>i, bottom <span class="op">=</span> cumulative_sizes[i<span class="op">-</span><span class="dv">1</span>])</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'sizes' is not defined</span></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">'# Pokemon'</span>)</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>ax.set_title(<span class="st">'Pokemon Distribution by Generation'</span>)</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="10-graphics_files/figure-html/plt-bar-3.png" class="img-fluid" width="672"></p>
 </div>
@@ -614,13 +615,11 @@ Example: Generations of Pokemon
 <p>As of January 2023, pie charts are <a href="https://github.com/has2k1/plotnine/issues/10">still not supported in plotnine</a>. So this demo will fall a bit flat.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnine <span class="im">import</span> <span class="op">*</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>plt.cla() <span class="co"># clear out matplotlib buffer</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>ggplot(poke, aes(x <span class="op">=</span> <span class="st">"1"</span>, fill <span class="op">=</span> <span class="st">"generation"</span>)) <span class="op">+</span> geom_bar(position <span class="op">=</span> <span class="st">"stack"</span>)</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co">## &lt;ggplot: (8794687858442)&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<p><img src="10-graphics_files/figure-html/gg-bar-py-5.png" class="img-fluid" width="614"></p>
-</div>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): ModuleNotFoundError: No module named 'plotnine'</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>plt.cla() <span class="co"># clear out matplotlib buffer</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>ggplot(poke, aes(x <span class="op">=</span> <span class="st">"1"</span>, fill <span class="op">=</span> <span class="st">"generation"</span>)) <span class="op">+</span> geom_bar(position <span class="op">=</span> <span class="st">"stack"</span>)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'ggplot' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <!-- #### Seaborn {-} -->
 <!-- As with Plotnine, seaborn does not support pie charts due to the same underlying issue. The best option is to create a pie chart in matplotlib and use seaborn colors [@zachHowCreatePie2021].  -->
@@ -734,22 +733,18 @@ Note
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">txhousing</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">date</span>, y <span class="op">=</span> <span class="va">median</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="10-graphics_files/figure-html/unnamed-chunk-1-7.png" class="img-fluid" width="2100"></p>
+<p><img src="10-graphics_files/figure-html/unnamed-chunk-1-5.png" class="img-fluid" width="2100"></p>
 </div>
 </div>
 </div>
 <div id="tabset-3-3" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-3-3-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnine <span class="im">import</span> <span class="op">*</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnine.data <span class="im">import</span> txhousing</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>ggplot(txhousing, aes(x <span class="op">=</span> <span class="st">"date"</span>, y <span class="op">=</span> <span class="st">"median"</span>)) <span class="op">+</span> geom_point()</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="co">## &lt;ggplot: (8794687687353)&gt;</span></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="co">## </span></span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="co">## /home/susan/.local/lib/python3.10/site-packages/plotnine/layer.py:411: PlotnineWarning: geom_point : Removed 616 rows containing missing values.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<p><img src="10-graphics_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid" width="614"></p>
-</div>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): ModuleNotFoundError: No module named 'plotnine'</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnine.data <span class="im">import</span> txhousing</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): ModuleNotFoundError: No module named 'plotnine'</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>ggplot(txhousing, aes(x <span class="op">=</span> <span class="st">"date"</span>, y <span class="op">=</span> <span class="st">"median"</span>)) <span class="op">+</span> geom_point()</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'ggplot' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
@@ -784,7 +779,7 @@ Note
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">xlab</a></span><span class="op">(</span><span class="st">"Date"</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ylab</a></span><span class="op">(</span><span class="st">"Median Home Price"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"Texas Housing Prices"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="10-graphics_files/figure-html/unnamed-chunk-3-3.png" class="img-fluid" width="2100"></p>
+<p><img src="10-graphics_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="2100"></p>
 </div>
 </div>
 </div>
@@ -794,12 +789,7 @@ Note
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>geom_point() <span class="op">+\</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>xlab(<span class="st">"Date"</span>) <span class="op">+</span> ylab(<span class="st">"Median Home Price"</span>) <span class="op">+\</span></span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>ggtitle(<span class="st">"Texas Housing Prices"</span>)</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="co">## &lt;ggplot: (8794711102197)&gt;</span></span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="co">## </span></span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="co">## /home/susan/.local/lib/python3.10/site-packages/plotnine/layer.py:411: PlotnineWarning: geom_point : Removed 616 rows containing missing values.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<p><img src="10-graphics_files/figure-html/unnamed-chunk-4-1.png" class="img-fluid" width="614"></p>
-</div>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'ggplot' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
@@ -827,7 +817,7 @@ Note
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">xlab</a></span><span class="op">(</span><span class="st">"Date"</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ylab</a></span><span class="op">(</span><span class="st">"Median Home Price"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"Texas Housing Prices"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="10-graphics_files/figure-html/unnamed-chunk-5-3.png" class="img-fluid" width="2100"></p>
+<p><img src="10-graphics_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" width="2100"></p>
 </div>
 </div>
 <p>We can also use a loess (locally weighted) smooth:</p>
@@ -849,12 +839,7 @@ Note
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>xlab(<span class="st">"Date"</span>) <span class="op">+</span> ylab(<span class="st">"Median Home Price"</span>) <span class="op">+\</span></span>
 <span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>ggtitle(<span class="st">"Texas Housing Prices"</span>)</span>
 <span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="co"># By default, geom_smooth in plotnine has a black line you can't see well</span></span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="co">## &lt;ggplot: (8794675637516)&gt;</span></span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a><span class="co">## </span></span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a><span class="co">## /home/susan/.local/lib/python3.10/site-packages/plotnine/layer.py:411: PlotnineWarning: geom_point : Removed 616 rows containing missing values.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<p><img src="10-graphics_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid" width="614"></p>
-</div>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'ggplot' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We can also use a loess (locally weighted) smooth:</p>
 <div class="cell">
@@ -862,12 +847,7 @@ Note
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>geom_smooth(method <span class="op">=</span> <span class="st">"loess"</span>, color <span class="op">=</span> <span class="st">"blue"</span>) <span class="op">+\</span></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>xlab(<span class="st">"Date"</span>) <span class="op">+</span> ylab(<span class="st">"Median Home Price"</span>) <span class="op">+\</span></span>
 <span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>ggtitle(<span class="st">"Texas Housing Prices"</span>)</span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="co">## &lt;ggplot: (8794675646915)&gt;</span></span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="co">## </span></span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="co">## /home/susan/.local/lib/python3.10/site-packages/plotnine/layer.py:411: PlotnineWarning: geom_point : Removed 616 rows containing missing values.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<p><img src="10-graphics_files/figure-html/unnamed-chunk-8-3.png" class="img-fluid" width="614"></p>
-</div>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'ggplot' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
@@ -896,7 +876,7 @@ Note
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">xlab</a></span><span class="op">(</span><span class="st">"Date"</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ylab</a></span><span class="op">(</span><span class="st">"Median Home Price"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"Texas Housing Prices"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="10-graphics_files/figure-html/unnamed-chunk-9-5.png" class="img-fluid" width="2100"></p>
+<p><img src="10-graphics_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="2100"></p>
 </div>
 </div>
 <p>That’s a really crowded graph! It’s slightly easier if we just take the points away and only show the statistics, but there are still way too many cities to be able to tell what shade matches which city.</p>
@@ -918,12 +898,7 @@ Note
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>geom_smooth(method <span class="op">=</span> <span class="st">"loess"</span>) <span class="op">+\</span></span>
 <span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>xlab(<span class="st">"Date"</span>) <span class="op">+</span> ylab(<span class="st">"Median Home Price"</span>) <span class="op">+\</span></span>
 <span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>ggtitle(<span class="st">"Texas Housing Prices"</span>)</span>
-<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="co">## &lt;ggplot: (8794672765793)&gt;</span></span>
-<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="co">## </span></span>
-<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a><span class="co">## /home/susan/.local/lib/python3.10/site-packages/plotnine/layer.py:411: PlotnineWarning: geom_point : Removed 616 rows containing missing values.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<p><img src="10-graphics_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid" width="614"></p>
-</div>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'ggplot' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>That’s a really crowded graph! It’s slightly easier if we just take the points away and only show the statistics, but there are still way too many cities to be able to tell what shade matches which city.</p>
 <div class="cell">
@@ -932,10 +907,7 @@ Note
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>theme(subplots_adjust<span class="op">=</span>{<span class="st">'right'</span>: <span class="fl">0.5</span>}) <span class="op">+\</span></span>
 <span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>xlab(<span class="st">"Date"</span>) <span class="op">+</span> ylab(<span class="st">"Median Home Price"</span>) <span class="op">+\</span></span>
 <span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>ggtitle(<span class="st">"Texas Housing Prices"</span>)</span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="co">## &lt;ggplot: (8794667610863)&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<p><img src="10-graphics_files/figure-html/unnamed-chunk-12-3.png" class="img-fluid" width="614"></p>
-</div>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'ggplot' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>This is one of the first places we see differences in Python and R’s graphs - python doesn’t allocate sufficient space for the legend by default. In Python, you have to manually adjust the theme to show the legend (or plot the legend separately).</p>
 </div>
@@ -961,7 +933,7 @@ Note
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">xlab</a></span><span class="op">(</span><span class="st">"Date"</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ylab</a></span><span class="op">(</span><span class="st">"Median Home Price"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"Texas Housing Prices"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="10-graphics_files/figure-html/unnamed-chunk-13-5.png" class="img-fluid" width="2100"></p>
+<p><img src="10-graphics_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid" width="2100"></p>
 </div>
 </div>
 <p>Here’s the facetted version of the chart:</p>
@@ -982,17 +954,14 @@ Note
 <div class="cell">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>citylist <span class="op">=</span> [<span class="st">"Houston"</span>, <span class="st">"Austin"</span>, <span class="st">"Dallas"</span>, <span class="st">"Fort Worth"</span>, <span class="st">"San Antonio"</span>]</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>housingsub <span class="op">=</span> txhousing[txhousing[<span class="st">'city'</span>].isin(citylist)]</span>
-<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'txhousing' is not defined</span></span>
 <span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>ggplot(housingsub, aes(x <span class="op">=</span> <span class="st">"date"</span>, y <span class="op">=</span> <span class="st">"median"</span>, color <span class="op">=</span> <span class="st">"city"</span>)) <span class="op">+\</span></span>
 <span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>geom_point() <span class="op">+\</span></span>
 <span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>geom_smooth(method <span class="op">=</span> <span class="st">"loess"</span>) <span class="op">+\</span></span>
 <span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>theme(subplots_adjust<span class="op">=</span>{<span class="st">'right'</span>: <span class="fl">0.75</span>}) <span class="op">+\</span></span>
 <span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>xlab(<span class="st">"Date"</span>) <span class="op">+</span> ylab(<span class="st">"Median Home Price"</span>) <span class="op">+\</span></span>
 <span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>ggtitle(<span class="st">"Texas Housing Prices"</span>)</span>
-<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a><span class="co">## &lt;ggplot: (8794675644056)&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<p><img src="10-graphics_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid" width="614"></p>
-</div>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'ggplot' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Here’s the facetted version of the chart:</p>
 <div class="cell">
@@ -1002,10 +971,7 @@ Note
 <span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>facet_wrap(<span class="st">"city"</span>) <span class="op">+\</span></span>
 <span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>xlab(<span class="st">"Date"</span>) <span class="op">+</span> ylab(<span class="st">"Median Home Price"</span>) <span class="op">+\</span></span>
 <span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>ggtitle(<span class="st">"Texas Housing Prices"</span>)</span>
-<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a><span class="co">## &lt;ggplot: (8794672708488)&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<p><img src="10-graphics_files/figure-html/unnamed-chunk-16-3.png" class="img-fluid" width="614"></p>
-</div>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'ggplot' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
@@ -1034,7 +1000,7 @@ Note
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">xlab</a></span><span class="op">(</span><span class="st">"Date"</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ylab</a></span><span class="op">(</span><span class="st">"Median Home Price"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"Texas Housing Prices"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="10-graphics_files/figure-html/unnamed-chunk-17-5.png" class="img-fluid" width="2100"></p>
+<p><img src="10-graphics_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid" width="2100"></p>
 </div>
 </div>
 <p>Notice I’ve removed the aesthetic mapping to color as it’s redundant now that each city is split out in its own plot.</p>
@@ -1043,7 +1009,7 @@ Note
 <div class="cell">
 <div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>citylist <span class="op">=</span> [<span class="st">"Houston"</span>, <span class="st">"Austin"</span>, <span class="st">"Dallas"</span>, <span class="st">"Fort Worth"</span>, <span class="st">"San Antonio"</span>]</span>
 <span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>housingsub <span class="op">=</span> txhousing[txhousing[<span class="st">'city'</span>].isin(citylist)]</span>
-<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'txhousing' is not defined</span></span>
 <span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>( <span class="co"># This is used to group lines together in python</span></span>
 <span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>ggplot(housingsub, aes(x <span class="op">=</span> <span class="st">"date"</span>, y <span class="op">=</span> <span class="st">"median"</span>, size <span class="op">=</span> <span class="st">"sales"</span>))</span>
 <span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a><span class="op">+</span> geom_point(alpha <span class="op">=</span> <span class="fl">.15</span>) <span class="co"># Make points transparent</span></span>
@@ -1053,10 +1019,7 @@ Note
 <span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a><span class="op">+</span> xlab(<span class="st">"Date"</span>) <span class="op">+</span> ylab(<span class="st">"Median Home Price"</span>)</span>
 <span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a><span class="op">+</span> ggtitle(<span class="st">"Texas Housing Prices"</span>)</span>
 <span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a><span class="co">## &lt;ggplot: (8794678684051)&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<p><img src="10-graphics_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid" width="614"></p>
-</div>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'ggplot' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Not all of the features we used in R are available in plotnine in Python (in part because of limitations of the underlying graphics interface that plotnine uses). This does somewhat limit the customization we can do with python, but for the most part we can still get the same basic information back out.</p>
 </div>
@@ -1077,7 +1040,7 @@ Note
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">xlab</a></span><span class="op">(</span><span class="st">"Number of Listings"</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ylab</a></span><span class="op">(</span><span class="st">"Number of Sales"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"Texas Housing Prices"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="10-graphics_files/figure-html/unnamed-chunk-19-3.png" class="img-fluid" width="2100"></p>
+<p><img src="10-graphics_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid" width="2100"></p>
 </div>
 </div>
 <p>The points for Fort Worth are compressed pretty tightly relative to the points for Houston and Dallas. When we get this type of difference, it is sometimes common to use a log transformation<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>. Here, I have transformed both the x and y axis, since the number of sales seems to be proportional to the number of listings.</p>
@@ -1105,12 +1068,7 @@ Note
 <span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a><span class="op">+</span> xlab(<span class="st">"Date"</span>) <span class="op">+</span> ylab(<span class="st">"Median Home Price"</span>)</span>
 <span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a><span class="op">+</span> ggtitle(<span class="st">"Texas Housing Prices"</span>)</span>
 <span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a><span class="co">## &lt;ggplot: (8794678443900)&gt;</span></span>
-<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a><span class="co">## </span></span>
-<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a><span class="co">## /home/susan/.local/lib/python3.10/site-packages/plotnine/layer.py:411: PlotnineWarning: geom_point : Removed 6 rows containing missing values.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<p><img src="10-graphics_files/figure-html/unnamed-chunk-21-1.png" class="img-fluid" width="614"></p>
-</div>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'ggplot' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Notice that the gridlines included in python by default are different than those in ggplot2 by default (personally, I vastly prefer the python version - it makes it obvious that we’re using a log scale).</p>
 </div>
@@ -1133,7 +1091,7 @@ Note
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guides.html">guides</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guide_legend.html">guide_legend</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Number of Sales"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"Houston Housing Data"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="10-graphics_files/figure-html/unnamed-chunk-22-3.png" class="img-fluid" width="2100"></p>
+<p><img src="10-graphics_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid" width="2100"></p>
 </div>
 </div>
 <div class="cell">
@@ -1163,7 +1121,7 @@ Note
 <div id="tabset-10-2" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-10-2-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>houston <span class="op">=</span> txhousing[txhousing.city<span class="op">==</span><span class="st">"Houston"</span>]</span>
-<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'txhousing' is not defined</span></span>
 <span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>(</span>
 <span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>  ggplot(houston, aes(x <span class="op">=</span> <span class="st">"date"</span>, y <span class="op">=</span> <span class="st">"inventory"</span>, size <span class="op">=</span> <span class="st">"sales"</span>))</span>
 <span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>  <span class="op">+</span> geom_point(shape <span class="op">=</span> <span class="st">'o'</span>, fill <span class="op">=</span> <span class="st">'none'</span>)</span>
@@ -1171,12 +1129,7 @@ Note
 <span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>  <span class="op">+</span> guides(size <span class="op">=</span> guide_legend(title <span class="op">=</span> <span class="st">"Number of Sales"</span>))</span>
 <span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>  <span class="op">+</span> ggtitle(<span class="st">"Houston Housing Data"</span>)</span>
 <span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a><span class="co">## &lt;ggplot: (8794620543514)&gt;</span></span>
-<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a><span class="co">## </span></span>
-<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a><span class="co">## /home/susan/.local/lib/python3.10/site-packages/plotnine/layer.py:411: PlotnineWarning: geom_point : Removed 1 rows containing missing values.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<p><img src="10-graphics_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid" width="614"></p>
-</div>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'ggplot' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>In plotnine, we have to use <a href="https://matplotlib.org/stable/api/markers_api.html">matplotlib marker syntax</a>.</p>
 <div class="cell">
@@ -1188,12 +1141,7 @@ Note
 <span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>  <span class="op">+</span> guides(size <span class="op">=</span> guide_legend(title <span class="op">=</span> <span class="st">"Number of Sales"</span>))</span>
 <span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>  <span class="op">+</span> ggtitle(<span class="st">"Houston Housing Data"</span>)</span>
 <span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a><span class="co">## &lt;ggplot: (8794617704142)&gt;</span></span>
-<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a><span class="co">## </span></span>
-<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a><span class="co">## /home/susan/.local/lib/python3.10/site-packages/plotnine/layer.py:411: PlotnineWarning: geom_point : Removed 1 rows containing missing values.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<p><img src="10-graphics_files/figure-html/unnamed-chunk-26-3.png" class="img-fluid" width="614"></p>
-</div>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'ggplot' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Plotnine also defaults to different color schemes than ggplot2 – just something to know if you want the plot to be exactly the same. Personally, I prefer the viridis color scheme (what plotnine uses) to the ggplot2 defaults.</p>
 <p>What happens if we move the variables around and map date to the point color?</p>
@@ -1206,12 +1154,7 @@ Note
 <span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a>  <span class="op">+</span> ggtitle(<span class="st">"Houston Housing Data"</span>)</span>
 <span id="cb36-7"><a href="#cb36-7" aria-hidden="true" tabindex="-1"></a>  <span class="op">+</span> theme(subplots_adjust<span class="op">=</span>{<span class="st">'right'</span>: <span class="fl">0.75</span>})</span>
 <span id="cb36-8"><a href="#cb36-8" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a><span class="co">## &lt;ggplot: (8794617704277)&gt;</span></span>
-<span id="cb36-10"><a href="#cb36-10" aria-hidden="true" tabindex="-1"></a><span class="co">## </span></span>
-<span id="cb36-11"><a href="#cb36-11" aria-hidden="true" tabindex="-1"></a><span class="co">## /home/susan/.local/lib/python3.10/site-packages/plotnine/layer.py:411: PlotnineWarning: geom_point : Removed 1 rows containing missing values.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<p><img src="10-graphics_files/figure-html/unnamed-chunk-27-5.png" class="img-fluid" width="614"></p>
-</div>
+<span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'ggplot' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Is that easier or harder to read?</p>
 </div>
@@ -1387,23 +1330,23 @@ Wait a few seconds, then expand this section
 <div id="tabset-12-2" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-12-2-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>fbiwide <span class="op">=</span> r.fbiwide</span>
-<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>fbiwide <span class="op">=</span> fbiwide.assign(YearFactor <span class="op">=</span> pd.Categorical(fbiwide.Year))</span>
-<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>fbiwide <span class="op">=</span> fbiwide.assign(Murder100k <span class="op">=</span> fbiwide.Murder<span class="op">/</span>fbiwide.Population <span class="op">*</span> <span class="dv">100000</span>)</span>
-<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>yr1980_2010 <span class="op">=</span> fbiwide[fbiwide.Year.isin([<span class="dv">1980</span>,<span class="dv">2010</span>])]</span>
-<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>subdata <span class="op">=</span> yr1980_2010[yr1980_2010.State.isin([<span class="st">"Alabama"</span>, <span class="st">"Alaska"</span>, <span class="st">"Arizona"</span>, <span class="st">"Arkansas"</span>])]</span>
-<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>(</span>
-<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>ggplot(subdata, aes(x <span class="op">=</span> <span class="st">"State"</span>, y <span class="op">=</span> <span class="st">"Murder100k"</span>, fill <span class="op">=</span> <span class="st">"YearFactor"</span>)) <span class="op">+</span></span>
-<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a>  geom_col(stat<span class="op">=</span><span class="st">'identity'</span>, position <span class="op">=</span> <span class="st">"dodge"</span>) <span class="op">+</span></span>
-<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a>  coord_flip() <span class="op">+</span></span>
-<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a>  ylab(<span class="st">"Murders per 100,000 residents"</span>)</span>
-<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a><span class="co">## &lt;ggplot: (8794612095280)&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<p><img src="10-graphics_files/figure-html/chart-emphasis-bar-py-1.png" class="img-fluid" width="614"></p>
-</div>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): ModuleNotFoundError: No module named 'pandas'</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>fbiwide <span class="op">=</span> r.fbiwide</span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>fbiwide <span class="op">=</span> fbiwide.assign(YearFactor <span class="op">=</span> pd.Categorical(fbiwide.Year))</span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): AttributeError: 'dict' object has no attribute 'assign'</span></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a>fbiwide <span class="op">=</span> fbiwide.assign(Murder100k <span class="op">=</span> fbiwide.Murder<span class="op">/</span>fbiwide.Population <span class="op">*</span> <span class="dv">100000</span>)</span>
+<span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): AttributeError: 'dict' object has no attribute 'assign'</span></span>
+<span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>yr1980_2010 <span class="op">=</span> fbiwide[fbiwide.Year.isin([<span class="dv">1980</span>,<span class="dv">2010</span>])]</span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): AttributeError: 'dict' object has no attribute 'Year'</span></span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a>subdata <span class="op">=</span> yr1980_2010[yr1980_2010.State.isin([<span class="st">"Alabama"</span>, <span class="st">"Alaska"</span>, <span class="st">"Arizona"</span>, <span class="st">"Arkansas"</span>])]</span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'yr1980_2010' is not defined</span></span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a>(</span>
+<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a>ggplot(subdata, aes(x <span class="op">=</span> <span class="st">"State"</span>, y <span class="op">=</span> <span class="st">"Murder100k"</span>, fill <span class="op">=</span> <span class="st">"YearFactor"</span>)) <span class="op">+</span></span>
+<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a>  geom_col(stat<span class="op">=</span><span class="st">'identity'</span>, position <span class="op">=</span> <span class="st">"dodge"</span>) <span class="op">+</span></span>
+<span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a>  coord_flip() <span class="op">+</span></span>
+<span id="cb38-16"><a href="#cb38-16" aria-hidden="true" tabindex="-1"></a>  ylab(<span class="st">"Murders per 100,000 residents"</span>)</span>
+<span id="cb38-17"><a href="#cb38-17" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb38-18"><a href="#cb38-18" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'ggplot' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
@@ -1423,7 +1366,7 @@ Wait a few seconds, then expand this section
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ylab</a></span><span class="op">(</span><span class="st">"Murders per 100,000 residents"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="10-graphics_files/figure-html/chart-emphasis-line-r-3.png" class="img-fluid" width="1800"></p>
+<p><img src="10-graphics_files/figure-html/chart-emphasis-line-r-1.png" class="img-fluid" width="1800"></p>
 </div>
 </div>
 </div>
@@ -1434,10 +1377,7 @@ Wait a few seconds, then expand this section
 <span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>  geom_line() <span class="op">+</span></span>
 <span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>  ylab(<span class="st">"Murders per 100,000 residents"</span>)</span>
 <span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a><span class="co">## &lt;ggplot: (8794617721484)&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<p><img src="10-graphics_files/figure-html/chart-emphasis-line-py-1.png" class="img-fluid" width="614"></p>
-</div>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'ggplot' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
@@ -1457,7 +1397,7 @@ Wait a few seconds, then expand this section
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html">geom_boxplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ylab</a></span><span class="op">(</span><span class="st">"Murders per 100,000 residents"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="10-graphics_files/figure-html/chart-emphasis-boxplot-r-3.png" class="img-fluid" width="1800"></p>
+<p><img src="10-graphics_files/figure-html/chart-emphasis-boxplot-r-1.png" class="img-fluid" width="1800"></p>
 </div>
 </div>
 </div>
@@ -1469,10 +1409,7 @@ Wait a few seconds, then expand this section
 <span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a>  geom_boxplot() <span class="op">+</span></span>
 <span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a>  ylab(<span class="st">"Murders per 100,000 residents"</span>)</span>
 <span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a><span class="co">## &lt;ggplot: (8794678640547)&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<p><img src="10-graphics_files/figure-html/chart-emphasis-boxplot-py-1.png" class="img-fluid" width="614"></p>
-</div>
+<span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'ggplot' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
@@ -1487,7 +1424,7 @@ Wait a few seconds, then expand this section
 <div class="cell">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
-<figure class="figure"><p><img src="10-graphics_files/figure-html/accuracy-guidelines-3.png" class="img-fluid figure-img" width="2100"></p>
+<figure class="figure"><p><img src="10-graphics_files/figure-html/accuracy-guidelines-1.png" class="img-fluid figure-img" width="2100"></p>
 <p></p><figcaption class="figure-caption">Which of the lines is the longest? Shortest? It is much easier to determine the relative length of the line when the ends are aligned. In fact, the line lengths are the same in both panels.</figcaption><p></p>
 </figure>
 </div>
