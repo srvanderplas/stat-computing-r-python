@@ -812,7 +812,6 @@ import seaborn.objects as so
 :::
 
 
-
 ## Exploratory Data Analysis and Plot Customization
 
 When you first get a new dataset, it is critical that you, as the analyst, get a feel for the data. 
@@ -833,13 +832,13 @@ Only once this process is complete should we move to any sort of confirmatory an
 In this section, we'll primarily use charts as a tool for exploratory data analysis.
 Pay close attention not only to the tools, but to the process of inquiry.
 
-
-
-::: ex
 ### Texas Housing Data
 
 Let's explore the `txhousing` data a bit more thoroughly by adding some complexity to our chart. 
 This example will give me an opportunity to show you how an exploratory data analysis might work in practice, while also demonstrating some of the features of each plotting library.
+
+
+### Starting Chart
 
 Before we start exploring, let's start with a basic scatterplot, and add a title and label our axes, so that we're creating good, informative charts.
 
@@ -878,6 +877,8 @@ ggtitle("Texas Housing Prices")
 ```
 
 :::
+
+### Exploring Trends
 
 First, we may want to show some sort of overall trend line. 
 We can start with a linear regression, but it may be better to use a loess smooth ([loess regression](https://en.wikipedia.org/wiki/Local_regression) is a fancy weighted average and can create curves without too much additional effort on your part).
@@ -942,6 +943,9 @@ ggtitle("Texas Housing Prices")
 I haven't yet figured out a way to do locally weighted regression in Seaborn using the objects interface, but I'm sure that will come as the interface develops.
 
 :::
+
+
+### Adding Complexity with Moderating Variables
 
 Looking at the plots here, it's clear that there are small sub-groupings (see, for instance, the almost continuous line of points at the very top of the group between 2000 and 2005). 
 Let's see if we can figure out what those additional variables are...
@@ -1008,6 +1012,8 @@ This is one of the first places we see differences in Python and R's graphs - py
 
 ```
 :::
+
+### Data Reduction Strategies
 
 In reality, though, you should not ever map color to something with more than about 7 categories if your goal is to allow people to trace the category back to the label. It just doesn't work well perceptually.
 
@@ -1102,6 +1108,9 @@ housingsub = txhousing[txhousing['city'].isin(citylist)]
 
 :::
 
+
+### Adding Additional Complexity
+
 Now that we've simplified our charts a bit, we can explore a couple of the other quantitative variables by mapping them to additional aesthetics:
 
 ::: panel-tabset
@@ -1151,6 +1160,8 @@ Not all of the features we used in R are available in plotnine in Python (in par
 Coming soon!
 :::
 
+### Exploring Other Variables and Relationships
+
 Up to this point, we've used the same position information - date for the y axis, median sale price for the y axis. Let's switch that up a bit so that we can play with some transformations on the x and y axis and add variable mappings to a continuous variable.
 
 ::: panel-tabset
@@ -1192,6 +1203,9 @@ ggplot(housingsub, aes(x = "listings", y = "sales", color = "city"))
 
 Notice that the gridlines included in python by default are different than those in ggplot2 by default (personally, I vastly prefer the python version - it makes it obvious that we're using a log scale).
 :::
+
+
+### Adding Additional Moderating Variables
 
 For the next demonstration, let's look at just Houston's data. We can examine the inventory's relationship to the number of sales by looking at the inventory-date relationship in x and y, and mapping the size or color of the point to number of sales.
 
@@ -1279,7 +1293,8 @@ Is that easier or harder to read?
 [^10-graphics-1]: This isn't necessarily a good thing, but you should know how to do it. The jury is still very much out on whether log transformations make data easier to read and understand
 
 
-### What type of chart to use?
+
+## What type of chart to use?
 
 It can be hard to know what type of chart to use for a particular type of data. 
 I recommend figuring out what you want to show first, and then thinking about how to show that data with an appropriate plot type. 
@@ -1298,7 +1313,9 @@ Consider the following factors:
 
 Once you've thought through this, take a look through catalogs like the [R Graph Gallery](https://r-graph-gallery.com/) or the  [Python Graph Gallery](https://python-graph-gallery.com/) to see what visualizations match your data and use-case.
 
-::: callout-learnmore
+@sec-good-graphics talks in more depth about considerations for creating *good* charts; these considerations may also inform your decisions.
+
+::: {.callout-learnmore}
 
 ## Additional Reading 
 
@@ -1318,3 +1335,5 @@ Once you've thought through this, take a look through catalogs like the [R Graph
 -   [Scientific Visualization with Python](https://github.com/rougier/scientific-visualization-book/blob/master/pdf/book.pdf)
 
 :::
+
+## References
