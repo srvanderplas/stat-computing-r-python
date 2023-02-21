@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.2.313">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="dcterms.date" content="2023-02-14">
+<meta name="dcterms.date" content="2023-02-21">
 <title>Statistical Computing using R and Python - 18&nbsp; Data Cleaning</title>
 <style>
 code{white-space: pre-wrap;}
@@ -339,24 +339,25 @@ div.csl-indent {
         <nav id="TOC" role="doc-toc" class="toc-active"><h2 id="toc-title">Table of contents</h2>
    
   <ul>
-<li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"><span class="toc-section-number">18.1</span>  Introduction</a></li>
-  <li><a href="#tidy-data" id="toc-tidy-data" class="nav-link" data-scroll-target="#tidy-data"><span class="toc-section-number">18.2</span>  Tidy Data</a></li>
+<li><a href="#fa-bullseye-objectives" id="toc-fa-bullseye-objectives" class="nav-link active" data-scroll-target="#fa-bullseye-objectives"><span class="toc-section-number">18.1</span>  <i class="fa-solid fa-bullseye" aria-label="bullseye"></i> Objectives</a></li>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction"><span class="toc-section-number">18.2</span>  Introduction</a></li>
+  <li><a href="#tidy-data" id="toc-tidy-data" class="nav-link" data-scroll-target="#tidy-data"><span class="toc-section-number">18.3</span>  Tidy Data</a></li>
   <li>
-<a href="#filter-subset-rows" id="toc-filter-subset-rows" class="nav-link" data-scroll-target="#filter-subset-rows"><span class="toc-section-number">18.3</span>  Filter: Subset rows</a>
+<a href="#filter-subset-rows" id="toc-filter-subset-rows" class="nav-link" data-scroll-target="#filter-subset-rows"><span class="toc-section-number">18.4</span>  Filter: Subset rows</a>
   <ul class="collapse">
-<li><a href="#common-row-selection-tasks" id="toc-common-row-selection-tasks" class="nav-link" data-scroll-target="#common-row-selection-tasks"><span class="toc-section-number">18.3.1</span>  Common Row Selection Tasks</a></li>
+<li><a href="#common-row-selection-tasks" id="toc-common-row-selection-tasks" class="nav-link" data-scroll-target="#common-row-selection-tasks"><span class="toc-section-number">18.4.1</span>  Common Row Selection Tasks</a></li>
   </ul>
 </li>
-  <li><a href="#select-pick-columns" id="toc-select-pick-columns" class="nav-link" data-scroll-target="#select-pick-columns"><span class="toc-section-number">18.4</span>  Select: Pick columns</a></li>
-  <li><a href="#mutate-add-and-transform-variables" id="toc-mutate-add-and-transform-variables" class="nav-link" data-scroll-target="#mutate-add-and-transform-variables"><span class="toc-section-number">18.5</span>  Mutate: Add and transform variables</a></li>
-  <li><a href="#summarize" id="toc-summarize" class="nav-link" data-scroll-target="#summarize"><span class="toc-section-number">18.6</span>  Summarize</a></li>
+  <li><a href="#select-pick-columns" id="toc-select-pick-columns" class="nav-link" data-scroll-target="#select-pick-columns"><span class="toc-section-number">18.5</span>  Select: Pick columns</a></li>
+  <li><a href="#mutate-add-and-transform-variables" id="toc-mutate-add-and-transform-variables" class="nav-link" data-scroll-target="#mutate-add-and-transform-variables"><span class="toc-section-number">18.6</span>  Mutate: Add and transform variables</a></li>
+  <li><a href="#summarize" id="toc-summarize" class="nav-link" data-scroll-target="#summarize"><span class="toc-section-number">18.7</span>  Summarize</a></li>
   <li>
-<a href="#group-by-power" id="toc-group-by-power" class="nav-link" data-scroll-target="#group-by-power"><span class="toc-section-number">18.7</span>  Group By + (?) = Power!</a>
+<a href="#group-by-power" id="toc-group-by-power" class="nav-link" data-scroll-target="#group-by-power"><span class="toc-section-number">18.8</span>  Group By + (?) = Power!</a>
   <ul class="collapse">
-<li><a href="#summarizing-across-multiple-variables" id="toc-summarizing-across-multiple-variables" class="nav-link" data-scroll-target="#summarizing-across-multiple-variables"><span class="toc-section-number">18.7.1</span>  Summarizing Across Multiple Variables</a></li>
+<li><a href="#summarizing-across-multiple-variables" id="toc-summarizing-across-multiple-variables" class="nav-link" data-scroll-target="#summarizing-across-multiple-variables"><span class="toc-section-number">18.8.1</span>  Summarizing Across Multiple Variables</a></li>
   </ul>
 </li>
-  <li><a href="#try-it-out" id="toc-try-it-out" class="nav-link" data-scroll-target="#try-it-out"><span class="toc-section-number">18.8</span>  Try it out</a></li>
+  <li><a href="#try-it-out" id="toc-try-it-out" class="nav-link" data-scroll-target="#try-it-out"><span class="toc-section-number">18.9</span>  Try it out</a></li>
   </ul><div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/srvanderplas/stat-computing-r-python/edit/main/part-wrangling/03-data-cleaning.qmd" class="toc-action">Edit this page</a></p></div></div></nav>
     </div>
 <!-- main -->
@@ -372,7 +373,7 @@ div.csl-indent {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">February 14, 2023</p>
+      <p class="date">February 21, 2023</p>
     </div>
   </div>
   
@@ -380,16 +381,16 @@ div.csl-indent {
   </div>
   
 
-</header><p>##<i class="fa-solid fa-bullseye" aria-label="bullseye"></i> Objectives</p>
+</header><section id="fa-bullseye-objectives" class="level2" data-number="18.1"><h2 data-number="18.1" class="anchored" data-anchor-id="fa-bullseye-objectives">
+<span class="header-section-number">18.1</span> <i class="fa-solid fa-bullseye" aria-label="bullseye"></i> Objectives</h2>
 <ul>
 <li>Identify required sequence of steps for data cleaning</li>
 <li>Describe step-by-step data cleaning process in lay terms appropriately</li>
 <li>Apply data manipulation verbs to prepare data for analysis</li>
 <li>Understand the consequences of data cleaning steps for statistical analysis</li>
 <li>Create summaries of data appropriate for analysis or display using data manipulation techniques</li>
-</ul>
-<section id="introduction" class="level2 page-columns page-full" data-number="18.1"><h2 data-number="18.1" class="anchored" data-anchor-id="introduction">
-<span class="header-section-number">18.1</span> Introduction</h2>
+</ul></section><section id="introduction" class="level2 page-columns page-full" data-number="18.2"><h2 data-number="18.2" class="anchored" data-anchor-id="introduction">
+<span class="header-section-number">18.2</span> Introduction</h2>
 <p>In this section, we’re going start learning how to work with data. Generally speaking, data doesn’t come in a form suitable for analysis<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> - you have to clean it up, create the variables you care about, get rid of those you don’t care about, and so on.</p>
 <p>Some people call the process of cleaning and organizing your data “data wrangling”, which is a fantastic way to think about chasing down all of the issues in the data.</p>
 <div class="quarto-figure quarto-figure-center">
@@ -419,8 +420,8 @@ Note
 <p><a href="https://pandas.pydata.org/Pandas_Cheat_Sheet.pdf">Here is a data wrangling with pandas cheatsheet</a> that is formatted similarly to the dplyr cheat sheet.</p>
 </div>
 </div>
-</section><section id="tidy-data" class="level2" data-number="18.2"><h2 data-number="18.2" class="anchored" data-anchor-id="tidy-data">
-<span class="header-section-number">18.2</span> Tidy Data</h2>
+</section><section id="tidy-data" class="level2" data-number="18.3"><h2 data-number="18.3" class="anchored" data-anchor-id="tidy-data">
+<span class="header-section-number">18.3</span> Tidy Data</h2>
 <p>There are infinitely many ways to configure “messy” data, but data that is “tidy” has 3 attributes:</p>
 <ol type="1">
 <li>Each variable has its own column</li>
@@ -429,8 +430,8 @@ Note
 </ol>
 <p>These attributes aren’t sufficient to define “clean” data, but they work to define “tidy” data (in the same way that you can have a “tidy” room because all of your clothes are folded, but they aren’t clean just because they’re folded; you could have folded a pile of dirty clothes).</p>
 <p>We’ll get more into how to work with different “messy” data configurations in <a href="05-data-reshape.html"><span>Chapter&nbsp;20</span></a> and <a href="06-data-join.html"><span>Chapter&nbsp;21</span></a>, but it’s worth keeping rules 1 and 3 in mind while working through this module.</p>
-</section><section id="filter-subset-rows" class="level2" data-number="18.3"><h2 data-number="18.3" class="anchored" data-anchor-id="filter-subset-rows">
-<span class="header-section-number">18.3</span> Filter: Subset rows</h2>
+</section><section id="filter-subset-rows" class="level2" data-number="18.4"><h2 data-number="18.4" class="anchored" data-anchor-id="filter-subset-rows">
+<span class="header-section-number">18.4</span> Filter: Subset rows</h2>
 <p>Filter allows us to work with a subset of a larger data frame, keeping only the rows we’re interested in. We provide one or more logical conditions, and only those rows which meet the logical conditions are returned from <code><a href="https://dplyr.tidyverse.org/reference/filter.html">filter()</a></code>. Note that unless we store the result from <code><a href="https://dplyr.tidyverse.org/reference/filter.html">filter()</a></code> in the original object, we don’t change the original.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure"><p><img src="../images/wrangling/dplyr_filter.jpg" class="img-fluid figure-img" alt="Cartoon showing three fuzzy monsters either selecting or crossing out rows of a data table. If the type of animal in the table is “otter” and the site is “bay”, a monster is drawing a purple rectangle around the row. If those conditions are not met, another monster is putting a line through the column indicating it will be excluded. Stylized text reads “dplyr::filter() - keep rows that satisfy your conditions.”"></p>
@@ -500,9 +501,37 @@ Example: starwars
 <span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="co">## </span></span>
 <span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="co">## [87 rows x 11 columns]</span></span>
 <span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> skimpy <span class="im">import</span> skim</span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): ModuleNotFoundError: No module named 'skimpy'</span></span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>skim(starwars)</span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'skim' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>skim(starwars)</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="co">## ╭─────────────────────────────── skimpy summary ───────────────────────────────╮</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="co">## │          Data Summary                Data Types                              │</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="co">## │ ┏━━━━━━━━━━━━━━━━━━━┳━━━━━━━━┓ ┏━━━━━━━━━━━━━┳━━━━━━━┓                       │</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="co">## │ ┃ dataframe         ┃ Values ┃ ┃ Column Type ┃ Count ┃                       │</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="co">## │ ┡━━━━━━━━━━━━━━━━━━━╇━━━━━━━━┩ ┡━━━━━━━━━━━━━╇━━━━━━━┩                       │</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="co">## │ │ Number of rows    │ 87     │ │ string      │ 8     │                       │</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="co">## │ │ Number of columns │ 11     │ │ float64     │ 3     │                       │</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="co">## │ └───────────────────┴────────┘ └─────────────┴───────┘                       │</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a><span class="co">## │                                   number                                     │</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a><span class="co">## │ ┏━━━━━━━━━━━━━━┳━━━━━┳━━━━━━┳━━━━━━┳━━━━━┳━━━━┳━━━━━┳━━━━━┳━━━━━━┳━━━━━━━━┓  │</span></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a><span class="co">## │ ┃ column_name  ┃ NA  ┃ NA % ┃ mean ┃ sd  ┃ p0 ┃ p25 ┃ p75 ┃ p100 ┃ hist   ┃  │</span></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a><span class="co">## │ ┡━━━━━━━━━━━━━━╇━━━━━╇━━━━━━╇━━━━━━╇━━━━━╇━━━━╇━━━━━╇━━━━━╇━━━━━━╇━━━━━━━━┩  │</span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a><span class="co">## │ │ height       │   6 │  6.9 │  170 │  35 │ 66 │ 170 │ 190 │  260 │ ▁ ▁█▂  │  │</span></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a><span class="co">## │ │ mass         │  28 │   32 │   97 │ 170 │ 15 │  56 │  84 │ 1400 │   █    │  │</span></span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a><span class="co">## │ │ birth_year   │  44 │   51 │   88 │ 150 │  8 │  35 │  72 │  900 │   █    │  │</span></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a><span class="co">## │ └──────────────┴─────┴──────┴──────┴─────┴────┴─────┴─────┴──────┴────────┘  │</span></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a><span class="co">## │                                   string                                     │</span></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a><span class="co">## │ ┏━━━━━━━━━━━━━━━━━━┳━━━━━━┳━━━━━━━━┳━━━━━━━━━━━━━━━━━━━━┳━━━━━━━━━━━━━━━━━┓  │</span></span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a><span class="co">## │ ┃ column_name      ┃ NA   ┃ NA %   ┃ words per row      ┃ total words     ┃  │</span></span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a><span class="co">## │ ┡━━━━━━━━━━━━━━━━━━╇━━━━━━╇━━━━━━━━╇━━━━━━━━━━━━━━━━━━━━╇━━━━━━━━━━━━━━━━━┩  │</span></span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a><span class="co">## │ │ name             │    0 │      0 │                1.8 │             160 │  │</span></span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a><span class="co">## │ │ hair_color       │    5 │    5.7 │                1.8 │             160 │  │</span></span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a><span class="co">## │ │ skin_color       │    0 │      0 │                1.8 │             160 │  │</span></span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a><span class="co">## │ │ eye_color        │    0 │      0 │                1.8 │             160 │  │</span></span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a><span class="co">## │ │ sex              │    4 │    4.6 │                1.8 │             160 │  │</span></span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a><span class="co">## │ │ gender           │    4 │    4.6 │                1.8 │             160 │  │</span></span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a><span class="co">## │ │ homeworld        │   10 │     11 │                1.8 │             160 │  │</span></span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a><span class="co">## │ │ species          │    4 │    4.6 │                1.8 │             160 │  │</span></span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a><span class="co">## │ └──────────────────┴──────┴────────┴────────────────────┴─────────────────┘  │</span></span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a><span class="co">## ╰──────────────────────────────────── End ─────────────────────────────────────╯</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
@@ -579,8 +608,8 @@ Example: starwars
 <span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="co">## 23     Lando Calrissian   177.0   79.0  ...  masculine       Socorro   Human</span></span>
 <span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="co">## 24                Lobot   175.0   79.0  ...  masculine        Bespin   Human</span></span>
 <span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="co">## 26           Mon Mothma   150.0    NaN  ...   feminine     Chandrila   Human</span></span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="co">## 27         Arvel Crynyd     NaN    NaN  ...  masculine           NaN   Human</span></span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="co">## 30         Qui-Gon Jinn   193.0   89.0  ...  masculine           NaN   Human</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="co">## 27         Arvel Crynyd     NaN    NaN  ...  masculine          &lt;NA&gt;   Human</span></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="co">## 30         Qui-Gon Jinn   193.0   89.0  ...  masculine          &lt;NA&gt;   Human</span></span>
 <span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a><span class="co">## 32        Finis Valorum   170.0    NaN  ...  masculine     Coruscant   Human</span></span>
 <span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a><span class="co">## 40       Shmi Skywalker   163.0    NaN  ...   feminine      Tatooine   Human</span></span>
 <span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="co">## 47           Mace Windu   188.0   84.0  ...  masculine    Haruun Kal   Human</span></span>
@@ -593,9 +622,9 @@ Example: starwars
 <span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a><span class="co">## 65           Jango Fett   183.0   79.0  ...  masculine  Concord Dawn   Human</span></span>
 <span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a><span class="co">## 70           Jocasta Nu   167.0    NaN  ...   feminine     Coruscant   Human</span></span>
 <span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a><span class="co">## 78      Raymus Antilles   188.0   79.0  ...  masculine      Alderaan   Human</span></span>
-<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a><span class="co">## 81                 Finn     NaN    NaN  ...  masculine           NaN   Human</span></span>
-<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a><span class="co">## 82                  Rey     NaN    NaN  ...   feminine           NaN   Human</span></span>
-<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a><span class="co">## 83          Poe Dameron     NaN    NaN  ...  masculine           NaN   Human</span></span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a><span class="co">## 81                 Finn     NaN    NaN  ...  masculine          &lt;NA&gt;   Human</span></span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a><span class="co">## 82                  Rey     NaN    NaN  ...   feminine          &lt;NA&gt;   Human</span></span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a><span class="co">## 83          Poe Dameron     NaN    NaN  ...  masculine          &lt;NA&gt;   Human</span></span>
 <span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a><span class="co">## 86        Padmé Amidala   165.0   45.0  ...   feminine         Naboo   Human</span></span>
 <span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a><span class="co">## </span></span>
 <span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a><span class="co">## [35 rows x 11 columns]</span></span>
@@ -661,8 +690,8 @@ Example: starwars
 </div>
 </div>
 </div>
-<section id="common-row-selection-tasks" class="level3" data-number="18.3.1"><h3 data-number="18.3.1" class="anchored" data-anchor-id="common-row-selection-tasks">
-<span class="header-section-number">18.3.1</span> Common Row Selection Tasks</h3>
+<section id="common-row-selection-tasks" class="level3" data-number="18.4.1"><h3 data-number="18.4.1" class="anchored" data-anchor-id="common-row-selection-tasks">
+<span class="header-section-number">18.4.1</span> Common Row Selection Tasks</h3>
 <p>In <code>dplyr</code>, there are a few helper functions which may be useful when constructing filter statements. In base R or python, these tasks are still important, and so I’ll do my best to show you easy ways to handle each task in each language.</p>
 <div class="callout-demo callout callout-style-default no-icon callout-captioned">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
@@ -702,20 +731,20 @@ Filtering by row number
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>poke <span class="op">=</span> pd.read_csv(<span class="st">"https://github.com/srvanderplas/datasets/raw/main/clean/pokemon_gen_1-9.csv"</span>)</span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>poke.iloc[<span class="dv">0</span>::<span class="dv">2</span>]</span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co">##       gen  pokedex_no  ...    type_1  type_2</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co">## 0       1           1  ...     Grass  Poison</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co">## 2       1           3  ...     Grass  Poison</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co">## 4       1           4  ...      Fire     NaN</span></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co">## 6       1           6  ...      Fire  Flying</span></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co">## 8       1           6  ...      Fire  Flying</span></span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="co">## ...   ...         ...  ...       ...     ...</span></span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="co">## 1516    9         999  ...     Ghost     NaN</span></span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="co">## 1518    9        1001  ...      Dark   Grass</span></span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="co">## 1520    9        1003  ...      Dark  Ground</span></span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="co">## 1522    9        1005  ...    Dragon    Dark</span></span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="co">## 1524    9        1007  ...  Fighting  Dragon</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co">##       gen  pokedex_no  ... height_m weight_kg</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co">## 0       1           1  ...      0.7       6.9</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co">## 2       1           3  ...      2.0     100.0</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co">## 4       1           4  ...      0.6       8.5</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co">## 6       1           6  ...      1.7      90.5</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co">## 8       1           6  ...      1.7      90.5</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="co">## ...   ...         ...  ...      ...       ...</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="co">## 1516    9         999  ...      0.3       5.0</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="co">## 1518    9        1001  ...      1.5      74.2</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="co">## 1520    9        1003  ...      2.7     699.7</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a><span class="co">## 1522    9        1005  ...      2.0     380.0</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="co">## 1524    9        1007  ...      2.5     303.0</span></span>
 <span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="co">## </span></span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="co">## [763 rows x 15 columns]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="co">## [763 rows x 16 columns]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>If we want to get only odd rows, we can use the index <code>[1::2]</code>, which will start at row 1 and give us 1, 3, 5, …</p>
 </div>
@@ -766,20 +795,20 @@ Sorting rows by variable values
 <p>In pandas, we use the <code>sort_values</code> function, which has an argument <code>ascending</code>. Multiple columns can be passed in to sort by multiple columns in a hierarchical manner.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>poke.sort_values([<span class="st">'total'</span>], ascending <span class="op">=</span> <span class="va">False</span>)</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co">##       gen  pokedex_no  ...   type_1    type_2</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co">## 1370    8         890  ...   Poison    Dragon</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co">## 282     1         150  ...  Psychic  Fighting</span></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co">## 283     1         150  ...  Psychic       NaN</span></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co">## 584     3         384  ...   Dragon    Flying</span></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="co">## 580     3         382  ...    Water       NaN</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co">##       gen  pokedex_no  ... height_m weight_kg</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co">## 1370    8         890  ...     20.0     950.0</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co">## 282     1         150  ...      2.0     122.0</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co">## 283     1         150  ...      2.0     122.0</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co">## 584     3         384  ...      7.0     206.5</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="co">## 580     3         382  ...      4.5     352.0</span></span>
 <span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="co">## ...   ...         ...  ...      ...       ...</span></span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="co">## 1336    8         872  ...      Ice       Bug</span></span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="co">## 328     2         191  ...    Grass       NaN</span></span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="co">## 1283    8         824  ...      Bug       NaN</span></span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="co">## 1187    7         746  ...    Water       NaN</span></span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="co">## 1188    7         746  ...    Water       NaN</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="co">## 1336    8         872  ...      0.3       3.8</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="co">## 328     2         191  ...      0.3       1.8</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="co">## 1283    8         824  ...      0.4       8.0</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="co">## 1187    7         746  ...      0.2       0.3</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="co">## 1188    7         746  ...      0.2       0.3</span></span>
 <span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="co">## </span></span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="co">## [1526 rows x 15 columns]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="co">## [1526 rows x 16 columns]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div id="tabset-4-3" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-4-3-tab">
@@ -847,64 +876,64 @@ Keep the top <span class="math inline">\(n\)</span> values of a variable
 <p>In Python, <code>nlargest</code> and <code>nsmallest</code> work roughly the same as <code>dplyr</code>’s <code>slice_max</code> and <code>slice_min</code> for integer counts.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>poke.nlargest(<span class="dv">5</span>, <span class="st">'total'</span>)</span>
-<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="co">##       gen  pokedex_no  ...   type_1    type_2</span></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co">## 1370    8         890  ...   Poison    Dragon</span></span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co">## 282     1         150  ...  Psychic  Fighting</span></span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="co">## 283     1         150  ...  Psychic       NaN</span></span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="co">## 584     3         384  ...   Dragon    Flying</span></span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="co">## 580     3         382  ...    Water       NaN</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="co">##       gen  pokedex_no  ... height_m weight_kg</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co">## 1370    8         890  ...     20.0     950.0</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co">## 282     1         150  ...      2.0     122.0</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="co">## 283     1         150  ...      2.0     122.0</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="co">## 584     3         384  ...      7.0     206.5</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="co">## 580     3         382  ...      4.5     352.0</span></span>
 <span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="co">## </span></span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="co">## [5 rows x 15 columns]</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="co">## [5 rows x 16 columns]</span></span>
 <span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>poke.nsmallest(<span class="dv">5</span>, <span class="st">'total'</span>)</span>
-<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="co">##       gen  pokedex_no  ... type_1 type_2</span></span>
-<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a><span class="co">## 1187    7         746  ...  Water    NaN</span></span>
-<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a><span class="co">## 1188    7         746  ...  Water    NaN</span></span>
-<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a><span class="co">## 328     2         191  ...  Grass    NaN</span></span>
-<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a><span class="co">## 1283    8         824  ...    Bug    NaN</span></span>
-<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a><span class="co">## 1336    8         872  ...    Ice    Bug</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="co">##       gen  pokedex_no  ... height_m weight_kg</span></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a><span class="co">## 1187    7         746  ...      0.2       0.3</span></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a><span class="co">## 1188    7         746  ...      0.2       0.3</span></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a><span class="co">## 328     2         191  ...      0.3       1.8</span></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a><span class="co">## 1283    8         824  ...      0.4       8.0</span></span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a><span class="co">## 1336    8         872  ...      0.3       3.8</span></span>
 <span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a><span class="co">## </span></span>
-<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a><span class="co">## [5 rows x 15 columns]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a><span class="co">## [5 rows x 16 columns]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>To get proportions, though, we have to do some math:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>poke.nlargest(<span class="bu">int</span>(<span class="bu">len</span>(poke)<span class="op">*</span><span class="fl">0.01</span>), <span class="st">'total'</span>)</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="co">##       gen  pokedex_no  ...   type_1    type_2</span></span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="co">## 1370    8         890  ...   Poison    Dragon</span></span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="co">## 282     1         150  ...  Psychic  Fighting</span></span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="co">## 283     1         150  ...  Psychic       NaN</span></span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="co">## 584     3         384  ...   Dragon    Flying</span></span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="co">## 580     3         382  ...    Water       NaN</span></span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="co">## 582     3         383  ...   Ground      Fire</span></span>
-<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="co">## 1257    7         800  ...  Psychic    Dragon</span></span>
-<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="co">## 1258    7         800  ...  Psychic    Dragon</span></span>
-<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a><span class="co">## 1259    7         800  ...  Psychic    Dragon</span></span>
-<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a><span class="co">## 779     4         493  ...   Normal       NaN</span></span>
-<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a><span class="co">## 1126    6         718  ...   Dragon    Ground</span></span>
-<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a><span class="co">## 1127    6         718  ...   Dragon    Ground</span></span>
-<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a><span class="co">## 1128    6         718  ...   Dragon    Ground</span></span>
-<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a><span class="co">## 405     2         248  ...     Rock      Dark</span></span>
-<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a><span class="co">## 567     3         373  ...   Dragon    Flying</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="co">##       gen  pokedex_no  ... height_m weight_kg</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="co">## 1370    8         890  ...     20.0     950.0</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="co">## 282     1         150  ...      2.0     122.0</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="co">## 283     1         150  ...      2.0     122.0</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a><span class="co">## 584     3         384  ...      7.0     206.5</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a><span class="co">## 580     3         382  ...      4.5     352.0</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="co">## 582     3         383  ...      3.5     950.0</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="co">## 1257    7         800  ...      2.4     230.0</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="co">## 1258    7         800  ...      2.4     230.0</span></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a><span class="co">## 1259    7         800  ...      2.4     230.0</span></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a><span class="co">## 779     4         493  ...      3.2     320.0</span></span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a><span class="co">## 1126    6         718  ...      5.0     305.0</span></span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a><span class="co">## 1127    6         718  ...      5.0     305.0</span></span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a><span class="co">## 1128    6         718  ...      5.0     305.0</span></span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a><span class="co">## 405     2         248  ...      2.0     202.0</span></span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a><span class="co">## 567     3         373  ...      1.5     102.6</span></span>
 <span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a><span class="co">## </span></span>
-<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a><span class="co">## [15 rows x 15 columns]</span></span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a><span class="co">## [15 rows x 16 columns]</span></span>
 <span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>poke.nsmallest(<span class="bu">int</span>(<span class="bu">len</span>(poke)<span class="op">*</span><span class="fl">0.01</span>), <span class="st">'total'</span>)</span>
-<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a><span class="co">##       gen  pokedex_no  ...   type_1  type_2</span></span>
-<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a><span class="co">## 1187    7         746  ...    Water     NaN</span></span>
-<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a><span class="co">## 1188    7         746  ...    Water     NaN</span></span>
-<span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a><span class="co">## 328     2         191  ...    Grass     NaN</span></span>
-<span id="cb18-25"><a href="#cb18-25" aria-hidden="true" tabindex="-1"></a><span class="co">## 1283    8         824  ...      Bug     NaN</span></span>
-<span id="cb18-26"><a href="#cb18-26" aria-hidden="true" tabindex="-1"></a><span class="co">## 1336    8         872  ...      Ice     Bug</span></span>
-<span id="cb18-27"><a href="#cb18-27" aria-hidden="true" tabindex="-1"></a><span class="co">## 465     3         298  ...   Normal   Fairy</span></span>
-<span id="cb18-28"><a href="#cb18-28" aria-hidden="true" tabindex="-1"></a><span class="co">## 616     4         401  ...      Bug     NaN</span></span>
-<span id="cb18-29"><a href="#cb18-29" aria-hidden="true" tabindex="-1"></a><span class="co">## 13      1          10  ...      Bug     NaN</span></span>
-<span id="cb18-30"><a href="#cb18-30" aria-hidden="true" tabindex="-1"></a><span class="co">## 16      1          13  ...      Bug  Poison</span></span>
-<span id="cb18-31"><a href="#cb18-31" aria-hidden="true" tabindex="-1"></a><span class="co">## 431     3         265  ...      Bug     NaN</span></span>
-<span id="cb18-32"><a href="#cb18-32" aria-hidden="true" tabindex="-1"></a><span class="co">## 446     3         280  ...  Psychic   Fairy</span></span>
-<span id="cb18-33"><a href="#cb18-33" aria-hidden="true" tabindex="-1"></a><span class="co">## 248     1         129  ...    Water     NaN</span></span>
-<span id="cb18-34"><a href="#cb18-34" aria-hidden="true" tabindex="-1"></a><span class="co">## 524     3         349  ...    Water     NaN</span></span>
-<span id="cb18-35"><a href="#cb18-35" aria-hidden="true" tabindex="-1"></a><span class="co">## 1032    6         664  ...      Bug     NaN</span></span>
-<span id="cb18-36"><a href="#cb18-36" aria-hidden="true" tabindex="-1"></a><span class="co">## 1237    7         789  ...  Psychic     NaN</span></span>
+<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a><span class="co">##       gen  pokedex_no  ... height_m weight_kg</span></span>
+<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a><span class="co">## 1187    7         746  ...      0.2       0.3</span></span>
+<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a><span class="co">## 1188    7         746  ...      0.2       0.3</span></span>
+<span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a><span class="co">## 328     2         191  ...      0.3       1.8</span></span>
+<span id="cb18-25"><a href="#cb18-25" aria-hidden="true" tabindex="-1"></a><span class="co">## 1283    8         824  ...      0.4       8.0</span></span>
+<span id="cb18-26"><a href="#cb18-26" aria-hidden="true" tabindex="-1"></a><span class="co">## 1336    8         872  ...      0.3       3.8</span></span>
+<span id="cb18-27"><a href="#cb18-27" aria-hidden="true" tabindex="-1"></a><span class="co">## 465     3         298  ...      0.2       2.0</span></span>
+<span id="cb18-28"><a href="#cb18-28" aria-hidden="true" tabindex="-1"></a><span class="co">## 616     4         401  ...      0.3       2.2</span></span>
+<span id="cb18-29"><a href="#cb18-29" aria-hidden="true" tabindex="-1"></a><span class="co">## 13      1          10  ...      0.3       2.9</span></span>
+<span id="cb18-30"><a href="#cb18-30" aria-hidden="true" tabindex="-1"></a><span class="co">## 16      1          13  ...      0.3       3.2</span></span>
+<span id="cb18-31"><a href="#cb18-31" aria-hidden="true" tabindex="-1"></a><span class="co">## 431     3         265  ...      0.3       3.6</span></span>
+<span id="cb18-32"><a href="#cb18-32" aria-hidden="true" tabindex="-1"></a><span class="co">## 446     3         280  ...      0.4       6.6</span></span>
+<span id="cb18-33"><a href="#cb18-33" aria-hidden="true" tabindex="-1"></a><span class="co">## 248     1         129  ...      0.9      10.0</span></span>
+<span id="cb18-34"><a href="#cb18-34" aria-hidden="true" tabindex="-1"></a><span class="co">## 524     3         349  ...      0.6       7.4</span></span>
+<span id="cb18-35"><a href="#cb18-35" aria-hidden="true" tabindex="-1"></a><span class="co">## 1032    6         664  ...      0.3       2.5</span></span>
+<span id="cb18-36"><a href="#cb18-36" aria-hidden="true" tabindex="-1"></a><span class="co">## 1237    7         789  ...      0.2       0.1</span></span>
 <span id="cb18-37"><a href="#cb18-37" aria-hidden="true" tabindex="-1"></a><span class="co">## </span></span>
-<span id="cb18-38"><a href="#cb18-38" aria-hidden="true" tabindex="-1"></a><span class="co">## [15 rows x 15 columns]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb18-38"><a href="#cb18-38" aria-hidden="true" tabindex="-1"></a><span class="co">## [15 rows x 16 columns]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div id="tabset-5-3" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-5-3-tab">
@@ -961,36 +990,10 @@ Try it out: Filtering
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>poke <span class="op">=</span> pd.read_csv(<span class="st">"https://github.com/srvanderplas/datasets/raw/main/clean/pokemon_gen_1-9.csv"</span>)</span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>poke.query(<span class="st">"type_1=='Water'"</span>)</span>
-<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="co">##       gen  pokedex_no  ... type_1   type_2</span></span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a><span class="co">## 9       1           7  ...  Water      NaN</span></span>
-<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="co">## 10      1           8  ...  Water      NaN</span></span>
-<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="co">## 11      1           9  ...  Water      NaN</span></span>
-<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a><span class="co">## 12      1           9  ...  Water      NaN</span></span>
-<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a><span class="co">## 98      1          54  ...  Water      NaN</span></span>
-<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a><span class="co">## ...   ...         ...  ...    ...      ...</span></span>
-<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a><span class="co">## 1467    9         964  ...  Water      NaN</span></span>
-<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a><span class="co">## 1468    9         964  ...  Water      NaN</span></span>
-<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a><span class="co">## 1469    9         964  ...  Water      NaN</span></span>
-<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a><span class="co">## 1481    9         976  ...  Water  Psychic</span></span>
-<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a><span class="co">## 1482    9         977  ...  Water      NaN</span></span>
-<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a><span class="co">## </span></span>
-<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a><span class="co">## [179 rows x 15 columns]</span></span>
-<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a>poke.query(<span class="st">"type_1=='Water'|type_2=='Water'"</span>)</span>
-<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a><span class="co"># The conditions have to be separated by |, which means "or"</span></span>
-<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a><span class="co">##       gen  pokedex_no  ...  type_1 type_2</span></span>
-<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a><span class="co">## 9       1           7  ...   Water    NaN</span></span>
-<span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a><span class="co">## 10      1           8  ...   Water    NaN</span></span>
-<span id="cb21-24"><a href="#cb21-24" aria-hidden="true" tabindex="-1"></a><span class="co">## 11      1           9  ...   Water    NaN</span></span>
-<span id="cb21-25"><a href="#cb21-25" aria-hidden="true" tabindex="-1"></a><span class="co">## 12      1           9  ...   Water    NaN</span></span>
-<span id="cb21-26"><a href="#cb21-26" aria-hidden="true" tabindex="-1"></a><span class="co">## 98      1          54  ...   Water    NaN</span></span>
-<span id="cb21-27"><a href="#cb21-27" aria-hidden="true" tabindex="-1"></a><span class="co">## ...   ...         ...  ...     ...    ...</span></span>
-<span id="cb21-28"><a href="#cb21-28" aria-hidden="true" tabindex="-1"></a><span class="co">## 1488    9         978  ...  Dragon  Water</span></span>
-<span id="cb21-29"><a href="#cb21-29" aria-hidden="true" tabindex="-1"></a><span class="co">## 1489    9         978  ...  Dragon  Water</span></span>
-<span id="cb21-30"><a href="#cb21-30" aria-hidden="true" tabindex="-1"></a><span class="co">## 1490    9         978  ...  Dragon  Water</span></span>
-<span id="cb21-31"><a href="#cb21-31" aria-hidden="true" tabindex="-1"></a><span class="co">## 1491    9         978  ...  Dragon  Water</span></span>
-<span id="cb21-32"><a href="#cb21-32" aria-hidden="true" tabindex="-1"></a><span class="co">## 1505    9         991  ...     Ice  Water</span></span>
-<span id="cb21-33"><a href="#cb21-33" aria-hidden="true" tabindex="-1"></a><span class="co">## </span></span>
-<span id="cb21-34"><a href="#cb21-34" aria-hidden="true" tabindex="-1"></a><span class="co">## [221 rows x 15 columns]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): pandas.errors.UndefinedVariableError: name 'type_1' is not defined</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>poke.query(<span class="st">"type_1=='Water'|type_2=='Water'"</span>)</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="co"># The conditions have to be separated by |, which means "or"</span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): pandas.errors.UndefinedVariableError: name 'type_1' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div id="tabset-6-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-4-tab">
@@ -1010,8 +1013,8 @@ Try it out: Filtering
 </div>
 </div>
 </div>
-</section></section><section id="select-pick-columns" class="level2" data-number="18.4"><h2 data-number="18.4" class="anchored" data-anchor-id="select-pick-columns">
-<span class="header-section-number">18.4</span> Select: Pick columns</h2>
+</section></section><section id="select-pick-columns" class="level2" data-number="18.5"><h2 data-number="18.5" class="anchored" data-anchor-id="select-pick-columns">
+<span class="header-section-number">18.5</span> Select: Pick columns</h2>
 <p>Sometimes, we don’t want to work with a set of 50 variables when we’re only interested in 5. When that happens, we might be able to pick the variables we want by index (e.g.&nbsp;<code>df[, c(1, 3, 5)]</code>), but this can get tedious.</p>
 <div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
@@ -1236,96 +1239,65 @@ Tip
 <div id="tabset-7-2" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-7-2-tab">
 <p>First, let’s install the nycflights13 package<span class="citation" data-cites="chowNycflights13DataPackage2020"><a href="#ref-chowNycflights13DataPackage2020" role="doc-biblioref">[3]</a></span> in python with <code>pip install nycflights13</code>.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> nycflights13 <span class="im">import</span> flights</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> nycflights13 <span class="im">import</span> flights</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): ModuleNotFoundError: No module named 'nycflights13'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Select operations are not as easy in python as they are using select() with helpers.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>cols <span class="op">=</span> flights.columns</span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Rearrange column order by manual indexing</span></span>
-<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> cols[<span class="dv">9</span>:<span class="dv">13</span>].append(cols[<span class="dv">0</span>:<span class="dv">9</span>])</span>
-<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> x.append(cols[<span class="dv">13</span>:<span class="dv">19</span>])</span>
-<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Then use the index to rearrange the columns</span></span>
-<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>flights.loc[:,x]</span>
-<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a><span class="co">##        carrier  flight tailnum  ... hour  minute             time_hour</span></span>
-<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a><span class="co">## 0           UA    1545  N14228  ...    5      15  2013-01-01T10:00:00Z</span></span>
-<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a><span class="co">## 1           UA    1714  N24211  ...    5      29  2013-01-01T10:00:00Z</span></span>
-<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a><span class="co">## 2           AA    1141  N619AA  ...    5      40  2013-01-01T10:00:00Z</span></span>
-<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a><span class="co">## 3           B6     725  N804JB  ...    5      45  2013-01-01T10:00:00Z</span></span>
-<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a><span class="co">## 4           DL     461  N668DN  ...    6       0  2013-01-01T11:00:00Z</span></span>
-<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a><span class="co">## ...        ...     ...     ...  ...  ...     ...                   ...</span></span>
-<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a><span class="co">## 336771      9E    3393     NaN  ...   14      55  2013-09-30T18:00:00Z</span></span>
-<span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a><span class="co">## 336772      9E    3525     NaN  ...   22       0  2013-10-01T02:00:00Z</span></span>
-<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a><span class="co">## 336773      MQ    3461  N535MQ  ...   12      10  2013-09-30T16:00:00Z</span></span>
-<span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a><span class="co">## 336774      MQ    3572  N511MQ  ...   11      59  2013-09-30T15:00:00Z</span></span>
-<span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a><span class="co">## 336775      MQ    3531  N839MQ  ...    8      40  2013-09-30T12:00:00Z</span></span>
-<span id="cb28-21"><a href="#cb28-21" aria-hidden="true" tabindex="-1"></a><span class="co">## </span></span>
-<span id="cb28-22"><a href="#cb28-22" aria-hidden="true" tabindex="-1"></a><span class="co">## [336776 rows x 19 columns]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'flights' is not defined</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> cols[<span class="dv">9</span>:<span class="dv">13</span>].append(cols[<span class="dv">0</span>:<span class="dv">9</span>])</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'cols' is not defined</span></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> x.append(cols[<span class="dv">13</span>:<span class="dv">19</span>])</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Then use the index to rearrange the columns</span></span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'x' is not defined</span></span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>flights.loc[:,x]</span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'flights' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<section id="list-comprehensions" class="level4" data-number="18.4.0.1"><h4 data-number="18.4.0.1" class="anchored" data-anchor-id="list-comprehensions">
-<span class="header-section-number">18.4.0.1</span> List Comprehensions</h4>
+<section id="list-comprehensions" class="level4" data-number="18.5.0.1"><h4 data-number="18.5.0.1" class="anchored" data-anchor-id="list-comprehensions">
+<span class="header-section-number">18.5.0.1</span> List Comprehensions</h4>
 <p>In Python, there are certain shorthands called “list comprehensions” <span class="citation" data-cites="pythonfoundationDataStructures2022"><a href="#ref-pythonfoundationDataStructures2022" role="doc-biblioref">[4]</a></span> that can perform similar functions to e.g.&nbsp;the <code><a href="https://tidyselect.r-lib.org/reference/starts_with.html">matches()</a></code> function in dplyr.</p>
 <p>Suppose we want to get all columns containing the word ‘time’. We could iterate through the list of columns (<code>flights.columns</code>) and add the column name any time we detect the word ‘time’ within. That is essentially what the following code does:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># This gets all columns that contain time</span></span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>timecols <span class="op">=</span> [col <span class="cf">for</span> col <span class="kw">in</span> flights.columns <span class="cf">if</span> <span class="st">'time'</span> <span class="kw">in</span> col]</span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>timecols</span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="co">## ['dep_time', 'sched_dep_time', 'arr_time', 'sched_arr_time', 'air_time', 'time_hour']</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'flights' is not defined</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>timecols</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'timecols' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Explaining the code: - <code>for col in flights.columns</code> iterates through the list of columns, storing each column name in the variable <code>col</code> - <code>if 'time' in col</code> detects the presence of the word ‘time’ in the column name stored in <code>col</code> - the <code>col</code> out front adds the column name in the variable <code>col</code> to the array of columns to keep</p>
-</section><section id="selecting-columns-in-python" class="level4" data-number="18.4.0.2"><h4 data-number="18.4.0.2" class="anchored" data-anchor-id="selecting-columns-in-python">
-<span class="header-section-number">18.4.0.2</span> Selecting columns in Python</h4>
+</section><section id="selecting-columns-in-python" class="level4" data-number="18.5.0.2"><h4 data-number="18.5.0.2" class="anchored" data-anchor-id="selecting-columns-in-python">
+<span class="header-section-number">18.5.0.2</span> Selecting columns in Python</h4>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># This gets all columns that contain time</span></span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>timecols <span class="op">=</span> [col <span class="cf">for</span> col <span class="kw">in</span> flights.columns <span class="cf">if</span> <span class="st">'time'</span> <span class="kw">in</span> col]</span>
 <span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Other columns</span></span>
-<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>selcols <span class="op">=</span> [<span class="st">"carrier"</span>, <span class="st">"flight"</span>, <span class="st">"tailnum"</span>]</span>
-<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine the two lists</span></span>
-<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>selcols.extend(timecols)</span>
-<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Subset the data frame</span></span>
-<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>flights.loc[:,selcols]</span>
-<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a><span class="co">##        carrier  flight tailnum  ...  sched_arr_time  air_time             time_hour</span></span>
-<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a><span class="co">## 0           UA    1545  N14228  ...             819     227.0  2013-01-01T10:00:00Z</span></span>
-<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a><span class="co">## 1           UA    1714  N24211  ...             830     227.0  2013-01-01T10:00:00Z</span></span>
-<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a><span class="co">## 2           AA    1141  N619AA  ...             850     160.0  2013-01-01T10:00:00Z</span></span>
-<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a><span class="co">## 3           B6     725  N804JB  ...            1022     183.0  2013-01-01T10:00:00Z</span></span>
-<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a><span class="co">## 4           DL     461  N668DN  ...             837     116.0  2013-01-01T11:00:00Z</span></span>
-<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a><span class="co">## ...        ...     ...     ...  ...             ...       ...                   ...</span></span>
-<span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a><span class="co">## 336771      9E    3393     NaN  ...            1634       NaN  2013-09-30T18:00:00Z</span></span>
-<span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a><span class="co">## 336772      9E    3525     NaN  ...            2312       NaN  2013-10-01T02:00:00Z</span></span>
-<span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a><span class="co">## 336773      MQ    3461  N535MQ  ...            1330       NaN  2013-09-30T16:00:00Z</span></span>
-<span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a><span class="co">## 336774      MQ    3572  N511MQ  ...            1344       NaN  2013-09-30T15:00:00Z</span></span>
-<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a><span class="co">## 336775      MQ    3531  N839MQ  ...            1020       NaN  2013-09-30T12:00:00Z</span></span>
-<span id="cb30-22"><a href="#cb30-22" aria-hidden="true" tabindex="-1"></a><span class="co">## </span></span>
-<span id="cb30-23"><a href="#cb30-23" aria-hidden="true" tabindex="-1"></a><span class="co">## [336776 rows x 9 columns]</span></span>
-<span id="cb30-24"><a href="#cb30-24" aria-hidden="true" tabindex="-1"></a>selcols.extend([<span class="st">"whoops"</span>])</span>
-<span id="cb30-25"><a href="#cb30-25" aria-hidden="true" tabindex="-1"></a>selcols</span>
-<span id="cb30-26"><a href="#cb30-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-27"><a href="#cb30-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Subset the data frame</span></span>
-<span id="cb30-28"><a href="#cb30-28" aria-hidden="true" tabindex="-1"></a><span class="co">## ['carrier', 'flight', 'tailnum', 'dep_time', 'sched_dep_time', 'arr_time', 'sched_arr_time', 'air_time', 'time_hour', 'whoops']</span></span>
-<span id="cb30-29"><a href="#cb30-29" aria-hidden="true" tabindex="-1"></a>flights.loc[:,selcols]</span>
-<span id="cb30-30"><a href="#cb30-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-31"><a href="#cb30-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Error-tolerance - use list comprehension to check if </span></span>
-<span id="cb30-32"><a href="#cb30-32" aria-hidden="true" tabindex="-1"></a><span class="co"># variable names are in the data frame</span></span>
-<span id="cb30-33"><a href="#cb30-33" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): KeyError: "['whoops'] not in index"</span></span>
-<span id="cb30-34"><a href="#cb30-34" aria-hidden="true" tabindex="-1"></a>selcols_fixed <span class="op">=</span> [x <span class="cf">for</span> x <span class="kw">in</span> selcols <span class="cf">if</span> x <span class="kw">in</span> flights.columns]</span>
-<span id="cb30-35"><a href="#cb30-35" aria-hidden="true" tabindex="-1"></a>flights.loc[:,selcols_fixed]</span>
-<span id="cb30-36"><a href="#cb30-36" aria-hidden="true" tabindex="-1"></a><span class="co">##        carrier  flight tailnum  ...  sched_arr_time  air_time             time_hour</span></span>
-<span id="cb30-37"><a href="#cb30-37" aria-hidden="true" tabindex="-1"></a><span class="co">## 0           UA    1545  N14228  ...             819     227.0  2013-01-01T10:00:00Z</span></span>
-<span id="cb30-38"><a href="#cb30-38" aria-hidden="true" tabindex="-1"></a><span class="co">## 1           UA    1714  N24211  ...             830     227.0  2013-01-01T10:00:00Z</span></span>
-<span id="cb30-39"><a href="#cb30-39" aria-hidden="true" tabindex="-1"></a><span class="co">## 2           AA    1141  N619AA  ...             850     160.0  2013-01-01T10:00:00Z</span></span>
-<span id="cb30-40"><a href="#cb30-40" aria-hidden="true" tabindex="-1"></a><span class="co">## 3           B6     725  N804JB  ...            1022     183.0  2013-01-01T10:00:00Z</span></span>
-<span id="cb30-41"><a href="#cb30-41" aria-hidden="true" tabindex="-1"></a><span class="co">## 4           DL     461  N668DN  ...             837     116.0  2013-01-01T11:00:00Z</span></span>
-<span id="cb30-42"><a href="#cb30-42" aria-hidden="true" tabindex="-1"></a><span class="co">## ...        ...     ...     ...  ...             ...       ...                   ...</span></span>
-<span id="cb30-43"><a href="#cb30-43" aria-hidden="true" tabindex="-1"></a><span class="co">## 336771      9E    3393     NaN  ...            1634       NaN  2013-09-30T18:00:00Z</span></span>
-<span id="cb30-44"><a href="#cb30-44" aria-hidden="true" tabindex="-1"></a><span class="co">## 336772      9E    3525     NaN  ...            2312       NaN  2013-10-01T02:00:00Z</span></span>
-<span id="cb30-45"><a href="#cb30-45" aria-hidden="true" tabindex="-1"></a><span class="co">## 336773      MQ    3461  N535MQ  ...            1330       NaN  2013-09-30T16:00:00Z</span></span>
-<span id="cb30-46"><a href="#cb30-46" aria-hidden="true" tabindex="-1"></a><span class="co">## 336774      MQ    3572  N511MQ  ...            1344       NaN  2013-09-30T15:00:00Z</span></span>
-<span id="cb30-47"><a href="#cb30-47" aria-hidden="true" tabindex="-1"></a><span class="co">## 336775      MQ    3531  N839MQ  ...            1020       NaN  2013-09-30T12:00:00Z</span></span>
-<span id="cb30-48"><a href="#cb30-48" aria-hidden="true" tabindex="-1"></a><span class="co">## </span></span>
-<span id="cb30-49"><a href="#cb30-49" aria-hidden="true" tabindex="-1"></a><span class="co">## [336776 rows x 9 columns]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'flights' is not defined</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>selcols <span class="op">=</span> [<span class="st">"carrier"</span>, <span class="st">"flight"</span>, <span class="st">"tailnum"</span>]</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine the two lists</span></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>selcols.extend(timecols)</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Subset the data frame</span></span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'timecols' is not defined</span></span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>flights.loc[:,selcols]</span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'flights' is not defined</span></span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a>selcols.extend([<span class="st">"whoops"</span>])</span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a>selcols</span>
+<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Subset the data frame</span></span>
+<span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a><span class="co">## ['carrier', 'flight', 'tailnum', 'whoops']</span></span>
+<span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a>flights.loc[:,selcols]</span>
+<span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Error-tolerance - use list comprehension to check if </span></span>
+<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a><span class="co"># variable names are in the data frame</span></span>
+<span id="cb30-22"><a href="#cb30-22" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'flights' is not defined</span></span>
+<span id="cb30-23"><a href="#cb30-23" aria-hidden="true" tabindex="-1"></a>selcols_fixed <span class="op">=</span> [x <span class="cf">for</span> x <span class="kw">in</span> selcols <span class="cf">if</span> x <span class="kw">in</span> flights.columns]</span>
+<span id="cb30-24"><a href="#cb30-24" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'flights' is not defined</span></span>
+<span id="cb30-25"><a href="#cb30-25" aria-hidden="true" tabindex="-1"></a>flights.loc[:,selcols_fixed]</span>
+<span id="cb30-26"><a href="#cb30-26" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'flights' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </div>
@@ -1441,8 +1413,8 @@ dplyr::relocate
 </div>
 </div>
 </div>
-</section><section id="mutate-add-and-transform-variables" class="level2" data-number="18.5"><h2 data-number="18.5" class="anchored" data-anchor-id="mutate-add-and-transform-variables">
-<span class="header-section-number">18.5</span> Mutate: Add and transform variables</h2>
+</section><section id="mutate-add-and-transform-variables" class="level2" data-number="18.6"><h2 data-number="18.6" class="anchored" data-anchor-id="mutate-add-and-transform-variables">
+<span class="header-section-number">18.6</span> Mutate: Add and transform variables</h2>
 <p>Up to this point, we’ve been primarily focusing on how to decrease the dimensionality of our dataset in various ways. But frequently, we also need to add columns for derived measures (e.g.&nbsp;BMI from weight and height information), change units, and replace missing or erroneous observations. The tidyverse verb for this is <code>mutate</code>, but in base R and python, we’ll simply use assignment to add columns to our data frames.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure"><p><img src="../images/wrangling/dplyr_mutate.png" class="img-fluid figure-img" alt="Cartoon of cute fuzzy monsters dressed up as different X-men characters, working together to add a new column to an existing data frame. Stylized title text reads “dplyr::mutate - add columns, keep existing.”"></p>
@@ -1498,7 +1470,8 @@ dplyr::relocate
 <span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>poke <span class="op">=</span> pd.read_csv(<span class="st">"https://github.com/srvanderplas/datasets/raw/main/clean/pokemon_gen_1-9.csv"</span>)</span>
 <span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>poke[<span class="st">"no_types"</span>] <span class="op">=</span> <span class="dv">1</span> <span class="co"># default value</span></span>
-<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>poke.loc[<span class="op">~</span>poke.type_2.isna(), <span class="st">"no_types"</span>] <span class="op">=</span> <span class="dv">2</span> <span class="co"># change those with a defined type 2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>poke.loc[<span class="op">~</span>poke.type_2.isna(), <span class="st">"no_types"</span>] <span class="op">=</span> <span class="dv">2</span> <span class="co"># change those with a defined type 2</span></span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): AttributeError: 'DataFrame' object has no attribute 'type_2'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Another function that may be useful is the <code>assign</code> function, which can be used to create new variables if you don’t want to use the <code>["new_col"]</code> notation. In some circumstances, <code>.assign(var = ...)</code> is a bit easier to work with because Python distinguishes between modifications to data and making a copy of the entire data frame (which is something I’d like to <a href="https://stackoverflow.com/questions/23296282/what-rules-does-pandas-use-to-generate-a-view-vs-a-copy">not get into right now</a> for simplicity’s sake).</p>
 </div>
@@ -1575,8 +1548,8 @@ Note
 </table>
 </div>
 </div>
-</section><section id="summarize" class="level2" data-number="18.6"><h2 data-number="18.6" class="anchored" data-anchor-id="summarize">
-<span class="header-section-number">18.6</span> Summarize</h2>
+</section><section id="summarize" class="level2" data-number="18.7"><h2 data-number="18.7" class="anchored" data-anchor-id="summarize">
+<span class="header-section-number">18.7</span> Summarize</h2>
 <p>The next verb is one that we’ve already implicitly seen in action: <code>summarize</code> takes a data frame with potentially many rows of data and reduces it down to one row of data using some function. You have used it to get single-row summaries of vectorized data in R, and we’ve used e.g.&nbsp;<code>group_by</code> + <code>count</code> in Python to perform certain tasks as well.</p>
 <p>Here (in a trivial example), I compute the overall average HP of a Pokemon in each generation, as well as the average number of characters in their name. Admittedly, that last computation is a bit silly, but it’s mostly for demonstration purposes.</p>
 <div class="panel-tabset">
@@ -1621,8 +1594,8 @@ Note
 </div>
 </div>
 <p>The real power of summarize, though, is in combination with Group By. We’ll see more summarize examples, but it’s easier to make good examples when you have all the tools - it’s hard to demonstrate how to use a hammer if you don’t also have a nail.</p>
-</section><section id="group-by-power" class="level2 page-columns page-full" data-number="18.7"><h2 data-number="18.7" class="anchored" data-anchor-id="group-by-power">
-<span class="header-section-number">18.7</span> Group By + (?) = Power!</h2>
+</section><section id="group-by-power" class="level2 page-columns page-full" data-number="18.8"><h2 data-number="18.8" class="anchored" data-anchor-id="group-by-power">
+<span class="header-section-number">18.8</span> Group By + (?) = Power!</h2>
 <p>Frequently, we have data that is more specific than the data we need - for instance, I may have observations of the temperature at 15-minute intervals, but I might want to record the daily high and low value. To do this, I need to</p>
 <ol type="1">
 <li>split my dataset into smaller datasets - one for each day</li>
@@ -1754,7 +1727,7 @@ Storms Example
 <span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>storms <span class="op">=</span> pd.read_csv(<span class="st">"https://github.com/srvanderplas/datasets/blob/main/clean/storms.csv"</span>)</span>
 <span id="cb42-4"><a href="#cb42-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Construct a time variable that behaves like a number but is formatted as a date</span></span>
-<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): pandas.errors.ParserError: Error tokenizing data. C error: Expected 1 fields in line 28, saw 367</span></span>
+<span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): pandas.errors.ParserError: Error tokenizing data. C error: Expected 1 fields in line 27, saw 367</span></span>
 <span id="cb42-7"><a href="#cb42-7" aria-hidden="true" tabindex="-1"></a>storms <span class="op">=</span> storms.assign(time <span class="op">=</span> pd.to_datetime(storms[[<span class="st">"year"</span>, <span class="st">"month"</span>, <span class="st">"day"</span>, <span class="st">"hour"</span>]]))</span>
 <span id="cb42-8"><a href="#cb42-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb42-9"><a href="#cb42-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove month/day/hour </span></span>
@@ -2045,8 +2018,8 @@ Storms Example
 <p></p><figcaption class="figure-caption">Radar coverage map from 1995, from <span class="citation" data-cites="massPacificNorthwestHas2006"><a href="#ref-massPacificNorthwestHas2006" role="doc-biblioref">[12]</a></span></figcaption><p></p>
 </figure>
 </div>
-</div></div><section id="summarizing-across-multiple-variables" class="level3" data-number="18.7.1"><h3 data-number="18.7.1" class="anchored" data-anchor-id="summarizing-across-multiple-variables">
-<span class="header-section-number">18.7.1</span> Summarizing Across Multiple Variables</h3>
+</div></div><section id="summarizing-across-multiple-variables" class="level3" data-number="18.8.1"><h3 data-number="18.8.1" class="anchored" data-anchor-id="summarizing-across-multiple-variables">
+<span class="header-section-number">18.8.1</span> Summarizing Across Multiple Variables</h3>
 <p>The dplyr package is filled with other handy functions for accomplishing common data-wrangling tasks. <code><a href="https://dplyr.tidyverse.org/reference/across.html">across()</a></code> is particularly useful - it allows you to make a modification to several columns at the same time.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure"><p><img src="../images/wrangling/dplyr_across.png" class="img-fluid figure-img"></p>
@@ -2265,8 +2238,8 @@ Storms Example
 </div>
 </div>
 </div>
-</section></section><section id="try-it-out" class="level2" data-number="18.8"><h2 data-number="18.8" class="anchored" data-anchor-id="try-it-out">
-<span class="header-section-number">18.8</span> Try it out</h2>
+</section></section><section id="try-it-out" class="level2" data-number="18.9"><h2 data-number="18.9" class="anchored" data-anchor-id="try-it-out">
+<span class="header-section-number">18.9</span> Try it out</h2>
 <p>You can <a href="https://www.gapminder.org/data/documentation/">read about the gapminder project here</a>.</p>
 <p>The gapminder data used for this set of problems contains data from 142 countries on 5 continents. The filtered data in <code>gapminder</code> (in R) contain data about every 5 year period between 1952 and 2007, the country’s life expectancy at birth, population, and per capita GDP (in US $, inflation adjusted). In the <code>gapminder_unfiltered</code> table, however, things are a bit different. Some countries have yearly data, observations are missing, and some countries don’t have complete data. The <code>gapminder</code> package in python (install with <code>pip install gapminder</code>) is a port of the R package, but doesn’t contain the unfiltered data, so we’ll instead use a CSV export.</p>
 <div class="callout-tip callout callout-style-default callout-captioned">
@@ -2315,8 +2288,8 @@ Read in the Data
 </div>
 </div>
 </div>
-<section id="task-1-how-bad-is-it" class="level3" data-number="18.8.1"><h3 data-number="18.8.1" class="anchored" data-anchor-id="task-1-how-bad-is-it">
-<span class="header-section-number">18.8.1</span> Task 1: How Bad is It?</h3>
+<section id="task-1-how-bad-is-it" class="level3" data-number="18.9.1"><h3 data-number="18.9.1" class="anchored" data-anchor-id="task-1-how-bad-is-it">
+<span class="header-section-number">18.9.1</span> Task 1: How Bad is It?</h3>
 <div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-20-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-20-1" role="tab" aria-controls="tabset-20-1" aria-selected="true">Problem</a></li>
@@ -2382,8 +2355,8 @@ Read in the Data
 </div>
 </div>
 </div>
-</section><section id="task-2-exclude-any-data-which-isnt-at-5-year-increments" class="level3" data-number="18.8.2"><h3 data-number="18.8.2" class="anchored" data-anchor-id="task-2-exclude-any-data-which-isnt-at-5-year-increments">
-<span class="header-section-number">18.8.2</span> Task 2: Exclude any data which isn’t at 5-year increments</h3>
+</section><section id="task-2-exclude-any-data-which-isnt-at-5-year-increments" class="level3" data-number="18.9.2"><h3 data-number="18.9.2" class="anchored" data-anchor-id="task-2-exclude-any-data-which-isnt-at-5-year-increments">
+<span class="header-section-number">18.9.2</span> Task 2: Exclude any data which isn’t at 5-year increments</h3>
 <p>Start in 1952 (so 1952, 1957, 1962, …, 2007).</p>
 <div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
@@ -2435,8 +2408,8 @@ Read in the Data
 </div>
 </div>
 </div>
-</section><section id="task-3-exclude-any-countries-that-dont-have-a-full-set-of-observations" class="level3" data-number="18.8.3"><h3 data-number="18.8.3" class="anchored" data-anchor-id="task-3-exclude-any-countries-that-dont-have-a-full-set-of-observations">
-<span class="header-section-number">18.8.3</span> Task 3: Exclude any countries that don’t have a full set of observations</h3>
+</section><section id="task-3-exclude-any-countries-that-dont-have-a-full-set-of-observations" class="level3" data-number="18.9.3"><h3 data-number="18.9.3" class="anchored" data-anchor-id="task-3-exclude-any-countries-that-dont-have-a-full-set-of-observations">
+<span class="header-section-number">18.9.3</span> Task 3: Exclude any countries that don’t have a full set of observations</h3>
 <div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-22-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-22-1" role="tab" aria-controls="tabset-22-1" aria-selected="true">R</a></li>
@@ -2486,21 +2459,29 @@ Read in the Data
 <span id="cb65-14"><a href="#cb65-14" aria-hidden="true" tabindex="-1"></a>  <span class="co"># remove nobs column</span></span>
 <span id="cb65-15"><a href="#cb65-15" aria-hidden="true" tabindex="-1"></a>  drop(<span class="st">"nobs"</span>, axis <span class="op">=</span> <span class="dv">1</span>)</span>
 <span id="cb65-16"><a href="#cb65-16" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb65-17"><a href="#cb65-17" aria-hidden="true" tabindex="-1"></a><span class="co">##                       country continent  year  lifeExp       pop   gdpPercap</span></span>
-<span id="cb65-18"><a href="#cb65-18" aria-hidden="true" tabindex="-1"></a><span class="co">## country                                                                     </span></span>
-<span id="cb65-19"><a href="#cb65-19" aria-hidden="true" tabindex="-1"></a><span class="co">## Afghanistan 0     Afghanistan      Asia  1952   28.801   8425333  779.445314</span></span>
-<span id="cb65-20"><a href="#cb65-20" aria-hidden="true" tabindex="-1"></a><span class="co">##             1     Afghanistan      Asia  1957   30.332   9240934  820.853030</span></span>
-<span id="cb65-21"><a href="#cb65-21" aria-hidden="true" tabindex="-1"></a><span class="co">##             2     Afghanistan      Asia  1962   31.997  10267083  853.100710</span></span>
-<span id="cb65-22"><a href="#cb65-22" aria-hidden="true" tabindex="-1"></a><span class="co">##             3     Afghanistan      Asia  1967   34.020  11537966  836.197138</span></span>
-<span id="cb65-23"><a href="#cb65-23" aria-hidden="true" tabindex="-1"></a><span class="co">##             4     Afghanistan      Asia  1972   36.088  13079460  739.981106</span></span>
-<span id="cb65-24"><a href="#cb65-24" aria-hidden="true" tabindex="-1"></a><span class="co">## ...                       ...       ...   ...      ...       ...         ...</span></span>
-<span id="cb65-25"><a href="#cb65-25" aria-hidden="true" tabindex="-1"></a><span class="co">## Zimbabwe    3308     Zimbabwe    Africa  1987   62.351   9216418  706.157306</span></span>
-<span id="cb65-26"><a href="#cb65-26" aria-hidden="true" tabindex="-1"></a><span class="co">##             3309     Zimbabwe    Africa  1992   60.377  10704340  693.420786</span></span>
-<span id="cb65-27"><a href="#cb65-27" aria-hidden="true" tabindex="-1"></a><span class="co">##             3310     Zimbabwe    Africa  1997   46.809  11404948  792.449960</span></span>
-<span id="cb65-28"><a href="#cb65-28" aria-hidden="true" tabindex="-1"></a><span class="co">##             3311     Zimbabwe    Africa  2002   39.989  11926563  672.038623</span></span>
-<span id="cb65-29"><a href="#cb65-29" aria-hidden="true" tabindex="-1"></a><span class="co">##             3312     Zimbabwe    Africa  2007   43.487  12311143  469.709298</span></span>
-<span id="cb65-30"><a href="#cb65-30" aria-hidden="true" tabindex="-1"></a><span class="co">## </span></span>
-<span id="cb65-31"><a href="#cb65-31" aria-hidden="true" tabindex="-1"></a><span class="co">## [1704 rows x 6 columns]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb65-17"><a href="#cb65-17" aria-hidden="true" tabindex="-1"></a><span class="co">##           country continent  year  lifeExp       pop   gdpPercap</span></span>
+<span id="cb65-18"><a href="#cb65-18" aria-hidden="true" tabindex="-1"></a><span class="co">## 0     Afghanistan      Asia  1952   28.801   8425333  779.445314</span></span>
+<span id="cb65-19"><a href="#cb65-19" aria-hidden="true" tabindex="-1"></a><span class="co">## 1     Afghanistan      Asia  1957   30.332   9240934  820.853030</span></span>
+<span id="cb65-20"><a href="#cb65-20" aria-hidden="true" tabindex="-1"></a><span class="co">## 2     Afghanistan      Asia  1962   31.997  10267083  853.100710</span></span>
+<span id="cb65-21"><a href="#cb65-21" aria-hidden="true" tabindex="-1"></a><span class="co">## 3     Afghanistan      Asia  1967   34.020  11537966  836.197138</span></span>
+<span id="cb65-22"><a href="#cb65-22" aria-hidden="true" tabindex="-1"></a><span class="co">## 4     Afghanistan      Asia  1972   36.088  13079460  739.981106</span></span>
+<span id="cb65-23"><a href="#cb65-23" aria-hidden="true" tabindex="-1"></a><span class="co">## ...           ...       ...   ...      ...       ...         ...</span></span>
+<span id="cb65-24"><a href="#cb65-24" aria-hidden="true" tabindex="-1"></a><span class="co">## 3308     Zimbabwe    Africa  1987   62.351   9216418  706.157306</span></span>
+<span id="cb65-25"><a href="#cb65-25" aria-hidden="true" tabindex="-1"></a><span class="co">## 3309     Zimbabwe    Africa  1992   60.377  10704340  693.420786</span></span>
+<span id="cb65-26"><a href="#cb65-26" aria-hidden="true" tabindex="-1"></a><span class="co">## 3310     Zimbabwe    Africa  1997   46.809  11404948  792.449960</span></span>
+<span id="cb65-27"><a href="#cb65-27" aria-hidden="true" tabindex="-1"></a><span class="co">## 3311     Zimbabwe    Africa  2002   39.989  11926563  672.038623</span></span>
+<span id="cb65-28"><a href="#cb65-28" aria-hidden="true" tabindex="-1"></a><span class="co">## 3312     Zimbabwe    Africa  2007   43.487  12311143  469.709298</span></span>
+<span id="cb65-29"><a href="#cb65-29" aria-hidden="true" tabindex="-1"></a><span class="co">## </span></span>
+<span id="cb65-30"><a href="#cb65-30" aria-hidden="true" tabindex="-1"></a><span class="co">## [1704 rows x 6 columns]</span></span>
+<span id="cb65-31"><a href="#cb65-31" aria-hidden="true" tabindex="-1"></a><span class="co">## </span></span>
+<span id="cb65-32"><a href="#cb65-32" aria-hidden="true" tabindex="-1"></a><span class="co">## &lt;string&gt;:8: FutureWarning: Not prepending group keys to the result index of transform-like apply. In the future, the group keys will be included in the index, regardless of whether the applied function returns a like-indexed object.</span></span>
+<span id="cb65-33"><a href="#cb65-33" aria-hidden="true" tabindex="-1"></a><span class="co">## To preserve the previous behavior, use</span></span>
+<span id="cb65-34"><a href="#cb65-34" aria-hidden="true" tabindex="-1"></a><span class="co">## </span></span>
+<span id="cb65-35"><a href="#cb65-35" aria-hidden="true" tabindex="-1"></a><span class="co">##  &gt;&gt;&gt; .groupby(..., group_keys=False)</span></span>
+<span id="cb65-36"><a href="#cb65-36" aria-hidden="true" tabindex="-1"></a><span class="co">## </span></span>
+<span id="cb65-37"><a href="#cb65-37" aria-hidden="true" tabindex="-1"></a><span class="co">## To adopt the future behavior and silence this warning, use </span></span>
+<span id="cb65-38"><a href="#cb65-38" aria-hidden="true" tabindex="-1"></a><span class="co">## </span></span>
+<span id="cb65-39"><a href="#cb65-39" aria-hidden="true" tabindex="-1"></a><span class="co">##  &gt;&gt;&gt; .groupby(..., group_keys=True)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
