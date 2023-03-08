@@ -15,9 +15,11 @@ In this section, we're going start learning how to work with data.
 Generally speaking, data doesn't come in a form suitable for analysis^[See [this twitter thread](https://twitter.com/JennyBryan/status/722954354198597632) for some horror stories. 
 [This tweet](https://twitter.com/jengolbeck/status/1153064308483510272?s=20) is also pretty good at showing one type of messiness.] - you have to clean it up, create the variables you care about, get rid of those you don't care about, and so on. 
 
-Some people call the process of cleaning and organizing your data "data wrangling", which is a fantastic way to think about chasing down all of the issues in the data. 
-
+::: aside
 ![Data wrangling (by Allison Horst)](../images/wrangling/data_cowboy.png){fig-alt="Cartoon of a fuzzy monster with a cowboy hat and lasso, riding another fuzzy monster labeled “dplyr”, lassoing a group of angry / unruly looking creatures labeled “data.”"}
+:::
+
+Some people call the process of cleaning and organizing your data "data wrangling", which is a fantastic way to think about chasing down all of the issues in the data. 
 
 
 In R, we'll be using the `tidyverse` for this. 
@@ -42,7 +44,7 @@ While pandas tends to be fairly similar to base R in basic operation, `datar` ma
 
 ::: column-margin
 I haven't had the chance to add the `datar` package to this book, but it looks promising and may be worth your time to figure out. 
-It's a bit too new for me to take the time to add it into this book - I want packages that will be maintained long-term if I'm going to teach them to others.
+It's a bit too new for me to teach right now - I want packages that will be maintained long-term if I'm going to teach them to others.
 :::
 
 
@@ -488,17 +490,19 @@ So for now, at least in R, you know how to cut your data down to size rowwise (w
 
 ### Python {-}
 
-First, let's install the nycflights13 package[@chowNycflights13DataPackage2020] in python with `pip install nycflights13`.
+First, let's install the nycflights13 package[@chowNycflights13DataPackage2020] in python by typing the following into your **system terminal**.
 
-```{bash, include = F}
+```{bash}
 pip install nycflights13
 ```
+
+Then, we can load the `flights` data from the `nycflights13` package.
 
 ```{python}
 from nycflights13 import flights
 ```
 
-Select operations are not as easy in python as they are using select() with helpers.
+Select operations are not as easy in python as they are when using `dplyr::select()` with helpers, but of course you can accomplish the same tasks.
 
 ```{python select-rearrange-py}
 cols = flights.columns
@@ -511,7 +515,7 @@ x = x.append(cols[13:19])
 flights.loc[:,x]
 ```
 
-#### List Comprehensions {.nonumber}
+#### List Comprehensions {-}
 
 In Python, there are certain shorthands called "list comprehensions" [@pythonfoundationDataStructures2022] that can perform similar functions to e.g. the `matches()` function in dplyr. 
 
@@ -526,11 +530,12 @@ timecols
 ```
 
 Explaining the code:
+
 - `for col in flights.columns` iterates through the list of columns, storing each column name in the variable `col`
 - `if 'time' in col` detects the presence of the word 'time' in the column name stored in `col`
 - the `col` out front adds the column name in the variable `col` to the array of columns to keep
 
-#### Selecting columns in Python {.nonumber}
+#### Selecting columns in Python {-}
 
 ```{python select-bare-vs-names-py, error = T}
 # This gets all columns that contain time
@@ -583,8 +588,7 @@ This is less convenient than `dplyr::everything` in part because it depends on u
 
 :::
 
-
-::: {.callout-note callout-collapse="true"}
+::: {.callout-demo collapse="true"}
 ### Rearranging Columns
 
 ::: panel-tabset
@@ -624,14 +628,18 @@ flights[numcols + list(flights.drop(numcols, axis = 1))]
 
 :::
 
+:::
+
 ## Mutate: Add and transform variables
 
 Up to this point, we've been primarily focusing on how to decrease the dimensionality of our dataset in various ways. 
 But frequently, we also need to add columns for derived measures (e.g. BMI from weight and height information), change units, and replace missing or erroneous observations. 
 The tidyverse verb for this is `mutate`, but in base R and python, we'll simply use assignment to add columns to our data frames.
 
+::: aside
 
 ![Mutate (by Allison Horst)](../images/wrangling/dplyr_mutate.png){fig-alt="Cartoon of cute fuzzy monsters dressed up as different X-men characters, working together to add a new column to an existing data frame. Stylized title text reads “dplyr::mutate - add columns, keep existing.”"}
+:::
 
 We'll use the Pokemon data to demonstrate. 
 Some Pokemon have a single "type", which is usually elemental, such as Water, Ice, Fire, etc., but others have two. 
@@ -779,6 +787,9 @@ This is known as the `split-apply-combine` [@wickhamSplitapplycombineStrategyDat
 
 In tidy parlance, `group_by` is the verb that accomplishes the first task. `summarize` accomplishes the second task and implicitly accomplishes the third as well.
 
+::: aside
+![The ungroup() command is just as important as the group_by() command! (by Allison Horst)](../images/wrangling/ungroup_blank.png){fig-alt="Two fuzzy monsters in the foreground in birthday party hats celebrate together because one has opened a gift with group_by() inside. Text above those two reads “Other really important parts sold separately!” In the background, a very hopeful little monster stands along holding a package labeled “ungroup”, waiting to be invited."}
+:::
 
 ::: panel-tabset
 ### R: `dplyr`{-}
@@ -809,8 +820,6 @@ poke.groupby('gen')[['pokedex_no', 'hp', 'name_length']].agg({'pokedex_no':'nuni
 
 When you `group_by` a variable, your result carries this grouping with it. In R, `summarize` will remove one layer of grouping (by default), but if you ever want to return to a completely ungrouped data set, you should use the `ungroup()` command. In Python, you should consider using `reset_index` or `grouped_thing.obj()` to access the original information[@danchoAnswerThereUngroup2021].
 
-![The ungroup() command is just as important as the group_by() command! (by Allison Horst)](../images/wrangling/ungroup_blank.png){fig-alt="Two fuzzy monsters in the foreground in birthday party hats celebrate together because one has opened a gift with group_by() inside. Text above those two reads “Other really important parts sold separately!” In the background, a very hopeful little monster stands along holding a package labeled “ungroup”, waiting to be invited."}
-
 
 ::: callout-caution
 ### Storms Example 
@@ -837,7 +846,7 @@ storms <- storms %>%
 ```{python read-data-storms-py}
 import pandas as pd
 import numpy as np
-storms = pd.read_csv("https://github.com/srvanderplas/datasets/blob/main/clean/storms.csv")
+storms = pd.read_csv("https://raw.githubusercontent.com/srvanderplas/datasets/main/clean/storms.csv", on_bad_lines='skip')
 
 # Construct a time variable that behaves like a number but is formatted as a date
 storms = storms.assign(time = pd.to_datetime(storms[["year", "month", "day", "hour"]]))
@@ -1067,18 +1076,19 @@ storm_evolution.query("year==2008").sort_values(['age'], ascending = False).head
 
 :::
 
-### Summarizing Across Multiple Variables
+
+
+## Summarizing Across Multiple Variables
+
+Suppose we want to summarize the numerical columns of any storm which was a hurricane (over the entire period it was a hurricane). 
+We don't want to write out all of the summarize statements individually, so we use `across()` instead (in `dplyr`). 
+
+::: panel-tabset
+#### R {-}
 
 The dplyr package is filled with other handy functions for accomplishing common data-wrangling tasks. `across()` is particularly useful - it allows you to make a modification to several columns at the same time.
 
 ![dplyr's across() function lets you apply a mutate or summarize statement to many columns (by Allison Horst)](../images/wrangling/dplyr_across.png)
-
-Suppose we want to summarize the numerical columns of any storm which was a hurricane (over the entire period it was a hurricane). 
-We don't want to write out all of the summarize statements individually, so we use `across()` instead. 
-
-::: panel-tabset
-
-#### R {-}
 
 ```{r storms-dplyr-other-functions}
 library(lubridate) # for the make_datetime() function
@@ -1106,11 +1116,7 @@ avg_hurricane_intensity %>%
 
 [Stackoverflow reference](https://stackoverflow.com/questions/63200530/python-pandas-equivalent-to-dplyr-1-0-0-summarizeacross)
 
-In the interests of using the same example, I've exported dplyr's `storms` data to [CSV](https://github.com/srvanderplas/unl-stat850/raw/main/data/storms.csv).
-```{r, eval = F, include = F}
-data(storms, package = "dplyr")
-readr::write_csv(storms, file = "data/storms.csv")
-```
+We can use python's list comprehensions in combination with `.agg` to accomplish the same task as `dplyr`'s `across` function.
 
 ```{python storms-dplyr-other-functions-py}
 import pandas as pd
@@ -1135,7 +1141,9 @@ groupby('name').
 agg({col: 'mean' for col in cols}))
 ```
 
-By default, pandas skips NaN values. If we want to be more clear, or want to pass another argument into the function, we can use what is called a **lambda function** - basically, a "dummy" function that has some arguments but not all of the arguments. Here, our lambda function is a function of `x`, and we calculate `x.mean(skipna=True)` for each x passed in (so, for each column). 
+By default, pandas skips NaN values. 
+If we want to be more clear, or want to pass another argument into the function, we can use what is called a **lambda function** - basically, a "dummy" function that has some arguments but not all of the arguments. 
+Here, our lambda function is a function of `x`, and we calculate `x.mean(skipna=True)` for each x passed in (so, for each column). 
 
 
 ```{python storms-dplyr-other-functions-py2}
@@ -1147,11 +1155,11 @@ filter(cols).
 groupby('name').
 agg({col: lambda x: x.mean(skipna=True) for col in cols}))
 ```
-
 :::
 
 
-## Try it out 
+
+## Try it out - Data Cleaning
 
 You can [read about the gapminder project here](https://www.gapminder.org/data/documentation/). 
 
@@ -1159,9 +1167,10 @@ The gapminder data used for this set of problems contains data from 142 countrie
 The filtered data in `gapminder` (in R) contain data about every 5 year period between 1952 and 2007, the country's life expectancy at birth, population, and per capita GDP (in US \$, inflation adjusted). 
 In the `gapminder_unfiltered` table, however, things are a bit different. 
 Some countries have yearly data, observations are missing, and some countries don't have complete data. 
-The `gapminder` package in python (install with `pip install gapminder`) is a port of the R package, but doesn't contain the unfiltered data, so we'll instead use a CSV export. 
+The `gapminder` package in python (install with `pip install gapminder`) is a port of the R package, but doesn't contain the unfiltered data, so we'll instead use a [CSV export](https://raw.githubusercontent.com/srvanderplas/datasets/main/raw/gapminder_unfiltered.csv). 
 
-::: callout-tip
+
+::: {.callout-tip collapse="true"}
 ### Read in the Data
 ::: panel-tabset
 
@@ -1181,6 +1190,10 @@ gapminder_unfiltered = pd.read_csv("https://raw.githubusercontent.com/srvanderpl
 ```
 :::
 
+:::
+
+
+::: {.callout-tip collapse="true"}
 ### Task 1: How Bad is It?
 
 ::: panel-tabset
@@ -1217,7 +1230,10 @@ In order to determine what gaps were present in the gapminder dataset, I determi
 In order to determine what gaps were present in the gapminder dataset, I determined how many years of data were available for each country by grouping the dataset and counting the rows. There should be 12 years worth of data between 1952 and 2007; as a result, I displayed the countries which did not have exactly 12 years of data. 
 
 :::
+:::
 
+
+::: {.callout-tip collapse="true"}
 ### Task 2: Exclude any data which isn't at 5-year increments
 Start in 1952 (so 1952, 1957, 1962, ..., 2007). 
 
@@ -1242,8 +1258,10 @@ gapminder_unfiltered.query("year in @years_to_keep")
 ```
 
 :::
+:::
 
 
+::: {.callout-tip collapse="true"}
 ### Task 3: Exclude any countries that don't have a full set of observations
 
 ::: panel-tabset
@@ -1284,7 +1302,7 @@ years_to_keep = [i for i in range(1952, 2008, 5)]
 :::
 :::
 
-::: callout-learnmore
+::: {.callout-learnmore collapse="true"}
 
 ## Additional Resources 
 - [Introduction to dplyr](https://stat545.com/dplyr-intro.html) and [Single Table dplyr functions](https://stat545.com/dplyr-single.html)
@@ -1300,4 +1318,5 @@ years_to_keep = [i for i in range(1952, 2008, 5)]
 
 :::
 
+## References
 
