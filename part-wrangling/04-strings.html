@@ -375,8 +375,8 @@ div.csl-indent {
   </div>
   
 
-</header><p>One of the most common types of “messy” data involves strings. If the data is input by humans, well, … we suck at spelling, typing, and data input, so… it’s going to be messy. But, another type of messy data involves situations where multiple variables are stored in the same column, or where the same variable is stored across two different columns. Usually, when this type of messy data occurs, the data is stored in a string/character variable.</p>
-<p>This chapter will teach you how to work with both situations, but we’ll focus on the second - you’ll learn the tools to handle the first case along the way.</p>
+</header><p>One of the most common types of “messy” data involves strings. If the data is input by humans, well, … we suck at spelling <span class="citation" data-cites="norvigHowWriteSpelling2007"><a href="#ref-norvigHowWriteSpelling2007" role="doc-biblioref">[1]</a></span>, typing, and data input, so… it’s going to be messy. But, another type of messy data involves situations where multiple variables are stored in the same column, or where the same variable is stored across two different columns. Usually, when this type of messy data occurs, the data is stored in a string/character variable.</p>
+<p>This chapter will teach you how to work with both messy spelling/data entry and multiple values in a single string, but we’ll focus on the second - you’ll learn the tools to handle the first case along the way.</p>
 <section id="fa-bullseye-objectives" class="level2" data-number="20.1"><h2 data-number="20.1" class="anchored" data-anchor-id="fa-bullseye-objectives">
 <span class="header-section-number">20.1</span> <i class="fa-solid fa-bullseye" aria-label="bullseye"></i> Objectives</h2>
 <ul>
@@ -586,7 +586,7 @@ div.csl-indent {
 </table>
 </div>
 </div>
-<p><a href="https://docs.oracle.com/cd/E19455-01/806-0169/overview-8/index.html">Numbers</a>, currencies, dates, and times are written differently based on what country you’re in <span class="citation" data-cites="ashourConciseGuideNumber2022"><a href="#ref-ashourConciseGuideNumber2022" role="doc-biblioref">[1]</a></span>. In computer terms, this is the <strong>locale</strong>, and it affects everything from how your computer formats the date/time to what character set it will try to use to display things <span class="citation" data-cites="LocaleComputerSoftware2022"><a href="#ref-LocaleComputerSoftware2022" role="doc-biblioref">[2]</a></span>.</p>
+<p><a href="https://docs.oracle.com/cd/E19455-01/806-0169/overview-8/index.html">Numbers</a>, currencies, dates, and times are written differently based on what country you’re in <span class="citation" data-cites="ashourConciseGuideNumber2022"><a href="#ref-ashourConciseGuideNumber2022" role="doc-biblioref">[2]</a></span>. In computer terms, this is the <strong>locale</strong>, and it affects everything from how your computer formats the date/time to what character set it will try to use to display things <span class="citation" data-cites="LocaleComputerSoftware2022"><a href="#ref-LocaleComputerSoftware2022" role="doc-biblioref">[3]</a></span>.</p>
 <p>Locales are something you may want to skip if you’re just starting out and you don’t work with code written by people in other countries. If you’re collaborating internationally, however, you may want to at least skim the section below to be aware of potential issues when locale-related problems crop up.</p>
 <div class="page-columns page-full"><p></p><div class="no-row-height column-margin column-container"><span class="">If you’ve never had to deal with the complexities of working on a laptop designed for one country using another country’s conventions, know that it isn’t necessarily the easiest thing to do.</span></div></div>
 <div class="callout-advanced callout callout-style-default no-icon callout-captioned">
@@ -666,19 +666,14 @@ Converting Columns Using Your Best Guess
 <span><span class="va">df_guess</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/type_convert.html">type_convert</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">df_guess</span><span class="op">)</span></span>
 <span><span class="co">## 'data.frame':    4 obs. of  8 variables:</span></span>
-<span><span class="co">##  $ int_col    : num  1 2 3 4</span></span>
+<span><span class="co">##  $ int_col    : int  1 2 3 4</span></span>
 <span><span class="co">##  $ float_col  : num  1.1 1.2 1.3 4.7</span></span>
-<span><span class="co">##  $ mix_col    :List of 4</span></span>
-<span><span class="co">##   ..$ : chr "a"</span></span>
-<span><span class="co">##   ..$ : int 2</span></span>
-<span><span class="co">##   ..$ : int 3</span></span>
-<span><span class="co">##   ..$ : int 4</span></span>
-<span><span class="co">##  $ missing_col: num  1 2 3 NaN</span></span>
+<span><span class="co">##  $ mix_col    : chr  "a" "2" "3" "4"</span></span>
+<span><span class="co">##  $ missing_col: num  1 2 3 NA</span></span>
 <span><span class="co">##  $ money_col  : chr  "£1,000.00" "£2,400.00" "£2,400.00" "£2,400.00"</span></span>
 <span><span class="co">##  $ eu_numbers : chr  "1.000.000,00" "2.000.342,00" "3.141,59" "34,25"</span></span>
 <span><span class="co">##  $ boolean_col: logi  TRUE FALSE TRUE TRUE</span></span>
-<span><span class="co">##  $ custom     : chr  "Y" "Y" "N" "N"</span></span>
-<span><span class="co">##  - attr(*, "pandas.index")=RangeIndex(start=0, stop=4, step=1)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span><span class="co">##  $ custom     : chr  "Y" "Y" "N" "N"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The <code>type_convert</code> function has a <code>locale</code> argument; <code>readr</code> includes a <code><a href="https://readr.tidyverse.org/reference/locale.html">locale()</a></code> function that you can pass to <code>type_convert</code> that allows you to define your own locale. Because we have numeric types structured from at least two locales in this data frame, we would have to specifically read the data in specifying which columns we wanted read with each locale.</p>
 <div class="cell">
@@ -690,19 +685,14 @@ Converting Columns Using Your Best Guess
 <span><span class="va">fixed_df</span><span class="op">$</span><span class="va">eu_numbers</span> <span class="op">=</span> <span class="va">fixed_df</span><span class="op">$</span><span class="va">eu_numbers</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">fixed_df</span><span class="op">)</span></span>
 <span><span class="co">## 'data.frame':    4 obs. of  8 variables:</span></span>
-<span><span class="co">##  $ int_col    : num  1 2 3 4</span></span>
+<span><span class="co">##  $ int_col    : int  1 2 3 4</span></span>
 <span><span class="co">##  $ float_col  : num  1.1 1.2 1.3 4.7</span></span>
-<span><span class="co">##  $ mix_col    :List of 4</span></span>
-<span><span class="co">##   ..$ : chr "a"</span></span>
-<span><span class="co">##   ..$ : int 2</span></span>
-<span><span class="co">##   ..$ : int 3</span></span>
-<span><span class="co">##   ..$ : int 4</span></span>
-<span><span class="co">##  $ missing_col: num  1 2 3 NaN</span></span>
+<span><span class="co">##  $ mix_col    : chr  "a" "2" "3" "4"</span></span>
+<span><span class="co">##  $ missing_col: num  1 2 3 NA</span></span>
 <span><span class="co">##  $ money_col  : chr  "£1,000.00" "£2,400.00" "£2,400.00" "£2,400.00"</span></span>
 <span><span class="co">##  $ eu_numbers : chr  "1.000.000,00" "2.000.342,00" "3.141,59" "34,25"</span></span>
 <span><span class="co">##  $ boolean_col: logi  TRUE FALSE TRUE TRUE</span></span>
-<span><span class="co">##  $ custom     : chr  "Y" "Y" "N" "N"</span></span>
-<span><span class="co">##  - attr(*, "pandas.index")=RangeIndex(start=0, stop=4, step=1)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span><span class="co">##  $ custom     : chr  "Y" "Y" "N" "N"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
@@ -771,12 +761,11 @@ Converting Columns Directly
 <span><span class="co">##  $ int_col    : num  1 2 3 4</span></span>
 <span><span class="co">##  $ float_col  : num  1.1 1.2 1.3 4.7</span></span>
 <span><span class="co">##  $ mix_col    : num  NA 2 3 4</span></span>
-<span><span class="co">##  $ missing_col: num  1 2 3 NaN</span></span>
+<span><span class="co">##  $ missing_col: num  1 2 3 NA</span></span>
 <span><span class="co">##  $ money_col  : num  NA NA NA NA</span></span>
 <span><span class="co">##  $ eu_numbers : num  NA NA NA NA</span></span>
-<span><span class="co">##  $ boolean_col: num  1 0 1 1</span></span>
-<span><span class="co">##  $ custom     : num  NA NA NA NA</span></span>
-<span><span class="co">##  - attr(*, "pandas.index")=RangeIndex(start=0, stop=4, step=1)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span><span class="co">##  $ boolean_col: num  NA NA NA NA</span></span>
+<span><span class="co">##  $ custom     : num  NA NA NA NA</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
@@ -837,22 +826,17 @@ Example: Converting Y/N data
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">fixed_df</span><span class="op">)</span></span>
 <span><span class="co">## 'data.frame':    4 obs. of  11 variables:</span></span>
-<span><span class="co">##  $ int_col    : num  1 2 3 4</span></span>
+<span><span class="co">##  $ int_col    : int  1 2 3 4</span></span>
 <span><span class="co">##  $ float_col  : num  1.1 1.2 1.3 4.7</span></span>
-<span><span class="co">##  $ mix_col    :List of 4</span></span>
-<span><span class="co">##   ..$ : chr "a"</span></span>
-<span><span class="co">##   ..$ : int 2</span></span>
-<span><span class="co">##   ..$ : int 3</span></span>
-<span><span class="co">##   ..$ : int 4</span></span>
-<span><span class="co">##  $ missing_col: num  1 2 3 NaN</span></span>
+<span><span class="co">##  $ mix_col    : chr  "a" "2" "3" "4"</span></span>
+<span><span class="co">##  $ missing_col: num  1 2 3 NA</span></span>
 <span><span class="co">##  $ money_col  : chr  "£1,000.00" "£2,400.00" "£2,400.00" "£2,400.00"</span></span>
 <span><span class="co">##  $ eu_numbers : chr  "1.000.000,00" "2.000.342,00" "3.141,59" "34,25"</span></span>
 <span><span class="co">##  $ boolean_col: logi  TRUE FALSE TRUE TRUE</span></span>
 <span><span class="co">##  $ custom     : chr  "Y" "Y" "N" "N"</span></span>
 <span><span class="co">##  $ custom1    : Factor w/ 2 levels "Y","N": 2 2 1 1</span></span>
 <span><span class="co">##  $ custom2    : logi  TRUE TRUE FALSE FALSE</span></span>
-<span><span class="co">##  $ custom3    : num  1 1 0 0</span></span>
-<span><span class="co">##  - attr(*, "pandas.index")=RangeIndex(start=0, stop=4, step=1)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span><span class="co">##  $ custom3    : num  1 1 0 0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
@@ -887,7 +871,7 @@ Example: Converting Y/N data
 </section><section id="find-and-replace" class="level2 page-columns page-full" data-number="20.4"><h2 data-number="20.4" class="anchored" data-anchor-id="find-and-replace">
 <span class="header-section-number">20.4</span> Find and replace</h2>
 <p>Another way to fix some issues is to just find-and-replace the problematic characters. This is not always the best solution<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>, and may introduce bugs if you use the same code to analyze new data with characters you haven’t anticipated, but in so many cases it’s also the absolute easiest, fastest, simplest way forward and easily solves many different problems.</p>
-<div class="page-columns page-full"><p></p><div class="no-row-height column-margin column-container"><span class="">I’ll show you how to correct all of the issues reading in the data using solutions shown above, but please do consider reading <span class="citation" data-cites="herrmannHowDealInternational2021"><a href="#ref-herrmannHowDealInternational2021" role="doc-biblioref">[3]</a></span> so that you know why find-and-replace isn’t (necessarily) the best option for locale-specific formatting.</span></div></div>
+<div class="page-columns page-full"><p></p><div class="no-row-height column-margin column-container"><span class="">I’ll show you how to correct all of the issues reading in the data using solutions shown above, but please do consider reading <span class="citation" data-cites="herrmannHowDealInternational2021"><a href="#ref-herrmannHowDealInternational2021" role="doc-biblioref">[4]</a></span> so that you know why find-and-replace isn’t (necessarily) the best option for locale-specific formatting.</span></div></div>
 <div class="callout-caution callout callout-style-default callout-captioned">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1047,7 +1031,7 @@ Example: Locale find-and-replace
 </section><section id="separating-multi-variable-columns" class="level2" data-number="20.5"><h2 data-number="20.5" class="anchored" data-anchor-id="separating-multi-variable-columns">
 <span class="header-section-number">20.5</span> Separating multi-variable columns</h2>
 <p>Another common situation is to have multiple variables in one column. This can happen, for instance, when conducting a factorial experiment: Instead of having separate columns for each factor, researchers sometimes combine several different factors into a single label for a condition to simplify data entry.</p>
-<p>In pandas, we use <code>x.str.split()</code> to split columns in a DataFrame, in R we use the <code>tidyr</code> package’s <code>separate</code> function.</p>
+<p>In pandas, we use <code>x.str.split()</code> to split columns in a DataFrame, in R we use the <code>tidyr</code> package’s <code>separate_wider_xxx()</code> series of functions.</p>
 <div class="callout-caution callout callout-style-default callout-captioned">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1079,16 +1063,16 @@ Example: Separating columns
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org">tidyr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://rstudio.github.io/reticulate/">reticulate</a></span><span class="op">)</span> <span class="co"># so we can access table3 in python</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">table3</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/separate.html">separate</a></span><span class="op">(</span><span class="va">table3</span>, <span class="va">rate</span>, into <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'cases'</span>, <span class="st">'pop'</span><span class="op">)</span>, sep <span class="op">=</span> <span class="st">"/"</span>, remove <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://tidyr.tidyverse.org/reference/separate_wider_delim.html">separate_wider_delim</a></span><span class="op">(</span><span class="va">table3</span>, <span class="va">rate</span>, delim <span class="op">=</span> <span class="st">"/"</span>, names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'cases'</span>, <span class="st">'pop'</span><span class="op">)</span>, cols_remove <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 6 × 5</span></span>
-<span><span class="co">##   country      year rate              cases  pop       </span></span>
-<span><span class="co">##   &lt;chr&gt;       &lt;int&gt; &lt;chr&gt;             &lt;chr&gt;  &lt;chr&gt;     </span></span>
-<span><span class="co">## 1 Afghanistan  1999 745/19987071      745    19987071  </span></span>
-<span><span class="co">## 2 Afghanistan  2000 2666/20595360     2666   20595360  </span></span>
-<span><span class="co">## 3 Brazil       1999 37737/172006362   37737  172006362 </span></span>
-<span><span class="co">## 4 Brazil       2000 80488/174504898   80488  174504898 </span></span>
-<span><span class="co">## 5 China        1999 212258/1272915272 212258 1272915272</span></span>
-<span><span class="co">## 6 China        2000 213766/1280428583 213766 1280428583</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span><span class="co">##   country      year cases  pop        rate             </span></span>
+<span><span class="co">##   &lt;chr&gt;       &lt;dbl&gt; &lt;chr&gt;  &lt;chr&gt;      &lt;chr&gt;            </span></span>
+<span><span class="co">## 1 Afghanistan  1999 745    19987071   745/19987071     </span></span>
+<span><span class="co">## 2 Afghanistan  2000 2666   20595360   2666/20595360    </span></span>
+<span><span class="co">## 3 Brazil       1999 37737  172006362  37737/172006362  </span></span>
+<span><span class="co">## 4 Brazil       2000 80488  174504898  80488/174504898  </span></span>
+<span><span class="co">## 5 China        1999 212258 1272915272 212258/1272915272</span></span>
+<span><span class="co">## 6 China        2000 213766 1280428583 213766/1280428583</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div id="tabset-7-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-3-tab">
@@ -1096,13 +1080,13 @@ Example: Separating columns
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>table3 <span class="op">=</span> r.table3</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>table3[[<span class="st">'cases'</span>, <span class="st">'pop'</span>]] <span class="op">=</span> table3.rate.<span class="bu">str</span>.split(<span class="st">"/"</span>, expand <span class="op">=</span> <span class="va">True</span>)</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>table3</span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co">##        country  year               rate   cases         pop</span></span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="co">## 0  Afghanistan  1999       745/19987071     745    19987071</span></span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="co">## 1  Afghanistan  2000      2666/20595360    2666    20595360</span></span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="co">## 2       Brazil  1999    37737/172006362   37737   172006362</span></span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="co">## 3       Brazil  2000    80488/174504898   80488   174504898</span></span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="co">## 4        China  1999  212258/1272915272  212258  1272915272</span></span>
-<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="co">## 5        China  2000  213766/1280428583  213766  1280428583</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co">##        country    year               rate   cases         pop</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="co">## 0  Afghanistan  1999.0       745/19987071     745    19987071</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="co">## 1  Afghanistan  2000.0      2666/20595360    2666    20595360</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="co">## 2       Brazil  1999.0    37737/172006362   37737   172006362</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="co">## 3       Brazil  2000.0    80488/174504898   80488   174504898</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="co">## 4        China  1999.0  212258/1272915272  212258  1272915272</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="co">## 5        China  2000.0  213766/1280428583  213766  1280428583</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>This uses python’s <strong>multiassign</strong> capability. Python can assign multiple things at once if those things are specified as a sequence (e.g.&nbsp;cases, pop). In this case, we split the rate column and assign two new columns, essentially adding two columns to our data frame and labeling them at the same time.</p>
 </div>
@@ -1598,23 +1582,27 @@ Putting it all Together
 
 
 <div id="refs" class="references csl-bib-body" role="doc-bibliography">
-<div id="ref-ashourConciseGuideNumber2022" class="csl-entry" role="doc-biblioentry">
+<div id="ref-norvigHowWriteSpelling2007" class="csl-entry" role="doc-biblioentry">
 <div class="csl-left-margin">[1] </div>
+<div class="csl-right-inline">P. Norvig, <span>“How to write a spelling corrector. Norvig.com,”</span> Feb. 01, 2007. [Online]. Available: <a href="http://norvig.com/spell-correct.html">http://norvig.com/spell-correct.html</a>. [Accessed: Mar. 08, 2023]</div>
+</div>
+<div id="ref-ashourConciseGuideNumber2022" class="csl-entry" role="doc-biblioentry">
+<div class="csl-left-margin">[2] </div>
 <div class="csl-right-inline">M. Ashour, <span>“A <span>Concise</span> <span>Guide</span> to <span>Number</span> <span>Localization</span>,”</span> <em>Phrase</em>. Feb. 2022 [Online]. Available: <a href="https://phrase.com/blog/posts/number-localization/">https://phrase.com/blog/posts/number-localization/</a>. [Accessed: Jul. 25, 2022]</div>
 </div>
 <div id="ref-LocaleComputerSoftware2022" class="csl-entry" role="doc-biblioentry">
-<div class="csl-left-margin">[2] </div>
+<div class="csl-left-margin">[3] </div>
 <div class="csl-right-inline">Wikipedia Contributors, <span>“Locale (computer software),”</span> <em>Wikipedia</em>. Apr. 2022 [Online]. Available: <a href="https://en.wikipedia.org/w/index.php?title=Locale_(computer_software)&amp;oldid=1082900932">https://en.wikipedia.org/w/index.php?title=Locale_(computer_software)&amp;oldid=1082900932</a>. [Accessed: Jul. 25, 2022]</div>
 </div>
 <div id="ref-herrmannHowDealInternational2021" class="csl-entry" role="doc-biblioentry">
-<div class="csl-left-margin">[3] </div>
+<div class="csl-left-margin">[4] </div>
 <div class="csl-right-inline">A. Herrmann, <span>“How to deal with international data formats in <span>Python</span>,”</span> <em>herrmann.tech</em>. Feb. 2021 [Online]. Available: <a href="https://herrmann.tech/en/blog/2021/02/05/how-to-deal-with-international-data-formats-in-python.html">https://herrmann.tech/en/blog/2021/02/05/how-to-deal-with-international-data-formats-in-python.html</a>. [Accessed: Jul. 25, 2022]</div>
 </div>
 </div>
 </section><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><hr>
 <ol>
 <li id="fn1"><p>Many functions from <code>stringr</code> have somewhat faster functional equivalents in the <code>stringi</code> package, but the <code>stringi</code> package has a less “tidy” API, so it may be worth the slight slowdown to use <code>stringr</code> if your data isn’t huge because your code will be more readable.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn2"><p>It’s particularly hackish when you’re working with locale-specific settings <span class="citation" data-cites="herrmannHowDealInternational2021"><a href="#ref-herrmannHowDealInternational2021" role="doc-biblioref">[3]</a></span>, and in many cases you can handle locale issues much more elegantly.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>It’s particularly hackish when you’re working with locale-specific settings <span class="citation" data-cites="herrmannHowDealInternational2021"><a href="#ref-herrmannHowDealInternational2021" role="doc-biblioref">[4]</a></span>, and in many cases you can handle locale issues much more elegantly.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol></section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
