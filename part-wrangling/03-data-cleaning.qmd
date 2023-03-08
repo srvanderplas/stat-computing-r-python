@@ -335,8 +335,11 @@ poke[order(poke$total, decreasing = T)[1:round(nrow(poke)*.01)],]
 
 #### Problem {-}
 
-Using the Pokemon data, can you create a new data frame that has only water type Pokemon? 
-Can you write a filter statement that looks for any Pokemon which has water type for either type1 or type2?
+Use the [Pokemon data](https://github.com/srvanderplas/datasets/raw/main/clean/pokemon_gen_1-9.csv) to accomplish the following:
+
+- create a new data frame that has only water type Pokemon
+- write a filter statement that looks for any Pokemon which has water type for either type1 or type2
+
 
 #### R: `dplyr` {-}
 
@@ -487,6 +490,10 @@ So for now, at least in R, you know how to cut your data down to size rowwise (w
 
 First, let's install the nycflights13 package[@chowNycflights13DataPackage2020] in python with `pip install nycflights13`.
 
+```{bash, include = F}
+pip install nycflights13
+```
+
 ```{python}
 from nycflights13 import flights
 ```
@@ -504,7 +511,7 @@ x = x.append(cols[13:19])
 flights.loc[:,x]
 ```
 
-#### List Comprehensions
+#### List Comprehensions {.nonumber}
 
 In Python, there are certain shorthands called "list comprehensions" [@pythonfoundationDataStructures2022] that can perform similar functions to e.g. the `matches()` function in dplyr. 
 
@@ -523,7 +530,7 @@ Explaining the code:
 - `if 'time' in col` detects the presence of the word 'time' in the column name stored in `col`
 - the `col` out front adds the column name in the variable `col` to the array of columns to keep
 
-#### Selecting columns in Python
+#### Selecting columns in Python {.nonumber}
 
 ```{python select-bare-vs-names-py, error = T}
 # This gets all columns that contain time
@@ -577,8 +584,12 @@ This is less convenient than `dplyr::everything` in part because it depends on u
 :::
 
 
-::: {.callout-note callout-collapse=true}
-### dplyr::relocate
+::: {.callout-note callout-collapse="true"}
+### Rearranging Columns
+
+::: panel-tabset
+
+#### `dplyr::relocate`
 
 Another handy `dplyr` function is `relocate`; while you definitely can do this operation in many, many different ways, it may be simpler to do it using relocate. 
 But, I'm covering relocate here mostly because it also comes with this amazing cartoon illustration.
@@ -592,6 +603,23 @@ relocate(flights, carrier:dest, everything())
 
 # move numeric variables to the front
 flights %>% relocate(where(is.numeric))
+```
+
+#### Python
+
+There are similar ways to rearrange columns in pandas, but they are a bit harder to work with - you have to specify the column names (in some way) and then perform the operation yourself.
+
+```{python relocate-pandas}
+import numpy as np
+cols = list(flights.columns.values) # get column names
+
+# Move flight specific info to the front
+flightcols = ['carrier', 'flight', 'tailnum', 'origin', 'dest']
+flights[flightcols + list(flights.drop(flightcols, axis = 1))]
+
+# move numeric variables to the front
+numcols = list(flights.select_dtypes(include = np.number).columns.values)
+flights[numcols + list(flights.drop(numcols, axis = 1))]
 ```
 
 :::
