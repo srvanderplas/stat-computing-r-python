@@ -287,7 +287,8 @@ fixed_df.dtypes
 
 ## Find and replace
 
-Another way to fix some issues is to just find-and-replace the problematic characters. This is not always the best solution[^data-transformations-2], and may introduce bugs if you use the same code to analyze new data with characters you haven't anticipated, but in so many cases it's also the absolute easiest, fastest, simplest way forward and easily solves many different problems.
+Another way to fix some issues is to just find-and-replace the problematic characters. 
+This is not always the best solution[^data-transformations-2], and may introduce bugs if you use the same code to analyze new data with characters you haven't anticipated, but in so many cases it's also the absolute easiest, fastest, simplest way forward and easily solves many different problems.
 
 [^data-transformations-2]: It's particularly hackish when you're working with locale-specific settings [@herrmannHowDealInternational2021], and in many cases you can handle locale issues much more elegantly.
 
@@ -301,7 +302,9 @@ Let's start with the money column.
 ::: panel-tabset
 ##### R
 
-In R, parse_number() handles the money column just fine - the pound sign goes away and we get a numeric value. This didn't work by default with type_convert, but as long as we `mutate` and tell R we expect a number, things work well. Then, as we did above, we can specify the locale settings so that decimal and grouping marks are handled correctly even for countries which use ',' for decimal and '.' for thousands separators.
+In R, `parse_number()` handles the money column just fine - the pound sign goes away and we get a numeric value. 
+This didn't work by default with `type_convert`, but as long as we `mutate` and tell R we expect a number, things work well. 
+Then, as we did above, we can specify the locale settings so that decimal and grouping marks are handled correctly even for countries which use ',' for decimal and '.' for thousands separators.
 
 ```{r guess-type-conversion-r-money}
 fixed_df = df %>%
@@ -476,7 +479,7 @@ table5
 :::
 :::
 
-## Advanced: Regular Expressions
+## Regular Expressions
 
 Matching exact strings is easy - it's just like using find and replace.
 
@@ -486,7 +489,29 @@ dog_hears <- str_extract(human_talk, "walk")
 dog_hears
 ```
 
-But, if you can master even a small amount of regular expression notation, you'll have exponentially more power to do good (or evil) when working with strings. You can get by without regular expressions if you're creative, but often they're much simpler.
+::: aside
+![To generate #1 albums, 'jay --help' recommends the -z flag. <br/>[XKCD comics by Randall Munroe](https://xkcd.com/1171/) CC-A-NC 2.5.](../images/wrangling/perl_problems.png){fig-alt="A stick figure with sunglasses says to another stick figure: 'If you're havin' perl problems I feel bad for you, son.' 'I got 99 problems,' 'So I used regular expressions.' 'Now I have 100 problems'."}
+:::
+
+A **regular expression** is a sequence of characters that specify a match pattern to search for in a larger text [@RegularExpression2023].
+Regular expressions may be used to specify find or find-and-replace operations on strings.
+
+Regular expressions can be extremely useful for cleaning and extracting data: they can replace misspellings, extract pieces of information from longer strings, and flexibly handle different ways people may input data. 
+They may be incredibly powerful, but they can also be complicated to create and the expressions themselves may be cryptic and nearly impossible to decode. 
+
+But, if you can master even a small amount of regular expression notation, you'll have exponentially more power to do good (or evil) when working with strings. 
+You can get by without regular expressions if you're creative, but often they're much simpler.
+
+::: aside
+I've assembled a [YouTube playlist](https://www.youtube.com/embed/videoseries?list=PLSNDUuFnzc02k4fq5w63GsSW0tZ5E6z9h) of different explanations of regular expressions, if you prefer that type of tutorial.
+
+::: {.youtube-video-container}
+<iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=PLSNDUuFnzc02k4fq5w63GsSW0tZ5E6z9h" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+:::
+
+:::
+
+The following demonstrations are intended for advanced students: if you are just learning how to program, you may want to come back to these when you need them.
 
 ::: {.callout-advanced collapse="true"}
 ### Regular Expression Basics
