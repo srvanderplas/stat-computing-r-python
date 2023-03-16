@@ -1,11 +1,11 @@
 # Working with Strings {#sec-strings}
 
 One of the most common types of "messy" data involves strings. 
-If the data is input by humans, well, ... we suck at spelling, typing, and data input, so... it's going to be messy.
+If the data is input by humans, well, ... we suck at spelling [@norvigHowWriteSpelling2007], typing, and data input, so... it's going to be messy.
 But, another type of messy data involves situations where multiple variables are stored in the same column, or where the same variable is stored across two different columns. 
 Usually, when this type of messy data occurs, the data is stored in a string/character variable.
 
-This chapter will teach you how to work with both situations, but we'll focus on the second - you'll learn the tools to handle the first case along the way.
+This chapter will teach you how to work with both messy spelling/data entry and multiple values in a single string, but we'll focus on the second - you'll learn the tools to handle the first case along the way.
 
 ## {{< fa bullseye >}} Objectives 
 
@@ -13,7 +13,7 @@ This chapter will teach you how to work with both situations, but we'll focus on
 - Use functions to split string data into multiple columns/variables
 - Use functions to join string data from multiple columns/variables into a single column/variable
 
-
+![Perhaps one day you'll be able to put this knowledge to use in a practical setting!](../images/wrangling/string_processing_starbucks.jpeg){fig-alt="A sign at a bar/coffee shop that says '// If you can read this code, tell your bartender the secret word of the day for a free drink on us'. 'var your_drink;' 'var reverse = function(s) { return s.split('').reverse().join('');' var bartender = { str 1: 'ers', str 2: reverse('rap'), str3: 'amet', request: function(preference) {return preference + '.Secret word:' + this.str2 + this.str3 + this.str1;}};' 'bartender.request(your_drink);'" width="50%"}
 
 ## Basic Operations
 
@@ -81,7 +81,7 @@ In @tbl-string-function, multiple functions are provided for e.g. common package
 
 [^data-transformations-1]: Many functions from `stringr` have somewhat faster functional equivalents in the `stringi` package, but the `stringi` package has a less "tidy" API, so it may be worth the slight slowdown to use `stringr` if your data isn't huge because your code will be more readable.
 
-## Converting strings to numbers {.unnumbered}
+## Converting strings to numbers
 
 One of the most common tasks when reading in and tidying messy data is that numeric-ish data can come in many forms that are read (by default) as strings. The data frame below provides an example of a few types of data which may be read in in unexpected ways. How do we tell R or Python that we want all of these columns to be treated as numbers?
 
@@ -111,11 +111,16 @@ df.to_csv("../data/number-formats.csv", index = False, quoting = 1)
 ```
 
 ```{r number-formats-r, echo = F, include = F, dependson='number-formats-py'}
-library(reticulate)
-df <- py$df
+# library(reticulate)
+# df <- py$df
+df <- read.csv("../data/number-formats.csv")
 ```
 
-Note that [numbers](https://docs.oracle.com/cd/E19455-01/806-0169/overview-8/index.html), currencies, dates, and times are written differently based on what country you're in [@ashourConciseGuideNumber2022]. In computer terms, this is the "locale", and it affects everything from how your computer formats the date/time to what character set it will try to use to display things [@LocaleComputerSoftware2022].
+[Numbers](https://docs.oracle.com/cd/E19455-01/806-0169/overview-8/index.html), currencies, dates, and times are written differently based on what country you're in [@ashourConciseGuideNumber2022]. 
+In computer terms, this is the **locale**, and it affects everything from how your computer formats the date/time to what character set it will try to use to display things [@LocaleComputerSoftware2022].
+
+Locales are something you may want to skip if you're just starting out and you don't work with code written by people in other countries. 
+If you're collaborating internationally, however, you may want to at least skim the section below to be aware of potential issues when locale-related problems crop up.
 
 [If you've never had to deal with the complexities of working on a laptop designed for one country using another country's conventions, know that it isn't necessarily the easiest thing to do.]{.aside}
 
@@ -282,7 +287,8 @@ fixed_df.dtypes
 
 ## Find and replace
 
-Another way to fix some issues is to just find-and-replace the problematic characters. This is not always the best solution[^data-transformations-2], and may introduce bugs if you use the same code to analyze new data with characters you haven't anticipated, but in so many cases it's also the absolute easiest, fastest, simplest way forward and easily solves many different problems.
+Another way to fix some issues is to just find-and-replace the problematic characters. 
+This is not always the best solution[^data-transformations-2], and may introduce bugs if you use the same code to analyze new data with characters you haven't anticipated, but in so many cases it's also the absolute easiest, fastest, simplest way forward and easily solves many different problems.
 
 [^data-transformations-2]: It's particularly hackish when you're working with locale-specific settings [@herrmannHowDealInternational2021], and in many cases you can handle locale issues much more elegantly.
 
@@ -296,7 +302,9 @@ Let's start with the money column.
 ::: panel-tabset
 ##### R
 
-In R, parse_number() handles the money column just fine - the pound sign goes away and we get a numeric value. This didn't work by default with type_convert, but as long as we `mutate` and tell R we expect a number, things work well. Then, as we did above, we can specify the locale settings so that decimal and grouping marks are handled correctly even for countries which use ',' for decimal and '.' for thousands separators.
+In R, `parse_number()` handles the money column just fine - the pound sign goes away and we get a numeric value. 
+This didn't work by default with `type_convert`, but as long as we `mutate` and tell R we expect a number, things work well. 
+Then, as we did above, we can specify the locale settings so that decimal and grouping marks are handled correctly even for countries which use ',' for decimal and '.' for thousands separators.
 
 ```{r guess-type-conversion-r-money}
 fixed_df = df %>%
@@ -391,7 +399,7 @@ fixed_df
 
 Another common situation is to have multiple variables in one column. This can happen, for instance, when conducting a factorial experiment: Instead of having separate columns for each factor, researchers sometimes combine several different factors into a single label for a condition to simplify data entry.
 
-In pandas, we use `x.str.split()` to split columns in a DataFrame, in R we use the `tidyr` package's `separate` function.
+In pandas, we use `x.str.split()` to split columns in a DataFrame, in R we use the `tidyr` package's `separate_wider_xxx()` series of functions.
 
 ::: callout-caution
 ### Example: Separating columns
@@ -411,7 +419,7 @@ library(dplyr)
 library(tidyr)
 library(reticulate) # so we can access table3 in python
 data(table3)
-separate(table3, rate, into = c('cases', 'pop'), sep = "/", remove = F)
+separate_wider_delim(table3, rate, delim = "/", names = c('cases', 'pop'), cols_remove = F)
 ```
 
 #### Python
@@ -481,10 +489,41 @@ dog_hears <- str_extract(human_talk, "walk")
 dog_hears
 ```
 
-But, if you can master even a small amount of regular expression notation, you'll have exponentially more power to do good (or evil) when working with strings. You can get by without regular expressions if you're creative, but often they're much simpler.
+::: aside
+![To generate #1 albums, 'jay --help' recommends the -z flag. <br/>[XKCD comics by Randall Munroe](https://xkcd.com/1171/) CC-A-NC 2.5.](../images/wrangling/perl_problems.png){fig-alt="A stick figure with sunglasses says to another stick figure: 'If you're havin' perl problems I feel bad for you, son.' 'I got 99 problems,' 'So I used regular expressions.' 'Now I have 100 problems'."}
+:::
+
+A **regular expression** is a sequence of characters that specify a match pattern to search for in a larger text [@RegularExpression2023].
+Regular expressions may be used to specify find or find-and-replace operations on strings.
+
+Regular expressions can be extremely useful for cleaning and extracting data: they can replace misspellings, extract pieces of information from longer strings, and flexibly handle different ways people may input data. 
+They may be incredibly powerful, but they can also be complicated to create and the expressions themselves may be cryptic and nearly impossible to decode. 
+
+But, if you can master even a small amount of regular expression notation, you'll have exponentially more power to do good (or evil) when working with strings. 
+You can get by without regular expressions if you're creative, but often they're much simpler.
+
+Here are some useful regular expressions^[Note that these are written in generic regular expression text - to use them in R you will have to escape each and every `\` with another `\`.]:
+
+- Validate a phone number [@atwoodRegexUseVs2005]: `^\(*\d{3}\)*( |-)*\d{3}( |-)*\d{4}$`
+- Check for first and last names [@cristianguerreroAnswerRegularExpression2017]: `^[\w'\-,.][^0-9_!¡?÷?¿/\\+=@#$%ˆ&*(){}|~<>;:[\]]{2,}$`    
+(This is a tricky proposition and this regular expression does make some assumptions about what characters are valid for names.)
+- Match a 5 or 9 digit zip code: `	(^\d{5}$)|(^\d{9}$)|(^\d{5}-\d{4}$)`
+
+These tasks are all well-suited for regular expressions. More complicated tasks, such as validating an email address, are less suited for regular expressions, though there are regular expressions that exist [@risticValidateEmailAddresses2021] for that task.
+
+::: aside
+I've assembled a [YouTube playlist](https://www.youtube.com/embed/videoseries?list=PLSNDUuFnzc02k4fq5w63GsSW0tZ5E6z9h) of different explanations of regular expressions, if you prefer that type of tutorial.
+
+::: {.youtube-video-container}
+<iframe width="560" height="315" src="https://www.youtube.com/embed/videoseries?list=PLSNDUuFnzc02k4fq5w63GsSW0tZ5E6z9h" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+:::
+
+:::
+
+The following demonstrations are intended for advanced students: if you are just learning how to program, you may want to come back to these when you need them.
 
 ::: {.callout-advanced collapse="true"}
-### Advanced: Short Regular Expressions Primer
+### Regular Expression Basics
 
 You may find it helpful to follow along with this section using this [web app](https://spannbaueradam.shinyapps.io/r_regex_tester/) built to test R regular expressions for R. A similar application for Perl compatible regular expressions (used by SAS and Python) can be found [here](https://regex101.com/). The subset of regular expression syntax we're going to cover here is fairly limited (and common to SAS, Python, and R, with a few adjustments), but [you can find regular expressions to do just about anything string-related](https://stackoverflow.com/questions/tagged/regex?tab=Votes). As with any tool, there are situations where it's useful, and situations where you should not use a regular expression, no matter how much you want to.
 
@@ -520,6 +559,10 @@ ssn = re.search(r"[0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9][0-9][0-9]", num_string)
 ssn
 ```
 :::
+:::
+
+::: {.callout-advanced collapse="true"}
+### Specifying repetition
 
 Listing out all of those numbers can get repetitive, though. How do we specify repetition?
 
@@ -577,7 +620,10 @@ bank_balance = re.search(r"\$[0-9,]+\.[0-9]{2}", num_string)
 bank_balance
 ```
 :::
+:::
 
+::: {.callout-advanced collapse="true"}
+### Matching Locations
 There are also ways to "anchor" a pattern to a part of the string (e.g. the beginning or the end)
 
 -   `^` has multiple meanings:
@@ -625,10 +671,18 @@ zip = re.search(r"[0-9-]{5,10}$", address).group() # match 5 and 9 digit zip cod
 ```
 :::
 
+:::
+
+::: {.callout-advanced collapse="true"}
+### Capturing Information
+
 -   `()` are used to capture information. So `([0-9]{4})` captures any 4-digit number
 -   `a|b` will select a or b.
 
-If you've captured information using (), you can reference that information using backreferences. In most languages, those look like this: `\1` for the first reference, `\9` for the ninth. In R, backreferences are `\\1` through `\\9`.
+If you've captured information using (), you can reference that information using **backreferences**. 
+
+In most languages, backreferences look like this: `\1` for the first reference, `\9` for the ninth. 
+In R, backreferences are `\\1` through `\\9`.
 
 ::: panel-tabset
 #### R {.unnumbered}
@@ -683,7 +737,13 @@ dog_hears
 ```
 :::
 
-Putting it all together, we can test our regular expressions to ensure that they are specific enough to pull out what we want, while not pulling out other similar information:
+:::
+
+
+::: {.callout-advanced collapse="true"}
+### Putting it all Together
+
+We can test our regular expressions to ensure that they are specific enough to pull out what we want, while not pulling out other similar information:
 
 ::: panel-tabset
 #### R {.unnumbered}
