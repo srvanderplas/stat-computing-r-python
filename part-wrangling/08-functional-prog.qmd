@@ -1,3 +1,278 @@
-# List data structures {#sec-lists}
+# Functional Programming {#sec-lists}
+
+In this section, we're going to change focus slightly from learning specific functions to learning programming **patterns**. 
+We're going to start this process by talking about functional programming and its connection to lists. 
+While this topic may be a bit advanced if you're just starting to learn how to program, it may help to skim through the deeper explanation so that you can at least recognize some of these words if you encounter them later.
+
+## Programming Philosophies
+
+::: callout-advanced
+This section is intended for everyone, but I do not expect that people who are just learning to program for the first time will fully absorb everything in this section. 
+Get what you can out of this, use it to improve how you write code, and come back to it later if it's too confusing.
+:::
+
+Just as spoken languages fall into families, like Indo-European or Sino-Tibetan, programming languages also have broad classifications. 
+Here are a few "families" or classifications of programming languages [@kuchlingFunctionalProgrammingHOWTO2022]:
+
+- Many languages are **procedural**: a program provides a list of instructions that tell the computer what to do with provided input. C, Pascal, Fortran, and UNIX shells are naturally procedural. JavaScript is also a fairly natural procedural language. Many R analysis scripts are also naturally written in a procedural style; SAS code is almost always procedural.
+- **Declarative languages** use code to describe the problem that needs to be solved, and the language figures out how to solve it. SQL is the most common declarative language you'll encounter for data-related tasks.
+- **Object oriented** languages (sometimes abbreviated OOP, for object-oriented programming) manipulate collections of objects or classes. Data is stored in classes that have associated functions, which are often called methods. Java is explicitly object-oriented; C++ and Python support object-oriented programming but don't force you to use those features.
+- **Functional** programming languages describe a problem using a set of functions, which only take inputs and produce outputs. Functions don't have any internal tracking of **state** - purely functional languages move from input to output without storing variables or even printing output to the command line, but it is common to adopt a functional approach to programming without requiring strict adherence to all principles of a fully functional approach. Haskell and Rust are fairly standard functional programming languages.
+
+
+::: {.youtube-video-container .aside}
+Hadley's talk on The Joy of Functional Programming for Data Science
+
+<iframe width="640" height="360" src="https://www.youtube.com/embed/bzUmK0Y07ck" title="&quot;The Joy of Functional Programming (for Data Science)&quot; with Hadley Wickham" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+:::
+
+
+Functional programming languages have a goal of writing **pure functions** - functions that do not change the global state (stuff stored in objects, memory, parameters, or files) of the program and thus have no side effects. 
+The return value of a pure function is based solely on the inputs to the function.
+Not all functions can be pure functions - for instance, there's no pure way to do file IO operations. 
+But it is a nice goal to be able to move parameters into functions and have the correct object returned from that function, so that you can pipe multiple operations together into a pipeline.
+
+Most general-purpose languages like C++ and Python and even some domain languages like R support multiple different programming paradigms. 
+While preparing to write this chapter, I saw functional programming books with examples in Java [@urmaModernJavaAction2018], JavaScript [@FPJS], and C# [@buonannoFunctionalProgrammingHow2017] - all languages that I would associate with OOP or procedural styles.
+I also found books teaching object oriented programming using Fortran 90-95 [@OOPfortran], which is something I wouldn't have considered possible.
+
+All of this is to say that while certain languages are built around principles like OOP or functional programming, almost every language has users who rely more heavily on one approach than the other. 
+There are very few "pure" programming languages, which reminds me of one of my favorite quotes about English: 
+
+> "The problem with defending the purity of the English language is that English is about as pure as a cribhouse whore. We don't just borrow words; on occasion, English has pursued other languages down alleyways to beat them unconscious and rifle their pockets for new vocabulary." ― [James D. Nicoll](https://www.goodreads.com/quotes/694108-the-problem-with-defending-the-purity-of-the-english-language)
+
+::: callout-demo
+### Object Oriented Philosophy in R and Python
+::: panel-tabset
+#### Python
+
+When you call `df.size()` in Python, you are calling the `size` method that is part of the `df` object, which is a `DataFrame`. 
+This suggests that Pandas, at least, is programmed using an object-oriented paradigm. 
+
+#### R
+
+<!-- R is a bit of a trickier case.  -->
+<!-- R has several different types of object-oriented structures that we usually avoid talking about until you start looking at developing your own R packages.  -->
+<!-- R also was designed by people who enjoyed using Lisp - another multi-paradigm approach that accommodates functional programming, procedural programming, and object-oriented programming.  -->
+An easy example of R's object oriented nature is that when you fit different models or perform different tests, the default output is different. 
+
+```{r model-output}
+data(mtcars)
+
+r1 <- t.test(mtcars$mpg~mtcars$vs)
+print(r1)
+
+r2 <- lm(mtcars$mpg ~ mtcars$vs)
+print(r2)
+```
+
+The output is different because each test/regression model object has a different print method, which allows R to create different output for each type of object. 
+
+:::
+
+:::
+
+Functional programming allows us to write programs that are more modular, and thus, are easier to test and debug.
+In addition, functional programming encourages you to think about data **pipelines**: a sequence of steps that are reproducible and reusable for different data sets and analyses.
+Functional programming is convenient for another (more esoteric, but important) reason - it allows you to prove that a function or series of functions is actually correct (rather than just testing input/output combinations). 
+
+![A pipeline of functional data analysis. Each function (station) modifies the data in some way and the returned result is passed into the next function (station) as input. This allows a sequence of functions to format data, visualize it, model it, and then package the results. While this paradigm doesn't require a functional approach, functional programming does make it simpler. Modified from [Allison Horst's work](https://github.com/allisonhorst/stats-illustrations)](../images/wrangling/functional-pipeline.png){fig-alt="Cute fuzzy monsters putting rectangular data tables onto a conveyor belt. Along the conveyor belt line are different automated “stations” that update the data. A monster at the end of the conveyor belt is carrying away a table that reads “Complete analysis.”"}
+
+If you have been using the R pipe (`|>` or `%>%`), you didn't realize it, but you were already using functional programming. Piping results from one function to another in a chain is a prime example of the "pure function" idea - it allows us to chain each step of a sequence together to create a sequence that is modular and testable.
+
+::: callout-demo
+
+## A simple example
+
+A **functional** is a function that takes another function as input and returns a vector as output.
+
+One simple example of a functional that is found in both R and Python is the `apply` function (or variants in R like `lapply`, `sapply`, `tapply`). 
+In Python, `.apply` is a method in Pandas, but we can find an even more low-level equivalent in the ideas of **list comprehensions** and **map** functions. 
+
+One additional concept that is helpful before we start is the idea of a **lambda** function - a small anonymous function (that is, a function that is not  named or stored in a variable).
+Lambda functions are great for filling in default arguments, but they have many other uses as well.
+
+Can you identify the lambda functions in each of the following examples?
+
+::: panel-tabset
+
+#### R
+
+This code generates 5 draws from a normal random variable with the specified mean and standard deviation 1.
+
+```{r}
+lapply(1:5, function(x) rnorm(5, mean = x, sd = 1))
+```
+
+Or, if you have R 4.1.0 or above, you can use a shorthand version:
+
+```{r}
+lapply(1:5, \(x) rnorm(5, mean = x))
+```
+
+The `\(x)` is shorthand for `function(x)` and allows you to quickly and easily define anonymous functions in R.
+
+
+#### Python
+
+This code generates 5 draws from a normal random variable with the specified mean and standard deviation 1.
+
+```{python}
+import numpy as np
+
+# List comprehension approach
+r1 = [np.random.normal(i, size = 5) for i in range(1, 6)]
+print(r1) 
+
+# Functional approach
+# Defining a lambda function allows us to fill in non-default options
+r2 = map(lambda a: np.random.normal(a, size = 5), range(1, 6))
+
+# This is what map spits out by default
+print(r2)
+# get your results back out with list()
+r2b = list(r2) 
+print(r2b)
+```
+
+:::
+
+:::
+
+## Replacing Loops
+
+One really convenient application of functional programming is to replace loops. 
+As Hadley Wickham says in [-@advr], 
+
+> the real downside of for loops is that they’re very flexible: a loop conveys that you’re iterating, but not what should be done with the results
+
+That is, in many cases when programming with data, what we want is to iterate over a vector and return a vector of results. 
+This is a *perfect* use case for functional programming, since we're specifying both that we're iterating AND more explicitly collecting the results into a form that makes sense.
+
+If we work with this definition of functional programming, then python list comprehensions are also a functional approach: they specify how the results are collected (usually by putting `[]` around the statement) and how the iteration will occur @rituraj_jainNestedListComprehensions2018.
+
+Let's look at a few examples.
+
+::: callout-demo
+Suppose we want to look at the Lego data and create a decade variable that describes the decade a set was first released.
+
+
+::: panel-tabset
+
+### base R
+
+```{r}
+lego <- read.csv("https://raw.githubusercontent.com/srvanderplas/datasets/main/clean/lego_sets.csv")
+
+lego$decade <- sapply(lego$year, \(x) floor(x/10)*10)
+head(lego[,c("set_num", "name", "year", "decade")])
+```
+
+
+Strictly speaking, this use of `sapply` isn't necessary - because R is vectorized by default, we could also have used `lego$decade <- floor(lego$year/10)*10`.
+However, there are functions in R that are not fully vectorized, and it is useful to know this approach for those use-cases as well, and it's easier to demonstrate this approach with a relatively simple use case.
+
+### R: `purrr`
+
+In purrr, you can create anonymous functions using `~` with `.` as a placeholder. If you need more parameters, you can use `.x`, `.y` and `map2` (for now) or `.1`, `.2`, `.3`, `...` with `pmap`. 
+
+```{r}
+library(purrr)
+library(readr)
+library(dplyr)
+
+lego <- read_csv("https://raw.githubusercontent.com/srvanderplas/datasets/main/clean/lego_sets.csv")
+
+lego <- lego |> # Either pipe will work here
+  mutate(decade = purrr::map_int(year, ~floor(./10)*10))
+
+lego |> 
+  select(set_num, name, year, decade) |> 
+  head()
+```
+
+
+### Python
+
+```{python}
+import pandas as pd
+import math
+
+lego = pd.read_csv("https://raw.githubusercontent.com/srvanderplas/datasets/main/clean/lego_sets.csv")
+lego['decade'] = [math.floor(i/10)*10 for i in lego.year]
+lego[['set_num', 'name', 'year', 'decade']].head()
+```
+
+
+:::
+:::
+
+For a more interesting example, though, let's consider fitting a different linear regression for each generation of pokemon, describing the relationship between HP (hit points) and CP (combat power). 
+
+::: callout-demo
+
+### Pokemon modeling
+
+::: panel-tabset
+
+#### base R
+```{r}
+poke <- read.csv("https://raw.githubusercontent.com/srvanderplas/datasets/main/clean/pokemon_gen_1-9.csv")
+# Get rid of mega pokemon - they're a different thing
+poke <- subset(poke, !grepl("Mega", poke$variant))
+
+# Split into a list of data frames from each gen
+poke_gens <- split(poke, poke$gen)
+
+# Fit linear regressions for each generation of pokemon
+models <- lapply(poke_gens, \(df) lm(total ~ hp, data = df))
+
+# Pull out coefficients and r-squared values
+results <- lapply(models, \(res) data.frame(coef1 = coef(res)[1], coef2 = coef(res)[2], rsq = summary(res)$r.squared)) 
+
+# Join the results back into a data.frame
+results <- do.call("rbind", results) 
+
+results
+```
+
+#### Tidy R
+In the tidyverse, we use `tidyr::nest()` to accomplish a similar thing to `split` in base R.
+
+This approach is designed to work entirely within a single data frame, which keeps the environment relatively clean and ensures that each step's results are stored in a convenient, easy-to-find place.
+
+```{r}
+library(purrr)
+library(readr)
+library(dplyr)
+library(stringr)
+library(tidyr)
+
+res <- read_csv("https://raw.githubusercontent.com/srvanderplas/datasets/main/clean/pokemon_gen_1-9.csv") %>%
+  # str_detect doesn't play nice with NAs, so replace NA with ""
+  mutate(variant = replace_na(variant, "")) %>%
+  # Remove mega pokemon
+  filter(str_detect(variant, "Mega", negate = T)) %>%
+  # Sub-data-frames
+  nest(.by = gen) %>%
+  # Fit model
+  mutate(model = map(data, ~lm(total ~ hp, data = .))) %>%
+  # Extract coefficients
+  mutate(res = map(model, ~data.frame(coef1 = coef(.)[1], coef2 = coef(.)[2], rsq = summary(.)$r.squared))) %>%
+  # Bind together
+  unnest(c(res))
+res
+```
+
+
+#### Python
+XXX Stopped here
+```{python}
+
+```
+
+:::
+
+:::
 
 ## References
