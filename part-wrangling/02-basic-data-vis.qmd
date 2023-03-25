@@ -12,22 +12,23 @@ This section is intended as a very light overview of how you might create charts
 Now that you can read data in to R and python and define new variables, you can create plots! 
 Data visualization is a skill that takes a lifetime to learn, but for now, let's start out easy:  let's talk about how to make (basic) plots in R (with `ggplot2`) and in python (with `plotnine`, which is a ggplot2 clone).
 
-::: callout-demo
 ### Graphing HBCU Enrollment
 Let's work with Historically Black College and University enrollment. 
 
-::: panel-tabset
-
+::: callout-demo
 #### Loading Libraries
 
-**R**:
+::: panel-tabset
+#### R
+
 ```{r plotting-data-r}
 hbcu_all <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-02-02/hbcu_all.csv')
 
 library(ggplot2)
 ```
 
-**Python**:
+#### Python
+
 ```{python plotting-data-python}
 import pandas as pd
 from plotnine import *
@@ -36,12 +37,20 @@ hbcu_all = pd.read_csv('https://raw.githubusercontent.com/rfordatascience/tidytu
 
 ```
 
-#### Line Chart
+:::
+:::
+
+### Making a Line Chart
 
 ggplot2 and plotnine work with data frames. 
-If you pass a data frame in as the data argument, you can refer to columns in that data with "bare" column names (you don't have to reference the full data object using `df$name` or `df.name`; you can instead use `name` or `"name"`):
 
-**R**:
+If you pass a data frame in as the data argument, you can refer to columns in that data with "bare" column names (you don't have to reference the full data object using `df$name` or `df.name`; you can instead use `name` or `"name"`).
+
+::: callout-demo
+
+::: panel-tabset
+#### R
+
 ```{r line-graph-r}
 
 ggplot(hbcu_all, aes(x = Year, y = `4-year`)) + geom_line() +
@@ -49,7 +58,7 @@ ggplot(hbcu_all, aes(x = Year, y = `4-year`)) + geom_line() +
 
 ```
 
-**Python**:
+#### Python
 ```{python line-graph-python}
 
 ggplot(hbcu_all, aes(x = "Year", y = "4-year")) + geom_line() + \
@@ -57,38 +66,64 @@ ggplot(hbcu_all, aes(x = "Year", y = "4-year")) + geom_line() + \
 
 ```
 
-#### Data Formatting
+:::
+:::
+
+### Data Formatting
 
 If your data is in the right format, ggplot2 is very easy to use; if your data aren't formatted neatly, it can be a real pain. 
 If you want to plot multiple lines, you need to either list each variable you want to plot, one by one, or (more likely) you want to get your data into "long form". 
+We'll learn more about how to do this type of data transition when we talk about [reshaping data](05-data-reshape.qmd).
+
+::: callout-demo
+
 You don't need to know exactly how this works, but it is helpful to see the difference in the two datasets:
 
-**R**:
+::: panel-tabset
+#### R
 ```{r pivot-operation-r}
 library(tidyr)
 hbcu_long <- pivot_longer(hbcu_all, -Year, names_to = "type", values_to = "value")
-
-head(hbcu_all)
-head(hbcu_long)
 ```
 
-**Python**: (data look the same as in R)
+#### Python
 ```{python pivot-operation-python}
 hbcu_long = pd.melt(hbcu_all, id_vars = ['Year'], value_vars = hbcu_all.columns[1:11])
 ```
 
+#### Original Data
+```{r pivot-operation-data, echo = F}
+knitr::kable(head(hbcu_all))
+```
+
+#### Long Data
+```{r pivot-operation-data-2, echo = F}
+
+knitr::kable(head(hbcu_long))
+```
+
 In the long form of the data, we have a row for each data point (year x measurement type), not for each year.
+:::
+:::
 
-#### Long Form Plot
+### Making a (Better) Line Chart
 
-**R**:
+If we had wanted to show all of the available data before, we would have needed to add a separate line for each column, coloring each one manually, and then we would have wanted to create a legend manually (which is a pain). 
+Converting the data to long form means we can use ggplot2/plotnine to do all of this for us with only a single `geom_line` statement.
+Having the data in the right form to plot is very important if you want to get the plot you're imagining with relatively little effort.
+
+
+::: callout-demo
+::: panel-tabset
+
+#### R
 ```{r long-form-demo-r}
 
 ggplot(hbcu_long, aes(x = Year, y = value, color = type)) + geom_line() +
   ggtitle("HBCU College Enrollment")
 ```
 
-**Python**:
+#### Python
 ```{python long-form-demo-python}
 
 ggplot(hbcu_long, aes(x = "Year", y = "value", color = "variable")) + geom_line() + \
