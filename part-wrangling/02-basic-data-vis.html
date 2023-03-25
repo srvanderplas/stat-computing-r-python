@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.2.313">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="dcterms.date" content="2023-03-20">
+<meta name="dcterms.date" content="2023-03-25">
 <title>Statistical Computing using R and Python - 15&nbsp; Data Visualization Basics</title>
 <style>
 code{white-space: pre-wrap;}
@@ -326,7 +326,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
    
   <ul>
 <li><a href="#fa-bullseye-objectives" id="toc-fa-bullseye-objectives" class="nav-link active" data-scroll-target="#fa-bullseye-objectives"><span class="toc-section-number">15.1</span>  <i class="fa-solid fa-bullseye" aria-label="bullseye"></i> Objectives</a></li>
-  <li><a href="#first-steps" id="toc-first-steps" class="nav-link" data-scroll-target="#first-steps"><span class="toc-section-number">15.2</span>  First Steps</a></li>
+  <li>
+<a href="#first-steps" id="toc-first-steps" class="nav-link" data-scroll-target="#first-steps"><span class="toc-section-number">15.2</span>  First Steps</a>
+  <ul class="collapse">
+<li><a href="#graphing-hbcu-enrollment" id="toc-graphing-hbcu-enrollment" class="nav-link" data-scroll-target="#graphing-hbcu-enrollment"><span class="toc-section-number">15.2.1</span>  Graphing HBCU Enrollment</a></li>
+  <li><a href="#making-a-line-chart" id="toc-making-a-line-chart" class="nav-link" data-scroll-target="#making-a-line-chart"><span class="toc-section-number">15.2.2</span>  Making a Line Chart</a></li>
+  <li><a href="#data-formatting" id="toc-data-formatting" class="nav-link" data-scroll-target="#data-formatting"><span class="toc-section-number">15.2.3</span>  Data Formatting</a></li>
+  <li><a href="#making-a-better-line-chart" id="toc-making-a-better-line-chart" class="nav-link" data-scroll-target="#making-a-better-line-chart"><span class="toc-section-number">15.2.4</span>  Making a (Better) Line Chart</a></li>
+  </ul>
+</li>
   </ul><div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/srvanderplas/stat-computing-r-python/edit/main/part-wrangling/02-basic-data-vis.qmd" class="toc-action">Edit this page</a></p></div></div></nav>
     </div>
 <!-- main -->
@@ -342,7 +350,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">March 20, 2023</p>
+      <p class="date">March 25, 2023</p>
     </div>
   </div>
   
@@ -359,33 +367,33 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </ul></section><section id="first-steps" class="level2" data-number="15.2"><h2 data-number="15.2" class="anchored" data-anchor-id="first-steps">
 <span class="header-section-number">15.2</span> First Steps</h2>
 <p>Now that you can read data in to R and python and define new variables, you can create plots! Data visualization is a skill that takes a lifetime to learn, but for now, let’s start out easy: let’s talk about how to make (basic) plots in R (with <code>ggplot2</code>) and in python (with <code>plotnine</code>, which is a ggplot2 clone).</p>
+<section id="graphing-hbcu-enrollment" class="level3" data-number="15.2.1"><h3 data-number="15.2.1" class="anchored" data-anchor-id="graphing-hbcu-enrollment">
+<span class="header-section-number">15.2.1</span> Graphing HBCU Enrollment</h3>
+<p>Let’s work with Historically Black College and University enrollment.</p>
 <div class="callout-demo callout callout-style-default no-icon callout-captioned">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-caption-container flex-fill">
-Graphing HBCU Enrollment
+Loading Libraries
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Let’s work with Historically Black College and University enrollment.</p>
 <div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
-<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" aria-current="page">Loading Libraries</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Line Chart</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false">Data Formatting</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" role="tab" aria-controls="tabset-1-4" aria-selected="false">Long Form Plot</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" aria-current="page">R</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Python</a></li>
 </ul>
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
-<p><strong>R</strong>:</p>
 <div class="cell">
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">hbcu_all</span> <span class="op">&lt;-</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html">read_csv</a></span><span class="op">(</span><span class="st">'https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-02-02/hbcu_all.csv'</span><span class="op">)</span></span>
 <span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p><strong>Python</strong>:</p>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnine <span class="im">import</span> <span class="op">*</span></span>
@@ -393,9 +401,31 @@ Graphing HBCU Enrollment
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>hbcu_all <span class="op">=</span> pd.read_csv(<span class="st">'https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-02-02/hbcu_all.csv'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
-<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
-<p>ggplot2 and plotnine work with data frames. If you pass a data frame in as the data argument, you can refer to columns in that data with “bare” column names (you don’t have to reference the full data object using <code>df$name</code> or <code>df.name</code>; you can instead use <code>name</code> or <code>"name"</code>):</p>
-<p><strong>R</strong>:</p>
+</div>
+</div>
+</div>
+</div>
+</section><section id="making-a-line-chart" class="level3" data-number="15.2.2"><h3 data-number="15.2.2" class="anchored" data-anchor-id="making-a-line-chart">
+<span class="header-section-number">15.2.2</span> Making a Line Chart</h3>
+<p>ggplot2 and plotnine work with data frames.</p>
+<p>If you pass a data frame in as the data argument, you can refer to columns in that data with “bare” column names (you don’t have to reference the full data object using <code>df$name</code> or <code>df.name</code>; you can instead use <code>name</code> or <code>"name"</code>).</p>
+<div class="callout-demo callout callout-style-default no-icon callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Demo
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist">
+<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">R</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">Python</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
 <div class="cell">
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">hbcu_all</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Year</span>, y <span class="op">=</span> <span class="va">`4-year`</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
@@ -404,57 +434,247 @@ Graphing HBCU Enrollment
 <p><img src="02-basic-data-vis_files/figure-html/line-graph-r-1.png" class="img-fluid" width="2100"></p>
 </div>
 </div>
-<p><strong>Python</strong>:</p>
+</div>
+<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>ggplot(hbcu_all, aes(x <span class="op">=</span> <span class="st">"Year"</span>, y <span class="op">=</span> <span class="st">"4-year"</span>)) <span class="op">+</span> geom_line() <span class="op">+</span> <span class="op">\</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  ggtitle(<span class="st">"4-year HBCU College Enrollment"</span>)</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">## &lt;ggplot: (8786300850080)&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">## &lt;ggplot: (8738685147389)&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="02-basic-data-vis_files/figure-html/line-graph-python-1.png" class="img-fluid" width="614"></p>
 </div>
 </div>
 </div>
-<div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
-<p>If your data is in the right format, ggplot2 is very easy to use; if your data aren’t formatted neatly, it can be a real pain. If you want to plot multiple lines, you need to either list each variable you want to plot, one by one, or (more likely) you want to get your data into “long form”. You don’t need to know exactly how this works, but it is helpful to see the difference in the two datasets:</p>
-<p><strong>R</strong>:</p>
+</div>
+</div>
+</div>
+</div>
+</section><section id="data-formatting" class="level3" data-number="15.2.3"><h3 data-number="15.2.3" class="anchored" data-anchor-id="data-formatting">
+<span class="header-section-number">15.2.3</span> Data Formatting</h3>
+<p>If your data is in the right format, ggplot2 is very easy to use; if your data aren’t formatted neatly, it can be a real pain. If you want to plot multiple lines, you need to either list each variable you want to plot, one by one, or (more likely) you want to get your data into “long form”. We’ll learn more about how to do this type of data transition when we talk about <a href="../part-wrangling/05-data-reshape.html">reshaping data</a>.</p>
+<div class="callout-demo callout callout-style-default no-icon callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Demo
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>You don’t need to know exactly how this works, but it is helpful to see the difference in the two datasets:</p>
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist">
+<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">R</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">Python</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-3" role="tab" aria-controls="tabset-3-3" aria-selected="false">Original Data</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-4" role="tab" aria-controls="tabset-3-4" aria-selected="false">Long Data</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
 <div class="cell">
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org">tidyr</a></span><span class="op">)</span></span>
-<span><span class="va">hbcu_long</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html">pivot_longer</a></span><span class="op">(</span><span class="va">hbcu_all</span>, <span class="op">-</span><span class="va">Year</span>, names_to <span class="op">=</span> <span class="st">"type"</span>, values_to <span class="op">=</span> <span class="st">"value"</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">hbcu_all</span><span class="op">)</span></span>
-<span><span class="co">## # A tibble: 6 × 12</span></span>
-<span><span class="co">##    Year Total e…¹  Males Females 4-yea…² 2-yea…³ Total…⁴ 4-yea…⁵ 2-yea…⁶ Total…⁷</span></span>
-<span><span class="co">##   &lt;dbl&gt;     &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;</span></span>
-<span><span class="co">## 1  1976    222613 104669  117944  206676   15937  156836  143528   13308   65777</span></span>
-<span><span class="co">## 2  1980    233557 106387  127170  218009   15548  168217  155085   13132   65340</span></span>
-<span><span class="co">## 3  1982    228371 104897  123474  212017   16354  165871  151472   14399   62500</span></span>
-<span><span class="co">## 4  1984    227519 102823  124696  212844   14675  164116  151289   12827   63403</span></span>
-<span><span class="co">## 5  1986    223275  97523  125752  207231   16044  162048  147631   14417   61227</span></span>
-<span><span class="co">## 6  1988    239755 100561  139194  223250   16505  173672  158606   15066   66083</span></span>
-<span><span class="co">## # … with 2 more variables: `4-year - Private` &lt;dbl&gt;, `2-year - Private` &lt;dbl&gt;,</span></span>
-<span><span class="co">## #   and abbreviated variable names ¹​`Total enrollment`, ²​`4-year`, ³​`2-year`,</span></span>
-<span><span class="co">## #   ⁴​`Total - Public`, ⁵​`4-year - Public`, ⁶​`2-year - Public`,</span></span>
-<span><span class="co">## #   ⁷​`Total - Private`</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">hbcu_long</span><span class="op">)</span></span>
-<span><span class="co">## # A tibble: 6 × 3</span></span>
-<span><span class="co">##    Year type              value</span></span>
-<span><span class="co">##   &lt;dbl&gt; &lt;chr&gt;             &lt;dbl&gt;</span></span>
-<span><span class="co">## 1  1976 Total enrollment 222613</span></span>
-<span><span class="co">## 2  1976 Males            104669</span></span>
-<span><span class="co">## 3  1976 Females          117944</span></span>
-<span><span class="co">## 4  1976 4-year           206676</span></span>
-<span><span class="co">## 5  1976 2-year            15937</span></span>
-<span><span class="co">## 6  1976 Total - Public   156836</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span><span class="va">hbcu_long</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html">pivot_longer</a></span><span class="op">(</span><span class="va">hbcu_all</span>, <span class="op">-</span><span class="va">Year</span>, names_to <span class="op">=</span> <span class="st">"type"</span>, values_to <span class="op">=</span> <span class="st">"value"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p><strong>Python</strong>: (data look the same as in R)</p>
+</div>
+<div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>hbcu_long <span class="op">=</span> pd.melt(hbcu_all, id_vars <span class="op">=</span> [<span class="st">'Year'</span>], value_vars <span class="op">=</span> hbcu_all.columns[<span class="dv">1</span>:<span class="dv">11</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+</div>
+<div id="tabset-3-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-3-tab">
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-sm table-striped">
+<colgroup>
+<col style="width: 3%">
+<col style="width: 11%">
+<col style="width: 4%">
+<col style="width: 5%">
+<col style="width: 4%">
+<col style="width: 4%">
+<col style="width: 10%">
+<col style="width: 10%">
+<col style="width: 10%">
+<col style="width: 10%">
+<col style="width: 11%">
+<col style="width: 11%">
+</colgroup>
+<thead><tr class="header">
+<th style="text-align: right;">Year</th>
+<th style="text-align: right;">Total enrollment</th>
+<th style="text-align: right;">Males</th>
+<th style="text-align: right;">Females</th>
+<th style="text-align: right;">4-year</th>
+<th style="text-align: right;">2-year</th>
+<th style="text-align: right;">Total - Public</th>
+<th style="text-align: right;">4-year - Public</th>
+<th style="text-align: right;">2-year - Public</th>
+<th style="text-align: right;">Total - Private</th>
+<th style="text-align: right;">4-year - Private</th>
+<th style="text-align: right;">2-year - Private</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1976</td>
+<td style="text-align: right;">222613</td>
+<td style="text-align: right;">104669</td>
+<td style="text-align: right;">117944</td>
+<td style="text-align: right;">206676</td>
+<td style="text-align: right;">15937</td>
+<td style="text-align: right;">156836</td>
+<td style="text-align: right;">143528</td>
+<td style="text-align: right;">13308</td>
+<td style="text-align: right;">65777</td>
+<td style="text-align: right;">63148</td>
+<td style="text-align: right;">2629</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1980</td>
+<td style="text-align: right;">233557</td>
+<td style="text-align: right;">106387</td>
+<td style="text-align: right;">127170</td>
+<td style="text-align: right;">218009</td>
+<td style="text-align: right;">15548</td>
+<td style="text-align: right;">168217</td>
+<td style="text-align: right;">155085</td>
+<td style="text-align: right;">13132</td>
+<td style="text-align: right;">65340</td>
+<td style="text-align: right;">62924</td>
+<td style="text-align: right;">2416</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1982</td>
+<td style="text-align: right;">228371</td>
+<td style="text-align: right;">104897</td>
+<td style="text-align: right;">123474</td>
+<td style="text-align: right;">212017</td>
+<td style="text-align: right;">16354</td>
+<td style="text-align: right;">165871</td>
+<td style="text-align: right;">151472</td>
+<td style="text-align: right;">14399</td>
+<td style="text-align: right;">62500</td>
+<td style="text-align: right;">60545</td>
+<td style="text-align: right;">1955</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1984</td>
+<td style="text-align: right;">227519</td>
+<td style="text-align: right;">102823</td>
+<td style="text-align: right;">124696</td>
+<td style="text-align: right;">212844</td>
+<td style="text-align: right;">14675</td>
+<td style="text-align: right;">164116</td>
+<td style="text-align: right;">151289</td>
+<td style="text-align: right;">12827</td>
+<td style="text-align: right;">63403</td>
+<td style="text-align: right;">61555</td>
+<td style="text-align: right;">1848</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1986</td>
+<td style="text-align: right;">223275</td>
+<td style="text-align: right;">97523</td>
+<td style="text-align: right;">125752</td>
+<td style="text-align: right;">207231</td>
+<td style="text-align: right;">16044</td>
+<td style="text-align: right;">162048</td>
+<td style="text-align: right;">147631</td>
+<td style="text-align: right;">14417</td>
+<td style="text-align: right;">61227</td>
+<td style="text-align: right;">59600</td>
+<td style="text-align: right;">1627</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1988</td>
+<td style="text-align: right;">239755</td>
+<td style="text-align: right;">100561</td>
+<td style="text-align: right;">139194</td>
+<td style="text-align: right;">223250</td>
+<td style="text-align: right;">16505</td>
+<td style="text-align: right;">173672</td>
+<td style="text-align: right;">158606</td>
+<td style="text-align: right;">15066</td>
+<td style="text-align: right;">66083</td>
+<td style="text-align: right;">64644</td>
+<td style="text-align: right;">1439</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="tabset-3-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-4-tab">
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-sm table-striped">
+<thead><tr class="header">
+<th style="text-align: right;">Year</th>
+<th style="text-align: left;">type</th>
+<th style="text-align: right;">value</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1976</td>
+<td style="text-align: left;">Total enrollment</td>
+<td style="text-align: right;">222613</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1976</td>
+<td style="text-align: left;">Males</td>
+<td style="text-align: right;">104669</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1976</td>
+<td style="text-align: left;">Females</td>
+<td style="text-align: right;">117944</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1976</td>
+<td style="text-align: left;">4-year</td>
+<td style="text-align: right;">206676</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">1976</td>
+<td style="text-align: left;">2-year</td>
+<td style="text-align: right;">15937</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">1976</td>
+<td style="text-align: left;">Total - Public</td>
+<td style="text-align: right;">156836</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
 <p>In the long form of the data, we have a row for each data point (year x measurement type), not for each year.</p>
 </div>
-<div id="tabset-1-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-4-tab">
-<p><strong>R</strong>:</p>
+</div>
+</div>
+</div>
+</div>
+</section><section id="making-a-better-line-chart" class="level3" data-number="15.2.4"><h3 data-number="15.2.4" class="anchored" data-anchor-id="making-a-better-line-chart">
+<span class="header-section-number">15.2.4</span> Making a (Better) Line Chart</h3>
+<p>If we had wanted to show all of the available data before, we would have needed to add a separate line for each column, coloring each one manually, and then we would have wanted to create a legend manually (which is a pain). Converting the data to long form means we can use ggplot2/plotnine to do all of this for us with only a single <code>geom_line</code> statement. Having the data in the right form to plot is very important if you want to get the plot you’re imagining with relatively little effort.</p>
+<div class="callout-demo callout callout-style-default no-icon callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Demo
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist">
+<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true">R</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false">Python</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
 <div class="cell">
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">hbcu_long</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">Year</span>, y <span class="op">=</span> <span class="va">value</span>, color <span class="op">=</span> <span class="va">type</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
@@ -463,13 +683,14 @@ Graphing HBCU Enrollment
 <p><img src="02-basic-data-vis_files/figure-html/long-form-demo-r-1.png" class="img-fluid" width="2100"></p>
 </div>
 </div>
-<p><strong>Python</strong>:</p>
+</div>
+<div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>ggplot(hbcu_long, aes(x <span class="op">=</span> <span class="st">"Year"</span>, y <span class="op">=</span> <span class="st">"value"</span>, color <span class="op">=</span> <span class="st">"variable"</span>)) <span class="op">+</span> geom_line() <span class="op">+</span> <span class="op">\</span></span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  ggtitle(<span class="st">"HBCU College Enrollment"</span>) <span class="op">+</span> <span class="op">\</span></span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  theme(subplots_adjust<span class="op">=</span>{<span class="st">'right'</span>:<span class="fl">0.75</span>}) <span class="co"># This moves the key so it takes up 25% of the area</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co">## &lt;ggplot: (8786300674403)&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co">## &lt;ggplot: (8738682033020)&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="02-basic-data-vis_files/figure-html/long-form-demo-python-1.png" class="img-fluid" width="614"></p>
 </div>
@@ -481,7 +702,7 @@ Graphing HBCU Enrollment
 </div>
 
 
-</section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
+</section></section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
     const mode = bsSheetEl.getAttribute("data-mode");
