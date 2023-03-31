@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.2.313">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="dcterms.date" content="2023-03-28">
+<meta name="dcterms.date" content="2023-03-31">
 <title>Statistical Computing using R and Python - 21&nbsp; Reshaping Data</title>
 <style>
 code{white-space: pre-wrap;}
@@ -359,7 +359,13 @@ div.csl-indent {
   <li><a href="#wider" id="toc-wider" class="nav-link" data-scroll-target="#wider"><span class="toc-section-number">21.3.2</span>  Wider</a></li>
   </ul>
 </li>
-  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references"><span class="toc-section-number">21.4</span>  References</a></li>
+  <li>
+<a href="#sec-gas-price-ex" id="toc-sec-gas-price-ex" class="nav-link" data-scroll-target="#sec-gas-price-ex"><span class="toc-section-number">21.4</span>  Example: Gas Prices Data</a>
+  <ul class="collapse">
+<li><a href="#setup-gas-price-data-cleaning" id="toc-setup-gas-price-data-cleaning" class="nav-link" data-scroll-target="#setup-gas-price-data-cleaning"><span class="toc-section-number">21.4.1</span>  Setup: Gas Price Data Cleaning</a></li>
+  </ul>
+</li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references"><span class="toc-section-number">21.5</span>  References</a></li>
   </ul><div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/srvanderplas/stat-computing-r-python/edit/main/part-wrangling/05-data-reshape.qmd" class="toc-action">Edit this page</a></p></div></div></nav>
     </div>
 <!-- main -->
@@ -375,7 +381,7 @@ div.csl-indent {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">March 28, 2023</p>
+      <p class="date">March 31, 2023</p>
     </div>
   </div>
   
@@ -1168,14 +1174,14 @@ Additional reading
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">table4a</span></span>
 <span><span class="co">## # A tibble: 3 × 3</span></span>
 <span><span class="co">##   country     `1999` `2000`</span></span>
-<span><span class="co">## * &lt;chr&gt;        &lt;int&gt;  &lt;int&gt;</span></span>
+<span><span class="co">##   &lt;chr&gt;        &lt;dbl&gt;  &lt;dbl&gt;</span></span>
 <span><span class="co">## 1 Afghanistan    745   2666</span></span>
 <span><span class="co">## 2 Brazil       37737  80488</span></span>
 <span><span class="co">## 3 China       212258 213766</span></span>
 <span><span class="va">table4b</span></span>
 <span><span class="co">## # A tibble: 3 × 3</span></span>
 <span><span class="co">##   country         `1999`     `2000`</span></span>
-<span><span class="co">## * &lt;chr&gt;            &lt;int&gt;      &lt;int&gt;</span></span>
+<span><span class="co">##   &lt;chr&gt;            &lt;dbl&gt;      &lt;dbl&gt;</span></span>
 <span><span class="co">## 1 Afghanistan   19987071   20595360</span></span>
 <span><span class="co">## 2 Brazil       172006362  174504898</span></span>
 <span><span class="co">## 3 China       1272915272 1280428583</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1201,7 +1207,7 @@ Additional reading
 <span>  <span class="fu">mutate</span><span class="op">(</span>year <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="va">year</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 6 × 4</span></span>
 <span><span class="co">##   country      year  cases population</span></span>
-<span><span class="co">##   &lt;chr&gt;       &lt;dbl&gt;  &lt;int&gt;      &lt;int&gt;</span></span>
+<span><span class="co">##   &lt;chr&gt;       &lt;dbl&gt;  &lt;dbl&gt;      &lt;dbl&gt;</span></span>
 <span><span class="co">## 1 Afghanistan  1999    745   19987071</span></span>
 <span><span class="co">## 2 Afghanistan  2000   2666   20595360</span></span>
 <span><span class="co">## 3 Brazil       1999  37737  172006362</span></span>
@@ -1235,7 +1241,7 @@ Additional reading
 <span><span class="va">table4_long</span></span>
 <span><span class="co">## # A tibble: 12 × 4</span></span>
 <span><span class="co">##    country     id         year       count</span></span>
-<span><span class="co">##    &lt;chr&gt;       &lt;chr&gt;      &lt;chr&gt;      &lt;int&gt;</span></span>
+<span><span class="co">##    &lt;chr&gt;       &lt;chr&gt;      &lt;chr&gt;      &lt;dbl&gt;</span></span>
 <span><span class="co">##  1 Afghanistan cases      1999         745</span></span>
 <span><span class="co">##  2 Afghanistan cases      2000        2666</span></span>
 <span><span class="co">##  3 Brazil      cases      1999       37737</span></span>
@@ -1256,7 +1262,7 @@ Additional reading
 <span><span class="va">table4_tidy</span></span>
 <span><span class="co">## # A tibble: 6 × 4</span></span>
 <span><span class="co">##   country     year   cases population</span></span>
-<span><span class="co">##   &lt;chr&gt;       &lt;chr&gt;  &lt;int&gt;      &lt;int&gt;</span></span>
+<span><span class="co">##   &lt;chr&gt;       &lt;chr&gt;  &lt;dbl&gt;      &lt;dbl&gt;</span></span>
 <span><span class="co">## 1 Afghanistan 1999     745   19987071</span></span>
 <span><span class="co">## 2 Afghanistan 2000    2666   20595360</span></span>
 <span><span class="co">## 3 Brazil      1999   37737  172006362</span></span>
@@ -1272,42 +1278,44 @@ Additional reading
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Get tables from R</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>table4a <span class="op">=</span> r.table4a</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>table4b <span class="op">=</span> r.table4b</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>tba <span class="op">=</span> pd.melt(table4a, id_vars <span class="op">=</span> [<span class="st">'country'</span>], value_vars <span class="op">=</span> [<span class="st">'1999'</span>, <span class="st">'2000'</span>], var_name <span class="op">=</span> <span class="st">'year'</span>, value_name <span class="op">=</span> <span class="st">'cases'</span>)</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>tbb <span class="op">=</span> pd.melt(table4b, id_vars <span class="op">=</span> [<span class="st">'country'</span>], value_vars <span class="op">=</span> [<span class="st">'1999'</span>, <span class="st">'2000'</span>], var_name <span class="op">=</span> <span class="st">'year'</span>, value_name <span class="op">=</span> <span class="st">'population'</span>)</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co"># To get the tidy data, we join the two together (see Table joins below)</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>table4_tidy <span class="op">=</span> pd.merge(tba, tbb, on <span class="op">=</span> [<span class="st">"country"</span>, <span class="st">"year"</span>], how <span class="op">=</span> <span class="st">'left'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): ModuleNotFoundError: No module named 'pandas'</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>table4a <span class="op">=</span> r.table4a</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>table4b <span class="op">=</span> r.table4b</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>tba <span class="op">=</span> pd.melt(table4a, id_vars <span class="op">=</span> [<span class="st">'country'</span>], value_vars <span class="op">=</span> [<span class="st">'1999'</span>, <span class="st">'2000'</span>], var_name <span class="op">=</span> <span class="st">'year'</span>, value_name <span class="op">=</span> <span class="st">'cases'</span>)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'pd' is not defined</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>tbb <span class="op">=</span> pd.melt(table4b, id_vars <span class="op">=</span> [<span class="st">'country'</span>], value_vars <span class="op">=</span> [<span class="st">'1999'</span>, <span class="st">'2000'</span>], var_name <span class="op">=</span> <span class="st">'year'</span>, value_name <span class="op">=</span> <span class="st">'population'</span>)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co"># To get the tidy data, we join the two together (see Table joins below)</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'pd' is not defined</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>table4_tidy <span class="op">=</span> pd.merge(tba, tbb, on <span class="op">=</span> [<span class="st">"country"</span>, <span class="st">"year"</span>], how <span class="op">=</span> <span class="st">'left'</span>)</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'pd' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Here’s the melt/pivot_longer + pivot/pivot_wider version:</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Get tables from R</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>table4a <span class="op">=</span> r.table4a</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>table4b <span class="op">=</span> r.table4b</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>table4a[<span class="st">'id'</span>] <span class="op">=</span> <span class="st">"cases"</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>table4b[<span class="st">'id'</span>] <span class="op">=</span> <span class="st">"population"</span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>table4 <span class="op">=</span> pd.concat([table4a, table4b])</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Fully long form</span></span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>table4_long <span class="op">=</span> pd.melt(table4, id_vars <span class="op">=</span> [<span class="st">'country'</span>, <span class="st">'id'</span>], value_vars <span class="op">=</span> [<span class="st">'1999'</span>, <span class="st">'2000'</span>], var_name <span class="op">=</span> <span class="st">'year'</span>, value_name <span class="op">=</span> <span class="st">'count'</span>)</span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Tidy form - case and population columns</span></span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>table4_tidy2 <span class="op">=</span> pd.pivot(table4_long, index <span class="op">=</span> [<span class="st">'country'</span>, <span class="st">'year'</span>], columns <span class="op">=</span> [<span class="st">'id'</span>], values <span class="op">=</span> <span class="st">'count'</span>)</span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="co"># reset_index() gets rid of the grouped index</span></span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>table4_tidy2.reset_index()</span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="co">## id      country  year   cases  population</span></span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="co">## 0   Afghanistan  1999     745    19987071</span></span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="co">## 1   Afghanistan  2000    2666    20595360</span></span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="co">## 2        Brazil  1999   37737   172006362</span></span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="co">## 3        Brazil  2000   80488   174504898</span></span>
-<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="co">## 4         China  1999  212258  1272915272</span></span>
-<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="co">## 5         China  2000  213766  1280428583</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): ModuleNotFoundError: No module named 'pandas'</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>table4a <span class="op">=</span> r.table4a</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>table4b <span class="op">=</span> r.table4b</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>table4a[<span class="st">'id'</span>] <span class="op">=</span> <span class="st">"cases"</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>table4b[<span class="st">'id'</span>] <span class="op">=</span> <span class="st">"population"</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>table4 <span class="op">=</span> pd.concat([table4a, table4b])</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Fully long form</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'pd' is not defined</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>table4_long <span class="op">=</span> pd.melt(table4, id_vars <span class="op">=</span> [<span class="st">'country'</span>, <span class="st">'id'</span>], value_vars <span class="op">=</span> [<span class="st">'1999'</span>, <span class="st">'2000'</span>], var_name <span class="op">=</span> <span class="st">'year'</span>, value_name <span class="op">=</span> <span class="st">'count'</span>)</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Tidy form - case and population columns</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'pd' is not defined</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>table4_tidy2 <span class="op">=</span> pd.pivot(table4_long, index <span class="op">=</span> [<span class="st">'country'</span>, <span class="st">'year'</span>], columns <span class="op">=</span> [<span class="st">'id'</span>], values <span class="op">=</span> <span class="st">'count'</span>)</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="co"># reset_index() gets rid of the grouped index</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'pd' is not defined</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>table4_tidy2.reset_index()</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'table4_tidy2' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
@@ -1336,7 +1344,7 @@ Additional reading
 <span>  <span class="fu">pivot_wider</span><span class="op">(</span>names_from <span class="op">=</span> <span class="va">type</span>, values_from <span class="op">=</span> <span class="va">count</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 6 × 4</span></span>
 <span><span class="co">##   country      year  cases population</span></span>
-<span><span class="co">##   &lt;chr&gt;       &lt;int&gt;  &lt;int&gt;      &lt;int&gt;</span></span>
+<span><span class="co">##   &lt;chr&gt;       &lt;dbl&gt;  &lt;dbl&gt;      &lt;dbl&gt;</span></span>
 <span><span class="co">## 1 Afghanistan  1999    745   19987071</span></span>
 <span><span class="co">## 2 Afghanistan  2000   2666   20595360</span></span>
 <span><span class="co">## 3 Brazil       1999  37737  172006362</span></span>
@@ -1350,13 +1358,7 @@ Additional reading
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>table2 <span class="op">=</span> r.table2</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>pd.pivot(table2, index <span class="op">=</span> [<span class="st">'country'</span>, <span class="st">'year'</span>], columns <span class="op">=</span> [<span class="st">'type'</span>], values <span class="op">=</span> <span class="st">'count'</span>).reset_index()</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co">## type      country  year   cases  population</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co">## 0     Afghanistan  1999     745    19987071</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co">## 1     Afghanistan  2000    2666    20595360</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co">## 2          Brazil  1999   37737   172006362</span></span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co">## 3          Brazil  2000   80488   174504898</span></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co">## 4           China  1999  212258  1272915272</span></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co">## 5           China  2000  213766  1280428583</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'pd' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
@@ -1476,6 +1478,444 @@ Try it Out!
 </div>
 </div>
 </div>
+</section></section><section id="sec-gas-price-ex" class="level2" data-number="21.4"><h2 data-number="21.4" class="anchored" data-anchor-id="sec-gas-price-ex">
+<span class="header-section-number">21.4</span> Example: Gas Prices Data</h2>
+<p>The US Energy Information Administration tracks gasoline prices, with data available on a weekly level since late 1994. You can go to <a href="https://www.eia.gov/dnav/pet/hist/LeafHandler.ashx?n=pet&amp;s=emm_epm0u_pte_nus_dpg&amp;f=w">this site</a> to see a nice graph of gas prices, along with a corresponding table. <!-- (or you can look at the screenshot below, as I don't really trust that the site design will stay the same...) --></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="../images/wrangling/06_gas_prices_screenshot.png" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">Gas prices at US EIA site</figcaption><p></p>
+</figure>
+</div>
+<p>The data in the table is structured in a fairly easy to read form: each row is a month; each week in the month is a set of two columns: one for the date, one for the average gas price. While this data is definitely not tidy, it is readable.</p>
+<p>But looking at the chart at the top of the page, it’s not clear how we might get that chart from the data in the format it’s presented here: to get a chart like that, we would need a table where each row was a single date, and there were columns for date and price. That would be tidy form data, and so we have to get from the wide, human-readable form into the long, tidier form that we can graph.</p>
+<div class="callout-tip callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Try it out: Manual Formatting in Excel
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist">
+<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-6-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-1" role="tab" aria-controls="tabset-6-1" aria-selected="true">Problem</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-2" role="tab" aria-controls="tabset-6-2" aria-selected="false">Solution</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-3" role="tab" aria-controls="tabset-6-3" aria-selected="false">Video</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-6-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-6-1-tab">
+<p>An excel spreadsheet of the data as downloaded in January 2023 is available <a href="https://github.com/srvanderplas/datasets/raw/main/raw/gas_prices_updated.xlsx">here</a>. Can you manually format the data (or even just the first year or two of data) into a long, skinny format?</p>
+<p>What steps are involved?</p>
+</div>
+<div id="tabset-6-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-2-tab">
+<ol type="1">
+<li><p>Copy the year-month column, creating one vertical copy for every set of columns</p></li>
+<li><p>Move each block of two columns down to the corresponding vertical copy</p></li>
+<li><p>Delete empty rows</p></li>
+<li><p>Format dates</p></li>
+<li><p>Delete empty columns</p></li>
+</ol>
+</div>
+<div id="tabset-6-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-3-tab">
+<div id="fig-excel-demo-video" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure"><iframe width="736" height="414" src="https://www.youtube.com/embed/n70eAKJmzRo" title="06 Tidying Gas Price Data (in Excel)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="">
+</iframe>
+<p></p><figcaption class="figure-caption">Figure&nbsp;21.5: Here is a video of me doing most of the cleaning steps - I skipped out on cleaning up the dates because Excel is miserable for working with dates.</figcaption><p></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<section id="setup-gas-price-data-cleaning" class="level3" data-number="21.4.1"><h3 data-number="21.4.1" class="anchored" data-anchor-id="setup-gas-price-data-cleaning">
+<span class="header-section-number">21.4.1</span> Setup: Gas Price Data Cleaning</h3>
+<p>For the next example, we’ll read the data in from the HTML table online and work to make it something we could e.g.&nbsp;plot. Before we can start cleaning, we have to read in the data:</p>
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist">
+<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-7-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-1" role="tab" aria-controls="tabset-7-1" aria-selected="true">R</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-2" role="tab" aria-controls="tabset-7-2" aria-selected="false">Python</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-7-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-7-1-tab">
+<div class="cell">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://rvest.tidyverse.org/">rvest</a></span><span class="op">)</span> <span class="co"># scrape data from the web</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://xml2.r-lib.org/">xml2</a></span><span class="op">)</span> <span class="co"># parse xml data</span></span>
+<span><span class="va">url</span> <span class="op">&lt;-</span> <span class="st">"https://www.eia.gov/dnav/pet/hist/LeafHandler.ashx?n=pet&amp;s=emm_epm0u_pte_nus_dpg&amp;f=w"</span></span>
+<span></span>
+<span><span class="va">htmldoc</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://xml2.r-lib.org/reference/read_xml.html">read_html</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span></span>
+<span><span class="va">gas_prices_html</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_table.html">html_table</a></span><span class="op">(</span><span class="va">htmldoc</span>, fill <span class="op">=</span> <span class="cn">T</span>, trim <span class="op">=</span> <span class="cn">T</span><span class="op">)</span><span class="op">[[</span><span class="fl">5</span><span class="op">]</span><span class="op">]</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">11</span><span class="op">]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="table table-sm table-striped">
+<caption>First 6 rows of gas prices data as read into R</caption>
+<colgroup>
+<col style="width: 12%">
+<col style="width: 9%">
+<col style="width: 7%">
+<col style="width: 9%">
+<col style="width: 7%">
+<col style="width: 9%">
+<col style="width: 7%">
+<col style="width: 9%">
+<col style="width: 7%">
+<col style="width: 9%">
+<col style="width: 7%">
+</colgroup>
+<thead><tr class="header">
+<th style="text-align: left;">Year-Month</th>
+<th style="text-align: left;">Week 1</th>
+<th style="text-align: left;">Week 1</th>
+<th style="text-align: left;">Week 2</th>
+<th style="text-align: left;">Week 2</th>
+<th style="text-align: left;">Week 3</th>
+<th style="text-align: left;">Week 3</th>
+<th style="text-align: left;">Week 4</th>
+<th style="text-align: left;">Week 4</th>
+<th style="text-align: left;">Week 5</th>
+<th style="text-align: left;">Week 5</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Year-Month</td>
+<td style="text-align: left;">End Date</td>
+<td style="text-align: left;">Value</td>
+<td style="text-align: left;">End Date</td>
+<td style="text-align: left;">Value</td>
+<td style="text-align: left;">End Date</td>
+<td style="text-align: left;">Value</td>
+<td style="text-align: left;">End Date</td>
+<td style="text-align: left;">Value</td>
+<td style="text-align: left;">End Date</td>
+<td style="text-align: left;">Value</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">1994-Nov</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">11/28</td>
+<td style="text-align: left;">1.175</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">1994-Dec</td>
+<td style="text-align: left;">12/05</td>
+<td style="text-align: left;">1.143</td>
+<td style="text-align: left;">12/12</td>
+<td style="text-align: left;">1.118</td>
+<td style="text-align: left;">12/19</td>
+<td style="text-align: left;">1.099</td>
+<td style="text-align: left;">12/26</td>
+<td style="text-align: left;">1.088</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">1995-Jan</td>
+<td style="text-align: left;">01/02</td>
+<td style="text-align: left;">1.104</td>
+<td style="text-align: left;">01/09</td>
+<td style="text-align: left;">1.111</td>
+<td style="text-align: left;">01/16</td>
+<td style="text-align: left;">1.102</td>
+<td style="text-align: left;">01/23</td>
+<td style="text-align: left;">1.110</td>
+<td style="text-align: left;">01/30</td>
+<td style="text-align: left;">1.109</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">1995-Feb</td>
+<td style="text-align: left;">02/06</td>
+<td style="text-align: left;">1.103</td>
+<td style="text-align: left;">02/13</td>
+<td style="text-align: left;">1.099</td>
+<td style="text-align: left;">02/20</td>
+<td style="text-align: left;">1.093</td>
+<td style="text-align: left;">02/27</td>
+<td style="text-align: left;">1.101</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="tabset-7-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-2-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): ModuleNotFoundError: No module named 'pandas'</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>gas_prices_html <span class="op">=</span> pd.read_html(<span class="st">"https://www.eia.gov/dnav/pet/hist/LeafHandler.ashx?n=pet&amp;s=emm_epm0u_pte_nus_dpg&amp;f=w"</span>)[<span class="dv">4</span>]</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'pd' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<pre><code>## Error in py_call_impl(callable, dots$args, dots$keywords): ModuleNotFoundError: No module named 'pandas'
+## Error in py_call_impl(callable, dots$args, dots$keywords): ModuleNotFoundError: No module named 'IPython'
+## Error in py_call_impl(callable, dots$args, dots$keywords): ModuleNotFoundError: No module named 'tabulate'
+## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'tabulate' is not defined</code></pre>
+</div>
+</div>
+</div>
+<div class="callout-tip callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Try it out: Formatting with Pivot Operations
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist">
+<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-8-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-1" role="tab" aria-controls="tabset-8-1" aria-selected="true">Problem</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-8-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-2" role="tab" aria-controls="tabset-8-2" aria-selected="false">Sketch</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-8-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-3" role="tab" aria-controls="tabset-8-3" aria-selected="false">R solution</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-8-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-4" role="tab" aria-controls="tabset-8-4" aria-selected="false">Python solution</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-8-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-8-1-tab">
+<p>Can you format the data in a long-skinny format for plotting using pivot operations without any database merges?</p>
+<p>Write out a list of steps, and for each step, sketch out what the data frame should look like.</p>
+<p>How do your steps compare to the steps you used for the manual approach?</p>
+</div>
+<div id="tabset-8-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-8-2-tab">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="../images/wrangling/gas-prices-steps.png" class="img-fluid figure-img" alt="Step 1: set row names to be more descriptive and remove header row. Step 2: Remove empty columns and pivot to long form, with dates and values in the same column and a description column that indicates what type of data is in the value column. Step 3: separate the week and variable information into different columns, discarding the week label. Step 4: pivot wider, so that date and value information are each in a single column. Step 5: remove rows with no values and create a yyyy-mm-dd format date. Step 6: Convert date and value into appropriate types (date, numeric)."></p>
+<p></p><figcaption class="figure-caption">Steps to work through the gas prices data cleaning process</figcaption><p></p>
+</figure>
+</div>
+</div>
+<div id="tabset-8-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-8-3-tab">
+<div class="cell">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://magrittr.tidyverse.org">magrittr</a></span><span class="op">)</span> <span class="co"># pipe friendly operations</span></span>
+<span></span>
+<span><span class="co"># Function to clean up column names</span></span>
+<span><span class="co"># Written as an extra function because it makes the code a lot cleaner</span></span>
+<span><span class="va">fix_gas_names</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="co"># Add extra header row information</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="va">x</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">""</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Date"</span>, <span class="st">"Value"</span><span class="op">)</span>, times <span class="op">=</span> <span class="fl">5</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="co"># trim leading/trailing spaces</span></span>
+<span>    <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_trim.html">str_trim</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="co"># replace characters in names that aren't ok for variables in R</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/make.names.html">make.names</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="co"># Clean up the table a bit</span></span>
+<span><span class="va">gas_prices_raw</span> <span class="op">&lt;-</span> <span class="va">gas_prices_html</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://magrittr.tidyverse.org/reference/aliases.html">set_names</a></span><span class="op">(</span><span class="fu">fix_gas_names</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="co"># remove first row that is really an extra header row</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">Year.Month</span> <span class="op">!=</span> <span class="st">"Year-Month"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="co"># get rid of empty rows</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">Year.Month</span> <span class="op">!=</span> <span class="st">""</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">gas_prices_raw</span><span class="op">)</span></span>
+<span><span class="co">## # A tibble: 6 × 11</span></span>
+<span><span class="co">##   Year.Month Week.1.Date Week.…¹ Week.…² Week.…³ Week.…⁴ Week.…⁵ Week.…⁶ Week.…⁷</span></span>
+<span><span class="co">##   &lt;chr&gt;      &lt;chr&gt;       &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;   &lt;chr&gt;  </span></span>
+<span><span class="co">## 1 1994-Nov   ""          ""      ""      ""      ""      ""      11/28   1.175  </span></span>
+<span><span class="co">## 2 1994-Dec   "12/05"     "1.143" "12/12" "1.118" "12/19" "1.099" 12/26   1.088  </span></span>
+<span><span class="co">## 3 1995-Jan   "01/02"     "1.104" "01/09" "1.111" "01/16" "1.102" 01/23   1.110  </span></span>
+<span><span class="co">## 4 1995-Feb   "02/06"     "1.103" "02/13" "1.099" "02/20" "1.093" 02/27   1.101  </span></span>
+<span><span class="co">## 5 1995-Mar   "03/06"     "1.103" "03/13" "1.096" "03/20" "1.095" 03/27   1.102  </span></span>
+<span><span class="co">## 6 1995-Apr   "04/03"     "1.116" "04/10" "1.134" "04/17" "1.149" 04/24   1.173  </span></span>
+<span><span class="co">## # … with 2 more variables: Week.5.Date &lt;chr&gt;, Week.5.Value &lt;chr&gt;, and</span></span>
+<span><span class="co">## #   abbreviated variable names ¹​Week.1.Value, ²​Week.2.Date, ³​Week.2.Value,</span></span>
+<span><span class="co">## #   ⁴​Week.3.Date, ⁵​Week.3.Value, ⁶​Week.4.Date, ⁷​Week.4.Value</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># gas_prices_raw &lt;- select(gas_prices_raw, -c(X, Date))</span></span>
+<span><span class="va">gas_prices_long</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html">pivot_longer</a></span><span class="op">(</span><span class="va">gas_prices_raw</span>, <span class="op">-</span><span class="va">Year.Month</span>,</span>
+<span>                                names_to <span class="op">=</span> <span class="st">"variable"</span>, values_to <span class="op">=</span> <span class="st">"value"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">gas_prices_long</span><span class="op">)</span></span>
+<span><span class="co">## # A tibble: 6 × 3</span></span>
+<span><span class="co">##   Year.Month variable     value</span></span>
+<span><span class="co">##   &lt;chr&gt;      &lt;chr&gt;        &lt;chr&gt;</span></span>
+<span><span class="co">## 1 1994-Nov   Week.1.Date  ""   </span></span>
+<span><span class="co">## 2 1994-Nov   Week.1.Value ""   </span></span>
+<span><span class="co">## 3 1994-Nov   Week.2.Date  ""   </span></span>
+<span><span class="co">## 4 1994-Nov   Week.2.Value ""   </span></span>
+<span><span class="co">## 5 1994-Nov   Week.3.Date  ""   </span></span>
+<span><span class="co">## 6 1994-Nov   Week.3.Value ""</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">gas_prices_sep</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tidyr.tidyverse.org/reference/separate.html">separate</a></span><span class="op">(</span><span class="va">gas_prices_long</span>, <span class="va">variable</span>, into <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"extra"</span>, <span class="st">"week"</span>, <span class="st">"variable"</span><span class="op">)</span>, sep <span class="op">=</span> <span class="st">"\\."</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="op">-</span><span class="va">extra</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">gas_prices_sep</span><span class="op">)</span></span>
+<span><span class="co">## # A tibble: 6 × 4</span></span>
+<span><span class="co">##   Year.Month week  variable value</span></span>
+<span><span class="co">##   &lt;chr&gt;      &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;</span></span>
+<span><span class="co">## 1 1994-Nov   1     Date     ""   </span></span>
+<span><span class="co">## 2 1994-Nov   1     Value    ""   </span></span>
+<span><span class="co">## 3 1994-Nov   2     Date     ""   </span></span>
+<span><span class="co">## 4 1994-Nov   2     Value    ""   </span></span>
+<span><span class="co">## 5 1994-Nov   3     Date     ""   </span></span>
+<span><span class="co">## 6 1994-Nov   3     Value    ""</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">gas_prices_wide</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_wider.html">pivot_wider</a></span><span class="op">(</span><span class="va">gas_prices_sep</span>, id_cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Year.Month"</span>, <span class="st">"week"</span><span class="op">)</span>, names_from <span class="op">=</span> <span class="va">variable</span>, values_from <span class="op">=</span> <span class="va">value</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">gas_prices_wide</span><span class="op">)</span></span>
+<span><span class="co">## # A tibble: 6 × 4</span></span>
+<span><span class="co">##   Year.Month week  Date    Value  </span></span>
+<span><span class="co">##   &lt;chr&gt;      &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;  </span></span>
+<span><span class="co">## 1 1994-Nov   1     ""      ""     </span></span>
+<span><span class="co">## 2 1994-Nov   2     ""      ""     </span></span>
+<span><span class="co">## 3 1994-Nov   3     ""      ""     </span></span>
+<span><span class="co">## 4 1994-Nov   4     "11/28" "1.175"</span></span>
+<span><span class="co">## 5 1994-Nov   5     ""      ""     </span></span>
+<span><span class="co">## 6 1994-Dec   1     "12/05" "1.143"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">gas_prices_date</span> <span class="op">&lt;-</span> <span class="va">gas_prices_wide</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nchar.html">nchar</a></span><span class="op">(</span><span class="va">Value</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/separate.html">separate</a></span><span class="op">(</span><span class="va">Year.Month</span>, into <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Year"</span>, <span class="st">"Month"</span><span class="op">)</span>, sep <span class="op">=</span> <span class="st">"-"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>Date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="va">Year</span>, <span class="va">Date</span>, sep <span class="op">=</span> <span class="st">"/"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
+<span>  </span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">gas_prices_date</span><span class="op">)</span></span>
+<span><span class="co">## # A tibble: 6 × 2</span></span>
+<span><span class="co">##   Date       Value</span></span>
+<span><span class="co">##   &lt;chr&gt;      &lt;chr&gt;</span></span>
+<span><span class="co">## 1 1994/11/28 1.175</span></span>
+<span><span class="co">## 2 1994/12/05 1.143</span></span>
+<span><span class="co">## 3 1994/12/12 1.118</span></span>
+<span><span class="co">## 4 1994/12/19 1.099</span></span>
+<span><span class="co">## 5 1994/12/26 1.088</span></span>
+<span><span class="co">## 6 1995/01/02 1.104</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://lubridate.tidyverse.org">lubridate</a></span><span class="op">)</span></span>
+<span><span class="va">gas_prices</span> <span class="op">&lt;-</span> <span class="va">gas_prices_date</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>Date <span class="op">=</span> <span class="fu"><a href="https://lubridate.tidyverse.org/reference/ymd.html">ymd</a></span><span class="op">(</span><span class="va">Date</span><span class="op">)</span>,</span>
+<span>         Price.per.gallon <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="va">Value</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="op">-</span><span class="va">Value</span><span class="op">)</span></span>
+<span>  </span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">gas_prices</span><span class="op">)</span></span>
+<span><span class="co">## # A tibble: 6 × 2</span></span>
+<span><span class="co">##   Date       Price.per.gallon</span></span>
+<span><span class="co">##   &lt;date&gt;                &lt;dbl&gt;</span></span>
+<span><span class="co">## 1 1994-11-28             1.18</span></span>
+<span><span class="co">## 2 1994-12-05             1.14</span></span>
+<span><span class="co">## 3 1994-12-12             1.12</span></span>
+<span><span class="co">## 4 1994-12-19             1.10</span></span>
+<span><span class="co">## 5 1994-12-26             1.09</span></span>
+<span><span class="co">## 6 1995-01-02             1.10</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-8-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-8-4-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> fix_gas_names(x):</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  xx <span class="op">=</span> pd.Series(x)</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># add extra stuff to x</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  y <span class="op">=</span> [<span class="st">"Date"</span>, <span class="st">"Value"</span>]<span class="op">*</span><span class="dv">5</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>  y <span class="op">=</span> [<span class="st">""</span>, <span class="op">*</span>y, <span class="st">""</span>, <span class="st">""</span>]</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>  names <span class="op">=</span> xx <span class="op">+</span> <span class="st">' '</span> <span class="op">+</span> y</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>  names <span class="op">=</span> names.<span class="bu">str</span>.strip()</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>  names <span class="op">=</span> names.<span class="bu">str</span>.replace(<span class="st">" "</span>, <span class="st">"."</span>)</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="bu">list</span>(names)</span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>gas_prices_raw <span class="op">=</span> gas_prices_html.copy()</span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a><span class="co"># What do column names look like?</span></span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'gas_prices_html' is not defined</span></span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>gas_prices_raw.columns <span class="co"># Multi-Index </span></span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a><span class="co"># (https://stackoverflow.com/questions/25189575/pandas-dataframe-select-columns-in-multiindex)</span></span>
+<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'gas_prices_raw' is not defined</span></span>
+<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a>colnames <span class="op">=</span> fix_gas_names(gas_prices_raw.columns.get_level_values(<span class="dv">0</span>))</span>
+<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'gas_prices_raw' is not defined</span></span>
+<span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a>colnames</span>
+<span id="cb21-24"><a href="#cb21-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-25"><a href="#cb21-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Set new column names</span></span>
+<span id="cb21-26"><a href="#cb21-26" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'colnames' is not defined</span></span>
+<span id="cb21-27"><a href="#cb21-27" aria-hidden="true" tabindex="-1"></a>gas_prices_raw.columns <span class="op">=</span> colnames</span>
+<span id="cb21-28"><a href="#cb21-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-29"><a href="#cb21-29" aria-hidden="true" tabindex="-1"></a><span class="co"># Drop any rows with NaN in Year-Month</span></span>
+<span id="cb21-30"><a href="#cb21-30" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'colnames' is not defined</span></span>
+<span id="cb21-31"><a href="#cb21-31" aria-hidden="true" tabindex="-1"></a>gas_prices_raw <span class="op">=</span> gas_prices_raw.dropna(axis <span class="op">=</span> <span class="dv">0</span>, subset <span class="op">=</span> [<span class="st">'Year-Month'</span>])</span>
+<span id="cb21-32"><a href="#cb21-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-33"><a href="#cb21-33" aria-hidden="true" tabindex="-1"></a><span class="co"># Drop extra columns on the end</span></span>
+<span id="cb21-34"><a href="#cb21-34" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'gas_prices_raw' is not defined</span></span>
+<span id="cb21-35"><a href="#cb21-35" aria-hidden="true" tabindex="-1"></a>gas_prices_raw <span class="op">=</span> gas_prices_raw.iloc[:,<span class="dv">0</span>:<span class="dv">11</span>]</span>
+<span id="cb21-36"><a href="#cb21-36" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'gas_prices_raw' is not defined</span></span>
+<span id="cb21-37"><a href="#cb21-37" aria-hidden="true" tabindex="-1"></a>gas_prices_raw.head()</span>
+<span id="cb21-38"><a href="#cb21-38" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'gas_prices_raw' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>gas_prices_long <span class="op">=</span> pd.melt(gas_prices_raw, id_vars <span class="op">=</span> <span class="st">'Year-Month'</span>, var_name <span class="op">=</span> <span class="st">'variable'</span>)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'pd' is not defined</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>gas_prices_long.head()</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'gas_prices_long' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>gas_prices_sep <span class="op">=</span> gas_prices_long</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'gas_prices_long' is not defined</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>gas_prices_sep[[<span class="st">"extra"</span>, <span class="st">"week"</span>, <span class="st">"variable"</span>]] <span class="op">=</span> gas_prices_sep.variable.<span class="bu">str</span>.split(<span class="vs">r'\.'</span>, expand <span class="op">=</span> <span class="va">True</span>)</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'gas_prices_sep' is not defined</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>gas_prices_sep <span class="op">=</span> gas_prices_sep.drop(<span class="st">'extra'</span>, axis <span class="op">=</span> <span class="dv">1</span>)</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'gas_prices_sep' is not defined</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>gas_prices_sep.head()</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'gas_prices_sep' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>gas_prices_wide <span class="op">=</span> pd.pivot(gas_prices_sep, index<span class="op">=</span>[<span class="st">'Year-Month'</span>, <span class="st">'week'</span>], columns <span class="op">=</span> <span class="st">'variable'</span>, values <span class="op">=</span> <span class="st">'value'</span>)</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'pd' is not defined</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>gas_prices_wide.head()</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'gas_prices_wide' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>gas_prices_date <span class="op">=</span> gas_prices_wide.dropna(axis <span class="op">=</span> <span class="dv">0</span>, subset <span class="op">=</span> [<span class="st">'Date'</span>, <span class="st">'Value'</span>]).reset_index()</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'gas_prices_wide' is not defined</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>gas_prices_date[[<span class="st">'Year'</span>, <span class="st">'Month'</span>]] <span class="op">=</span> gas_prices_date[<span class="st">'Year-Month'</span>].<span class="bu">str</span>.split(<span class="vs">r'-'</span>, expand <span class="op">=</span> <span class="va">True</span>)</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'gas_prices_date' is not defined</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>gas_prices_date[<span class="st">'Date'</span>] <span class="op">=</span> gas_prices_date.Year <span class="op">+</span> <span class="st">'/'</span> <span class="op">+</span> gas_prices_date.Date</span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'gas_prices_date' is not defined</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>gas_prices_date[<span class="st">'Date'</span>] <span class="op">=</span> pd.to_datetime(gas_prices_date.Date)</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'pd' is not defined</span></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>gas_prices_date.head()</span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'gas_prices_date' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>gas_prices <span class="op">=</span> gas_prices_date.drop([<span class="st">"Year-Month"</span>, <span class="st">"Year"</span>, <span class="st">"Month"</span>, <span class="st">"week"</span>], axis <span class="op">=</span> <span class="dv">1</span>)</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'gas_prices_date' is not defined</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>gas_prices[<span class="st">'Price_per_gallon'</span>] <span class="op">=</span> gas_prices.Value</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'gas_prices' is not defined</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>gas_prices <span class="op">=</span> gas_prices.drop(<span class="st">"Value"</span>, axis <span class="op">=</span> <span class="dv">1</span>)</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'gas_prices' is not defined</span></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>gas_prices.head()</span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'gas_prices' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p>We’ll return to this example in <a href="06-data-join.html#sec-gas-price-ex2"><span>Section&nbsp;22.7</span></a> to demonstrate how you can use pivot operations and database merges together to complete this operation in a slightly different way.</p>
 <div class="callout-learnmore callout callout-style-default no-icon callout-captioned">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1489,8 +1929,8 @@ Other resources
 <p><span class="citation" data-cites="doughertyCleanMessyData2021"><a href="#ref-doughertyCleanMessyData2021" role="doc-biblioref">[5]</a></span> - very nice task-oriented chapter that’s below the level addressed in this course but still useful</p>
 </div>
 </div>
-</section></section><section id="references" class="level2" data-number="21.4"><h2 data-number="21.4" class="anchored" data-anchor-id="references">
-<span class="header-section-number">21.4</span> References</h2>
+</section></section><section id="references" class="level2" data-number="21.5"><h2 data-number="21.5" class="anchored" data-anchor-id="references">
+<span class="header-section-number">21.5</span> References</h2>
 
 
 <div id="refs" class="references csl-bib-body" role="doc-bibliography">
