@@ -101,24 +101,26 @@ We would need to take the following steps:
 It is helpful to develop the ability to lay out a set of tables in a schema (because often, database schemas aren't well documented) and mentally map out the steps that you need to combine tables to get the information you want from the information you have.
 :::
 
+## Vocabulary
+
 Table joins allow us to combine information stored in different tables, keeping certain information (the stuff we need) while discarding extraneous information.
 
-**keys** are values that are found in multiple tables that can be used to connect the tables. A key (or set of keys) uniquely identify an observation. 
+**Keys** are values that are found in multiple tables that can be used to connect the tables. A key (or set of keys) uniquely identify an observation. 
 A **primary key** identifies an observation in its own table. 
 A **foreign key** identifies an observation in another table.
 
 There are 3 main types of table joins:
 
--   Mutating joins, which add columns from one table to matching rows in another table\
+-   **Mutating joins**, which add columns from one table to matching rows in another table\
     Ex: adding birthday to the table of all individuals in a class
 
--   Filtering joins, which remove rows from a table based on whether or not there is a matching row in another table (but the columns in the original table don't change)\
+-   **Filtering joins**, which remove rows from a table based on whether or not there is a matching row in another table (but the columns in the original table don't change)\
     Ex: finding all teachers or students who have class ClassID
 
--   Set operations, which treat observations as set elements (e.g. union, intersection, etc.)\
+-   **Set operations**, which treat observations as set elements (e.g. union, intersection, etc.)\
     Ex: taking the union of all student and teacher IDs to get a list of individual IDs
 
-## Setup: Animating Joins
+## Illustrating Joins
 
 Note: all of these animations are stolen from https://github.com/gadenbuie/tidyexplain.
 
@@ -128,18 +130,18 @@ If we start with two tables, x and y,
 
 The next several sections will show animations demonstrating the different types of joins.
 
-## Mutating Joins
+### Mutating Joins
 
 We're primarily going to focus on mutating joins, as filtering joins can be accomplished by ... filtering ... rather than by table joins.
 
 ::: panel-tabset
-### Inner Join
+#### Inner Join
 
 We can do a filtering `inner_join` to keep only rows which are in both tables (but we keep all columns)
 
 ![](../images/wrangling/inner-join.gif)
 
-### Left Join
+#### Left Join
 
 But what if we want to keep all of the rows in x? We would do a `left_join`
 
@@ -149,7 +151,7 @@ If there are multiple matches in the y table, though, we might have to duplicate
 
 ![](../images/wrangling/left-join-extra.gif)
 
-### Right Join
+#### Right Join
 
 If we wanted to keep all of the rows in y, we would do a `right_join`:
 
@@ -157,7 +159,7 @@ If we wanted to keep all of the rows in y, we would do a `right_join`:
 
 (or, we could do a left join with y and x, but... either way is fine).
 
-### Full Join
+#### Full Join
 
 And finally, if we want to keep all of the rows, we'd do a `full_join`:
 
@@ -184,6 +186,60 @@ In mutating joins, the columns from both sides are always kept.
 +-------+-----------+------------+----------+
 | outer | all       | all        | all      |
 +-------+-----------+------------+----------+
+
+#### Code
+
+```{r, include = F}
+x = data.frame(v1 = c(1:3), v2 = c("x1", "x2", "x3"))
+y = data.frame(v1 = c(1, 2, 4), v3 = c("y1", "y2", "y4"))
+```
+```{python, include = F}
+x = r.x
+y = r.y
+```
+
+::: panel-tabset
+
+##### R (base)
+
+Joins in base R are accomplished with the `merge` command. 
+
+Specify the keys to join by using `by` (or `by.x` and `by.y` if the column names are different in the two tables). 
+Specify the rows to keep using `all` or `all.x` and `all.y`. 
+By default, R will merge on any variables that have the same names in each table.
+
+```{r base-mutating-joins}
+merge(x, y, by = "v1", all = F) # inner join
+merge(x, y, by = "v1", all = T) # full join
+merge(x, y, by = "v1", all.x = T) # left join
+merge(x, y, by = "v1", all.y = T) # right join
+```
+
+##### R (tidy)
+`dplyr` contains functions that specifically implement mutating joins separately, primarily for code readability.
+
+```{r tidy-mutating-joins}
+library(dplyr)
+inner_join(x, y)
+left_join(x, y)
+right_join(x, y)
+full_join(x, y)
+```
+
+##### Pandas
+
+Mutating joins in pandas are accomplished with the `merge` command.
+The join type can be specified using the `how` parameter (left, right, outer, inner, cross). 
+Specify the keys to join by using `on` (or `left_on` and `right_on` if the column names are different in the two tables). 
+
+```{python py-mutating-joins}
+import pandas as pd
+pd.merge(x, y) # inner join (how = 'inner' is default)
+pd.merge(x, y, how = 'left')
+pd.merge(x, y, how = 'right')
+pd.merge(x, y, how = 'outer') # full join
+```
+:::
 
 ::: callout-demo
 ### Demo: Mutating Joins
@@ -264,26 +320,91 @@ pd.merge(t1, t2, on  = 'x', how = 'outer')
 
 I've included the other types of joins as animations because the animations are so useful for understanding the concept, but feel free to read through more information on these types of joins [here](https://r4ds.had.co.nz/relational-data.html#filtering-joins) [@r4ds].
 
-## Filtering Joins
+### Filtering Joins
 
 ::: panel-tabset
-### Semi Join
+#### Semi Join
 
 A semi join keeps matching rows from x and y, discarding all other rows and keeping only the columns from x.
 
 ![](../images/wrangling/semi-join.gif)
 
-### Anti Join
+#### Anti Join
 
 An anti-join keeps rows in x that do not have a match in y, and only keeps columns in x.
 
 ![](../images/wrangling/anti-join.gif)
 :::
 
-## Set Operations
+#### Code
 
 ::: panel-tabset
-### Union
+
+##### R (base)
+
+Semi and anti joins aren't available by default in base R. You have to do multiple stages of operations to get either one to work.
+
+```{r base-filtering-joins}
+## Semi-join
+# First, do an inner join
+innerxy = merge(x, y, all = F)
+innerxy
+# Then, only keep cols in x
+semixy = innerxy[,names(innerxy)%in% names(x)]
+semixy
+
+## Anti-join
+# First, do an outer join
+outerxy = merge(x, y, all = T)
+outerxy
+# Then, drop any rows with NAs
+antixy = na.omit(outerxy)
+antixy
+# Then, only keep cols in x
+antixy = antixy[,names(antixy) %in% names(x)]
+antixy
+```
+
+##### R (tidy)
+```{r tidy-filtering-joins}
+library(dplyr)
+semi_join(x, y)
+anti_join(x, y)
+```
+
+##### Pandas
+In pandas, we have to be a bit tricky to get semi and anti joins. 
+
+```{python py-filtering-joins}
+import pandas as pd
+# First, we merge the two data frames (inner by default)
+semixy = pd.merge(x, y) # Semi join
+semixy
+# Then, we drop the extra columns
+semixy = semixy[semixy.columns.intersection(x.columns)]
+semixy
+
+
+# This syntax keeps track of which rows are from which table
+outer = x.merge(y, how='outer', indicator=True)
+outer
+# Then we drop any rows that aren't 'left_only'
+antixy = outer[(outer._merge=='left_only')].drop('_merge', axis=1)
+antixy
+# Then we drop any cols that aren't in x
+antixy = antixy[antixy.columns.intersection(x.columns)]
+antixy
+```
+:::
+
+### Set Operations
+
+When talking about set operations, we start with two different data frames than those used above:
+
+![](../images/wrangling/original-dfs-set-ops.png)
+
+::: panel-tabset
+#### Union
 
 All unique rows from x and y
 
@@ -293,25 +414,91 @@ Or, all unique rows from y and x.
 
 ![](../images/wrangling/union-rev.gif)
 
-### Union All
+#### Union All
 
 All rows from x and y, keeping duplicate rows.
 
 ![](../images/wrangling/union-all.gif)
 
-### Intersection
+This is fundamentally the same as an `rbind` or `bind_rows` operation. 
+
+#### Intersection
 
 Common rows in x and y, keeping only unique rows.
 
 ![](../images/wrangling/intersect.gif)
 
-### Set Difference
+#### Set Difference
 
 All rows from x which are not also rows in y, keeping unique rows.
 
 ![](../images/wrangling/setdiff.gif)
 
 ![](../images/wrangling/setdiff-rev.gif)
+:::
+
+#### Code
+
+```{r, include = F}
+x = data.frame(v1 = c(1, 1, 2), v2 = c("a", "b", "a"))
+y = data.frame(v1 = c(1, 2), v2 = c("a", "b"))
+```
+```{python, include = F}
+x = r.x
+y = r.y
+```
+
+::: panel-tabset
+
+##### R (base)
+
+```{r base-set-joins}
+unionxy = unique(rbind(x, y))
+unionxy
+
+unionallxy = rbind(x, y)
+unionallxy
+
+intersectxy = merge(x, y, all = F)
+intersectxy
+```
+
+It is possible to get set difference and intersection for data frames by applying the base methods `setdiff` and `intersect`, but `dplyr` does this by overriding those defaults, so it's easier to just use that.
+
+##### R (tidy)
+```{r tidy-set-joins}
+library(dplyr)
+union(x, y)
+unionall(x, y)
+setdiff(x, y)
+setdiff(y, x)
+intersect(x, y)
+```
+
+##### Pandas
+
+```{python py-set-joins}
+import pandas as pd
+
+# Union
+pd.concat([x, y]).drop_duplicates(keep = False)
+
+# Union all
+pd.concat([x, y])
+
+# Intersection
+intersect = x.merge(y, how='inner')
+intersect
+
+# Set Difference
+setdiffxy = x.merge(y, how='outer', indicator=True)
+setdiffxy = setdiffxy[(setdiffxy._merge=='left_only')].drop('_merge', axis = 1)
+setdiffxy
+
+setdiffyx = x.merge(y, how='outer', indicator=True)
+setdiffyx = setdiffyx[(setdiffyx._merge=='right_only')].drop('_merge', axis = 1)
+setdiffyx
+```
 :::
 
 ## Example: NYC Flights
