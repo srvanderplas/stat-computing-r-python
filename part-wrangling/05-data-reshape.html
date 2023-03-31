@@ -359,12 +359,7 @@ div.csl-indent {
   <li><a href="#wider" id="toc-wider" class="nav-link" data-scroll-target="#wider"><span class="toc-section-number">21.3.2</span>  Wider</a></li>
   </ul>
 </li>
-  <li>
-<a href="#sec-gas-price-ex" id="toc-sec-gas-price-ex" class="nav-link" data-scroll-target="#sec-gas-price-ex"><span class="toc-section-number">21.4</span>  Example: Gas Prices Data</a>
-  <ul class="collapse">
-<li><a href="#setup-gas-price-data-cleaning" id="toc-setup-gas-price-data-cleaning" class="nav-link" data-scroll-target="#setup-gas-price-data-cleaning"><span class="toc-section-number">21.4.1</span>  Setup: Gas Price Data Cleaning</a></li>
-  </ul>
-</li>
+  <li><a href="#sec-gas-price-ex" id="toc-sec-gas-price-ex" class="nav-link" data-scroll-target="#sec-gas-price-ex"><span class="toc-section-number">21.4</span>  Example: Gas Prices Data</a></li>
   <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references"><span class="toc-section-number">21.5</span>  References</a></li>
   </ul><div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/srvanderplas/stat-computing-r-python/edit/main/part-wrangling/05-data-reshape.qmd" class="toc-action">Edit this page</a></p></div></div></nav>
     </div>
@@ -1488,58 +1483,24 @@ Try it Out!
 </div>
 <p>The data in the table is structured in a fairly easy to read form: each row is a month; each week in the month is a set of two columns: one for the date, one for the average gas price. While this data is definitely not tidy, it is readable.</p>
 <p>But looking at the chart at the top of the page, it’s not clear how we might get that chart from the data in the format it’s presented here: to get a chart like that, we would need a table where each row was a single date, and there were columns for date and price. That would be tidy form data, and so we have to get from the wide, human-readable form into the long, tidier form that we can graph.</p>
-<div class="callout-tip callout callout-style-default callout-captioned">
+<div class="callout-demo callout callout-style-default no-icon callout-captioned">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
-<i class="callout-icon"></i>
+<i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-caption-container flex-fill">
-Try it out: Manual Formatting in Excel
+Setup: Gas Price Data Cleaning
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist">
-<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-6-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-1" role="tab" aria-controls="tabset-6-1" aria-selected="true">Problem</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-2" role="tab" aria-controls="tabset-6-2" aria-selected="false">Solution</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-3" role="tab" aria-controls="tabset-6-3" aria-selected="false">Video</a></li>
-</ul>
-<div class="tab-content">
-<div id="tabset-6-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-6-1-tab">
-<p>An excel spreadsheet of the data as downloaded in January 2023 is available <a href="https://github.com/srvanderplas/datasets/raw/main/raw/gas_prices_updated.xlsx">here</a>. Can you manually format the data (or even just the first year or two of data) into a long, skinny format?</p>
-<p>What steps are involved?</p>
-</div>
-<div id="tabset-6-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-2-tab">
-<ol type="1">
-<li><p>Copy the year-month column, creating one vertical copy for every set of columns</p></li>
-<li><p>Move each block of two columns down to the corresponding vertical copy</p></li>
-<li><p>Delete empty rows</p></li>
-<li><p>Format dates</p></li>
-<li><p>Delete empty columns</p></li>
-</ol>
-</div>
-<div id="tabset-6-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-3-tab">
-<div id="fig-excel-demo-video" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure"><iframe width="736" height="414" src="https://www.youtube.com/embed/n70eAKJmzRo" title="06 Tidying Gas Price Data (in Excel)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="">
-</iframe>
-<p></p><figcaption class="figure-caption">Figure&nbsp;21.5: Here is a video of me doing most of the cleaning steps - I skipped out on cleaning up the dates because Excel is miserable for working with dates.</figcaption><p></p>
-</figure>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
-<section id="setup-gas-price-data-cleaning" class="level3" data-number="21.4.1"><h3 data-number="21.4.1" class="anchored" data-anchor-id="setup-gas-price-data-cleaning">
-<span class="header-section-number">21.4.1</span> Setup: Gas Price Data Cleaning</h3>
 <p>For the next example, we’ll read the data in from the HTML table online and work to make it something we could e.g.&nbsp;plot. Before we can start cleaning, we have to read in the data:</p>
 <div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
-<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-7-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-1" role="tab" aria-controls="tabset-7-1" aria-selected="true">R</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-2" role="tab" aria-controls="tabset-7-2" aria-selected="false">Python</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-6-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-1" role="tab" aria-controls="tabset-6-1" aria-selected="true">R</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-2" role="tab" aria-controls="tabset-6-2" aria-selected="false">Python</a></li>
 </ul>
 <div class="tab-content">
-<div id="tabset-7-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-7-1-tab">
+<div id="tabset-6-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-6-1-tab">
 <div class="cell">
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://rvest.tidyverse.org/">rvest</a></span><span class="op">)</span> <span class="co"># scrape data from the web</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://xml2.r-lib.org/">xml2</a></span><span class="op">)</span> <span class="co"># parse xml data</span></span>
@@ -1662,7 +1623,7 @@ Try it out: Manual Formatting in Excel
 </div>
 </div>
 </div>
-<div id="tabset-7-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-2-tab">
+<div id="tabset-6-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-2-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): ModuleNotFoundError: No module named 'pandas'</span></span>
@@ -1673,6 +1634,50 @@ Try it out: Manual Formatting in Excel
 ## Error in py_call_impl(callable, dots$args, dots$keywords): ModuleNotFoundError: No module named 'IPython'
 ## Error in py_call_impl(callable, dots$args, dots$keywords): ModuleNotFoundError: No module named 'tabulate'
 ## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'tabulate' is not defined</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout-tip callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Try it out: Manual Formatting in Excel
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist">
+<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-7-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-1" role="tab" aria-controls="tabset-7-1" aria-selected="true">Problem</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-2" role="tab" aria-controls="tabset-7-2" aria-selected="false">Solution</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-3" role="tab" aria-controls="tabset-7-3" aria-selected="false">Video</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-7-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-7-1-tab">
+<p>An excel spreadsheet of the data as downloaded in January 2023 is available <a href="https://github.com/srvanderplas/datasets/raw/main/raw/gas_prices_updated.xlsx">here</a>. Can you manually format the data (or even just the first year or two of data) into a long, skinny format?</p>
+<p>What steps are involved?</p>
+</div>
+<div id="tabset-7-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-2-tab">
+<ol type="1">
+<li><p>Copy the year-month column, creating one vertical copy for every set of columns</p></li>
+<li><p>Move each block of two columns down to the corresponding vertical copy</p></li>
+<li><p>Delete empty rows</p></li>
+<li><p>Format dates</p></li>
+<li><p>Delete empty columns</p></li>
+</ol>
+</div>
+<div id="tabset-7-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-3-tab">
+<div id="fig-excel-demo-video" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure"><iframe class="youtube-video-container" width="736" height="414" src="https://www.youtube.com/embed/n70eAKJmzRo" title="06 Tidying Gas Price Data (in Excel)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="">
+</iframe>
+<p></p><figcaption class="figure-caption">Figure&nbsp;21.5: Here is a video of me doing most of the cleaning steps - I skipped out on cleaning up the dates because Excel is miserable for working with dates.</figcaption><p></p>
+</figure>
+</div>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -1929,7 +1934,7 @@ Other resources
 <p><span class="citation" data-cites="doughertyCleanMessyData2021"><a href="#ref-doughertyCleanMessyData2021" role="doc-biblioref">[5]</a></span> - very nice task-oriented chapter that’s below the level addressed in this course but still useful</p>
 </div>
 </div>
-</section></section><section id="references" class="level2" data-number="21.5"><h2 data-number="21.5" class="anchored" data-anchor-id="references">
+</section><section id="references" class="level2" data-number="21.5"><h2 data-number="21.5" class="anchored" data-anchor-id="references">
 <span class="header-section-number">21.5</span> References</h2>
 
 

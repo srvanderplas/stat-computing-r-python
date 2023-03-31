@@ -350,12 +350,7 @@ div.csl-indent {
   <li><a href="#filtering-joins" id="toc-filtering-joins" class="nav-link" data-scroll-target="#filtering-joins"><span class="toc-section-number">22.4</span>  Filtering Joins</a></li>
   <li><a href="#set-operations" id="toc-set-operations" class="nav-link" data-scroll-target="#set-operations"><span class="toc-section-number">22.5</span>  Set Operations</a></li>
   <li><a href="#example-nyc-flights" id="toc-example-nyc-flights" class="nav-link" data-scroll-target="#example-nyc-flights"><span class="toc-section-number">22.6</span>  Example: NYC Flights</a></li>
-  <li>
-<a href="#sec-gas-price-ex2" id="toc-sec-gas-price-ex2" class="nav-link" data-scroll-target="#sec-gas-price-ex2"><span class="toc-section-number">22.7</span>  Example: Gas Prices Data</a>
-  <ul class="collapse">
-<li><a href="#setup-gas-price-data-cleaning" id="toc-setup-gas-price-data-cleaning" class="nav-link" data-scroll-target="#setup-gas-price-data-cleaning"><span class="toc-section-number">22.7.1</span>  Setup: Gas Price Data Cleaning</a></li>
-  </ul>
-</li>
+  <li><a href="#sec-gas-price-ex2" id="toc-sec-gas-price-ex2" class="nav-link" data-scroll-target="#sec-gas-price-ex2"><span class="toc-section-number">22.7</span>  Example: Gas Prices Data</a></li>
   <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references"><span class="toc-section-number">22.8</span>  References</a></li>
   </ul><div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/srvanderplas/stat-computing-r-python/edit/main/part-wrangling/06-data-join.qmd" class="toc-action">Edit this page</a></p></div></div></nav>
     </div>
@@ -662,28 +657,45 @@ Demo: Mutating Joins
 <p>An inner join keeps only rows that exist on both sides, but keeps all columns.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): ModuleNotFoundError: No module named 'pandas'</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>pd.merge(t1, t2, on <span class="op">=</span> [<span class="st">'x'</span>]) <span class="co"># inner is default</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'pd' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>pd.merge(t1, t2, on <span class="op">=</span> [<span class="st">'x'</span>]) <span class="co"># inner is default</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">##    x    y    z</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co">## 0  B  2.0  2.0</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co">## 1  D  3.0  5.0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>A left join keeps all of the rows in the left side, and adds any columns from the right side that match rows on the left. Rows on the left that don’t match get filled in with NAs.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>pd.merge(t1, t2, on  <span class="op">=</span> <span class="st">'x'</span>, how <span class="op">=</span> <span class="st">'left'</span>)</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'pd' is not defined</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>pd.merge(t2, t1, on <span class="op">=</span> <span class="st">'x'</span>, how <span class="op">=</span> <span class="st">'left'</span>)</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'pd' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co">##    x    y    z</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co">## 0  A  1.0  NaN</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co">## 1  B  2.0  2.0</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co">## 2  D  3.0  5.0</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>pd.merge(t2, t1, on <span class="op">=</span> <span class="st">'x'</span>, how <span class="op">=</span> <span class="st">'left'</span>)</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co">##    x    z    y</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co">## 0  B  2.0  2.0</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co">## 1  C  4.0  NaN</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="co">## 2  D  5.0  3.0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>There is a similar construct called a right join that is equivalent to flipping the arguments in a left join. The row and column ordering may be different, but all of the same values will be there</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>pd.merge(t1, t2, on  <span class="op">=</span> <span class="st">'x'</span>, how <span class="op">=</span> <span class="st">'right'</span>)</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'pd' is not defined</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>pd.merge(t2, t1, on <span class="op">=</span> <span class="st">'x'</span>, how <span class="op">=</span> <span class="st">'right'</span>)</span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'pd' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co">##    x    y    z</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co">## 0  B  2.0  2.0</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co">## 1  C  NaN  4.0</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co">## 2  D  3.0  5.0</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>pd.merge(t2, t1, on <span class="op">=</span> <span class="st">'x'</span>, how <span class="op">=</span> <span class="st">'right'</span>)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co">##    x    z    y</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="co">## 0  A  NaN  1.0</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="co">## 1  B  2.0  2.0</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a><span class="co">## 2  D  5.0  3.0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>An outer join keeps everything - all rows, all columns.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>pd.merge(t1, t2, on  <span class="op">=</span> <span class="st">'x'</span>, how <span class="op">=</span> <span class="st">'outer'</span>)</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'pd' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co">##    x    y    z</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co">## 0  A  1.0  NaN</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co">## 1  B  2.0  2.0</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co">## 2  D  3.0  5.0</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co">## 3  C  NaN  4.0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
@@ -770,7 +782,7 @@ Loading Data
 <span><span class="co"># You will want to specify your own path</span></span>
 <span><span class="fu"><a href="https://dbplyr.tidyverse.org/reference/nycflights13.html">nycflights13_sqlite</a></span><span class="op">(</span>path <span class="op">=</span> <span class="st">"../data/"</span><span class="op">)</span></span>
 <span><span class="co">## &lt;SQLiteConnection&gt;</span></span>
-<span><span class="co">##   Path: ../data//nycflights13.sqlite</span></span>
+<span><span class="co">##   Path: /home/susan/Projects/Class/stat-computing-r-python/data/nycflights13.sqlite</span></span>
 <span><span class="co">##   Extensions: TRUE</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
@@ -873,49 +885,55 @@ Example: Mutating Joins
 <div id="tabset-7-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-2-tab">
 <div>
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): ModuleNotFoundError: No module named 'pandas'</span></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sqlite3</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnine <span class="im">import</span> <span class="op">*</span></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): ModuleNotFoundError: No module named 'plotnine'</span></span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>con <span class="op">=</span> sqlite3.<span class="ex">connect</span>(<span class="st">"../data/nycflights13.sqlite"</span>)</span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>planes <span class="op">=</span> pd.read_sql_query(<span class="st">"SELECT * FROM planes"</span>, con)</span>
-<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'pd' is not defined</span></span>
-<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>flights <span class="op">=</span> pd.read_sql_query(<span class="st">"SELECT * FROM flights"</span>, con)</span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'pd' is not defined</span></span>
-<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>con.close() <span class="co"># close connection</span></span>
-<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>plane_age <span class="op">=</span> planes.assign(age <span class="op">=</span> <span class="kw">lambda</span> df: <span class="dv">2013</span> <span class="op">-</span> df.year).loc[:,[<span class="st">"tailnum"</span>, <span class="st">"age"</span>, <span class="st">"manufacturer"</span>]]</span>
-<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'planes' is not defined</span></span>
-<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>delays_by_plane <span class="op">=</span> flights.loc[:, [<span class="st">"dep_delay"</span>, <span class="st">"arr_delay"</span>, <span class="st">"carrier"</span>, <span class="st">"flight"</span>, <span class="st">"tailnum"</span>]]</span>
-<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'flights' is not defined</span></span>
-<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>res <span class="op">=</span> pd.merge(plane_age, delays_by_plane, on <span class="op">=</span> <span class="st">"tailnum"</span>, how <span class="op">=</span> <span class="st">"inner"</span>)</span>
-<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a><span class="co"># cut_width isn't in plotnine, so we have to create the bins ourselves first</span></span>
-<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'pd' is not defined</span></span>
-<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>age_bins <span class="op">=</span> [i <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">2</span> <span class="op">+</span> <span class="bu">int</span>(<span class="bu">max</span>(res.age)))] </span>
-<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'res' is not defined</span></span>
-<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>res <span class="op">=</span> res.assign(agebin <span class="op">=</span> pd.cut(res.age, age_bins))</span>
-<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a><span class="co"># res.agebin.value_counts(dropna=False)</span></span>
-<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'res' is not defined</span></span>
-<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a>(</span>
-<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a>ggplot(res, aes(x <span class="op">=</span> <span class="st">"age"</span>, y <span class="op">=</span> <span class="st">"dep_delay"</span>, group <span class="op">=</span> <span class="st">"agebin"</span>)) <span class="op">+</span> </span>
-<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a>  geom_boxplot() <span class="op">+</span> </span>
-<span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a>  ylab(<span class="st">"Departure Delay (min)"</span>) <span class="op">+</span> </span>
-<span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a>  xlab(<span class="st">"Plane age"</span>) <span class="op">+</span> </span>
-<span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a>  coord_cartesian(ylim <span class="op">=</span> [<span class="op">-</span><span class="dv">20</span>, <span class="dv">50</span>])</span>
-<span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'ggplot' is not defined</span></span>
-<span id="cb14-35"><a href="#cb14-35" aria-hidden="true" tabindex="-1"></a>(</span>
-<span id="cb14-36"><a href="#cb14-36" aria-hidden="true" tabindex="-1"></a>ggplot(res, aes(x <span class="op">=</span> <span class="st">"age"</span>, y <span class="op">=</span> <span class="st">"arr_delay"</span>, group <span class="op">=</span> <span class="st">"agebin"</span>)) <span class="op">+</span> </span>
-<span id="cb14-37"><a href="#cb14-37" aria-hidden="true" tabindex="-1"></a>  geom_boxplot() <span class="op">+</span> </span>
-<span id="cb14-38"><a href="#cb14-38" aria-hidden="true" tabindex="-1"></a>  ylab(<span class="st">"Arrival Delay (min)"</span>) <span class="op">+</span> </span>
-<span id="cb14-39"><a href="#cb14-39" aria-hidden="true" tabindex="-1"></a>  xlab(<span class="st">"Plane age"</span>) <span class="op">+</span> </span>
-<span id="cb14-40"><a href="#cb14-40" aria-hidden="true" tabindex="-1"></a>  coord_cartesian(ylim <span class="op">=</span> (<span class="op">-</span><span class="dv">30</span>, <span class="dv">60</span>))</span>
-<span id="cb14-41"><a href="#cb14-41" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb14-42"><a href="#cb14-42" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'ggplot' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sqlite3</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnine <span class="im">import</span> <span class="op">*</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>con <span class="op">=</span> sqlite3.<span class="ex">connect</span>(<span class="st">"../data/nycflights13.sqlite"</span>)</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>planes <span class="op">=</span> pd.read_sql_query(<span class="st">"SELECT * FROM planes"</span>, con)</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>flights <span class="op">=</span> pd.read_sql_query(<span class="st">"SELECT * FROM flights"</span>, con)</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>con.close() <span class="co"># close connection</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>plane_age <span class="op">=</span> planes.assign(age <span class="op">=</span> <span class="kw">lambda</span> df: <span class="dv">2013</span> <span class="op">-</span> df.year).loc[:,[<span class="st">"tailnum"</span>, <span class="st">"age"</span>, <span class="st">"manufacturer"</span>]]</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>delays_by_plane <span class="op">=</span> flights.loc[:, [<span class="st">"dep_delay"</span>, <span class="st">"arr_delay"</span>, <span class="st">"carrier"</span>, <span class="st">"flight"</span>, <span class="st">"tailnum"</span>]]</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>res <span class="op">=</span> pd.merge(plane_age, delays_by_plane, on <span class="op">=</span> <span class="st">"tailnum"</span>, how <span class="op">=</span> <span class="st">"inner"</span>)</span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a><span class="co"># cut_width isn't in plotnine, so we have to create the bins ourselves first</span></span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>age_bins <span class="op">=</span> [i <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">2</span> <span class="op">+</span> <span class="bu">int</span>(<span class="bu">max</span>(res.age)))] </span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>res <span class="op">=</span> res.assign(agebin <span class="op">=</span> pd.cut(res.age, age_bins))</span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a><span class="co"># res.agebin.value_counts(dropna=False)</span></span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>(</span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>ggplot(res, aes(x <span class="op">=</span> <span class="st">"age"</span>, y <span class="op">=</span> <span class="st">"dep_delay"</span>, group <span class="op">=</span> <span class="st">"agebin"</span>)) <span class="op">+</span> </span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>  geom_boxplot() <span class="op">+</span> </span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a>  ylab(<span class="st">"Departure Delay (min)"</span>) <span class="op">+</span> </span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a>  xlab(<span class="st">"Plane age"</span>) <span class="op">+</span> </span>
+<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a>  coord_cartesian(ylim <span class="op">=</span> [<span class="op">-</span><span class="dv">20</span>, <span class="dv">50</span>])</span>
+<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a><span class="co">## &lt;ggplot: (8732824852932)&gt;</span></span>
+<span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a><span class="co">## </span></span>
+<span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a><span class="co">## /home/susan/.local/lib/python3.8/site-packages/plotnine/layer.py:334: PlotnineWarning: stat_boxplot : Removed 9374 rows containing non-finite values.</span></span>
+<span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a>(</span>
+<span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a>ggplot(res, aes(x <span class="op">=</span> <span class="st">"age"</span>, y <span class="op">=</span> <span class="st">"arr_delay"</span>, group <span class="op">=</span> <span class="st">"agebin"</span>)) <span class="op">+</span> </span>
+<span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a>  geom_boxplot() <span class="op">+</span> </span>
+<span id="cb14-35"><a href="#cb14-35" aria-hidden="true" tabindex="-1"></a>  ylab(<span class="st">"Arrival Delay (min)"</span>) <span class="op">+</span> </span>
+<span id="cb14-36"><a href="#cb14-36" aria-hidden="true" tabindex="-1"></a>  xlab(<span class="st">"Plane age"</span>) <span class="op">+</span> </span>
+<span id="cb14-37"><a href="#cb14-37" aria-hidden="true" tabindex="-1"></a>  coord_cartesian(ylim <span class="op">=</span> (<span class="op">-</span><span class="dv">30</span>, <span class="dv">60</span>))</span>
+<span id="cb14-38"><a href="#cb14-38" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb14-39"><a href="#cb14-39" aria-hidden="true" tabindex="-1"></a><span class="co">## &lt;ggplot: (8732837843161)&gt;</span></span>
+<span id="cb14-40"><a href="#cb14-40" aria-hidden="true" tabindex="-1"></a><span class="co">## </span></span>
+<span id="cb14-41"><a href="#cb14-41" aria-hidden="true" tabindex="-1"></a><span class="co">## /home/susan/.local/lib/python3.8/site-packages/plotnine/layer.py:334: PlotnineWarning: stat_boxplot : Removed 10317 rows containing non-finite values.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell quarto-layout-panel">
-
+<div class="quarto-layout-row quarto-layout-valign-top">
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="06-data-join_files/figure-html/flights-delay-age-py-1.png" class="img-fluid"></p>
+</div>
+<div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<p><img src="06-data-join_files/figure-html/flights-delay-age-py-2.png" class="img-fluid"></p>
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -926,8 +944,16 @@ Example: Mutating Joins
 </section><section id="sec-gas-price-ex2" class="level2" data-number="22.7"><h2 data-number="22.7" class="anchored" data-anchor-id="sec-gas-price-ex2">
 <span class="header-section-number">22.7</span> Example: Gas Prices Data</h2>
 <p>Let’s return to the gas price data introduced in <a href="05-data-reshape.html#sec-gas-price-ex"><span>Section&nbsp;21.4</span></a>. I’ve repeated the setup chunks here for you to read in the data appropriately.</p>
-<section id="setup-gas-price-data-cleaning" class="level3" data-number="22.7.1"><h3 data-number="22.7.1" class="anchored" data-anchor-id="setup-gas-price-data-cleaning">
-<span class="header-section-number">22.7.1</span> Setup: Gas Price Data Cleaning</h3>
+<div class="callout-demo callout callout-style-default no-icon callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Setup: Gas Price Data Cleaning
+</div>
+</div>
+<div class="callout-body-container callout-body">
 <p>For the next example, we’ll read the data in from the HTML table online and work to make it something we could e.g.&nbsp;plot. Before we can start cleaning, we have to read in the data:</p>
 <div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
@@ -949,6 +975,8 @@ Example: Mutating Joins
 </div>
 <div class="cell">
 
+</div>
+</div>
 </div>
 </div>
 </div>
@@ -1082,9 +1110,9 @@ Try it out: Formatting using merge + pivot
 </div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>gas_prices_dates_long <span class="op">=</span> pd.melt(gas_prices_dates, id_vars <span class="op">=</span> <span class="st">'Year-Month'</span>, var_name <span class="op">=</span> <span class="st">"week"</span>, value_name <span class="op">=</span> <span class="st">"month_day"</span>)</span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'pd' is not defined</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'gas_prices_dates' is not defined</span></span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>gas_prices_values_long <span class="op">=</span> pd.melt(gas_prices_values, id_vars <span class="op">=</span> <span class="st">'Year-Month'</span>, var_name <span class="op">=</span> <span class="st">"week"</span>, value_name <span class="op">=</span> <span class="st">"price_per_gallon"</span>)</span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'pd' is not defined</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'gas_prices_values' is not defined</span></span>
 <span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>gas_prices_dates_long.head()</span>
 <span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'gas_prices_dates_long' is not defined</span></span>
 <span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>gas_prices_values_long.head()</span>
@@ -1101,13 +1129,13 @@ Try it out: Formatting using merge + pivot
 <span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'gas_prices_dates_long_clean' is not defined</span></span>
 <span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>gas_prices_dates_long_clean[<span class="st">"Date"</span>] <span class="op">=</span> pd.to_datetime(gas_prices_dates_long_clean.Date)</span>
 <span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'pd' is not defined</span></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'gas_prices_dates_long_clean' is not defined</span></span>
 <span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>gas_prices_values_long_clean <span class="op">=</span> gas_prices_values_long.dropna().copy()</span>
 <span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'gas_prices_values_long' is not defined</span></span>
 <span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>gas_prices_values_long_clean[<span class="st">"week"</span>] <span class="op">=</span> gas_prices_values_long_clean.week.<span class="bu">str</span>.extract(<span class="vs">r"Week.(\d).Value"</span>)</span>
 <span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'gas_prices_values_long_clean' is not defined</span></span>
 <span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a>gas_prices_values_long_clean[<span class="st">"price_per_gallon"</span>] <span class="op">=</span> pd.to_numeric(gas_prices_values_long_clean[<span class="st">"price_per_gallon"</span>])</span>
-<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'pd' is not defined</span></span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'gas_prices_values_long_clean' is not defined</span></span>
 <span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a>gas_prices_dates_long_clean.head()</span>
 <span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'gas_prices_dates_long_clean' is not defined</span></span>
 <span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a>gas_prices_values_long_clean.head()</span>
@@ -1115,7 +1143,7 @@ Try it out: Formatting using merge + pivot
 </div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>gas_prices <span class="op">=</span> pd.merge(gas_prices_dates_long_clean, gas_prices_values_long_clean, on <span class="op">=</span> (<span class="st">"Year-Month"</span>, <span class="st">"week"</span>)).loc[:,[<span class="st">"Date"</span>, <span class="st">"price_per_gallon"</span>]]</span>
-<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'pd' is not defined</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'gas_prices_dates_long_clean' is not defined</span></span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>gas_prices.head()</span>
 <span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'gas_prices' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -1124,7 +1152,7 @@ Try it out: Formatting using merge + pivot
 </div>
 </div>
 </div>
-</section></section><section id="references" class="level2" data-number="22.8"><h2 data-number="22.8" class="anchored" data-anchor-id="references">
+</section><section id="references" class="level2" data-number="22.8"><h2 data-number="22.8" class="anchored" data-anchor-id="references">
 <span class="header-section-number">22.8</span> References</h2>
 
 
