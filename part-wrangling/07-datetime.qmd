@@ -18,7 +18,8 @@ I'm going to let Tom Scott deliver this portion of the material for me, as his t
 
 There is also an excellent StackOverflow question @freewindWhySubtractingThese2021 and answers [@skeetAnswerWhySubtracting2011,@borgwardtAnswerWhySubtracting2011] demonstrating exactly how times and time zones can get very confusing even in relatively simple circumstances.
 
-Long story short, we will be using libraries in R and python which handle some of these complexities for us, because dates, times, and timezones are **hard** and we *really* don't want to know exactly how hard they are. The libraries I've chosen for this are `datetime` in Python (used by Pandas), and `lubridate` in R.
+Long story short, we will be using libraries in R and python which handle some of these complexities for us, because dates, times, and timezones are **hard** and we *really* don't want to know exactly how hard they are.
+The libraries I've chosen for this are `datetime` in Python (used by Pandas), and `lubridate` in R.
 
 ::: callout-tip
 ## Try It Out - Getting Set up
@@ -67,40 +68,42 @@ Let's differentiate between three types of data which refer to a point in time:
 -   a **time** within a day
 -   a **date-time** - a specific time on a specific date
 
-Now, let's think about all of the different ways we can specify dates. The table below has examples along with `strptime` formats that are used in both `R` and `python` for telling the computer which date format is used.
+Now, let's think about all of the different ways we can specify dates.
+The table below has examples along with `strptime` formats that are used in both `R` and `python` for telling the computer which date format is used.
 
-+----------+---------------------+----------+---------------------------------------+-------------------+
-|          | Example             | Type     | Notes                                 | `strptime` format |
-+=========:+=====================+==========+=======================================+==================:+
-| 1        | January 12, 2023    | date     | Common in US/N. America               | %B %d, %Y         |
-+----------+---------------------+----------+---------------------------------------+-------------------+
-| 2        | 12 January 2023     | date     | Common in Europe                      | %d %B %Y          |
-+----------+---------------------+----------+---------------------------------------+-------------------+
-| 3        | 01/12/2023          | date     | Common in US                          | %m/%d/%Y          |
-+----------+---------------------+----------+---------------------------------------+-------------------+
-| 4        | 1/12/23             | date     | Common in US                          | %m/%d/%y          |
-+----------+---------------------+----------+---------------------------------------+-------------------+
-| 5        | 12/01/2023          | date     | Common in Europe/Asia                 | %d/%m/%Y          |
-+----------+---------------------+----------+---------------------------------------+-------------------+
-| 6        | 2023-01-12          | date     | ISO 8601 standard\                    | %Y-%m-%d\         |
-|          |                     |          | (automatically sorts chronologically) | or %F             |
-+----------+---------------------+----------+---------------------------------------+-------------------+
-| 7        | 12 2023             | date     | day of year + year                    | %j %Y             |
-+----------+---------------------+----------+---------------------------------------+-------------------+
-| 8        | 9:23 PM             | time     | 12h time                              | %I:%M %p          |
-+----------+---------------------+----------+---------------------------------------+-------------------+
-| 9        | 21:23               | time     | 24h time (military time)              | %H:%M\            |
-|          |                     |          |                                       | or %R             |
-+----------+---------------------+----------+---------------------------------------+-------------------+
-| 10       | 21:23:05            | time     | 24h time (with seconds)               | %H:%M:%S\         |
-|          |                     |          |                                       | or %T             |
-+----------+---------------------+----------+---------------------------------------+-------------------+
-| 11       | 2023-01-12T21:23:05 | datetime | ISO 8601 international standard       | %FT%T             |
-+----------+---------------------+----------+---------------------------------------+-------------------+
++-----------+---------------------+-----------+---------------------------------------+-------------------+
+|           | Example             | Type      | Notes                                 | `strptime` format |
++==========:+=====================+===========+=======================================+==================:+
+| 1         | January 12, 2023    | date      | Common in US/N. America               | %B %d, %Y         |
++-----------+---------------------+-----------+---------------------------------------+-------------------+
+| 2         | 12 January 2023     | date      | Common in Europe                      | %d %B %Y          |
++-----------+---------------------+-----------+---------------------------------------+-------------------+
+| 3         | 01/12/2023          | date      | Common in US                          | %m/%d/%Y          |
++-----------+---------------------+-----------+---------------------------------------+-------------------+
+| 4         | 1/12/23             | date      | Common in US                          | %m/%d/%y          |
++-----------+---------------------+-----------+---------------------------------------+-------------------+
+| 5         | 12/01/2023          | date      | Common in Europe/Asia                 | %d/%m/%Y          |
++-----------+---------------------+-----------+---------------------------------------+-------------------+
+| 6         | 2023-01-12          | date      | ISO 8601 standard\                    | %Y-%m-%d\         |
+|           |                     |           | (automatically sorts chronologically) | or %F             |
++-----------+---------------------+-----------+---------------------------------------+-------------------+
+| 7         | 12 2023             | date      | day of year + year                    | %j %Y             |
++-----------+---------------------+-----------+---------------------------------------+-------------------+
+| 8         | 9:23 PM             | time      | 12h time                              | %I:%M %p          |
++-----------+---------------------+-----------+---------------------------------------+-------------------+
+| 9         | 21:23               | time      | 24h time (military time)              | %H:%M\            |
+|           |                     |           |                                       | or %R             |
++-----------+---------------------+-----------+---------------------------------------+-------------------+
+| 10        | 21:23:05            | time      | 24h time (with seconds)               | %H:%M:%S\         |
+|           |                     |           |                                       | or %T             |
++-----------+---------------------+-----------+---------------------------------------+-------------------+
+| 11        | 2023-01-12T21:23:05 | datetime  | ISO 8601 international standard       | %FT%T             |
++-----------+---------------------+-----------+---------------------------------------+-------------------+
 
 : Different ways to specify dates and times. {#tbl-formats}
 
-Note that rows 4 and 5 of @tbl-formats are ambiguous if you don't know what location your data comes from - the dates could refer to December 1, 2023 or January 12, 2023. This only gets worse if you use 2-digit years.
+Note that rows 4 and 5 of @tbl-formats are ambiguous if you don't know what location your data comes from - the dates could refer to December 1, 2023 or January 12, 2023.
+This only gets worse if you use 2-digit years.
 
 There are three main ways that you might want to create a date/time @grolemundDatesTimes:
 
@@ -108,17 +111,21 @@ There are three main ways that you might want to create a date/time @grolemundDa
 -   From individual date/time components
 -   From an existing date/time object
 
-## Creation from Strings
+## Creating Dates and Times
 
-Dates and times are often stored in tabular formats as strings. In some cases, these are read in and automatically formatted as date-times, but in other situations, you have to specify the format yourself.
+### Creation from Strings
+
+Dates and times are often stored in tabular formats as strings.
+In some cases, these are read in and automatically formatted as date-times, but in other situations, you have to specify the format yourself.
 
 ::: callout-demo
-### Demo: Datetimes from Strings
+#### Demo: Datetimes from Strings
 
-Let's use some data from the US Geological Service with records of earthquakes with magnitude greater than 6 on the Richter scale that occurred between January 1, 2000 and January 1, 2023. You can pull this data yourself using https://earthquake.usgs.gov/earthquakes/map/, but you can also access a CSV of the data [here](https://github.com/srvanderplas/datasets/raw/main/raw/earthquakes2000.csv).
+Let's use some data from the US Geological Service with records of earthquakes with magnitude greater than 6 on the Richter scale that occurred between January 1, 2000 and January 1, 2023.
+You can pull this data yourself using https://earthquake.usgs.gov/earthquakes/map/, but you can also access a CSV of the data [here](https://github.com/srvanderplas/datasets/raw/main/raw/earthquakes2000.csv).
 
 ::: panel-tabset
-#### R + lubridate
+##### R + lubridate
 
 ```{r}
 library(lubridate)
@@ -136,7 +143,8 @@ str(quake2)
 
 However, if we use `readr::read_csv`, the data is correctly read in as a `POSIXct` format, which is how R indicates that something is a datetime object.
 
-If we want to directly convert the Time column in `quake` to a datetime, we can use the `lubridate` package, which has helper functions `ymd_hms`, `ymd`, and more. Our data is formatted in ISO 8601 standard format, which means we can easily read it in with `ymd_hms()` .
+If we want to directly convert the Time column in `quake` to a datetime, we can use the `lubridate` package, which has helper functions `ymd_hms`, `ymd`, and more.
+Our data is formatted in ISO 8601 standard format, which means we can easily read it in with `ymd_hms()` .
 
 ```{r}
 library(lubridate)
@@ -154,9 +162,10 @@ all.equal(quake2$Time, quake$dateTime)
 
 So in the case that your data is not automatically read in as a date-time, you can use the helper functions from lubridate (`ymd_hms`, `ymd`, `mdy`, ...) to convert strings to date-time data.
 
-#### Base R
+##### Base R
 
-As lovely as the lubridate package is, there are some situations where using the tidyverse may not be desirable or even allowed. It is helpful to know how to solve this problem in base R, even if 99% of the time we can use the much easier-to-remember lubridate package.
+As lovely as the lubridate package is, there are some situations where using the tidyverse may not be desirable or even allowed.
+It is helpful to know how to solve this problem in base R, even if 99% of the time we can use the much easier-to-remember lubridate package.
 
 In this case, we would use the `as.POSIXct` function, and we probably want to have the reference page up (run `?strptime` in the R console to pull up the help page).
 
@@ -176,9 +185,10 @@ quake$dateTime2 <- as.POSIXct(quake$Time, tz = "UTC", "%Y-%m-%dT%H:%M:%S")
 all.equal(quake$dateTime, quake$dateTime2)
 ```
 
-#### Pandas
+##### Pandas
 
-In pandas, we can use the `to_datetime` method. If the format is not specified, pandas will try to guess the date-time format; in this case, the guess works, but if not, you can provide a `format = …` argument that works the same way as R.
+In pandas, we can use the `to_datetime` method.
+If the format is not specified, pandas will try to guess the date-time format; in this case, the guess works, but if not, you can provide a `format = …` argument that works the same way as R.
 
 ```{python}
 import pandas as pd
@@ -201,26 +211,26 @@ quake.dateTime2[0:10]
 :::
 
 ::: callout-tip
-### Try it Out - Datetimes from Strings
+#### Try it Out - Datetimes from Strings
 
-It's usually important for new parents to keep a log of the new baby's feeds, to ensure that the baby is getting enough liquids and isn't getting dehydrated. 
-I used an app to keep track of my daughter's feeds from birth (though here, we'll only work with [the first month of data](https://raw.githubusercontent.com/srvanderplas/datasets/main/raw/feeds_first_month.csv)), and it used a reasonable, if not standard way to store dates and times. 
+It's usually important for new parents to keep a log of the new baby's feeds, to ensure that the baby is getting enough liquids and isn't getting dehydrated.
+I used an app to keep track of my daughter's feeds from birth (though here, we'll only work with [the first 3 months of data](https://raw.githubusercontent.com/srvanderplas/datasets/main/raw/feeds_first_month.csv)), and it used a reasonable, if not standard way to store dates and times.
 
 ::: panel-tabset
-#### Problem
+##### Problem
 
 Take a look at the [first month of feeds](https://raw.githubusercontent.com/srvanderplas/datasets/main/raw/feeds_first_month.csv).
 Note that these data are from August 7, 2021 to November 4, 2021 -- roughly baby's first 90 days.
 
-1. Convert Start and End to datetime variables
-2. Can you plot the feeds somehow?
-3. Can you do arithmetic with datetimes to see if there are any user entry errors?    
-This data was created by a *highly* unreliable and error prone couple of individuals -- specifically, sleep-deprived new parents. 
+1.  Convert Start and End to datetime variables
+2.  Can you plot the feeds somehow?
+3.  Can you do arithmetic with datetimes to see if there are any user entry errors?\
+    This data was created by a *highly* unreliable and error prone couple of individuals -- specifically, sleep-deprived new parents.
 
-To do this, you may need to figure out how to specify a non-standard date format in R and/or python. The `parse_date_time` function is useful in R, and `pd.to_datetime()` takes a format argument in python.
+To do this, you may need to figure out how to specify a non-standard date format in R and/or python.
+The `parse_date_time` function is useful in R, and `pd.to_datetime()` takes a format argument in python.
 
-
-#### R solution
+##### R solution
 
 First, let's read the data in and explore a bit.
 
@@ -233,7 +243,8 @@ head(feeds)
 # Looks like %H:%M:%S %m-%d-%Y format.
 ```
 
-It looks like the data is stored in a format where the time (`%H:%M:%S`) is first and the date (`%m-%d-%Y`) is second. We can use the `parse_date_time` function in lubridate
+It looks like the data is stored in a format where the time (`%H:%M:%S`) is first and the date (`%m-%d-%Y`) is second.
+We can use the `parse_date_time` function in lubridate
 
 ```{r}
 feeds <- feeds %>%
@@ -241,7 +252,7 @@ feeds <- feeds %>%
          End = parse_date_time(End, orders = c("%H:%M:%S %m-%d-%Y")))
 ```
 
-Let's then explore how we might plot this data: 
+Let's then explore how we might plot this data:
 
 ```{r}
 #| fig-width: 6
@@ -285,11 +296,9 @@ ggplot(feeds, aes(x = duration, fill = Type)) + geom_histogram(color = "black") 
   xlab("Feed duration, in seconds") + facet_wrap(~Type)
 ```
 
-We can see a few suspiciously long feeds - 9000 seconds is 2.5 hours, which is not unheard of for a baby to breastfeed, but would be an exceptionally long bottle feed (unless a parent fell asleep before hitting "stop" on the feed, which is much more likely). 
+We can see a few suspiciously long feeds - 9000 seconds is 2.5 hours, which is not unheard of for a baby to breastfeed, but would be an exceptionally long bottle feed (unless a parent fell asleep before hitting "stop" on the feed, which is much more likely).
 
-
-#### Python solution
-
+##### Python solution
 
 First, let's read the data in and explore a bit.
 
@@ -302,7 +311,8 @@ feeds.head()
 # Looks like %H:%M:%S %m-%d-%Y format.
 ```
 
-It looks like the data is stored in a format where the time (`%H:%M:%S`) is first and the date (`%m-%d-%Y`) is second. We can use the format argument to `pd.to_datetime` to specify this:
+It looks like the data is stored in a format where the time (`%H:%M:%S`) is first and the date (`%m-%d-%Y`) is second.
+We can use the format argument to `pd.to_datetime` to specify this:
 
 ```{python}
 feeds["Start"] = pd.to_datetime(feeds.Start, format = "%H:%M:%S %m-%d-%Y")
@@ -324,7 +334,7 @@ feeds["duration"] = feeds.time_end - feeds.time_start
 ```
 
 Note that as of January 2023, RStudio does not correctly display timedelta data types in python.
-They show up as NAs in the table, but are printed fine in the console. 
+They show up as NAs in the table, but are printed fine in the console.
 Don't spend hours trying to figure out why it isn't working -- it's bad enough that I did.
 
 ```{python}
@@ -339,7 +349,6 @@ from plotnine import *
 
 ```
 
-
 ```{python}
 from plotnine import *
 
@@ -351,22 +360,19 @@ from plotnine import *
 )
 
 ```
-
+:::
 :::
 
-:::
+### Creation from Components
 
-## Creation from Components
-
-Sometimes, instead of a single string, you'll have the individual components of the date-time spread across columns. 
+Sometimes, instead of a single string, you'll have the individual components of the date-time spread across columns.
 The `nycflights13` data is a good example of this.
 
 ::: callout-demo
-### Demo: Datetimes from Components
+#### Demo: Datetimes from Components
 
 ::: panel-tabset
-
-#### R + lubridate
+##### R + lubridate
 
 In `lubridate`, the `make_date()` and `make_datetime()` functions can be used to create date-times from component pieces.
 
@@ -384,7 +390,7 @@ flights <- flights %>%
 flights %>% select(date, datetime, year, month, day, hour, minute)
 ```
 
-#### Base R
+##### Base R
 
 In base R, we can use the `ISOdate` function to create date times.
 
@@ -393,7 +399,7 @@ flights$datetime_base = with(flights, ISOdatetime(year, month, day, hour, minute
 all.equal(flights$datetime, flights$datetime_base)
 ```
 
-#### Python
+##### Python
 
 In pandas, we can pass multiple columns to `pd.to_datetime()` and as long as they are named reasonably, pandas will handle the conversion.
 If we want to have the date but not the time for some reason, we just pass fewer columns to pandas.
@@ -409,13 +415,245 @@ flights["datetime"] = pd.to_datetime(flights[["year", "month", "day", "hour", "m
 
 flights[["date", "datetime", "year", "month", "day", "hour", "minute"]]
 ```
-
 :::
 :::
-
 
 <!-- ## Creation from other objects -->
 
-<!-- Another way to create date-time objects is to modify other objects.  -->
+### Creation from Other Objects
+
+Sometimes, you may have information in one type of variable (e.g. a datetime) and want to split it into a date and a time, separately.
+
+Some systems store datetimes as the number of seconds from a specific point (commonly, the **Unix Epoch**, midnight on 1970-01-01).
+You may have to convert from seconds since this epoch (or some other epoch [@wikipediacontributorsEpochComputing2023]) to an actual date-time that is human readable.
+
+If you ever have to convert dates and times that were stored in Microsoft Excel, it can be helpful to know that Microsoft stores dates as the number of days since January 1, 1900 [@microsoftsupportDATEVALUEFunctionMicrosoft2023] (or if the spreadsheet was created on a Mac, January 1, 1904) [@elizabethmottWhyDatesCome2013].
+Yes, this is as confusing as it sounds.
+Don't use MS Excel for handling dates [@caudillExcelHellCautionary2018; @chris88888888ExcelStillSucks2020] (or really, at all, now that you know better tools).
+Geneticists have actually renamed genes because Microsoft won't fix Excel to handle dates properly [@vincentScientistsRenameHuman2020].
+
+::: callout-demo
+#### Demo: Creation from Other Objects
+
+::: panel-tabset
+##### R + lubridate
+
+In `lubridate`, the `as_date()` and `as_datetime()` functions can be used to create date-times from other objects.
+
+```{r}
+tmp <- flights %>%
+  mutate(date2 = as_date(datetime))
+
+# Check that date and date2 are the same
+all.equal(flights$date, flights$date2)
+```
+
+Here's a demonstration of epoch timekeeping.
+
+```{r}
+current_time <- now(tzone = "UTC")
+# This converts to the number of seconds since the Unix epoch
+seconds_since_epoch <- current_time %>% seconds()
+# Now let's convert back to a datetime
+(current_time2 <- as_datetime(seconds_since_epoch))
+# Check to see that they're equal
+all.equal(current_time, current_time2)
+```
+
+##### Base R
+
+In base R, we can use the `as.Date` function to create dates from datetimes.
+
+```{r}
+flights$date2 = as.Date(flights$date)
+all.equal(flights$date, flights$date2)
+```
+
+We can handle epochs as well:
+
+```{r}
+# Let's see what was 10000 days after the UNIX epoch
+as.Date(1e4, origin = "1970-01-01")
+
+# If we use as.POSIXct, we are counting in seconds from midnight
+as.POSIXct(1e4, origin = as.POSIXct("1970-01-01 00:00:00"))
+```
+
+By default, `as.POSIXct` will use the system's time zone, which may not be desirable; you can always set the time zone yourself if you would like to do so.
+
+##### Python
+
+In pandas, we can pass multiple columns to `pd.to_datetime()` and as long as they are named reasonably, pandas will handle the conversion.
+If we want to have the date but not the time for some reason, we just pass fewer columns to pandas.
+
+```{python}
+from nycflights13 import flights
+
+flights["date2"] = flights.date.dt.date # Convert datetime to date
+
+# They look the same
+flights[["date", "date2"]]
+
+flights.dtypes
+# date2 is an object, date is a datetime64.
+```
+
+We created `flights.date` using `pd.to_datetime()`.
+Given this comparison, it may be better to use to.datetime() and append `.dt.date` on the end if you do not want to keep the time information that is provided by default.
+:::
+:::
+
+## Working with Dates and Times
+
+In this section, we'll work with comments by famous artist `Shitty_Watercolour`.
+
+::: aside
+Here's one of Shitty Watercolour's works: ![Reddit context. Image source](../images/wrangling/watercolor_example.jpeg){fig-alt="A watercolor painting of a dog imagining touching a different dog through a laptop screen. The dogs apparently see each other once a month and facetime once a week."}
+:::
+
+::: callout-demo
+### Getting the Data
+
+::: panel-tabset
+#### R
+
+Note: The textbook caches data, so your results may differ from those shown here because RedditExtractoR only acquires the last \~1000 comments from a user.
+
+```{r reddit-poems-dl, eval = F}
+# remotes::install_github("ivan-rivera/RedditExtractor")
+library(RedditExtractoR)
+
+comment_list <- get_user_content("Shitty_Watercolour")
+watercolour <- comment_list$Shitty_Watercolour$comments
+```
+
+```{r reddit-poems, include = F}
+# remotes::install_github("ivan-rivera/RedditExtractor")
+library(RedditExtractoR)
+
+if (!file.exists("../data/watercolour.csv")) {
+  comment_list <- get_user_content("Shitty_Watercolour")
+  watercolour <- comment_list$Shitty_Watercolour$comments
+  readr::write_csv(watercolour, "../data/watercolour.csv")
+} else {
+  watercolour <- readr::read_csv("../data/watercolour.csv")
+}
+```
+
+#### Python
+
+```{python}
+# Get data from R directly, since redditExtractor package is in R
+watercolour = r.watercolour
+```
+:::
+:::
+
+### Time Zones
+
+We often store data in UTC[^07-datetime-1], but we may want to represent the data in a more familiar time zone for interpretation's purposes.
+
+[^07-datetime-1]: Coordinated Universal Time, but the acronym is in a different language and the words are thus in a different order.
+
+| Task                                                | R                                       | Python                                                                 |
+|-----------------------------------------------------|-----------------------------------------|------------------------------------------------------------------------|
+| Set the time zone to e.g. GMT (Greenwich Mean Time) | `as_datetime(time, tz = "GMT")`         | `time.apply(lambda x: pd.Timestamp(x).tz_localize("GMT"))`             |
+| Display the time in a different time zone           | `with_tz(time, tz = "America/Chicago")` | `time.apply(lambda x: pd.Timestamp(x).tz_convert("America/Chicago"))`  |
+
+: Working with Time Zones. Here, `time` is a placeholder for whatever variable is being converted.
+
+::: callout-tip
+#### Try it Out - Formatting Dates
+
+::: panel-tabset
+##### Problem
+
+The `watercolour` dataset above contains 959 comments from `Shitty_Watercolour`, with the UTC date and timestamp of the comment.
+
+Figure out how to format these data into a proper date type and timestamp that is user-readable.
+Make sure you inform R or python that the timestamp is provided in UTC.
+
+![Hovering over the time on a reddit comment will produce a popup showing the full time that the comment was posted.](../images/wrangling/reddit-timestamp-mouseover.png) Compare a couple of your timestamps to the timestamps provided by Reddit when you mouse over a comment.
+
+Can you get R or Python to output the date in your timezone?
+
+##### R Solution
+
+```{r}
+watercolour <- watercolour %>%
+  mutate(date = ymd(date_utc, tz = "UTC"),
+         time = as_datetime(timestamp),
+         time_cst = with_tz(time, tzone_out = "CST"))
+
+watercolour[,c("date", "time", "time_cst")]
+```
+
+##### Python Solution
+
+```{python}
+from datetime import datetime
+
+watercolour["date"] = pd.to_datetime(watercolour.date_utc).dt.date
+watercolour["time"] = pd.to_datetime(watercolour.timestamp, unit = 's')
+
+# Tell Python the time is in UTC 
+watercolour["time"] = watercolour.time.apply(lambda x: pd.Timestamp(x).tz_localize("UTC"))
+
+watercolour["time_cst"] = watercolour.time.apply(lambda x: pd.Timestamp(x).tz_convert("US/Central"))
+
+watercolour[["date", "time", "time_cst"]]
+```
+:::
+:::
+
+### Time Spans
+
+Dates and times can be added and subtracted - after all, underneath, they're usually implemented as a number of XXX from the reference time point, where XXX is usually seconds for datetimes and days for dates.
+
+In R, the difference between two timestamps is called a **duration** and is implemented in the **duration** class [See @r4ds Chapter 16.4.1 for more info]. 
+
+::: callout-tip
+#### Try it Out - Datetime Math
+
+::: panel-tabset
+##### Problem
+
+Use the `watercolour` data and plot the interval between successive `Shitty_Watercolour` posts in minutes. What can you conclude?
+
+
+##### R Solution
+
+```{r}
+watercolour <- watercolour %>%
+  arrange(time) %>%
+  mutate(diff = as.duration(time - lag(time, 1)),
+         diffmin = as.numeric(diff, "minutes"))
+
+library(ggplot2)
+ggplot(watercolour, aes(x = diffmin)) + 
+  geom_histogram() + 
+  xlab("Time between posts (minutes)") + 
+  scale_x_log10(breaks = c(1, 15, 30, 60, 1440, 10080))
+```
+
+Most of the time, `Shitty_Watercolour` takes at least 15 minutes to generate a new comment. There is also a noticable peak just before 1440 minutes, indicating that as with most users, `Shitty_Watercolour` is active at approximately the same time each day for a few hours. The final break shown, 10080, is the number of minutes in a week, indicating that occasionally, `Shitty_Watercolour` goes more than a week between posts.
+
+##### Python Solution
+
+```{python}
+from datetime import datetime
+
+watercolour = watercolour.sort_values(by = 'time')
+watercolour["diff"] = watercolour.time.diff().astype('timedelta64')
+# This formats in minutes
+watercolour["diffmin"] = watercolour.time.diff().astype('timedelta64[m]')
+
+import seaborn.objects as so
+p = so.Plot(watercolour, "diffmin")
+p.add(so.Bars(), so.Hist())
+p.show()
+```
+:::
+:::
 
 ## References
