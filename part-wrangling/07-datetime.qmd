@@ -610,7 +610,7 @@ watercolour[["date", "time", "time_cst"]]
 
 Dates and times can be added and subtracted - after all, underneath, they're usually implemented as a number of XXX from the reference time point, where XXX is usually seconds for datetimes and days for dates.
 
-In R, the difference between two timestamps is called a **duration** and is implemented in the **duration** class [See @r4ds Chapter 16.4.1 for more info]. 
+In R, the difference between two timestamps is called a **duration** and is implemented in the **duration** class [See @r4ds Chapter 16.4.1 for more info]. In Python, a similar class exists and is called a **timedelta** [@pythonfoundationDatetimeBasicDate2023].
 
 ::: callout-tip
 #### Try it Out - Datetime Math
@@ -633,6 +633,7 @@ library(ggplot2)
 ggplot(watercolour, aes(x = diffmin)) + 
   geom_histogram() + 
   xlab("Time between posts (minutes)") + 
+  ylab("# Posts") + 
   scale_x_log10(breaks = c(1, 15, 30, 60, 1440, 10080))
 ```
 
@@ -647,10 +648,19 @@ watercolour = watercolour.sort_values(by = 'time')
 watercolour["diff"] = watercolour.time.diff().astype('timedelta64')
 # This formats in minutes
 watercolour["diffmin"] = watercolour.time.diff().astype('timedelta64[m]')
+# Remove negative minutes - something funky there?
+watercolour = watercolour.query("diffmin > 0")
 
 import seaborn.objects as so
-p = so.Plot(watercolour, "diffmin")
-p.add(so.Bars(), so.Hist())
+p = (
+  so.
+  Plot(watercolour, watercolour["diffmin"]).
+  add(so.Bars(width=.95), so.Hist(bins = 30)).
+  scale(x = so.Continuous(trans = "log").
+    tick(at = [1, 15, 30, 60, 1440, 10080]).
+    label(like="{x:d}")).
+  label(x = "Time between posts (minutes)", y = "# Posts")
+)
 p.show()
 ```
 :::
