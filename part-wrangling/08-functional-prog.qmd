@@ -207,7 +207,7 @@ lego[['set_num', 'name', 'year', 'decade']].head()
 :::
 :::
 
-For a more interesting example, though, let's consider fitting a different linear regression for each generation of pokemon, describing the relationship between HP (hit points) and CP (combat power). 
+For a more interesting example, though, let's consider fitting a different linear regression for each generation of Pokemon, describing the relationship between HP (hit points) and CP (combat power, aka `total` in this dataset). 
 
 ::: callout-demo
 
@@ -216,7 +216,7 @@ For a more interesting example, though, let's consider fitting a different linea
 ::: panel-tabset
 
 #### base R
-```{r}
+```{r base-split-regression}
 poke <- read.csv("https://raw.githubusercontent.com/srvanderplas/datasets/main/clean/pokemon_gen_1-9.csv")
 # Get rid of mega pokemon - they're a different thing
 poke <- subset(poke, !grepl("Mega", poke$variant))
@@ -241,7 +241,7 @@ In the tidyverse, we use `tidyr::nest()` to accomplish a similar thing to `split
 
 This approach is designed to work entirely within a single data frame, which keeps the environment relatively clean and ensures that each step's results are stored in a convenient, easy-to-find place.
 
-```{r}
+```{r tidyr-nest-regression}
 library(purrr)
 library(readr)
 library(dplyr)
@@ -270,20 +270,20 @@ res
 This construct of storing everything inside a single data frame isn't as common in Python, but we can make it work with only a little extra effort. 
 
 ::: aside
-I am sure that the code I've written here is a bit kludgy if you are more fluent in python/pandas than I am, so please feel free to submit a pull request to fix it if you know a better or more "pretty" way to do this.
+I am sure that the python code I've written here is a bit kludgy if you are more fluent in python/pandas than I am, so please feel free to submit a pull request to fix it if you know a better or more "pretty" way to do this.
 :::
 
-You will need to `pip install statsmodels` to get the statsmodels [@seabold2010statsmodels] package that implements many basic statistical models. 
-The `scikit-learn` package [@scikitlearn] is another commonly used package, but it does not have the easy accessor functions to pull out e.g. coefficients and r-squared values, so we'll use `statsmodels` here. 
+You will need to `pip install statsmodels` to get the `statsmodels` [@seabold2010statsmodels] package that implements many basic statistical models. 
+The `scikit-learn` package [@scikitlearn] is another commonly used package [@menonLinearRegressionLines2018], but it does not have the easy accessor functions to pull out e.g. coefficients and r-squared values, so we'll use `statsmodels` here. 
 
-```{python}
+```{python groupby-regression}
 import pandas as pd
 from statsmodels.formula.api import ols
 
 # Create a function to fit a linear regression
+# There is probably a better way to do this flexibly,
+# but this approach is simple and useful for illustrative purposes
 def pokereg(data):
-  # See https://towardsdatascience.com/linear-regression-in-6-lines-of-python-5e1d0cd05b8d
-  # for how to fit the linear regression
   x = data[["hp"]].values
   y = data[["total"]].values
   model = ols('total ~ hp', data)
@@ -291,24 +291,33 @@ def pokereg(data):
   return results
 
 res = pd.read_csv("https://raw.githubusercontent.com/srvanderplas/datasets/main/clean/pokemon_gen_1-9.csv")
+
 # Replace NAs with ""
 res["variant"] = ["" if pd.isna(i) else i for i in res.variant]
 # Remove mega pokemon
 res = res.query('~(variant.str.contains("(?:^[mM]ega)"))')
+
 # Group data frames and apply regression function to each group
 res_reg = res.groupby("gen").apply(pokereg)
+
 # Make results into a dataframe and rename the column as 'results'
 res_reg = pd.DataFrame.from_dict(res_reg).rename(columns = {0:'results'})
 
 # Get values of interest and store in new columns
-res_reg['gen'] = res_reg.index
+res_reg = res_reg.reset_index() # store gen in its own column
 res_reg['coef1'] = res_reg.results.map(lambda x: x.params[0])
 res_reg['coef2'] = res_reg.results.map(lambda x: x.params[1])
 res_reg['rsq'] = res_reg.results.map(lambda x: x.rsquared)
+
+res_reg[['gen', 'coef1', 'coef2', 'rsq']]
 ```
 
+While this doesn't store our data in the same DataFrame as the model results, we do have a key that links the two: the `gen` variable is present in both `res` and `res_reg` and can be used to join the data to the regression results, if necessary.
+
 :::
 
 :::
+
+
 
 ## References
