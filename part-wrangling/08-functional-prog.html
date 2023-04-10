@@ -120,7 +120,9 @@ div.csl-indent {
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light"><script id="quarto-search-options" type="application/json">{
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/quarto-contrib/fontawesome6-0.1.0/all.css" rel="stylesheet">
+<link href="../site_libs/quarto-contrib/fontawesome6-0.1.0/latex-fontsize.css" rel="stylesheet"><script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
   "collapse-after": 3,
@@ -343,10 +345,12 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
         <nav id="TOC" role="doc-toc" class="toc-active"><h2 id="toc-title">Table of contents</h2>
    
   <ul>
-<li><a href="#programming-philosophies" id="toc-programming-philosophies" class="nav-link active" data-scroll-target="#programming-philosophies"><span class="toc-section-number">24.1</span>  Programming Philosophies</a></li>
-  <li><a href="#replacing-loops-with-functional-programming" id="toc-replacing-loops-with-functional-programming" class="nav-link" data-scroll-target="#replacing-loops-with-functional-programming"><span class="toc-section-number">24.2</span>  Replacing Loops with Functional Programming</a></li>
-  <li><a href="#functional-programming-and-complex-data-structures" id="toc-functional-programming-and-complex-data-structures" class="nav-link" data-scroll-target="#functional-programming-and-complex-data-structures"><span class="toc-section-number">24.3</span>  Functional Programming and Complex Data Structures</a></li>
-  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references"><span class="toc-section-number">24.4</span>  References</a></li>
+<li><a href="#fa-bullseye-objectives" id="toc-fa-bullseye-objectives" class="nav-link active" data-scroll-target="#fa-bullseye-objectives"><span class="toc-section-number">24.1</span>  <i class="fa-solid fa-bullseye" aria-label="bullseye"></i> Objectives</a></li>
+  <li><a href="#programming-philosophies" id="toc-programming-philosophies" class="nav-link" data-scroll-target="#programming-philosophies"><span class="toc-section-number">24.2</span>  Programming Philosophies</a></li>
+  <li><a href="#replacing-loops-with-functional-programming" id="toc-replacing-loops-with-functional-programming" class="nav-link" data-scroll-target="#replacing-loops-with-functional-programming"><span class="toc-section-number">24.3</span>  Replacing Loops with Functional Programming</a></li>
+  <li><a href="#complex-data-structures" id="toc-complex-data-structures" class="nav-link" data-scroll-target="#complex-data-structures"><span class="toc-section-number">24.4</span>  Complex Data Structures</a></li>
+  <li><a href="#assembling-hierarchical-data" id="toc-assembling-hierarchical-data" class="nav-link" data-scroll-target="#assembling-hierarchical-data"><span class="toc-section-number">24.5</span>  Assembling Hierarchical Data</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references"><span class="toc-section-number">24.6</span>  References</a></li>
   </ul><div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/srvanderplas/stat-computing-r-python/edit/main/part-wrangling/08-functional-prog.qmd" class="toc-action">Edit this page</a></p></div></div></nav>
     </div>
 <!-- main -->
@@ -371,8 +375,14 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
   
 
 </header><p>In this section, we’re going to change focus slightly from learning specific functions to learning programming <strong>patterns</strong>. We’re going to start this process by talking about functional programming and its connection to lists. While this topic may be a bit advanced if you’re just starting to learn how to program, it may help to skim through the deeper explanation so that you can at least recognize some of these words if you encounter them later.</p>
-<section id="programming-philosophies" class="level2 page-columns page-full" data-number="24.1"><h2 data-number="24.1" class="anchored" data-anchor-id="programming-philosophies">
-<span class="header-section-number">24.1</span> Programming Philosophies</h2>
+<section id="fa-bullseye-objectives" class="level2" data-number="24.1"><h2 data-number="24.1" class="anchored" data-anchor-id="fa-bullseye-objectives">
+<span class="header-section-number">24.1</span> <i class="fa-solid fa-bullseye" aria-label="bullseye"></i> Objectives</h2>
+<ul>
+<li>Use functional programming to replace for loops</li>
+<li>Articulate <em>why</em> functional programming can be preferable to using for loops</li>
+<li>Use functional programming to clean data, model data subsets, and assemble hierarchical data.</li>
+</ul></section><section id="programming-philosophies" class="level2 page-columns page-full" data-number="24.2"><h2 data-number="24.2" class="anchored" data-anchor-id="programming-philosophies">
+<span class="header-section-number">24.2</span> Programming Philosophies</h2>
 <div class="callout-advanced callout callout-style-default no-icon callout-captioned">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -496,37 +506,37 @@ A simple Functional Example
 <div class="cell">
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">5</span>, mean <span class="op">=</span> <span class="va">x</span>, sd <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">## [[1]]</span></span>
-<span><span class="co">## [1] 2.4540190 0.7992366 1.3908812 3.7454485 1.9206683</span></span>
+<span><span class="co">## [1]  0.2912126  0.6309546 -0.3719486  0.2599935 -0.8367708</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## [[2]]</span></span>
-<span><span class="co">## [1] 2.149735 2.185829 2.086924 2.142516 2.479581</span></span>
+<span><span class="co">## [1] 2.560487 2.537249 1.327294 3.382403 2.119002</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## [[3]]</span></span>
-<span><span class="co">## [1] 3.292851 3.705825 3.763778 1.835181 3.604134</span></span>
+<span><span class="co">## [1] 2.136292 3.112474 3.273136 1.687993 3.792324</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## [[4]]</span></span>
-<span><span class="co">## [1] 6.005010 2.632321 4.747971 3.747229 3.650359</span></span>
+<span><span class="co">## [1] 2.587561 4.470052 3.898658 2.594018 4.569913</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## [[5]]</span></span>
-<span><span class="co">## [1] 5.110780 5.993193 4.575554 5.328540 3.941231</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span><span class="co">## [1] 4.658290 5.930453 3.969215 5.079154 4.273368</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Or, if you have R 4.1.0 or above, you can use a shorthand version:</p>
 <div class="cell">
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">5</span>, mean <span class="op">=</span> <span class="va">x</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">## [[1]]</span></span>
-<span><span class="co">## [1] -0.1527339 -0.4133465  1.9031611 -0.5147432  1.9213762</span></span>
+<span><span class="co">## [1] 1.0743809 0.2934581 1.8729530 2.6988297 0.3518289</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## [[2]]</span></span>
-<span><span class="co">## [1] 1.829076 4.098899 2.684800 1.608848 1.632180</span></span>
+<span><span class="co">## [1]  2.1748625  1.5382339 -0.2918882  2.2877158  3.0789758</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## [[3]]</span></span>
-<span><span class="co">## [1] 3.376588 3.800975 3.521486 1.853459 1.840961</span></span>
+<span><span class="co">## [1] 3.217872 3.042116 4.050187 3.712081 3.210130</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## [[4]]</span></span>
-<span><span class="co">## [1] 5.162233 4.204278 1.845813 3.576826 3.188912</span></span>
+<span><span class="co">## [1] 3.869494 5.038674 2.962870 5.393614 4.179238</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## [[5]]</span></span>
-<span><span class="co">## [1] 6.294759 6.275895 4.963000 3.438242 3.376910</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span><span class="co">## [1] 5.223234 4.469824 4.992935 4.902451 5.862289</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The <code>\(x)</code> is shorthand for <code>function(x)</code> and allows you to quickly and easily define anonymous functions in R.</p>
 </div>
@@ -541,24 +551,24 @@ A simple Functional Example
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Functional approach</span></span>
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Defining a lambda function allows us to fill in non-default options</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co">## [array([1.00188005, 1.71104918, 1.68148905, 2.4056283 , 2.91977126]), array([3.07097877, 1.68139002, 1.63328904, 0.31826717, 1.43705886]), array([3.77590251, 2.20512395, 2.84734084, 3.11030182, 3.54686392]), array([3.47211463, 4.53338073, 4.1795719 , 3.20808969, 2.36278765]), array([4.86427289, 6.94097469, 4.48265791, 4.78587706, 4.75008698])]</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co">## [array([ 1.53048245,  1.00286667,  0.53337015, -0.49644252,  0.53554049]), array([1.63879451, 0.49370885, 1.67686675, 1.75666162, 1.04664143]), array([2.26549128, 1.34487541, 2.63582901, 1.26208285, 3.53412326]), array([4.46977649, 3.81116135, 3.80019706, 2.88448765, 4.61296432]), array([7.12802388, 4.86689224, 3.28888757, 4.66707882, 5.59581618])]</span></span>
 <span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>r2 <span class="op">=</span> <span class="bu">map</span>(<span class="kw">lambda</span> a: np.random.normal(a, size <span class="op">=</span> <span class="dv">5</span>), <span class="bu">range</span>(<span class="dv">1</span>, <span class="dv">6</span>))</span>
 <span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co"># This is what map spits out by default</span></span>
 <span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(r2)</span>
 <span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co"># get your results back out with list()</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co">## &lt;map object at 0x7fdee267bd60&gt;</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co">## &lt;map object at 0x7fcfe70bbd60&gt;</span></span>
 <span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>r2b <span class="op">=</span> <span class="bu">list</span>(r2) </span>
 <span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(r2b)</span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="co">## [array([ 1.42680771,  0.56574123,  1.76436387, -0.62311068,  1.4754314 ]), array([2.54793165, 1.25305158, 2.77371305, 2.83857077, 1.66667927]), array([2.87787709, 2.35734449, 4.8475063 , 2.06206698, 3.83745025]), array([3.83241259, 3.45007128, 3.14685069, 4.51420146, 3.69855797]), array([4.38604495, 4.91745468, 3.42149302, 5.40968203, 1.72452551])]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="co">## [array([-1.26959761,  1.54059014,  2.13072558,  2.03142366,  1.20107553]), array([1.25158002, 1.04434662, 1.70355261, 0.80675563, 0.61879676]), array([2.46382297, 3.27760677, 2.80133084, 4.21287317, 4.77756675]), array([3.13661618, 4.04084484, 3.32615927, 4.60794533, 4.5836419 ]), array([5.71349496, 4.51107897, 6.18681007, 5.66582093, 6.40476871])]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
 </div>
 </div>
 </div>
-</section><section id="replacing-loops-with-functional-programming" class="level2 page-columns page-full" data-number="24.2"><h2 data-number="24.2" class="anchored" data-anchor-id="replacing-loops-with-functional-programming">
-<span class="header-section-number">24.2</span> Replacing Loops with Functional Programming</h2>
+</section><section id="replacing-loops-with-functional-programming" class="level2 page-columns page-full" data-number="24.3"><h2 data-number="24.3" class="anchored" data-anchor-id="replacing-loops-with-functional-programming">
+<span class="header-section-number">24.3</span> Replacing Loops with Functional Programming</h2>
 <p>One really convenient application of functional programming is to replace loops. As Hadley Wickham says in <span class="citation" data-cites="advr"><a href="#ref-advr" role="doc-biblioref">[6]</a></span>,</p>
 <blockquote class="blockquote">
 <p>the real downside of for loops is that they’re very flexible: a loop conveys that you’re iterating, but not what should be done with the results</p>
@@ -830,14 +840,14 @@ Example: Pokemon modeling
 
 <iframe width="640" height="360" src="https://www.youtube.com/embed/KdDyRt9XV_g" title="Nested data frames and multiple models in R with Equitable Equations" frameborder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="">
 </iframe>
-</div></div></section><section id="functional-programming-and-complex-data-structures" class="level2 page-columns page-full" data-number="24.3"><h2 data-number="24.3" class="anchored" data-anchor-id="functional-programming-and-complex-data-structures">
-<span class="header-section-number">24.3</span> Functional Programming and Complex Data Structures</h2>
+</div></div></section><section id="complex-data-structures" class="level2 page-columns page-full" data-number="24.4"><h2 data-number="24.4" class="anchored" data-anchor-id="complex-data-structures">
+<span class="header-section-number">24.4</span> Complex Data Structures</h2>
 <p>Not all datasets are strictly tabular. One of the most common situations where we get data that can’t be made into a completely tabular structure is when we’re dealing with hierarchical data: tree structures, (network) graph structures, and even most webpages contain data that isn’t strictly tabular in nature. Sometimes, we can get that data into a tabular structure, but it generally depends on the data itself.</p>
 <p>One of the most common structures for storing data on the web is <a href="https://www.json.org/json-en.html">JSON: JavaScript Object Notation</a><span class="citation" data-cites="wikipediacontributorsJSON2023"><a href="#ref-wikipediacontributorsJSON2023" role="doc-biblioref">[12]</a></span>.</p>
 
 <div class="no-row-height column-margin column-container"><div class="">
 <p>(JSON is pronounced “Jason”, like the person’s name).</p>
-</div></div><p>In this section we’ll work with some data gathered from <img src="../images/wrangling/tmdb.svg" class="img-fluid" alt="The Movie Database logo">. I submitted a query for all movies that Patrick Stewart was involved with, and you can find the resulting JSON file <a href="https://raw.githubusercontent.com/srvanderplas/stat-computing-r-python/main/data/Patrick_Stewart.json">here</a>.</p>
+</div></div><p><img src="../images/wrangling/tmdb.svg" class="img-fluid" alt="The Movie Database logo"> In this section we’ll work with some data gathered from TMDB (the movie database). I submitted a query for all movies that Patrick Stewart was involved with, and you can find the resulting JSON file <a href="https://raw.githubusercontent.com/srvanderplas/stat-computing-r-python/main/data/Patrick_Stewart.json">here</a>.</p>
 <div class="callout-demo callout callout-style-default no-icon callout-captioned">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -861,7 +871,7 @@ JSON File Parsing
 <span><span class="va">data_url</span> <span class="op">&lt;-</span> <span class="st">"https://raw.githubusercontent.com/srvanderplas/stat-computing-r-python/main/data/Patrick_Stewart.json"</span></span>
 <span></span>
 <span><span class="va">ps_json</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/jsonlite/man/fromJSON.html">fromJSON</a></span><span class="op">(</span><span class="va">data_url</span><span class="op">)</span></span>
-<span><span class="va">ps_json</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">ps_json</span><span class="op">)</span></span>
 <span><span class="co">## $cast</span></span>
 <span><span class="co">##     adult                    backdrop_path                            genre_ids</span></span>
 <span><span class="co">## 1   FALSE /mNdsbVuRdsyo8eitW2IBW2BWRkU.jpg                      878, 28, 12, 53</span></span>
@@ -5294,35 +5304,28 @@ JSON File Parsing
 <p>So now how do we get our data into a proper form? If we read the documentation a bit further, we can see a “See also” section that has a <code>json_normalize</code> function which promises to “Normalize semi-structured JSON data into a flat table”. That sounds pretty good, let’s try it!</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>ps_cast <span class="op">=</span> pd.json_normalize(patrick_stewart.cast)</span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>ps_cast</span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="co">##      adult                     backdrop_path  ...                 credit_id  order</span></span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="co">## 0    False  /mNdsbVuRdsyo8eitW2IBW2BWRkU.jpg  ...  52fe4225c3a36847f80076d9      0</span></span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="co">## 1    False  /wygUDDRNpeKUnkekRGeLCZM93tA.jpg  ...  52fe4226c3a36847f8007ba3      0</span></span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="co">## 2    False  /vsjuHP9RQZJgYUvvSlO3mjJpXkq.jpg  ...  52fe4226c3a36847f8007c27      0</span></span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="co">## 3    False  /6z9w8eidKWDDXwZNSVNaRolAYEP.jpg  ...  52fe4226c3a36847f8007cf1      0</span></span>
-<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="co">## 4    False  /4ADZ2iiATjoKxZwjJRiEo1x6Fk0.jpg  ...  52fe43d79251416c75020267      0</span></span>
-<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="co">## ..     ...                               ...  ...                       ...    ...</span></span>
-<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a><span class="co">## 145  False  /kyTlMMVWo1GffYoQctZwLqJcwaj.jpg  ...  58dae4eec3a3686caa000492     35</span></span>
-<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a><span class="co">## 146  False  /bywThfrqhK4PUPMPhkrkDAKF0yd.jpg  ...  5c41b8ce0e0a2643d393d9b8     41</span></span>
-<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a><span class="co">## 147  False  /7D2PgX369YYePs4m44IQvROWM42.jpg  ...  548eb982c3a3684ea100604e     52</span></span>
-<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a><span class="co">## 148  False  /zJRVO9G5c7tTfDRvfC13nUDqXdH.jpg  ...  5e758008b7d35200167702ca     53</span></span>
-<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a><span class="co">## 149  False  /wvqdJLVh0mSblly7UnYFPEk04Wd.jpg  ...  57f5a890c3a36816040019b0     62</span></span>
-<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a><span class="co">## </span></span>
-<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a><span class="co">## [150 rows x 17 columns]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>ps_cast.head()</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="co">##    adult                     backdrop_path  ...                 credit_id  order</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="co">## 0  False  /mNdsbVuRdsyo8eitW2IBW2BWRkU.jpg  ...  52fe4225c3a36847f80076d9      0</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="co">## 1  False  /wygUDDRNpeKUnkekRGeLCZM93tA.jpg  ...  52fe4226c3a36847f8007ba3      0</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="co">## 2  False  /vsjuHP9RQZJgYUvvSlO3mjJpXkq.jpg  ...  52fe4226c3a36847f8007c27      0</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="co">## 3  False  /6z9w8eidKWDDXwZNSVNaRolAYEP.jpg  ...  52fe4226c3a36847f8007cf1      0</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="co">## 4  False  /4ADZ2iiATjoKxZwjJRiEo1x6Fk0.jpg  ...  52fe43d79251416c75020267      0</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="co">## </span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a><span class="co">## [5 rows x 17 columns]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Huh, that actually worked! (I’m not used to this type of thing working on the first try).</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>ps_crew <span class="op">=</span> pd.json_normalize(patrick_stewart.crew)</span>
-<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>ps_crew</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>ps_crew.head()</span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="co">##    adult                     backdrop_path  ...  department                 job</span></span>
 <span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="co">## 0  False                              None  ...        Crew              Thanks</span></span>
 <span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="co">## 1  False  /vsjuHP9RQZJgYUvvSlO3mjJpXkq.jpg  ...  Production            Producer</span></span>
 <span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="co">## 2  False  /ccsLztuF4cKlfnriitwdxs0coBa.jpg  ...  Production         Co-Producer</span></span>
 <span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a><span class="co">## 3  False  /eMxx1QohCBbhFEiB9SYIGFo2oK3.jpg  ...  Production  Executive Producer</span></span>
 <span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a><span class="co">## 4  False  /li27iYcGbSp89YTlVRmwujteykw.jpg  ...  Production  Executive Producer</span></span>
-<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a><span class="co">## 5  False  /g5CMQPz5cqUHro9pNLBRW7cT8cY.jpg  ...  Production  Executive Producer</span></span>
-<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a><span class="co">## </span></span>
-<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a><span class="co">## [6 rows x 17 columns]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a><span class="co">## </span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a><span class="co">## [5 rows x 17 columns]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We can combine these as we did in R into a single data frame, and sort by movie ID to simplify the list.</p>
 <div class="cell">
@@ -5360,7 +5363,12 @@ Try It Out: JSON File Parsing
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>I used <img src="../images/wrangling/tmdb.svg" class="img-fluid" alt="The Movie Database logo"> to find all movies resulting from the query “Star Trek” and stored the resulting JSON file <a href="https://raw.githubusercontent.com/srvanderplas/stat-computing-r-python/main/data/Star_Trek.json">here</a>.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="../images/wrangling/tmdb.svg" class="img-fluid figure-img" alt="The Movie Database logo"></p>
+<p></p><figcaption class="figure-caption">The Movie Database API</figcaption><p></p>
+</figure>
+</div>
+<p>I used TMDB to find all movies resulting from the query “Star Trek” and stored the resulting JSON file <a href="https://raw.githubusercontent.com/srvanderplas/stat-computing-r-python/main/data/Star_Trek.json">here</a>.</p>
 <div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-6-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-1" role="tab" aria-controls="tabset-6-1" aria-selected="true">Problem</a></li>
@@ -5458,8 +5466,140 @@ Try It Out: JSON File Parsing
 </div>
 </div>
 </div>
-</section><section id="references" class="level2" data-number="24.4"><h2 data-number="24.4" class="anchored" data-anchor-id="references">
-<span class="header-section-number">24.4</span> References</h2>
+</section><section id="assembling-hierarchical-data" class="level2" data-number="24.5"><h2 data-number="24.5" class="anchored" data-anchor-id="assembling-hierarchical-data">
+<span class="header-section-number">24.5</span> Assembling Hierarchical Data</h2>
+<p>Another common situation we find ourselves in as analysts is to have multiple levels of data.</p>
+<p>Let’s start with a totally absurd hypothetical situation: Suppose I watched the documentary <a href="https://www.imdb.com/title/tt4819510/">“Chicken People”</a> and became interested in the different breeds of chicken. As a data scientist, I want to assemble a dataset on chicken breeds that I might use to decide what breed(s) to raise.</p>
+<p>A site such as <a href="https://www.cacklehatchery.com/chicken-breeds/">Cackle Hatchery</a> has an overall summary table as well as pages for each individual breed. I’m not going to show you how to web scrape here - it’s not relevant to this chapter - but we can at least outline the process:</p>
+<ul>
+<li>Acquire the overall table</li>
+<li>Use the links to each breed in the overall table to get more specific information for each breed
+<ul>
+<li>This will require a function to scrape that individual data</li>
+<li>We can use map to apply that function to acquire individual data from each breed</li>
+</ul>
+</li>
+</ul>
+<div class="callout-demo callout callout-style-default no-icon callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Chicken Breed Data Assembly
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist">
+<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-7-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-1" role="tab" aria-controls="tabset-7-1" aria-selected="true">R</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-2" role="tab" aria-controls="tabset-7-2" aria-selected="false">Python</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-7-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-7-1-tab">
+<p>First, let’s get the table of breed information. I have re-hosted the HTML structure of the files to preserve the ability to use this example even when the website updates/changes.</p>
+<div class="cell">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://rvest.tidyverse.org/">rvest</a></span><span class="op">)</span></span>
+<span><span class="va">url</span> <span class="op">&lt;-</span> <span class="st">"https://www.cacklehatchery.com/chicken-breeds/"</span> <span class="co"># original</span></span>
+<span><span class="va">url</span> <span class="op">&lt;-</span> <span class="st">"https://raw.githubusercontent.com/srvanderplas/datasets/main/raw/chickens/breeds-table.html"</span></span>
+<span><span class="va">breeds</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://xml2.r-lib.org/reference/read_xml.html">read_html</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span>  <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_table.html">html_table</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">breeds</span> <span class="op">&lt;-</span> <span class="va">breeds</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">breeds</span><span class="op">)</span></span>
+<span><span class="co">## # A tibble: 6 × 9</span></span>
+<span><span class="co">##   `Chicken Breed Name`    `Egg Production` `Egg Color` `Cold Hardy` `Heat Hardy`</span></span>
+<span><span class="co">##   &lt;chr&gt;                   &lt;chr&gt;            &lt;chr&gt;       &lt;chr&gt;        &lt;chr&gt;       </span></span>
+<span><span class="co">## 1 Austra White            220-280 eggs pe… Cream       Good         "Good"      </span></span>
+<span><span class="co">## 2 Ayam Cemani             80-100 per year  White       Good         ""          </span></span>
+<span><span class="co">## 3 Barnevelder             150-200 eggs pe… Dark Brown  Poor         ""          </span></span>
+<span><span class="co">## 4 Barred Cochin Bantam    Fair             Brown       Very         ""          </span></span>
+<span><span class="co">## 5 Barred Cochin Standard  110-160 eggs pe… Brown       Very         ""          </span></span>
+<span><span class="co">## 6 Barred Old English Ban… 120 eggs per ye… Cream       Good         ""          </span></span>
+<span><span class="co">## # ℹ 4 more variables: Purpose &lt;chr&gt;, Broody &lt;chr&gt;, `Mating Ratio` &lt;chr&gt;,</span></span>
+<span><span class="co">## #   `Roost Height` &lt;chr&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The <code>html_table</code> method in rvest does not maintain the links to the breed pages, but we can get the list of links separately using some magic that I’m not going to explain here because it’s web scraping.</p>
+<div class="cell">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">breeds</span> <span class="op">&lt;-</span> <span class="va">breeds</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>name <span class="op">=</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_replace.html">str_replace_all</a></span><span class="op">(</span><span class="va">`Chicken Breed Name`</span>, </span>
+<span>                                <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"[[:punct:]]"</span> <span class="op">=</span> <span class="st">""</span>, </span>
+<span>                                  <span class="st">" "</span> <span class="op">=</span> <span class="st">"-"</span>, </span>
+<span>                                  <span class="st">"[^A-z-]"</span> <span class="op">=</span> <span class="st">""</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Original site structure</span></span>
+<span><span class="va">breeds</span><span class="op">$</span><span class="va">link</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://xml2.r-lib.org/reference/read_xml.html">read_html</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://rvest.tidyverse.org/reference/rename.html">html_nodes</a></span><span class="op">(</span><span class="st">"tr a"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_attr.html">html_attr</a></span><span class="op">(</span><span class="st">"href"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"https://www.cacklehatchery.com"</span>, <span class="va">.</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Then, we can apply a function that takes an individual breed URL and acquires additional data from the individual breed pages. Again, I will not explain how this function is constructed here; instead we’ll take its existence for granted.</p>
+<div class="cell">
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://xml2.r-lib.org/">xml2</a></span><span class="op">)</span></span>
+<span><span class="va">parse_breed</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">url</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">html</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://xml2.r-lib.org/reference/read_xml.html">read_html</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span></span>
+<span>  <span class="va">breed_facts</span> <span class="op">&lt;-</span> <span class="va">html</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/rename.html">html_nodes</a></span><span class="op">(</span><span class="st">".breed_facts_tab li"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/rename.html">html_nodes</a></span><span class="op">(</span><span class="st">"strong"</span><span class="op">)</span></span>
+<span>  <span class="va">breed_facts_titles</span> <span class="op">&lt;-</span> <span class="va">breed_facts</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_text.html">html_text</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="va">breed_facts_values</span> <span class="op">&lt;-</span> <span class="va">breed_facts</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
+<span>    <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">xml_parent</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
+<span>    <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map_chr</a></span><span class="op">(</span><span class="va">html_text2</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
+<span>    <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_remove.html">str_remove</a></span><span class="op">(</span><span class="va">breed_facts_titles</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
+<span>    <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_trim.html">str_trim</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>  <span class="va">breed_facts_titles</span> <span class="op">&lt;-</span> <span class="va">breed_facts_titles</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_trim.html">str_trim</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_remove.html">str_remove_all</a></span><span class="op">(</span><span class="st">"[[:punct:]]"</span><span class="op">)</span></span>
+<span>  <span class="va">breed_facts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span><span class="op">(</span><span class="va">breed_facts_values</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rlang.r-lib.org/reference/set_names.html">set_names</a></span><span class="op">(</span><span class="va">breed_facts_titles</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="va">description</span> <span class="op">&lt;-</span> <span class="va">html</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/rename.html">html_nodes</a></span><span class="op">(</span><span class="st">"#tab-description"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_text.html">html_text</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_trim.html">str_trim</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_remove.html">str_remove</a></span><span class="op">(</span><span class="st">"Description\\n\\n"</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="va">parse_availability</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">tab</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="va">dates</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/rename.html">html_nodes</a></span><span class="op">(</span><span class="va">tab</span>, <span class="st">"td:first-of-type"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_text.html">html_text</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>    <span class="va">avail</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/rename.html">html_nodes</a></span><span class="op">(</span><span class="va">tab</span>, <span class="st">"td:last-of-type"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_attr.html">html_attr</a></span><span class="op">(</span><span class="st">"class"</span><span class="op">)</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>date <span class="op">=</span> <span class="va">dates</span>, avail <span class="op">=</span> <span class="va">avail</span><span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span>  </span>
+<span>  <span class="va">availability</span> <span class="op">&lt;-</span> <span class="va">html</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/rename.html">html_node</a></span><span class="op">(</span><span class="st">"#tab-availability table"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu">parse_availability</span><span class="op">(</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="va">videos</span> <span class="op">&lt;-</span> <span class="va">html</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/rename.html">html_node</a></span><span class="op">(</span><span class="st">".video_tab"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/rename.html">html_nodes</a></span><span class="op">(</span><span class="st">"iframe"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_attr.html">html_attr</a></span><span class="op">(</span><span class="st">"src"</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="va">parse_reviews</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">rev</span><span class="op">)</span> <span class="op">{</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span></span>
+<span>      id <span class="op">=</span> <span class="va">rev</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_attr.html">html_attr</a></span><span class="op">(</span><span class="st">"id"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_remove.html">str_remove</a></span><span class="op">(</span><span class="st">"li-comment-"</span><span class="op">)</span>,</span>
+<span>      rating <span class="op">=</span> <span class="va">rev</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/rename.html">html_node</a></span><span class="op">(</span><span class="st">".star-rating span strong"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_text.html">html_text</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>      author <span class="op">=</span> <span class="va">rev</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/rename.html">html_node</a></span><span class="op">(</span><span class="st">".woocommerce-review__author"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_text.html">html_text</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>      date <span class="op">=</span> <span class="va">rev</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/rename.html">html_node</a></span><span class="op">(</span><span class="st">".woocommerce-review__published-date"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_attr.html">html_attr</a></span><span class="op">(</span><span class="st">"datetime"</span><span class="op">)</span>,</span>
+<span>      title <span class="op">=</span> <span class="va">rev</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/rename.html">html_node</a></span><span class="op">(</span><span class="st">".description h3"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_text.html">html_text</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>      review <span class="op">=</span> <span class="va">rev</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/rename.html">html_node</a></span><span class="op">(</span><span class="st">".description p"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_text.html">html_text</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>    <span class="op">)</span></span>
+<span>  <span class="op">}</span></span>
+<span>  <span class="va">reviews</span> <span class="op">&lt;-</span> <span class="va">html</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/rename.html">html_nodes</a></span><span class="op">(</span><span class="st">".comment"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map_dfr.html">map_df</a></span><span class="op">(</span><span class="va">parse_reviews</span><span class="op">)</span></span>
+<span>  </span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span><span class="op">(</span></span>
+<span>    description <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="va">description</span><span class="op">)</span>, </span>
+<span>    availability <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="va">availability</span><span class="op">)</span>, </span>
+<span>    videos <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="va">videos</span><span class="op">)</span>, </span>
+<span>    reviews <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="va">reviews</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="va">additional_info</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map_dfr.html">map_df</a></span><span class="op">(</span><span class="va">breeds</span><span class="op">$</span><span class="va">link</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span>, <span class="va">parse_breed</span><span class="op">)</span></span>
+<span><span class="va">additional_info</span></span>
+<span><span class="co">## # A tibble: 5 × 4</span></span>
+<span><span class="co">##   description availability  videos    reviews      </span></span>
+<span><span class="co">##   &lt;list&gt;      &lt;list&gt;        &lt;list&gt;    &lt;list&gt;       </span></span>
+<span><span class="co">## 1 &lt;chr [1]&gt;   &lt;df [45 × 2]&gt; &lt;chr [1]&gt; &lt;df [21 × 6]&gt;</span></span>
+<span><span class="co">## 2 &lt;chr [1]&gt;   &lt;df [45 × 2]&gt; &lt;chr [2]&gt; &lt;df [2 × 6]&gt; </span></span>
+<span><span class="co">## 3 &lt;chr [1]&gt;   &lt;df [0 × 2]&gt;  &lt;chr [3]&gt; &lt;df [5 × 6]&gt; </span></span>
+<span><span class="co">## 4 &lt;chr [1]&gt;   &lt;df [0 × 2]&gt;  &lt;chr [3]&gt; &lt;df [7 × 6]&gt; </span></span>
+<span><span class="co">## 5 &lt;chr [1]&gt;   &lt;df [45 × 2]&gt; &lt;chr [2]&gt; &lt;df [5 × 6]&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-7-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-2-tab">
+<p>XXX todo</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section><section id="references" class="level2" data-number="24.6"><h2 data-number="24.6" class="anchored" data-anchor-id="references">
+<span class="header-section-number">24.6</span> References</h2>
 
 
 <div id="refs" class="references csl-bib-body" role="doc-bibliography">
