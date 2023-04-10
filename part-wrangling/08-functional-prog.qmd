@@ -4,6 +4,12 @@ In this section, we're going to change focus slightly from learning specific fun
 We're going to start this process by talking about functional programming and its connection to lists. 
 While this topic may be a bit advanced if you're just starting to learn how to program, it may help to skim through the deeper explanation so that you can at least recognize some of these words if you encounter them later.
 
+## {{< fa bullseye >}} Objectives 
+
+- Use functional programming to replace for loops
+- Articulate *why* functional programming can be preferable to using for loops
+- Use functional programming to clean data, model data subsets, and assemble hierarchical data.
+
 ## Programming Philosophies
 
 ::: callout-advanced
@@ -364,9 +370,10 @@ Here's another demonstration of the use of the `tidymodels` package and `purrr` 
 :::
 
 
-## Functional Programming and Complex Data Structures
+## Complex Data Structures
 
-Not all datasets are strictly tabular. One of the most common situations where we get data that can't be made into a completely tabular structure is when we're dealing with hierarchical data: tree structures, (network) graph structures, and even most webpages contain data that isn't strictly tabular in nature.
+Not all datasets are strictly tabular. 
+One of the most common situations where we get data that can't be made into a completely tabular structure is when we're dealing with hierarchical data: tree structures, (network) graph structures, and even most webpages contain data that isn't strictly tabular in nature.
 Sometimes, we can get that data into a tabular structure, but it generally depends on the data itself.
 
 One of the most common structures for storing data on the web is [JSON: JavaScript Object Notation](https://www.json.org/json-en.html)[@wikipediacontributorsJSON2023]. 
@@ -410,7 +417,8 @@ res_tbl <- map_df(res_json, as_tibble) %>%
 writeLines(toJSON(res_tbl, pretty = TRUE), con = "../data/Star_Trek.json")
 ```
 
-In this section we'll work with some data gathered from ![The Movie Database](../images/wrangling/tmdb.svg){fig-alt="The Movie Database logo"}. 
+![The Movie Database](../images/wrangling/tmdb.svg){fig-alt="The Movie Database logo"}
+In this section we'll work with some data gathered from TMDB (the movie database). 
 I submitted a query for all movies that Patrick Stewart was involved with, and you can find the resulting JSON file [here](https://raw.githubusercontent.com/srvanderplas/stat-computing-r-python/main/data/Patrick_Stewart.json). 
 
 ::: callout-demo
@@ -428,7 +436,7 @@ library(jsonlite)
 data_url <- "https://raw.githubusercontent.com/srvanderplas/stat-computing-r-python/main/data/Patrick_Stewart.json"
 
 ps_json <- fromJSON(data_url)
-ps_json
+head(ps_json)
 ```
 
 By default, fromJSON does a LOT of heavy lifting for us: 
@@ -560,14 +568,14 @@ So now how do we get our data into a proper form? If we read the documentation a
 
 ```{python}
 ps_cast = pd.json_normalize(patrick_stewart.cast)
-ps_cast
+ps_cast.head()
 ```
 
 Huh, that actually worked! (I'm not used to this type of thing working on the first try).
 
 ```{python}
 ps_crew = pd.json_normalize(patrick_stewart.crew)
-ps_crew
+ps_crew.head()
 ```
 
 We can combine these as we did in R into a single data frame, and sort by movie ID to simplify the list.
@@ -587,9 +595,9 @@ ps_movies[['id', 'original_title', 'character', 'job']].sort_values(['id'])
 ::: callout-tip
 
 ### Try It Out: JSON File Parsing
+![The Movie Database API](../images/wrangling/tmdb.svg){fig-alt="The Movie Database logo"}
 
-I used
-![The Movie Database API](../images/wrangling/tmdb.svg){fig-alt="The Movie Database logo"} to find all movies resulting from the query "Star Trek" and stored the resulting JSON file [here](https://raw.githubusercontent.com/srvanderplas/stat-computing-r-python/main/data/Star_Trek.json). 
+I used TMDB to find all movies resulting from the query "Star Trek" and stored the resulting JSON file [here](https://raw.githubusercontent.com/srvanderplas/stat-computing-r-python/main/data/Star_Trek.json). 
 
 
 ::: panel-tabset
@@ -663,5 +671,124 @@ plt.show()
 :::
 
 :::
+
+## Assembling Hierarchical Data
+
+Another common situation we find ourselves in as analysts is to have multiple levels of data. 
+
+Let's start with a totally absurd hypothetical situation: Suppose I watched the documentary ["Chicken People"](https://www.imdb.com/title/tt4819510/) and became interested in the different breeds of chicken. 
+As a data scientist, I want to assemble a dataset on chicken breeds that I might use to decide what breed(s) to raise.
+
+A site such as [Cackle Hatchery](https://www.cacklehatchery.com/chicken-breeds/) has an overall summary table as well as pages for each individual breed. 
+I'm not going to show you how to web scrape here - it's not relevant to this chapter - but we can at least outline the process:
+
+- Acquire the overall table
+- Use the links to each breed in the overall table to get more specific information for each breed
+    - This will require a function to scrape that individual data
+    - We can use map to apply that function to acquire individual data from each breed
+
+
+::: callout-demo
+### Chicken Breed Data Assembly
+
+::: panel-tabset
+
+#### R
+
+First, let's get the table of breed information.
+I have re-hosted the HTML structure of the files to preserve the ability to use this example even when the website updates/changes. 
+
+```{r}
+library(rvest)
+url <- "https://www.cacklehatchery.com/chicken-breeds/" # original
+url <- "https://raw.githubusercontent.com/srvanderplas/datasets/main/raw/chickens/breeds-table.html"
+breeds <- read_html(url) |>
+  html_table()
+breeds <- breeds[[1]]
+head(breeds)
+```
+
+The `html_table` method in rvest does not maintain the links to the breed pages, but we can get the list of links separately using some magic that I'm not going to explain here because it's web scraping.
+
+
+```{r}
+breeds <- breeds %>%
+  mutate(name = str_replace_all(`Chicken Breed Name`, 
+                                c("[[:punct:]]" = "", 
+                                  " " = "-", 
+                                  "[^A-z-]" = "")))
+
+# Original site structure
+breeds$link <- read_html(url) %>% 
+  html_nodes("tr a") %>% 
+  html_attr("href") %>% 
+  paste0("https://www.cacklehatchery.com", .)
+
+```
+
+Then, we can apply a function that takes an individual breed URL and acquires additional data from the individual breed pages.
+Again, I will not explain how this function is constructed here; instead we'll take its existence for granted.
+
+```{r}
+library(xml2)
+parse_breed <- function(url) {
+  html <- read_html(url)
+  breed_facts <- html %>% html_nodes(".breed_facts_tab li") %>% html_nodes("strong")
+  breed_facts_titles <- breed_facts %>% html_text()
+  breed_facts_values <- breed_facts %>% 
+    map(xml_parent) %>% 
+    map_chr(html_text2) %>% 
+    str_remove(breed_facts_titles) %>% 
+    str_trim()
+  breed_facts_titles <- breed_facts_titles %>% str_trim() %>% str_remove_all("[[:punct:]]")
+  breed_facts <- data.frame(t(breed_facts_values)) %>% set_names(breed_facts_titles)
+  
+  description <- html %>% html_nodes("#tab-description") %>% html_text() %>% str_trim() %>%
+    str_remove("Description\\n\\n")
+  
+  parse_availability <- function(tab) {
+    dates <- html_nodes(tab, "td:first-of-type") %>% html_text()
+    avail <- html_nodes(tab, "td:last-of-type") %>% html_attr("class")
+    data.frame(date = dates, avail = avail)
+  }
+  
+  availability <- html %>% html_node("#tab-availability table") %>% parse_availability()
+  
+  videos <- html %>% html_node(".video_tab") %>% html_nodes("iframe") %>% html_attr("src")
+  
+  parse_reviews <- function(rev) {
+    data.frame(
+      id = rev %>% html_attr("id") %>% str_remove("li-comment-"),
+      rating = rev %>% html_node(".star-rating span strong") %>% html_text(),
+      author = rev %>% html_node(".woocommerce-review__author") %>% html_text(),
+      date = rev %>% html_node(".woocommerce-review__published-date") %>% html_attr("datetime"),
+      title = rev %>% html_node(".description h3") %>% html_text(),
+      review = rev %>% html_node(".description p") %>% html_text()
+    )
+  }
+  reviews <- html %>% html_nodes(".comment") %>% map_df(parse_reviews)
+  
+  return(tibble(
+    description = list(description), 
+    availability = list(availability), 
+    videos = list(videos), 
+    reviews = list(reviews)))
+}
+
+additional_info <- map_df(breeds$link[1:5], parse_breed)
+additional_info
+```
+
+
+
+#### Python
+
+XXX todo
+
+:::
+
+:::
+
+
 
 ## References
