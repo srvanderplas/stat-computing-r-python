@@ -82,7 +82,7 @@ If you have been using the R pipe (`|>` or `%>%`), you didn't realize it, but yo
 
 ::: callout-demo
 
-## A simple example
+### A simple Functional Example
 
 A **functional** is a function that takes another function as input and returns a vector as output.
 
@@ -139,7 +139,7 @@ print(r2b)
 
 :::
 
-## Replacing Loops
+## Replacing Loops with Functional Programming
 
 One really convenient application of functional programming is to replace loops. 
 As Hadley Wickham says in [-@advr], 
@@ -209,9 +209,9 @@ lego[['set_num', 'name', 'year', 'decade']].head()
 
 For a more interesting example, though, let's consider fitting a different linear regression for each generation of Pokemon, describing the relationship between HP (hit points) and CP (combat power, aka `total` in this dataset). 
 
-::: callout-demo
+::: callout-caution
 
-### Pokemon modeling
+### Example: Pokemon modeling
 
 ::: panel-tabset
 
@@ -219,22 +219,30 @@ For a more interesting example, though, let's consider fitting a different linea
 ```{r base-split-regression}
 poke <- read.csv("https://raw.githubusercontent.com/srvanderplas/datasets/main/clean/pokemon_gen_1-9.csv")
 # Get rid of mega pokemon - they're a different thing
-poke <- subset(poke, !grepl("Mega", poke$variant))
+poke <- subset(poke, !grepl("Mega", poke$variant)) # step 1
 
 # Split into a list of data frames from each gen
-poke_gens <- split(poke, poke$gen)
+poke_gens <- split(poke, poke$gen) # step 2
 
 # Fit linear regressions for each generation of pokemon
-models <- lapply(poke_gens, \(df) lm(total ~ hp, data = df))
+models <- lapply(poke_gens, \(df) lm(total ~ hp, data = df)) # step 3
 
 # Pull out coefficients and r-squared values
-results <- lapply(models, \(res) data.frame(coef1 = coef(res)[1], coef2 = coef(res)[2], rsq = summary(res)$r.squared)) 
+results <- lapply(models, \(res) data.frame(coef1 = coef(res)[1], coef2 = coef(res)[2], rsq = summary(res)$r.squared))  # step 4
 
 # Join the results back into a data.frame
-results <- do.call("rbind", results) 
+results <- do.call("rbind", results) # step 5
 
 results
 ```
+
+1. Data in data frame
+2. Data split into a list of data frames
+3. Models in a list corresponding to data in step 2
+4. Results in a list of data frames corresponding to models in step 3
+5. Bind results in step 4 back into a data frame
+
+In each step, we specify not only what the iterative action should be, but also what form the results will take.
 
 #### Tidy R
 In the tidyverse, we use `tidyr::nest()` to accomplish a similar thing to `split` in base R.
@@ -252,17 +260,29 @@ res <- read_csv("https://raw.githubusercontent.com/srvanderplas/datasets/main/cl
   # str_detect doesn't play nice with NAs, so replace NA with ""
   mutate(variant = replace_na(variant, "")) %>%
   # Remove mega pokemon
-  filter(str_detect(variant, "Mega", negate = T)) %>%
+  filter(str_detect(variant, "Mega", negate = T)) %>% # step 1
   # Sub-data-frames
-  nest(.by = gen) %>%
+  nest(.by = gen) %>% # step 2
   # Fit model
-  mutate(model = map(data, ~lm(total ~ hp, data = .))) %>%
+  mutate(model = map(data, ~lm(total ~ hp, data = .))) %>% # step 3
   # Extract coefficients
-  mutate(res = map(model, ~data.frame(coef1 = coef(.)[1], coef2 = coef(.)[2], rsq = summary(.)$r.squared))) %>%
+  mutate(res = map(model, ~data.frame(coef1 = coef(.)[1], 
+                                      coef2 = coef(.)[2], 
+                                      rsq = summary(.)$r.squared))) %>% # step 4
   # Bind together
-  unnest(c(res))
+  unnest(c(res)) # step 5
 res
 ```
+
+Our data takes the form:
+
+1. An ungrouped data frame
+2. A data frame with 9 rows, one for each generation, with a list-column `data` that contains the full data for each generation
+3. We fit our model and store the model results into another list-column named `model` that contains the fitted model object
+4. We define some summary information and store it into a list-column containing each 1-row data frame
+5. We "unnest" the summary information, which is equivalent to bringing the columns we defined up to the primary level and binding the rows together.
+
+At each step, we're specifying the form of the results along with the contents.
 
 
 #### Python
@@ -298,12 +318,16 @@ res["variant"] = ["" if pd.isna(i) else i for i in res.variant]
 res = res.query('~(variant.str.contains("(?:^[mM]ega)"))')
 
 # Group data frames and apply regression function to each group
-res_reg = res.groupby("gen").apply(pokereg)
+res_reg = (
+  res # step 1
+    .groupby("gen") # step 2
+    .apply(pokereg) # step 3
+)
 
 # Make results into a dataframe and rename the column as 'results'
-res_reg = pd.DataFrame.from_dict(res_reg).rename(columns = {0:'results'})
+res_reg = pd.DataFrame(res_reg).rename(columns = {0:'results'}) # step 4
 
-# Get values of interest and store in new columns
+# Get values of interest and store in new columns # step 5
 res_reg = res_reg.reset_index() # store gen in its own column
 res_reg['coef1'] = res_reg.results.map(lambda x: x.params[0])
 res_reg['coef2'] = res_reg.results.map(lambda x: x.params[1])
@@ -313,6 +337,14 @@ res_reg[['gen', 'coef1', 'coef2', 'rsq']]
 ```
 
 While this doesn't store our data in the same DataFrame as the model results, we do have a key that links the two: the `gen` variable is present in both `res` and `res_reg` and can be used to join the data to the regression results, if necessary.
+
+1. Data in an ungrouped data frame
+2. We group by `gen` (generation)
+3. We apply the function `pokereg` to fit a linear regression, and the results are stored in an indexed Series where the index corresponds to `gen`.
+4. We make the results into a DataFrame so that we can add extra columns, and rename the automatically created Series to `results` to be more descriptive
+5. We create summary information and store the summaries in columns in the data frame.
+
+While the grouping and binding operations are in a different order in Python than in R, the basic specification of the structure of the output each time we iterate is similar.
 
 :::
 
