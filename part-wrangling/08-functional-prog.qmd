@@ -266,9 +266,45 @@ res
 
 
 #### Python
-XXX Stopped here
-```{python}
 
+This construct of storing everything inside a single data frame isn't as common in Python, but we can make it work with only a little extra effort. 
+
+::: aside
+I am sure that the code I've written here is a bit kludgy if you are more fluent in python/pandas than I am, so please feel free to submit a pull request to fix it if you know a better or more "pretty" way to do this.
+:::
+
+You will need to `pip install statsmodels` to get the statsmodels [@seabold2010statsmodels] package that implements many basic statistical models. 
+The `scikit-learn` package [@scikitlearn] is another commonly used package, but it does not have the easy accessor functions to pull out e.g. coefficients and r-squared values, so we'll use `statsmodels` here. 
+
+```{python}
+import pandas as pd
+from statsmodels.formula.api import ols
+
+# Create a function to fit a linear regression
+def pokereg(data):
+  # See https://towardsdatascience.com/linear-regression-in-6-lines-of-python-5e1d0cd05b8d
+  # for how to fit the linear regression
+  x = data[["hp"]].values
+  y = data[["total"]].values
+  model = ols('total ~ hp', data)
+  results = model.fit()
+  return results
+
+res = pd.read_csv("https://raw.githubusercontent.com/srvanderplas/datasets/main/clean/pokemon_gen_1-9.csv")
+# Replace NAs with ""
+res["variant"] = ["" if pd.isna(i) else i for i in res.variant]
+# Remove mega pokemon
+res = res.query('~(variant.str.contains("(?:^[mM]ega)"))')
+# Group data frames and apply regression function to each group
+res_reg = res.groupby("gen").apply(pokereg)
+# Make results into a dataframe and rename the column as 'results'
+res_reg = pd.DataFrame.from_dict(res_reg).rename(columns = {0:'results'})
+
+# Get values of interest and store in new columns
+res_reg['gen'] = res_reg.index
+res_reg['coef1'] = res_reg.results.map(lambda x: x.params[0])
+res_reg['coef2'] = res_reg.results.map(lambda x: x.params[1])
+res_reg['rsq'] = res_reg.results.map(lambda x: x.rsquared)
 ```
 
 :::
