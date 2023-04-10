@@ -390,6 +390,21 @@ ps_id <- patrick_
 mysearch = GET(sprintf("https://api.themoviedb.org/3/person/%d/movie_credits?api_key=%s", ps_id, tmdb_key))
 
 writeLines(content(mysearch, "text"), con = "../data/Patrick_Stewart.json")
+
+
+query <- sprintf("https://api.themoviedb.org/3/search/movie?api_key=%s&query=%s", tmdb_key, "Star%20Trek")
+mysearch = GET(query)
+total_pgs = content(mysearch, "parsed")$total_pages
+
+query <- paste0(query, "&page=", 1:6)
+res <- map(query, GET)
+res_content <- map(res, content, "text")
+res_json <- map(res_content, fromJSON)
+res_tbl <- map_df(res_json, as_tibble) %>%
+  unnest(results) %>%
+  nest(results = -c(page, total_pages, total_results))
+
+writeLines(toJSON(res_tbl, pretty = TRUE), con = "../data/Star_Trek.json")
 ```
 
 In this section we'll work with some data gathered from ![The Movie Database](../images/wrangling/tmdb.svg){fig-alt="The Movie Database logo"}. 
@@ -565,5 +580,85 @@ ps_movies[['id', 'original_title', 'character', 'job']].sort_values(['id'])
 
 :::
 
+
+::: callout-tip
+
+### Try It Out: JSON File Parsing
+
+I used
+![The Movie Database API](../images/wrangling/tmdb.svg){fig-alt="The Movie Database logo"} to find all movies resulting from the query "Star Trek" and stored the resulting JSON file [here](https://raw.githubusercontent.com/srvanderplas/stat-computing-r-python/main/data/Star_Trek.json). 
+
+
+::: panel-tabset
+
+#### Problem
+
+Create a data frame using the Star Trek [query results](https://raw.githubusercontent.com/srvanderplas/stat-computing-r-python/main/data/Star_Trek.json). 
+Because there were 6 pages of query results, the JSON file looks a bit different than the format used in the example above. 
+Can you create a plot of the release date and rating of each movie?
+
+
+#### R solution
+
+```{r}
+library(jsonlite)
+library(tidyr)
+library(dplyr)
+
+file_loc <- "https://raw.githubusercontent.com/srvanderplas/stat-computing-r-python/main/data/Star_Trek.json"
+
+startrek <- fromJSON(file_loc) |>
+  unnest(results)
+
+startrek |>
+  select(title, release_date, popularity, vote_average, vote_count) |>
+  head()
+
+# convert release_date to datetime
+library(lubridate)
+startrek <- startrek |>
+  mutate(rel_date = ymd(release_date))
+
+startrek |>
+  arrange(rel_date) |>
+  select(title, rel_date, popularity, vote_average, vote_count) |>
+  head()
+
+library(ggplot2)
+ggplot(startrek, aes(x = rel_date, y = popularity)) + geom_point() + 
+  xlab("Release Date")
+
+ggplot(startrek, aes(x = rel_date, y = vote_average)) + geom_point() + 
+  xlab("Release Date")
+```
+
+
+
+#### Python solution
+
+```{python}
+import pandas as pd
+import numpy as np
+file_loc = "https://raw.githubusercontent.com/srvanderplas/stat-computing-r-python/main/data/Star_Trek.json"
+trek = pd.read_json(file_loc)
+
+trek['results2'] = trek.results.map(pd.json_normalize)
+
+# This doesn't actually keep the page info but I don't think we need that
+trek_tidy = pd.concat(trek.results2.to_list())
+trek_tidy['rel_date'] = pd.to_datetime(trek_tidy.release_date)
+
+import matplotlib.pyplot as plt
+p1 = trek_tidy.plot.scatter('rel_date', 'popularity')
+plt.show()
+
+p2 = trek_tidy.plot.scatter('rel_date', 'vote_average')
+plt.show()
+```
+
+
+:::
+
+:::
 
 ## References
