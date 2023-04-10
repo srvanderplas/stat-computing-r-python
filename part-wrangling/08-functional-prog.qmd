@@ -151,6 +151,10 @@ This is a *perfect* use case for functional programming, since we're specifying 
 
 If we work with this definition of functional programming, then python list comprehensions are also a functional approach: they specify how the results are collected (usually by putting `[]` around the statement) and how the iteration will occur @rituraj_jainNestedListComprehensions2018.
 
+::: aside
+There is an excellent vignette comparing Base R functional programming approaches to the `purrr` package that is worth a look if you've used one and want to try the other [@hadleywickhamPurrrBase2022].
+:::
+
 Let's look at a few examples.
 
 ::: callout-demo
@@ -209,9 +213,16 @@ lego[['set_num', 'name', 'year', 'decade']].head()
 
 For a more interesting example, though, let's consider fitting a different linear regression for each generation of Pokemon, describing the relationship between HP (hit points) and CP (combat power, aka `total` in this dataset). 
 
+::: {.youtube-video-container .aside}
+Here's another demonstration of the use of the `tidymodels` package and `purrr` to fit multiple regression models to data subsets.
+
+<iframe width="640" height="360" src="https://youtu.be/KdDyRt9XV_g" title="Nested data frames and multiple models in R with Equitable Equations" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+:::
+
 ::: callout-caution
 
 ### Example: Pokemon modeling
+
 
 ::: panel-tabset
 
@@ -350,6 +361,209 @@ While the grouping and binding operations are in a different order in Python tha
 
 :::
 
+## Functional Programming and Complex Data Structures
+
+Not all datasets are strictly tabular. One of the most common situations where we get data that can't be made into a completely tabular structure is when we're dealing with hierarchical data: tree structures, (network) graph structures, and even most webpages contain data that isn't strictly tabular in nature.
+Sometimes, we can get that data into a tabular structure, but it generally depends on the data itself.
+
+One of the most common structures for storing data on the web is [JSON: JavaScript Object Notation](https://www.json.org/json-en.html)[@wikipediacontributorsJSON2023]. 
+
+::: aside
+(JSON is pronounced "Jason", like the person's name).
+:::
+
+```{r get-tmdb-data, include = F, eval = F}
+# https://developers.themoviedb.org/3/search/search-movies
+# https://developers.themoviedb.org/3/discover/movie-discover
+
+library(httr)
+
+resp = GET(sprintf("https://api.themoviedb.org/3/authentication/token/new?api_key=%s", tmdb_key))
+request_token = httr::content(resp, "parsed")$request_token
+
+person = "Patrick%20Stewart"
+personsearch = GET(sprintf("https://api.themoviedb.org/3/search/person?api_key=%s&language=en-US&page=1&include_adult=false&query=%s", tmdb_key, person))
+# content(personsearch, "parsed")
+patrick_stewart <- content(personsearch, "parsed")
+ps_id <- patrick_
+
+mysearch = GET(sprintf("https://api.themoviedb.org/3/person/%d/movie_credits?api_key=%s", ps_id, tmdb_key))
+
+writeLines(content(mysearch, "text"), con = "../data/Patrick_Stewart.json")
+```
+
+In this section we'll work with some data gathered from ![The Movie Database](../images/wrangling/tmdb.svg){fig-alt="The Movie Database logo"}. 
+I submitted a query for all movies that Patrick Stewart was involved with, and you can find the resulting JSON file [here](https://raw.githubusercontent.com/srvanderplas/stat-computing-r-python/main/data/Patrick_Stewart.json). 
+
+::: callout-demo
+
+### JSON File Parsing
+
+::: panel-tabset
+
+#### R
+
+We'll use the `jsonlite` package to read the data in, but invariably this package still requires us to do some post-processing ourselves.
+
+```{r}
+library(jsonlite)
+data_url <- "https://raw.githubusercontent.com/srvanderplas/stat-computing-r-python/main/data/Patrick_Stewart.json"
+
+ps_json <- fromJSON(data_url)
+ps_json
+```
+
+By default, fromJSON does a LOT of heavy lifting for us: 
+
+1. Identifying the structure of the top-level data: cast, crew, and id information
+2. Parses cast information into a data frame with list-columns
+3. Parses crew information into a data frame with list-columns
+
+It's hard to explain how *nice* this is to someone who hasn't had to parse this type of information by hand before... so let's briefly explore that process.
+
+```{r}
+library(jsonlite)
+
+ps_messy <- fromJSON(data_url, simplifyVector = T, simplifyDataFrame = F)
+
+# Top-level objects (show the first object in the list)
+ps_messy$cast[[1]]
+ps_messy$crew[[1]]
+ps_messy$id
+```
+
+Let's start with the cast list. Most objects seem to be single entries; the only thing that isn't is the `genre_ids` field. So let's see whether we can just convert each list entry to a data frame, and then deal with the `genre_ids` column afterwards.
+
+```{r, error = T}
+cast_list <- ps_messy$cast
+
+as.data.frame(cast_list[[1]])
+
+map(cast_list, as.data.frame)
+```
+
+Well, that didn't work, but the error message at least tells us what index is causing the problem: 6. Let's look at that data:
+
+```{r}
+cast_list[[6]]
+```
+
+Ok, so `backdrop_path` is `NULL`, and `as.data.frame` can't handle the fact that some fields are defined (length 1) and others are NULL (length 0). We could possibly replace the NULL with NA first?
+
+```{r}
+fix_nulls <- function(x) {
+  lapply(x, \(y) if (is.null(y)) NA else y)
+}
+
+cast_list_fix <- map(cast_list, fix_nulls)
+cast_list_fix[[6]]
+
+map(cast_list_fix, as.data.frame)
+
+cast_list_fix[[8]]
+```
+
+Ok, well, this time, we have an issue with position 8, and we have an empty list of genre_ids.
+
+An empty list and NULL both have length 0, so let's alter our `fix_nulls` function to test for things of length 0 instead of testing for nulls. 
+That should fix both problems using the same code, and we're trying to directly test for the issue which was causing problems, which is perhaps a better approach anyways.
+
+```{r}
+fix_nulls <- function(x) {
+  lapply(x, \(y) if (length(y) == 0) NA else y)
+}
+
+cast_list_fix <- map(cast_list, fix_nulls)
+cast_list_fix[[8]]
+
+cast_list_df <- map_df(cast_list_fix, as.data.frame)
+cast_list_df
+```
+
+We still have too many rows for each entry because of the multiple `genre_ids`. 
+But we can fix that with the `nest` command.
+
+```{r}
+cast_list <- nest(cast_list_df, genre_ids = genre_ids )
+cast_list
+```
+
+Then, we'd have to apply this whole process to the crew list as well. 
+Let's see how robust our process actually is!
+
+```{r}
+crew_list <- ps_messy$crew
+crew_list_fix <- map(crew_list, fix_nulls)
+crew_list_df <- map_df(crew_list_fix, as.data.frame)
+crew_list <- nest(crew_list_df, genre_ids = genre_ids )
+crew_list
+```
+
+Ok, so that actually worked, but only because the structure of the crew data is the same as the structure of the cast data. 
+
+It's good to see what we'd have to do manually if `fromJSON()` failed on us. 
+It's also an excellent example of functional programming in a practical setting.
+
+Let's finish this up by converting our cast and crew data frames into a single data frame with a variable indicating which source DF is relevant.
+
+```{r}
+patrick_stewart_movies <- bind_rows(
+  mutate(cast_list, role = "cast"),
+  mutate(crew_list, role = "crew")
+)
+patrick_stewart_movies %>%
+  arrange(id)
+```
+
+We could theoretically clean this up so that movies where Patrick Stewart was in both the cast and crew are on a single row, but I think this is "good enough" for now. 
+
+#### Python
+
+Pandas includes a `read_json` function, so let's try that and see if it works as well as `fromJSON()` did in R:
+
+```{python, error = T}
+import pandas as pd
+
+data_url = "https://raw.githubusercontent.com/srvanderplas/stat-computing-r-python/main/data/Patrick_Stewart.json"
+
+pd.read_json(data_url)
+```
+
+If we read the [documentation for read_json](https://pandas.pydata.org/docs/reference/api/pandas.read_json.html), we can see that we have a few different options - maybe playing around with some of those options will help? Our top-level structure is a list with 3 values: cast, crew, and id. So let's see if we can read things in as a series instead of a DataFrame first, and hopefully we can use that to get some traction on the situation.
+
+```{python}
+patrick_stewart = pd.read_json(data_url, typ='series', orient = 'records')
+
+# First item in the cast list
+patrick_stewart.cast[0]
+```
+
+So now how do we get our data into a proper form? If we read the documentation a bit further, we can see a "See also" section that has a `json_normalize` function which promises to "Normalize semi-structured JSON data into a flat table". That sounds pretty good, let's try it!
+
+```{python}
+ps_cast = pd.json_normalize(patrick_stewart.cast)
+ps_cast
+```
+
+Huh, that actually worked! (I'm not used to this type of thing working on the first try).
+
+```{python}
+ps_crew = pd.json_normalize(patrick_stewart.crew)
+ps_crew
+```
+
+We can combine these as we did in R into a single data frame, and sort by movie ID to simplify the list.
+
+```{python}
+ps_cast['role'] = 'cast'
+ps_crew['role'] = 'crew'
+ps_movies = pd.concat([ps_cast, ps_crew])
+ps_movies[['id', 'original_title', 'character', 'job']].sort_values(['id'])
+```
+
+:::
+
+:::
 
 
 ## References
