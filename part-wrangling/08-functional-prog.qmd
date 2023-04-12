@@ -791,5 +791,83 @@ chickens.head()
 :::
 
 
+::: callout-tip
+### Try It Out: Cleaning Chicken Data
+
+::: panel-tabset
+
+#### Problem
+
+Unnest the chicken breed facts data, cleaning the responses. 
+Which jobs are most suitable for a functional programming approach?
+
+#### R solution
+
+```{r}
+# Column names in breed_facts are too different
+# chickens_exp <- chickens |> unnest('breed_facts', names_sep='facts')
+
+fix_names <- function(df) {
+  if (!is.null(df)) {
+    names(df) <- names(df) |>
+      str_to_title() |>
+      str_remove_all("[^A-z]") |> # Remove anything that isn't A-z, including spaces.
+      str_replace_all(c("CountryOfOrigin?" = "Origin", "Weights" = "Weight", "Tlc" = "TLC", "Albc" = "ALBC", "Apa" = "APA", "BroodyS" = "Broody", "Temperment" = "Temperament", "Broody" = "Broody_facts", "Purpose" = "Purpose_facts")) |>
+      str_remove_all("Shell|FarmSource|SourceFarm|Small|PoultryShow") |>
+      str_replace_all("^$", "xxx") # replace blank names with xxx
+    df
+  } else {
+    return(NULL) 
+  }
+}
+chickens_fix <- chickens |> 
+  mutate(breed_facts = map(breed_facts, fix_names))
+
+# Test names
+chickens_fix$breed_facts %>% map(names) |> unlist() |> unique()
+```
+
+We've fixed some of the misspellings and duplications. Rooster, Pullet, and Cockerel are all likely to be parsing issues stemming from Weight, but that's the reality of working with data that is gathered from the internet.
+
+```{r}
+chickens_exp <- chickens_fix |> unnest("breed_facts")
+
+head(chickens_exp[,c(1, 16:37)])
+```
+
+There's still quite a bit of cleaning left to do to get this data to be "pretty". 
+
+```{r}
+tidy_col <- function(x, text = "(?:\\(estimates only, see FAQ\\))|(?:^APA)|(?:^TLC)|EggSize|(?:Fertility Percentage)|(?:Purpose and Type)") {
+  str_remove_all(x, "[\u0600-\u06FF]") |> # Remove non-ascii characters
+    str_remove_all("[Â®â¢Ââ]") |>
+    str_remove_all(text) |>
+    str_remove_all("[:\\.\\?!\\*]") |>
+    str_replace_all("\u0094", "-") |>
+    str_replace_all("-{1,}", "-") |>
+    str_squish()
+}
+
+tmp <- mutate(chickens_exp, across(Class:Purpose_facts, tidy_col))
+
+head(select(tmp, 1, Class:Purpose_facts))
+```
+
+If we consider the use of `across()` as a functional programming technique (which it is), then it is much easier to create a generic `tidy_col` function than to tidy each column individually. There are probably a few things we've missed, but the data looks decent for the amount of time we put in.
+
+#### Python
+
+```{python}
+import pandas as pd
+
+```
+
+XXX TODO
+
+:::
+
+:::
+
+
 
 ## References
