@@ -687,103 +687,79 @@ I'm not going to show you how to web scrape here - it's not relevant to this cha
     - This will require a function to scrape that individual data
     - We can use map to apply that function to acquire individual data from each breed
 
+I've used this approach to generate two files: 
 
-::: callout-demo
-### Chicken Breed Data Assembly
+- [chicken-breeds.csv](https://github.com/srvanderplas/datasets/blob/main/raw/chicken-breeds.csv) - the original table of breed information
+- [chicken-breed-details.json](https://raw.githubusercontent.com/srvanderplas/datasets/main/raw/chicken-breed-details.json), which is a JSON file assembled by scraping information off of each breed's individual page. 
+
+::: callout-tip
+### Try It Out: Chicken Breed Data Assembly
 
 ::: panel-tabset
 
-#### R
+#### Problem
 
-First, let's get the table of breed information.
-I have re-hosted the HTML structure of the files to preserve the ability to use this example even when the website updates/changes. 
+Can you create a nested data frame that has all of the information from both the CSV and JSON file in a single tabular structure?
 
-```{r}
-library(rvest)
-url <- "https://www.cacklehatchery.com/chicken-breeds/" # original
-url <- "https://raw.githubusercontent.com/srvanderplas/datasets/main/raw/chickens/breeds-table.html"
-breeds <- read_html(url) |>
-  html_table()
-breeds <- breeds[[1]]
-head(breeds)
-```
-
-The `html_table` method in rvest does not maintain the links to the breed pages, but we can get the list of links separately using some magic that I'm not going to explain here because it's web scraping.
-
+#### R solution
 
 ```{r}
-breeds <- breeds %>%
-  mutate(name = str_replace_all(`Chicken Breed Name`, 
-                                c("[[:punct:]]" = "", 
-                                  " " = "-", 
-                                  "[^A-z-]" = "")))
+library(readr)
+library(tidyr)
+library(dplyr)
+library(purrr)
+library(jsonlite)
+library(stringr)
 
-# Original site structure
-breeds$link <- read_html(url) %>% 
-  html_nodes("tr a") %>% 
-  html_attr("href") %>% 
-  paste0("https://www.cacklehatchery.com", .)
+overall <- read_csv("https://raw.githubusercontent.com/srvanderplas/datasets/main/raw/chicken-breeds.csv")
+details <- fromJSON("https://raw.githubusercontent.com/srvanderplas/datasets/main/raw/chicken-breed-details.json")
 
+head(overall)
+head(details)
+
+breed_details <- details |>
+unnest(c("name", "description")) |>
+  mutate(name = str_remove_all(name, " Chicken") |>
+           str_remove_all("[^\\x00-\\x7F]+") |> 
+           str_remove_all("Standard|Game") |>
+           str_replace_all("D’", "d") |>
+           str_to_title() |>
+           str_squish())
+
+overall <- overall |>
+  mutate(name = `Chicken Breed Name` |>
+           str_remove_all("[^\\x00-\\x7F]+") |>
+           str_remove_all("Standard|Game") |>
+           str_replace_all("D’", "d") |>
+           str_to_title() |>
+           str_squish())
+
+# Names aren't exactly the same, but close enough after some minor string manipulation
+anti_join(overall, breed_details)
+anti_join(breed_details, overall)
+
+chickens <- full_join(overall, breed_details)
+head(chickens)
 ```
-
-Then, we can apply a function that takes an individual breed URL and acquires additional data from the individual breed pages.
-Again, I will not explain how this function is constructed here; instead we'll take its existence for granted.
-
-```{r}
-library(xml2)
-parse_breed <- function(url) {
-  html <- read_html(url)
-  breed_facts <- html %>% html_nodes(".breed_facts_tab li") %>% html_nodes("strong")
-  breed_facts_titles <- breed_facts %>% html_text()
-  breed_facts_values <- breed_facts %>% 
-    map(xml_parent) %>% 
-    map_chr(html_text2) %>% 
-    str_remove(breed_facts_titles) %>% 
-    str_trim()
-  breed_facts_titles <- breed_facts_titles %>% str_trim() %>% str_remove_all("[[:punct:]]")
-  breed_facts <- data.frame(t(breed_facts_values)) %>% set_names(breed_facts_titles)
-  
-  description <- html %>% html_nodes("#tab-description") %>% html_text() %>% str_trim() %>%
-    str_remove("Description\\n\\n")
-  
-  parse_availability <- function(tab) {
-    dates <- html_nodes(tab, "td:first-of-type") %>% html_text()
-    avail <- html_nodes(tab, "td:last-of-type") %>% html_attr("class")
-    data.frame(date = dates, avail = avail)
-  }
-  
-  availability <- html %>% html_node("#tab-availability table") %>% parse_availability()
-  
-  videos <- html %>% html_node(".video_tab") %>% html_nodes("iframe") %>% html_attr("src")
-  
-  parse_reviews <- function(rev) {
-    data.frame(
-      id = rev %>% html_attr("id") %>% str_remove("li-comment-"),
-      rating = rev %>% html_node(".star-rating span strong") %>% html_text(),
-      author = rev %>% html_node(".woocommerce-review__author") %>% html_text(),
-      date = rev %>% html_node(".woocommerce-review__published-date") %>% html_attr("datetime"),
-      title = rev %>% html_node(".description h3") %>% html_text(),
-      review = rev %>% html_node(".description p") %>% html_text()
-    )
-  }
-  reviews <- html %>% html_nodes(".comment") %>% map_df(parse_reviews)
-  
-  return(tibble(
-    description = list(description), 
-    availability = list(availability), 
-    videos = list(videos), 
-    reviews = list(reviews)))
-}
-
-additional_info <- map_df(breeds$link[1:10], parse_breed)
-additional_info
-
-```
-
-
 
 #### Python
 
+```{python}
+import pandas as pd
+overall = pd.read_csv("https://raw.githubusercontent.com/srvanderplas/datasets/main/raw/chicken-breeds.csv")
+details = pd.read_json("https://raw.githubusercontent.com/srvanderplas/datasets/main/raw/chicken-breed-details.json")
+
+overall['name'] = overall['Chicken Breed Name'].str.replace("[^\x00-\x7F]|Standard|Game|Chicken", '', regex=True).str.replace("D’", "d").str.replace("\s{1,}", " ", regex = True).str.title().str.strip()
+
+details = details.explode(['name', 'description'])
+
+details['name'] = details['name'].str.replace("[^\x00-\x7F]|Standard|Game|Chicken", '', regex=True).str.replace("D’", "d").str.replace("\s{1,}", " ", regex = True).str.title().str.strip()
+  
+chickens = overall.merge(details, how='outer', on = 'name',  indicator=True)
+chickens[(chickens._merge!='both')][['name', '_merge']]
+
+chickens.head()
+```
 
 :::
 
