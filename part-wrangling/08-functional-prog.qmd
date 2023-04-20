@@ -417,7 +417,7 @@ res_tbl <- map_df(res_json, as_tibble) %>%
 writeLines(toJSON(res_tbl, pretty = TRUE), con = "../data/Star_Trek.json")
 ```
 
-![The Movie Database](../images/wrangling/tmdb.svg){fig-alt="The Movie Database logo"}
+![The Movie Database](../images/wrangling/tmdb.svg){fig-alt="The Movie Database logo" width="50%"}
 In this section we'll work with some data gathered from TMDB (the movie database). 
 I submitted a query for all movies that Patrick Stewart was involved with, and you can find the resulting JSON file [here](https://raw.githubusercontent.com/srvanderplas/stat-computing-r-python/main/data/Patrick_Stewart.json). 
 
@@ -436,8 +436,15 @@ library(jsonlite)
 data_url <- "https://raw.githubusercontent.com/srvanderplas/stat-computing-r-python/main/data/Patrick_Stewart.json"
 
 ps_json <- fromJSON(data_url)
-head(ps_json)
 ```
+
+
+<details><summary>Exploring the output structure</summary>
+```{r}
+# head(ps_json) # This output is too long
+map(ps_json, head) # show the first 6 rows of each element in the list
+```
+</details>
 
 By default, fromJSON does a LOT of heavy lifting for us: 
 
@@ -451,28 +458,42 @@ It's hard to explain how *nice* this is to someone who hasn't had to parse this 
 library(jsonlite)
 
 ps_messy <- fromJSON(data_url, simplifyVector = T, simplifyDataFrame = F)
+```
 
+
+<details><summary>Exploring the output structure (long version)</summary>
+```{r}
 # Top-level objects (show the first object in the list)
 ps_messy$cast[[1]]
 ps_messy$crew[[1]]
 ps_messy$id
 ```
+</details>
 
 Let's start with the cast list. Most objects seem to be single entries; the only thing that isn't is the `genre_ids` field. So let's see whether we can just convert each list entry to a data frame, and then deal with the `genre_ids` column afterwards.
 
 ```{r, error = T}
 cast_list <- ps_messy$cast
+```
 
+
+<details><summary>Data frame conversion</summary>
+```{r}
 as.data.frame(cast_list[[1]])
+```
+</details>
 
+```{r}
 map(cast_list, as.data.frame)
 ```
 
 Well, that didn't work, but the error message at least tells us what index is causing the problem: 6. Let's look at that data:
 
+<details><summary>Data frame conversion errors</summary>
 ```{r}
-cast_list[[6]]
+cast_list[[6]][1:5]
 ```
+</details>
 
 Ok, so `backdrop_path` is `NULL`, and `as.data.frame` can't handle the fact that some fields are defined (length 1) and others are NULL (length 0). We could possibly replace the NULL with NA first?
 
@@ -482,11 +503,12 @@ fix_nulls <- function(x) {
 }
 
 cast_list_fix <- map(cast_list, fix_nulls)
-cast_list_fix[[6]]
+
+cast_list_fix[[6]][1:5]
 
 map(cast_list_fix, as.data.frame)
 
-cast_list_fix[[8]]
+cast_list_fix[[8]][1:5]
 ```
 
 Ok, well, this time, we have an issue with position 8, and we have an empty list of genre_ids.
@@ -500,10 +522,10 @@ fix_nulls <- function(x) {
 }
 
 cast_list_fix <- map(cast_list, fix_nulls)
-cast_list_fix[[8]]
+cast_list_fix[[8]][1:5]
 
 cast_list_df <- map_df(cast_list_fix, as.data.frame)
-cast_list_df
+cast_list_df[1:10, 1:5]
 ```
 
 We still have too many rows for each entry because of the multiple `genre_ids`. 
@@ -511,7 +533,7 @@ But we can fix that with the `nest` command.
 
 ```{r}
 cast_list <- nest(cast_list_df, genre_ids = genre_ids )
-cast_list
+cast_list[1:10,c(1:4, 17)]
 ```
 
 Then, we'd have to apply this whole process to the crew list as well. 
@@ -522,7 +544,7 @@ crew_list <- ps_messy$crew
 crew_list_fix <- map(crew_list, fix_nulls)
 crew_list_df <- map_df(crew_list_fix, as.data.frame)
 crew_list <- nest(crew_list_df, genre_ids = genre_ids )
-crew_list
+crew_list[1:5,c(1:4, 17)]
 ```
 
 Ok, so that actually worked, but only because the structure of the crew data is the same as the structure of the cast data. 
@@ -560,6 +582,9 @@ If we read the [documentation for read_json](https://pandas.pydata.org/docs/refe
 ```{python}
 patrick_stewart = pd.read_json(data_url, typ='series', orient = 'records')
 
+# List the objects
+patrick_stewart.index
+
 # First item in the cast list
 patrick_stewart.cast[0]
 ```
@@ -595,7 +620,7 @@ ps_movies[['id', 'original_title', 'character', 'job']].sort_values(['id'])
 ::: callout-tip
 
 ### Try It Out: JSON File Parsing
-![The Movie Database API](../images/wrangling/tmdb.svg){fig-alt="The Movie Database logo"}
+![The Movie Database](../images/wrangling/tmdb.svg){fig-alt="The Movie Database logo" width="50%"}
 
 I used TMDB to find all movies resulting from the query "Star Trek" and stored the resulting JSON file [here](https://raw.githubusercontent.com/srvanderplas/stat-computing-r-python/main/data/Star_Trek.json). 
 
@@ -687,103 +712,157 @@ I'm not going to show you how to web scrape here - it's not relevant to this cha
     - This will require a function to scrape that individual data
     - We can use map to apply that function to acquire individual data from each breed
 
+I've used this approach to generate two files: 
 
-::: callout-demo
-### Chicken Breed Data Assembly
+- [chicken-breeds.csv](https://github.com/srvanderplas/datasets/blob/main/raw/chicken-breeds.csv) - the original table of breed information
+- [chicken-breed-details.json](https://raw.githubusercontent.com/srvanderplas/datasets/main/raw/chicken-breed-details.json), which is a JSON file assembled by scraping information off of each breed's individual page. 
+
+::: callout-tip
+### Try It Out: Chicken Breed Data Assembly
 
 ::: panel-tabset
 
-#### R
+#### Problem
 
-First, let's get the table of breed information.
-I have re-hosted the HTML structure of the files to preserve the ability to use this example even when the website updates/changes. 
+Can you create a nested data frame that has all of the information from both the CSV and JSON file in a single tabular structure?
 
-```{r}
-library(rvest)
-url <- "https://www.cacklehatchery.com/chicken-breeds/" # original
-url <- "https://raw.githubusercontent.com/srvanderplas/datasets/main/raw/chickens/breeds-table.html"
-breeds <- read_html(url) |>
-  html_table()
-breeds <- breeds[[1]]
-head(breeds)
-```
-
-The `html_table` method in rvest does not maintain the links to the breed pages, but we can get the list of links separately using some magic that I'm not going to explain here because it's web scraping.
-
+#### R solution
 
 ```{r}
-breeds <- breeds %>%
-  mutate(name = str_replace_all(`Chicken Breed Name`, 
-                                c("[[:punct:]]" = "", 
-                                  " " = "-", 
-                                  "[^A-z-]" = "")))
+library(readr)
+library(tidyr)
+library(dplyr)
+library(purrr)
+library(jsonlite)
+library(stringr)
 
-# Original site structure
-breeds$link <- read_html(url) %>% 
-  html_nodes("tr a") %>% 
-  html_attr("href") %>% 
-  paste0("https://www.cacklehatchery.com", .)
+overall <- read_csv("https://raw.githubusercontent.com/srvanderplas/datasets/main/raw/chicken-breeds.csv")
+details <- fromJSON("https://raw.githubusercontent.com/srvanderplas/datasets/main/raw/chicken-breed-details.json")
 
+head(overall)
+head(details)
+
+breed_details <- details |>
+unnest(c("name", "description")) |>
+  mutate(name = str_remove_all(name, " Chicken") |>
+           str_remove_all("[^\\x00-\\x7F]+") |> 
+           str_remove_all("Standard|Game") |>
+           str_replace_all("D’", "d") |>
+           str_to_title() |>
+           str_squish())
+
+overall <- overall |>
+  mutate(name = `Chicken Breed Name` |>
+           str_remove_all("[^\\x00-\\x7F]+") |>
+           str_remove_all("Standard|Game") |>
+           str_replace_all("D’", "d") |>
+           str_to_title() |>
+           str_squish())
+
+# Names aren't exactly the same, but close enough after some minor string manipulation
+anti_join(overall, breed_details)
+anti_join(breed_details, overall)
+
+chickens <- full_join(overall, breed_details)
+head(chickens)
 ```
-
-Then, we can apply a function that takes an individual breed URL and acquires additional data from the individual breed pages.
-Again, I will not explain how this function is constructed here; instead we'll take its existence for granted.
-
-```{r}
-library(xml2)
-parse_breed <- function(url) {
-  html <- read_html(url)
-  breed_facts <- html %>% html_nodes(".breed_facts_tab li") %>% html_nodes("strong")
-  breed_facts_titles <- breed_facts %>% html_text()
-  breed_facts_values <- breed_facts %>% 
-    map(xml_parent) %>% 
-    map_chr(html_text2) %>% 
-    str_remove(breed_facts_titles) %>% 
-    str_trim()
-  breed_facts_titles <- breed_facts_titles %>% str_trim() %>% str_remove_all("[[:punct:]]")
-  breed_facts <- data.frame(t(breed_facts_values)) %>% set_names(breed_facts_titles)
-  
-  description <- html %>% html_nodes("#tab-description") %>% html_text() %>% str_trim() %>%
-    str_remove("Description\\n\\n")
-  
-  parse_availability <- function(tab) {
-    dates <- html_nodes(tab, "td:first-of-type") %>% html_text()
-    avail <- html_nodes(tab, "td:last-of-type") %>% html_attr("class")
-    data.frame(date = dates, avail = avail)
-  }
-  
-  availability <- html %>% html_node("#tab-availability table") %>% parse_availability()
-  
-  videos <- html %>% html_node(".video_tab") %>% html_nodes("iframe") %>% html_attr("src")
-  
-  parse_reviews <- function(rev) {
-    data.frame(
-      id = rev %>% html_attr("id") %>% str_remove("li-comment-"),
-      rating = rev %>% html_node(".star-rating span strong") %>% html_text(),
-      author = rev %>% html_node(".woocommerce-review__author") %>% html_text(),
-      date = rev %>% html_node(".woocommerce-review__published-date") %>% html_attr("datetime"),
-      title = rev %>% html_node(".description h3") %>% html_text(),
-      review = rev %>% html_node(".description p") %>% html_text()
-    )
-  }
-  reviews <- html %>% html_nodes(".comment") %>% map_df(parse_reviews)
-  
-  return(tibble(
-    description = list(description), 
-    availability = list(availability), 
-    videos = list(videos), 
-    reviews = list(reviews)))
-}
-
-additional_info <- map_df(breeds$link[1:10], parse_breed)
-additional_info
-
-```
-
-
 
 #### Python
 
+```{python}
+import pandas as pd
+overall = pd.read_csv("https://raw.githubusercontent.com/srvanderplas/datasets/main/raw/chicken-breeds.csv")
+details = pd.read_json("https://raw.githubusercontent.com/srvanderplas/datasets/main/raw/chicken-breed-details.json")
+
+overall['name'] = overall['Chicken Breed Name'].str.replace("[^\x00-\x7F]|Standard|Game|Chicken", '', regex=True).str.replace("D’", "d").str.replace("\s{1,}", " ", regex = True).str.title().str.strip()
+
+details = details.explode(['name', 'description'])
+
+details['name'] = details['name'].str.replace("[^\x00-\x7F]|Standard|Game|Chicken", '', regex=True).str.replace("D’", "d").str.replace("\s{1,}", " ", regex = True).str.title().str.strip()
+  
+chickens = overall.merge(details, how='outer', on = 'name',  indicator=True)
+chickens[(chickens._merge!='both')][['name', '_merge']]
+
+chickens.head()
+```
+
+:::
+
+:::
+
+
+::: callout-tip
+### Try It Out: Cleaning Chicken Data
+
+::: panel-tabset
+
+#### Problem
+
+Unnest the chicken breed facts data, cleaning the responses. 
+Which jobs are most suitable for a functional programming approach?
+
+#### R solution
+
+```{r}
+# Column names in breed_facts are too different
+# chickens_exp <- chickens |> unnest('breed_facts', names_sep='facts')
+
+fix_names <- function(df) {
+  if (!is.null(df)) {
+    names(df) <- names(df) |>
+      str_to_title() |>
+      str_remove_all("[^A-z]") |> # Remove anything that isn't A-z, including spaces.
+      str_replace_all(c("CountryOfOrigin?" = "Origin", "Weights" = "Weight", "Tlc" = "TLC", "Albc" = "ALBC", "Apa" = "APA", "BroodyS" = "Broody", "Temperment" = "Temperament", "Broody" = "Broody_facts", "Purpose" = "Purpose_facts")) |>
+      str_remove_all("Shell|FarmSource|SourceFarm|Small|PoultryShow") |>
+      str_replace_all("^$", "xxx") # replace blank names with xxx
+    df
+  } else {
+    return(NULL) 
+  }
+}
+chickens_fix <- chickens |> 
+  mutate(breed_facts = map(breed_facts, fix_names))
+
+# Test names
+chickens_fix$breed_facts %>% map(names) |> unlist() |> unique()
+```
+
+We've fixed some of the misspellings and duplications. Rooster, Pullet, and Cockerel are all likely to be parsing issues stemming from Weight, but that's the reality of working with data that is gathered from the internet.
+
+```{r}
+chickens_exp <- chickens_fix |> unnest("breed_facts")
+
+head(chickens_exp[,c(1, 16:37)])
+```
+
+There's still quite a bit of cleaning left to do to get this data to be "pretty". 
+
+```{r}
+tidy_col <- function(x, text = "(?:\\(estimates only, see FAQ\\))|(?:^APA)|(?:^TLC)|EggSize|(?:Fertility Percentage)|(?:Purpose and Type)") {
+  str_remove_all(x, "[\u0600-\u06FF]") |> # Remove non-ascii characters
+    str_remove_all("[Â®â¢Ââ]") |>
+    str_remove_all(text) |>
+    str_remove_all("[:\\.\\?!\\*]") |>
+    str_replace_all("\u0094", "-") |>
+    str_replace_all("-{1,}", "-") |>
+    str_squish()
+}
+
+tmp <- mutate(chickens_exp, across(Class:Purpose_facts, tidy_col))
+
+head(select(tmp, 1, Class:Purpose_facts))
+```
+
+If we consider the use of `across()` as a functional programming technique (which it is), then it is much easier to create a generic `tidy_col` function than to tidy each column individually. There are probably a few things we've missed, but the data looks decent for the amount of time we put in.
+
+#### Python
+
+```{python}
+import pandas as pd
+
+```
+
+XXX TODO
 
 :::
 
