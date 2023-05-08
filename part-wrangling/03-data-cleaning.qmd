@@ -652,13 +652,22 @@ Let's add a column that indicates how many types a pokemon has.
 ```{r mutate-add-variables}
 poke <- read_csv("https://github.com/srvanderplas/datasets/raw/main/clean/pokemon_gen_1-9.csv")
 
+# This splits type_1,type_2 into two separate variables. 
+# Don't worry about the string processing (gsub) just now
+# Focus on how variables are defined.
+poke$type_1 <- gsub(",.*$", "", poke$type) # Replace anything after comma with ''
+poke$type_2 <- gsub("^.*,", "", poke$type) # Use the 2nd type
+poke$type_2[poke$type_1 == poke$type_2] <- NA # Type 2 only exists if not same as Type 1
+
 poke$no_types <- 1 # set a default value
-poke$no_types[!is.na(poke$type_2)] <- 2 # set the value if type_2 is not NA
+poke$no_types[grepl(",", poke$type)] <- 2 # set the value if there's not a comma in type
 
 # This is a bit faster
-poke$no_types <- ifelse(is.na(poke$type_2), 1, 2)
+poke$no_types <- ifelse(grepl(",", poke$type), 2, 1)
 
-# This checks number of types vs. value of type_2 (sanity)
+# Sanity check
+# This checks number of types vs. value of type_2
+# If type 2 is NA, then number of types should be 1
 t(table(poke$type_2, poke$no_types, useNA = 'ifany'))
 ```
 
@@ -671,6 +680,13 @@ I could reduce that to 2x with the `ifelse` function, but it's still a lot of ty
 poke <- read_csv("https://github.com/srvanderplas/datasets/raw/main/clean/pokemon_gen_1-9.csv")
 
 poke <- poke %>%
+  # This splits type into type_1,type_2 : two separate variables. 
+  # Don't worry about the string processing (str_extract) just now
+  # Focus on how variables are defined: 
+  #   we use a function on the type column
+  #   within the mutate statement.
+  mutate(type_1 = str_extract(type, "^(.*),", group = 1),
+         type_2 = str_extract(type, "(.*),(.*)", group = 2)) %>%
   mutate(no_types = if_else(is.na(type_2), 1, 2))
 
 select(poke, type_2, no_types) %>% table(useNA = 'ifany') %>% t()
@@ -686,8 +702,17 @@ In python, this type of variable operation (replacing one value with another) ca
 import pandas as pd
 poke = pd.read_csv("https://github.com/srvanderplas/datasets/raw/main/clean/pokemon_gen_1-9.csv")
 
+# This splits type into two columns, type_1 and type_2, based on ","
+poke[["type_1", "type_2"]] = poke["type"].apply(lambda x: pd.Series(str(x).split(",")))
+
+# This defines number of types
 poke["no_types"] = 1 # default value
 poke.loc[~poke.type_2.isna(), "no_types"] = 2 # change those with a defined type 2
+
+
+poke.groupby(["no_types", "type_2"], dropna=False).size()
+# When type_2 is NaN, no_types is 1
+# When type_2 is defined, no_types is 2
 ```
 
 Another function that may be useful is the `assign` function, which can be used to create new variables if you don't want to use the `["new_col"]` notation. 
