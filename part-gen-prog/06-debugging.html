@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.2.313">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="dcterms.date" content="2023-04-20">
+<meta name="dcterms.date" content="2023-05-08">
 <title>Statistical Computing using R and Python - 13&nbsp; Debugging</title>
 <style>
 code{white-space: pre-wrap;}
@@ -146,7 +146,7 @@ window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
-</script><link rel="stylesheet" href="../build_deps/style.css">
+</script><script src="https://kit.fontawesome.com/baac5f0610.js" crossorigin="anonymous"></script><link rel="stylesheet" href="../build_deps/style.css">
 </head>
 <body class="nav-sidebar floating slimcontent">
 
@@ -368,6 +368,7 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
   <li><a href="#r-debug" id="toc-r-debug" class="nav-link" data-scroll-target="#r-debug"><span class="toc-section-number">15.0.3</span>  R <code>debug()</code></a></li>
   </ul>
 </li>
+  <li><a href="#sec-debugging-refs" id="toc-sec-debugging-refs" class="nav-link" data-scroll-target="#sec-debugging-refs"><span class="toc-section-number">15.1</span>  References</a></li>
   </ul><div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/srvanderplas/stat-computing-r-python/edit/main/part-gen-prog/06-debugging.qmd" class="toc-action">Edit this page</a></p></div></div></nav>
     </div>
 <!-- main -->
@@ -383,7 +384,7 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">April 20, 2023</p>
+      <p class="date">May 8, 2023</p>
     </div>
   </div>
   
@@ -922,7 +923,7 @@ Real world example: Web Scraping
 <span><span class="co">## Error in UseMethod("xml_find_all"): no applicable method for 'xml_find_all' applied to an object of class "function"</span></span>
 <span><span class="co"># find the table that contains it</span></span>
 <span><span class="fu">search_for_parent</span><span class="op">(</span><span class="va">poll_results</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="st">"table"</span><span class="op">)</span> </span>
-<span><span class="co">## Error in nodeset_apply(x, function(x) .Call(node_parents, x)): object 'poll_results' not found</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span><span class="co">## Error in eval(expr, envir, enclos): object 'poll_results' not found</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
@@ -954,18 +955,18 @@ Real world example: Web Scraping
 <span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>html_file <span class="op">=</span> <span class="bu">open</span>(<span class="st">'shorturl.at/jkS59'</span>, <span class="st">'r'</span>)</span>
-<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): FileNotFoundError: [Errno 2] No such file or directory: 'shorturl.at/jkS59'</span></span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a><span class="co">## Error: FileNotFoundError: [Errno 2] No such file or directory: 'shorturl.at/jkS59'</span></span>
 <span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>page <span class="op">=</span> html_file.read() </span>
 <span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a><span class="co"># Read the page as HTML</span></span>
-<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'html_file' is not defined</span></span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a><span class="co">## Error: NameError: name 'html_file' is not defined</span></span>
 <span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>soup <span class="op">=</span> BeautifulSoup(page, <span class="st">'html'</span>)</span>
 <span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a><span class="co"># Find all poll results in any table</span></span>
-<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'page' is not defined</span></span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a><span class="co">## Error: NameError: name 'page' is not defined</span></span>
 <span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>poll_results <span class="op">=</span> soup.findAll(<span class="st">'td'</span>, {<span class="st">'class'</span>: <span class="st">'lp-results'</span>})</span>
 <span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a><span class="co"># Find the table that contains the first poll result</span></span>
-<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'soup' is not defined</span></span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a><span class="co">## Error: NameError: name 'soup' is not defined</span></span>
 <span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>search_for_parent(poll_results[<span class="dv">0</span>], <span class="st">'table'</span>)</span>
-<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): NameError: name 'poll_results' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a><span class="co">## Error: NameError: name 'poll_results' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
@@ -1071,20 +1072,20 @@ Try it out: Hurricanes in R
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">storms</span>, package <span class="op">=</span> <span class="st">"dplyr"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">storms</span><span class="op">)</span> <span class="co"># make sure the data exists and is formatted as expected</span></span>
-<span><span class="co">## tibble [11,859 × 13] (S3: tbl_df/tbl/data.frame)</span></span>
-<span><span class="co">##  $ name                        : chr [1:11859] "Amy" "Amy" "Amy" "Amy" ...</span></span>
-<span><span class="co">##  $ year                        : num [1:11859] 1975 1975 1975 1975 1975 ...</span></span>
-<span><span class="co">##  $ month                       : num [1:11859] 6 6 6 6 6 6 6 6 6 6 ...</span></span>
-<span><span class="co">##  $ day                         : int [1:11859] 27 27 27 27 28 28 28 28 29 29 ...</span></span>
-<span><span class="co">##  $ hour                        : num [1:11859] 0 6 12 18 0 6 12 18 0 6 ...</span></span>
-<span><span class="co">##  $ lat                         : num [1:11859] 27.5 28.5 29.5 30.5 31.5 32.4 33.3 34 34.4 34 ...</span></span>
-<span><span class="co">##  $ long                        : num [1:11859] -79 -79 -79 -79 -78.8 -78.7 -78 -77 -75.8 -74.8 ...</span></span>
-<span><span class="co">##  $ status                      : chr [1:11859] "tropical depression" "tropical depression" "tropical depression" "tropical depression" ...</span></span>
-<span><span class="co">##  $ category                    : Ord.factor w/ 7 levels "-1"&lt;"0"&lt;"1"&lt;"2"&lt;..: 1 1 1 1 1 1 1 1 2 2 ...</span></span>
-<span><span class="co">##  $ wind                        : int [1:11859] 25 25 25 25 25 25 25 30 35 40 ...</span></span>
-<span><span class="co">##  $ pressure                    : int [1:11859] 1013 1013 1013 1013 1012 1012 1011 1006 1004 1002 ...</span></span>
-<span><span class="co">##  $ tropicalstorm_force_diameter: int [1:11859] NA NA NA NA NA NA NA NA NA NA ...</span></span>
-<span><span class="co">##  $ hurricane_force_diameter    : int [1:11859] NA NA NA NA NA NA NA NA NA NA ...</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span><span class="co">## tibble [19,066 × 13] (S3: tbl_df/tbl/data.frame)</span></span>
+<span><span class="co">##  $ name                        : chr [1:19066] "Amy" "Amy" "Amy" "Amy" ...</span></span>
+<span><span class="co">##  $ year                        : num [1:19066] 1975 1975 1975 1975 1975 ...</span></span>
+<span><span class="co">##  $ month                       : num [1:19066] 6 6 6 6 6 6 6 6 6 6 ...</span></span>
+<span><span class="co">##  $ day                         : int [1:19066] 27 27 27 27 28 28 28 28 29 29 ...</span></span>
+<span><span class="co">##  $ hour                        : num [1:19066] 0 6 12 18 0 6 12 18 0 6 ...</span></span>
+<span><span class="co">##  $ lat                         : num [1:19066] 27.5 28.5 29.5 30.5 31.5 32.4 33.3 34 34.4 34 ...</span></span>
+<span><span class="co">##  $ long                        : num [1:19066] -79 -79 -79 -79 -78.8 -78.7 -78 -77 -75.8 -74.8 ...</span></span>
+<span><span class="co">##  $ status                      : Factor w/ 9 levels "disturbance",..: 7 7 7 7 7 7 7 7 8 8 ...</span></span>
+<span><span class="co">##  $ category                    : num [1:19066] NA NA NA NA NA NA NA NA NA NA ...</span></span>
+<span><span class="co">##  $ wind                        : int [1:19066] 25 25 25 25 25 25 25 30 35 40 ...</span></span>
+<span><span class="co">##  $ pressure                    : int [1:19066] 1013 1013 1013 1013 1012 1012 1011 1006 1004 1002 ...</span></span>
+<span><span class="co">##  $ tropicalstorm_force_diameter: int [1:19066] NA NA NA NA NA NA NA NA NA NA ...</span></span>
+<span><span class="co">##  $ hurricane_force_diameter    : int [1:19066] NA NA NA NA NA NA NA NA NA NA ...</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Everything looks ok in the setup chunk…</p>
 <div class="cell">
@@ -1123,16 +1124,16 @@ Try it out: Hurricanes in R
 <div class="cell">
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">storms</span><span class="op">)</span></span>
 <span><span class="co">## # A tibble: 6 × 13</span></span>
-<span><span class="co">##   name   year month   day  hour   lat  long status categ…¹  wind press…² tropi…³</span></span>
-<span><span class="co">##   &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;chr&gt;  &lt;ord&gt;   &lt;int&gt;   &lt;int&gt;   &lt;int&gt;</span></span>
-<span><span class="co">## 1 Amy    1975     6    27     0  27.5 -79   tropi… -1         25    1013      NA</span></span>
-<span><span class="co">## 2 Amy    1975     6    27     6  28.5 -79   tropi… -1         25    1013      NA</span></span>
-<span><span class="co">## 3 Amy    1975     6    27    12  29.5 -79   tropi… -1         25    1013      NA</span></span>
-<span><span class="co">## 4 Amy    1975     6    27    18  30.5 -79   tropi… -1         25    1013      NA</span></span>
-<span><span class="co">## 5 Amy    1975     6    28     0  31.5 -78.8 tropi… -1         25    1012      NA</span></span>
-<span><span class="co">## 6 Amy    1975     6    28     6  32.4 -78.7 tropi… -1         25    1012      NA</span></span>
-<span><span class="co">## # … with 1 more variable: hurricane_force_diameter &lt;int&gt;, and abbreviated</span></span>
-<span><span class="co">## #   variable names ¹​category, ²​pressure, ³​tropicalstorm_force_diameter</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span><span class="co">##   name   year month   day  hour   lat  long status       category  wind pressure</span></span>
+<span><span class="co">##   &lt;chr&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;fct&gt;           &lt;dbl&gt; &lt;int&gt;    &lt;int&gt;</span></span>
+<span><span class="co">## 1 Amy    1975     6    27     0  27.5 -79   tropical de…       NA    25     1013</span></span>
+<span><span class="co">## 2 Amy    1975     6    27     6  28.5 -79   tropical de…       NA    25     1013</span></span>
+<span><span class="co">## 3 Amy    1975     6    27    12  29.5 -79   tropical de…       NA    25     1013</span></span>
+<span><span class="co">## 4 Amy    1975     6    27    18  30.5 -79   tropical de…       NA    25     1013</span></span>
+<span><span class="co">## 5 Amy    1975     6    28     0  31.5 -78.8 tropical de…       NA    25     1012</span></span>
+<span><span class="co">## 6 Amy    1975     6    28     6  32.4 -78.7 tropical de…       NA    25     1012</span></span>
+<span><span class="co">## # ℹ 2 more variables: tropicalstorm_force_diameter &lt;int&gt;,</span></span>
+<span><span class="co">## #   hurricane_force_diameter &lt;int&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Whoops. I meant “category” when I typed “status”.</p>
 <div class="cell">
@@ -1175,23 +1176,8 @@ Try it out: Hurricanes in R
 <span>  <span class="co"># See what categories exist</span></span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">name</span>, <span class="va">category</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">## # A tibble: 14 × 2</span></span>
-<span><span class="co">##    name      category</span></span>
-<span><span class="co">##    &lt;chr&gt;     &lt;ord&gt;   </span></span>
-<span><span class="co">##  1 Andrea    0       </span></span>
-<span><span class="co">##  2 Barry     0       </span></span>
-<span><span class="co">##  3 Chantal   0       </span></span>
-<span><span class="co">##  4 Dorian    0       </span></span>
-<span><span class="co">##  5 Erin      0       </span></span>
-<span><span class="co">##  6 Fernand   0       </span></span>
-<span><span class="co">##  7 Gabrielle 0       </span></span>
-<span><span class="co">##  8 Eight     -1      </span></span>
-<span><span class="co">##  9 Humberto  1       </span></span>
-<span><span class="co">## 10 Ingrid    1       </span></span>
-<span><span class="co">## 11 Jerry     0       </span></span>
-<span><span class="co">## 12 Karen     0       </span></span>
-<span><span class="co">## 13 Lorenzo   0       </span></span>
-<span><span class="co">## 14 Melissa   0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span><span class="co">## # A tibble: 0 × 2</span></span>
+<span><span class="co">## # ℹ 2 variables: name &lt;chr&gt;, category &lt;dbl&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>It looks like 2013 was just an incredibly quiet year for tropical activity.</p>
 </div>
@@ -1217,22 +1203,22 @@ Try it out: Hurricanes in R
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">plot</span><span class="op">)</span> <span class="co"># Don't print plots - clutters up output at the moment</span></span>
 <span><span class="op">}</span></span>
 <span><span class="co">## [1] "Category 1 storms"</span></span>
-<span><span class="co">## [1] "subdata dims: nrow 45 ncol 13"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span><span class="co">## [1] "subdata dims: nrow 49 ncol 13"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="06-debugging_files/figure-html/hurricane-tracks-debugging-4-1.png" class="img-fluid" width="2100"></p>
 </div>
 <pre><code>## [1] "Category 2 storms"
-## [1] "subdata dims: nrow 39 ncol 13"</code></pre>
+## [1] "subdata dims: nrow 51 ncol 13"</code></pre>
 <div class="cell-output-display">
 <p><img src="06-debugging_files/figure-html/hurricane-tracks-debugging-4-2.png" class="img-fluid" width="2100"></p>
 </div>
 <pre><code>## [1] "Category 3 storms"
-## [1] "subdata dims: nrow 29 ncol 13"</code></pre>
+## [1] "subdata dims: nrow 43 ncol 13"</code></pre>
 <div class="cell-output-display">
 <p><img src="06-debugging_files/figure-html/hurricane-tracks-debugging-4-3.png" class="img-fluid" width="2100"></p>
 </div>
 <pre><code>## [1] "Category 4 storms"
-## [1] "subdata dims: nrow 32 ncol 13"</code></pre>
+## [1] "subdata dims: nrow 49 ncol 13"</code></pre>
 <div class="cell-output-display">
 <p><img src="06-debugging_files/figure-html/hurricane-tracks-debugging-4-4.png" class="img-fluid" width="2100"></p>
 </div>
@@ -1343,7 +1329,7 @@ Using traceback
 <span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> x <span class="op">+</span> bb(<span class="dv">4</span>)</span>
 <span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>aa(<span class="dv">5</span>)</span>
-<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): TypeError: unsupported operand type(s) for +: 'NoneType' and 'int'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a><span class="co">## Error: TypeError: unsupported operand type(s) for +: 'NoneType' and 'int'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Python’s <a href="https://docs.python.org/3/library/traceback.html">traceback</a> information is a bit more low-level and requires a bit more from the programmer than R’s version.</p>
 </div>
@@ -1398,7 +1384,7 @@ Example : browser()
 <span><span class="fu">get_xkcd</span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/grDevices/as.raster.html">as.raster</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">## Error in readPNG(source = image): unable to open //imgs.xkcd.com/comics/washing_machine_settings.png</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span><span class="co">## Error in readPNG(source = image): unable to open //imgs.xkcd.com/comics/commemorative_plaque.png</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Here’s the final function</p>
 <div class="cell">
@@ -1485,7 +1471,7 @@ Example using <code>ipdb</code>
 <span id="cb30-27"><a href="#cb30-27" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> image</span>
 <span id="cb30-28"><a href="#cb30-28" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-29"><a href="#cb30-29" aria-hidden="true" tabindex="-1"></a>plt.imshow(get_xkcd())</span>
-<span id="cb30-30"><a href="#cb30-30" aria-hidden="true" tabindex="-1"></a><span class="co">## Error in py_call_impl(callable, dots$args, dots$keywords): ValueError: unknown url type: '//imgs.xkcd.com/comics/washing_machine_settings.png'</span></span>
+<span id="cb30-30"><a href="#cb30-30" aria-hidden="true" tabindex="-1"></a><span class="co">## Error: ValueError: unknown url type: '//imgs.xkcd.com/comics/commemorative_plaque.png'</span></span>
 <span id="cb30-31"><a href="#cb30-31" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <p><img src="06-debugging_files/figure-html/browser-demo-py-1.png" class="img-fluid" width="672"></p>
@@ -1661,11 +1647,11 @@ Try it out
 </div>
 <div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>res <span class="op">=</span> get_xkcd(<span class="st">'3000'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-error">
-<pre><code>Error in py_call_impl(callable, dots$args, dots$keywords): urllib.error.HTTPError: HTTP Error 404: Not Found</code></pre>
+<pre><code>Error: urllib.error.HTTPError: HTTP Error 404: Not Found</code></pre>
 </div>
 <div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>res <span class="op">=</span> get_xkcd(<span class="st">'abcd'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-error">
-<pre><code>Error in py_call_impl(callable, dots$args, dots$keywords): TypeError: To get current xkcd, pass in an empty string, otherwise, pass in a valid integer comic number</code></pre>
+<pre><code>Error: TypeError: To get current xkcd, pass in an empty string, otherwise, pass in a valid integer comic number</code></pre>
 </div>
 </div>
 </div>
@@ -1801,6 +1787,8 @@ Try it out: <code>debug</code> in R
 </div>
 </div>
 </div>
+</section></section><section id="sec-debugging-refs" class="level2" data-number="15.1"><h2 data-number="15.1" class="anchored" data-anchor-id="sec-debugging-refs">
+<span class="header-section-number">15.1</span> References</h2>
 
 
 <div id="refs" class="references csl-bib-body" role="doc-bibliography">
@@ -1871,7 +1859,7 @@ Try it out: <code>debug</code> in R
 <div class="csl-right-inline">S. Grimes, <span>“This 500-<span>Year</span>-<span>Old</span> <span>Piece</span> of <span>Advice</span> <span>Can</span> <span>Help</span> <span>You</span> <span>Solve</span> <span>Your</span> <span>Modern</span> <span>Problems</span>,”</span> <em>Forge</em>. Dec. 2019 [Online]. Available: <a href="https://forge.medium.com/the-500-year-old-piece-of-advice-that-will-change-your-life-1e580f115731">https://forge.medium.com/the-500-year-old-piece-of-advice-that-will-change-your-life-1e580f115731</a>. [Accessed: Sep. 21, 2022]</div>
 </div>
 </div>
-</section></section><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><hr>
+</section><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><hr>
 <ol>
 <li id="fn1"><p>Some people use cats, but I find that they don’t meet the nonjudgmental criteria. Of course, they’re equally judgmental whether your code works or not, so maybe that works if you’re a cat person, which I am not. Dogs, in my experience, can work, but often will try to comfort you when they realize you’re upset, which both helps and lessens your motivation to fix the problem. A rubber duck is the perfect dispassionate listener.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol></section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">

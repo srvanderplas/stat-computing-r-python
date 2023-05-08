@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.2.313">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="dcterms.date" content="2023-04-20">
+<meta name="dcterms.date" content="2023-05-08">
 <title>Statistical Computing using R and Python - 25&nbsp; Functional Programming</title>
 <style>
 code{white-space: pre-wrap;}
@@ -146,7 +146,7 @@ window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
-</script><link rel="stylesheet" href="../build_deps/style.css">
+</script><script src="https://kit.fontawesome.com/baac5f0610.js" crossorigin="anonymous"></script><link rel="stylesheet" href="../build_deps/style.css">
 </head>
 <body class="nav-sidebar floating slimcontent">
 
@@ -355,7 +355,7 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
   <li><a href="#replacing-loops-with-functional-programming" id="toc-replacing-loops-with-functional-programming" class="nav-link" data-scroll-target="#replacing-loops-with-functional-programming"><span class="toc-section-number">25.3</span>  Replacing Loops with Functional Programming</a></li>
   <li><a href="#complex-data-structures" id="toc-complex-data-structures" class="nav-link" data-scroll-target="#complex-data-structures"><span class="toc-section-number">25.4</span>  Complex Data Structures</a></li>
   <li><a href="#assembling-hierarchical-data" id="toc-assembling-hierarchical-data" class="nav-link" data-scroll-target="#assembling-hierarchical-data"><span class="toc-section-number">25.5</span>  Assembling Hierarchical Data</a></li>
-  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references"><span class="toc-section-number">25.6</span>  References</a></li>
+  <li><a href="#sec-functional-prog-refs" id="toc-sec-functional-prog-refs" class="nav-link" data-scroll-target="#sec-functional-prog-refs"><span class="toc-section-number">25.6</span>  References</a></li>
   </ul><div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/srvanderplas/stat-computing-r-python/edit/main/part-wrangling/08-functional-prog.qmd" class="toc-action">Edit this page</a></p></div></div></nav>
     </div>
 <!-- main -->
@@ -371,7 +371,7 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">April 20, 2023</p>
+      <p class="date">May 8, 2023</p>
     </div>
   </div>
   
@@ -511,37 +511,37 @@ A simple Functional Example
 <div class="cell">
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">5</span>, mean <span class="op">=</span> <span class="va">x</span>, sd <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">## [[1]]</span></span>
-<span><span class="co">## [1] 0.4387285 1.1330657 1.0441055 1.7244030 0.6735600</span></span>
+<span><span class="co">## [1] 1.3587496 0.1578278 1.8249207 1.0645067 1.9241987</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## [[2]]</span></span>
-<span><span class="co">## [1] 1.356978 4.717603 1.814021 1.735615 2.203974</span></span>
+<span><span class="co">## [1] 1.344622 1.932193 1.093726 1.625325 2.571887</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## [[3]]</span></span>
-<span><span class="co">## [1] 5.159385 4.439005 1.514152 4.067009 1.644368</span></span>
+<span><span class="co">## [1] 2.6920844 3.3576957 2.6263409 0.8166047 2.2277849</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## [[4]]</span></span>
-<span><span class="co">## [1] 3.655217 5.049472 3.739394 3.329780 3.617121</span></span>
+<span><span class="co">## [1] 2.907850 3.526292 5.091808 5.156028 4.981953</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## [[5]]</span></span>
-<span><span class="co">## [1] 4.981520 5.046483 3.755596 4.185624 4.286423</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span><span class="co">## [1] 4.643083 5.200319 4.238091 5.128817 4.894213</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Or, if you have R 4.1.0 or above, you can use a shorthand version:</p>
 <div class="cell">
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, \<span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">5</span>, mean <span class="op">=</span> <span class="va">x</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">## [[1]]</span></span>
-<span><span class="co">## [1] 0.3410169 2.3214890 3.1804891 1.4336504 1.0650393</span></span>
+<span><span class="co">## [1]  2.8012549 -0.2346510  0.3769987  1.7063192  2.1886159</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## [[2]]</span></span>
-<span><span class="co">## [1] 1.9890210 1.5627826 0.4912011 2.5291908 2.4457862</span></span>
+<span><span class="co">## [1] 2.270315 1.451908 1.448878 2.702576 2.465227</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## [[3]]</span></span>
-<span><span class="co">## [1] 4.370364 2.180753 2.376926 2.602497 3.282503</span></span>
+<span><span class="co">## [1] 4.500227 2.211936 2.558935 3.997856 4.267816</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## [[4]]</span></span>
-<span><span class="co">## [1] 2.937465 4.203590 4.327174 3.050180 4.626548</span></span>
+<span><span class="co">## [1] 3.204811 5.952805 5.375644 3.557751 5.113919</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## [[5]]</span></span>
-<span><span class="co">## [1] 4.643520 4.538882 4.008337 4.768433 3.945161</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span><span class="co">## [1] 4.578079 5.617726 3.328408 7.213570 5.017305</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The <code>\(x)</code> is shorthand for <code>function(x)</code> and allows you to quickly and easily define anonymous functions in R.</p>
 </div>
@@ -556,16 +556,16 @@ A simple Functional Example
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Functional approach</span></span>
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Defining a lambda function allows us to fill in non-default options</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co">## [array([-0.77906066,  2.05214355,  1.72554001,  0.7584667 ,  2.24633474]), array([2.40111491, 2.31918225, 1.36232223, 0.79807613, 1.47834854]), array([4.16725694, 2.19048384, 3.11457723, 2.54691536, 2.09751842]), array([3.00100303, 5.0984273 , 3.06988761, 2.99330161, 4.31783032]), array([3.34069165, 4.36551468, 5.97572347, 5.42477504, 5.76606932])]</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="co">## [array([ 1.76476401,  1.35267653, -1.09449081,  2.16596692, -0.91875791]), array([1.80168433, 1.50543587, 1.82256708, 1.55480133, 0.41157027]), array([1.82099044, 3.18914168, 3.33961501, 1.73248254, 2.27343437]), array([2.59610875, 2.42921154, 3.66834034, 5.86745926, 3.70872423]), array([5.33108396, 5.2239654 , 5.09992483, 6.09193623, 5.14104148])]</span></span>
 <span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>r2 <span class="op">=</span> <span class="bu">map</span>(<span class="kw">lambda</span> a: np.random.normal(a, size <span class="op">=</span> <span class="dv">5</span>), <span class="bu">range</span>(<span class="dv">1</span>, <span class="dv">6</span>))</span>
 <span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co"># This is what map spits out by default</span></span>
 <span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(r2)</span>
 <span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co"># get your results back out with list()</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co">## &lt;map object at 0x7f07681d3730&gt;</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co">## &lt;map object at 0x7fe50cefc910&gt;</span></span>
 <span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>r2b <span class="op">=</span> <span class="bu">list</span>(r2) </span>
 <span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(r2b)</span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="co">## [array([1.06923657, 2.12554275, 1.61925869, 0.04934962, 0.9048769 ]), array([1.71822287, 2.58916875, 1.70476669, 2.72649437, 1.85903448]), array([2.1156096 , 2.07148658, 3.61407381, 4.19072349, 2.58930252]), array([5.78777524, 3.67496362, 3.42908602, 4.23364318, 2.33627933]), array([4.02028475, 4.74887834, 3.5279838 , 3.92797907, 4.24446515])]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="co">## [array([0.51129768, 1.08162385, 1.88433886, 0.89460784, 0.20396103]), array([2.07040278, 2.34700046, 1.04725466, 1.27830775, 3.30674721]), array([3.0215988 , 3.03822637, 2.46045834, 2.68475217, 3.38659899]), array([3.16271049, 4.76917786, 4.47538028, 4.97590086, 4.3004413 ]), array([3.76597878, 4.52098374, 3.62290811, 3.70206799, 5.00095883])]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
@@ -1817,7 +1817,7 @@ Try It Out: Cleaning Chicken Data
 </div>
 </div>
 </div>
-</section><section id="references" class="level2" data-number="25.6"><h2 data-number="25.6" class="anchored" data-anchor-id="references">
+</section><section id="sec-functional-prog-refs" class="level2" data-number="25.6"><h2 data-number="25.6" class="anchored" data-anchor-id="sec-functional-prog-refs">
 <span class="header-section-number">25.6</span> References</h2>
 
 
