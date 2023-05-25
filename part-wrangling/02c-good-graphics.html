@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.2.313">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="dcterms.date" content="2023-05-10">
+<meta name="dcterms.date" content="2023-05-25">
 <title>Statistical Computing using R and Python - 19&nbsp; Creating Good Charts</title>
 <style>
 code{white-space: pre-wrap;}
@@ -81,6 +81,25 @@ code span.st { color: #4070a0; } /* String */
 code span.va { color: #19177c; } /* Variable */
 code span.vs { color: #4070a0; } /* VerbatimString */
 code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
 </style>
 
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
@@ -330,9 +349,10 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
   <li>
 <a href="#perceptual-and-cognitive-factors" id="toc-perceptual-and-cognitive-factors" class="nav-link" data-scroll-target="#perceptual-and-cognitive-factors"><span class="toc-section-number">19.2</span>  Perceptual and Cognitive Factors</a>
   <ul class="collapse">
-<li><a href="#color" id="toc-color" class="nav-link" data-scroll-target="#color"><span class="toc-section-number">19.2.1</span>  Color</a></li>
-  <li><a href="#short-term-memory" id="toc-short-term-memory" class="nav-link" data-scroll-target="#short-term-memory"><span class="toc-section-number">19.2.2</span>  Short Term Memory</a></li>
-  <li><a href="#grouping-and-sense-making" id="toc-grouping-and-sense-making" class="nav-link" data-scroll-target="#grouping-and-sense-making"><span class="toc-section-number">19.2.3</span>  Grouping and Sense-making</a></li>
+<li><a href="#preattentive-features" id="toc-preattentive-features" class="nav-link" data-scroll-target="#preattentive-features"><span class="toc-section-number">19.2.1</span>  Preattentive Features</a></li>
+  <li><a href="#color" id="toc-color" class="nav-link" data-scroll-target="#color"><span class="toc-section-number">19.2.2</span>  Color</a></li>
+  <li><a href="#short-term-memory" id="toc-short-term-memory" class="nav-link" data-scroll-target="#short-term-memory"><span class="toc-section-number">19.2.3</span>  Short Term Memory</a></li>
+  <li><a href="#grouping-and-sense-making" id="toc-grouping-and-sense-making" class="nav-link" data-scroll-target="#grouping-and-sense-making"><span class="toc-section-number">19.2.4</span>  Grouping and Sense-making</a></li>
   </ul>
 </li>
   <li><a href="#general-guidelines-for-accuracy" id="toc-general-guidelines-for-accuracy" class="nav-link" data-scroll-target="#general-guidelines-for-accuracy"><span class="toc-section-number">19.3</span>  General guidelines for accuracy</a></li>
@@ -352,7 +372,7 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">May 10, 2023</p>
+      <p class="date">May 25, 2023</p>
     </div>
   </div>
   
@@ -369,22 +389,72 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
 <p>Unfortunately, while our visual system is <em>amazing</em>, it is not always as accurate as the computers we use to render graphics. We have physical limits in the number of colors we can perceive, our short term memory, attention, and our ability to accurately read information off of charts in different forms.</p>
 </section><section id="perceptual-and-cognitive-factors" class="level2" data-number="19.2"><h2 data-number="19.2" class="anchored" data-anchor-id="perceptual-and-cognitive-factors">
 <span class="header-section-number">19.2</span> Perceptual and Cognitive Factors</h2>
-<section id="color" class="level3" data-number="19.2.1"><h3 data-number="19.2.1" class="anchored" data-anchor-id="color">
-<span class="header-section-number">19.2.1</span> Color</h3>
-<p>Our eyes are optimized for perceiving the yellow/green region of the color spectrum. Why? Well, our sun produces yellow light, and plants tend to be green. It’s pretty important to be able to distinguish different shades of green (evolutionarily speaking) because it impacts your ability to feed yourself. There aren’t that many purple or blue predators, so there is less selection pressure to improve perception of that part of the visual spectrum.</p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure"><p><img src="../images/wrangling/Eyesensitivity.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Sensitivity of the human eye to different wavelengths of visual light (Image from <a href="https://upload.wikimedia.org/wikipedia/commons/c/c0/Eyesensitivity.svg">Wikimedia commons</a>)</figcaption><p></p>
+<section id="preattentive-features" class="level3" data-number="19.2.1"><h3 data-number="19.2.1" class="anchored" data-anchor-id="preattentive-features">
+<span class="header-section-number">19.2.1</span> Preattentive Features</h3>
+<p>You’ve almost certainly noticed that some graphical tasks are easier than others. Part of the reason for this is that certain tasks require active engagement and attention to search through the visual stimulus; others, however, just “pop” out of the background. We call these features that just “pop” without active work <strong>preattentive</strong> features; technically, they are detected within the first 250ms of viewing a stimulus <span class="citation" data-cites="treisman_preattentive_1985"><a href="#ref-treisman_preattentive_1985" role="doc-biblioref">[1]</a></span>.</p>
+<p>Take a look at <a href="#fig-preattentive1">Figure&nbsp;<span>19.1</span></a>; can you spot the point that is different?</p>
+<div id="fig-preattentive1" class="cell quarto-layout-panel">
+<figure class="figure"><div class="quarto-layout-row quarto-layout-valign-top">
+<div class="cell-output-display quarto-layout-cell quarto-layout-cell-subref" style="flex-basis: 50.0%;justify-content: center;">
+<div id="fig-preattentive1-1" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure"><p><img src="02c-good-graphics_files/figure-html/fig-preattentive1-1.png" class="img-fluid figure-img" data-ref-parent="fig-preattentive1" width="1200"></p>
+<p></p><figcaption class="figure-caption">(a) Shape</figcaption><p></p>
 </figure>
 </div>
-<p>Not everyone perceives color in the same way. Some individuals are <a href="https://en.wikipedia.org/wiki/Color_blindness">colorblind or color deficient</a>. We have 3 cones used for color detection, as well as cells called rods which detect light intensity (brightness/darkness). In about 5% of the population (10% of XY individuals, &lt;1% of XX individuals), one or more of the cones may be missing or malformed, leading to color blindness - a reduced ability to perceive different shades. The rods, however, function normally in almost all of the population, which means that light/dark contrasts are extremely safe, while contrasts based on the hue of the color are problematic in some instances.</p>
+</div>
+<div class="cell-output-display quarto-layout-cell quarto-layout-cell-subref" style="flex-basis: 50.0%;justify-content: center;">
+<div id="fig-preattentive1-2" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure"><p><img src="02c-good-graphics_files/figure-html/fig-preattentive1-2.png" class="img-fluid figure-img" data-ref-parent="fig-preattentive1" width="1200"></p>
+<p></p><figcaption class="figure-caption">(b) Color</figcaption><p></p>
+</figure>
+</div>
+</div>
+</div>
+<p></p><figcaption class="figure-caption">Figure&nbsp;19.1: Two scatterplots with one point that is different. Can you easily spot the different point?</figcaption><p></p>
+</figure>
+</div>
+<p>Color and shape are commonly used graphical features that are processed pre-attentively. Some people suggest utilizing this to pack more dimensions into multivariate visualizations <span class="citation" data-cites="healey_high-speed_1996"><a href="#ref-healey_high-speed_1996" role="doc-biblioref">[2]</a></span>, but in general, knowing which features are processed more quickly (color/shape) and which are processed more slowly (combinations of preattentively processed features) allows you to design a chart that requires less cognitive effort to read.</p>
+<p>As awesome as it is to be able to use preattentive features to process information, we should not use combinations of preattentive features to show different variables. Take a look at <a href="#fig-preattentive2">Figure&nbsp;<span>19.2</span></a> - part (a) shows the same grouping in color and shape, part (b) shows color and shape used to encode different variables.</p>
+<div id="fig-preattentive2" class="cell quarto-layout-panel">
+<figure class="figure"><div class="quarto-layout-row quarto-layout-valign-top">
+<div class="cell-output-display quarto-layout-cell quarto-layout-cell-subref" style="flex-basis: 50.0%;justify-content: center;">
+<div id="fig-preattentive2-1" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure"><p><img src="02c-good-graphics_files/figure-html/fig-preattentive2-1.png" class="img-fluid figure-img" data-ref-parent="fig-preattentive2"></p>
+<p></p><figcaption class="figure-caption">(a) Shape and Color (dual encoded)</figcaption><p></p>
+</figure>
+</div>
+</div>
+<div class="cell-output-display quarto-layout-cell quarto-layout-cell-subref" style="flex-basis: 50.0%;justify-content: center;">
+<div id="fig-preattentive2-2" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure"><p><img src="02c-good-graphics_files/figure-html/fig-preattentive2-2.png" class="img-fluid figure-img" data-ref-parent="fig-preattentive2"></p>
+<p></p><figcaption class="figure-caption">(b) Shape and Color (different variables)</figcaption><p></p>
+</figure>
+</div>
+</div>
+</div>
+<p></p><figcaption class="figure-caption">Figure&nbsp;19.2: Two scatterplots. Can you easily spot the different point(s)?</figcaption><p></p>
+</figure>
+</div>
+<p>Here, it is easy to differentiate the points in <a href="#fig-preattentive2">Figure&nbsp;<span>19.2</span></a>(a), because they are dual-encoded. However, it is very difficult to pick out the different groups of points in <a href="#fig-preattentive2">Figure&nbsp;<span>19.2</span></a>(b) because the combination of preattentive features requires active attention to sort out.</p>
+<section id="takeaways" class="level4 unnumbered"><h4 class="unnumbered anchored" data-anchor-id="takeaways">Takeaways</h4>
+<p>Careful use of preattentive features can reduce the cognitive effort required for viewers to perceive a chart.</p>
+<p>Encode only one variable using preattentive features, as combinations of preattentive features are not processed preattentively.</p>
+</section></section><section id="color" class="level3" data-number="19.2.2"><h3 data-number="19.2.2" class="anchored" data-anchor-id="color">
+<span class="header-section-number">19.2.2</span> Color</h3>
+<p>Our eyes are optimized for perceiving the yellow/green region of the color spectrum, as shown in <a href="#fig-sensitivity">Figure&nbsp;<span>19.3</span></a>. Why? Well, our sun produces yellow light, and plants tend to be green. It’s pretty important to be able to distinguish different shades of green (evolutionarily speaking) because it impacts your ability to feed yourself. There aren’t that many purple or blue predators, so there is less selection pressure to improve perception of that part of the visual spectrum.</p>
+<div id="fig-sensitivity" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure"><p><img src="../images/wrangling/Eyesensitivity.png" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">Figure&nbsp;19.3: Sensitivity of the human eye to different wavelengths of visual light (Image from <a href="https://upload.wikimedia.org/wikipedia/commons/c/c0/Eyesensitivity.svg">Wikimedia commons</a>)</figcaption><p></p>
+</figure>
+</div>
+<p>Not everyone perceives color in the same way. Some individuals are <a href="https://en.wikipedia.org/wiki/Color_blindness">colorblind or color deficient</a> <span class="citation" data-cites="wikipediacontributors23c"><a href="#ref-wikipediacontributors23c" role="doc-biblioref">[3]</a></span>. We have 3 cones used for color detection, as well as cells called rods, which detect light intensity (brightness/darkness). In about 5% of the population (10% of XY individuals, &lt;1% of XX individuals), one or more of the cones may be missing or malformed, leading to color blindness - a reduced ability to perceive different shades. The rods, however, function normally in almost all of the population, which means that light/dark contrasts are extremely safe, while contrasts based on the hue of the color are problematic in some instances.</p>
 <div class="callout-note callout callout-style-default callout-captioned">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-caption-container flex-fill">
-Colorblindness Test
+Colorblindness Testing
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
@@ -398,26 +468,35 @@ Colorblindness Test
 </div>
 </div>
 <p>In addition to colorblindness, there are other factors than the actual color value which are important in how we experience color, such as context.</p>
-<div class="cell">
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure"><p><img src="../images/wrangling/CheckerShadow.png" class="img-fluid figure-img" style="width:45.0%"></p>
-<p></p><figcaption class="figure-caption">The color constancy illusion. The squares marked A and B are actually the same color</figcaption><p></p>
+<div id="fig-checker-shadow" class="cell quarto-layout-panel">
+<figure class="figure"><div class="quarto-layout-row quarto-layout-valign-top">
+<div class="cell-output-display quarto-layout-cell quarto-layout-cell-subref" style="flex-basis: 70.0%;justify-content: center;">
+<div id="fig-checker-shadow-1" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure"><p><img src="../images/wrangling/CheckerShadow.png" class="img-fluid figure-img" data-ref-parent="fig-checker-shadow"></p>
+<p></p><figcaption class="figure-caption">(a) The original illusion</figcaption><p></p>
 </figure>
 </div>
 </div>
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure"><p><img src="../images/wrangling/CheckerShadow2.png" class="img-fluid figure-img" style="width:45.0%"></p>
-<p></p><figcaption class="figure-caption">The color constancy illusion. The squares marked A and B are actually the same color</figcaption><p></p>
+<div class="cell-output-display quarto-layout-cell quarto-layout-cell-subref" style="flex-basis: 30.0%;justify-content: center;">
+<div id="fig-checker-shadow-2" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure"><p><img src="../images/wrangling/CheckerShadow2.png" class="img-fluid figure-img" data-ref-parent="fig-checker-shadow"></p>
+<p></p><figcaption class="figure-caption">(b) The illusion with the checkerboard and shadow removed</figcaption><p></p>
 </figure>
 </div>
 </div>
 </div>
-<p>Our brains are extremely dependent on context and make excellent use of the large amounts of experience we have with the real world. As a result, we implicitly “remove” the effect of things like shadows as we make sense of the input to the visual system. This can result in odd things, like the checkerboard and shadow shown above - because we’re correcting for the shadow, B looks lighter than A even though when the context is removed they are clearly the same shade.</p>
-<p><strong>Implications and Guidelines</strong></p>
+<p></p><figcaption class="figure-caption">Figure&nbsp;19.4: The color constancy illusion. The squares marked A and B are actually the same color.</figcaption><p></p>
+</figure>
+</div>
+<p>Our brains are extremely dependent on context and make excellent use of the large amounts of experience we have with the real world. As a result, we implicitly “remove” the effect of things like shadows as we make sense of the input to the visual system. This can result in odd things, like the checkerboard and shadow shown in <a href="#fig-checker-shadow">Figure&nbsp;<span>19.4</span></a> - because we’re correcting for the shadow, B looks lighter than A even though when the context is removed they are clearly the same shade.</p>
+<section id="takeaways-1" class="level4" data-number="19.2.2.1"><h4 data-number="19.2.2.1" class="anchored" data-anchor-id="takeaways-1">
+<span class="header-section-number">19.2.2.1</span> Takeaways</h4>
 <ul>
-<li>Do not use rainbow color gradient schemes - because of the unequal perception of different wavelengths, these schemes are <em>misleading</em> - the color distance does not match the perceptual distance.</li>
+<li>Do not use rainbow color gradient schemes
+<ul>
+<li>because of the unequal perception of different wavelengths, these schemes are <em>misleading</em> - the color distance does not match the perceptual distance.</li>
+</ul>
+</li>
 <li>Avoid any scheme that uses green-yellow-red signaling if you have a target audience that may include colorblind people.</li>
 <li>To “colorblind-proof” a graphic, you can use a couple of strategies:
 <ul>
@@ -436,8 +515,8 @@ Colorblindness Test
 </ul>
 </li>
 <li>There are packages such as <code>RColorBrewer</code> and <code>dichromat</code> that have color palettes which are aesthetically pleasing, and, in many cases, colorblind friendly (<code>dichromat</code> is better for that than <code>RColorBrewer</code>). You can also take a look at other <a href="https://lisacharlotterost.de/2016/04/22/Colors-for-DataVis/">ways to find nice color palettes</a>.</li>
-</ul></section><section id="short-term-memory" class="level3" data-number="19.2.2"><h3 data-number="19.2.2" class="anchored" data-anchor-id="short-term-memory">
-<span class="header-section-number">19.2.2</span> Short Term Memory</h3>
+</ul></section></section><section id="short-term-memory" class="level3" data-number="19.2.3"><h3 data-number="19.2.3" class="anchored" data-anchor-id="short-term-memory">
+<span class="header-section-number">19.2.3</span> Short Term Memory</h3>
 <p>We have a limited amount of memory that we can instantaneously utilize. This mental space, called <strong>short-term memory</strong>, holds information for active use, but only for a limited amount of time.</p>
 <div class="callout-tip callout callout-style-default callout-captioned">
 <div class="callout-header d-flex align-content-center">
@@ -471,8 +550,8 @@ Wait a few seconds, then expand this section
 </li>
 <li><p>Use colors and symbols which have implicit meaning to minimize the need to refer to the legend.</p></li>
 <li><p>Add annotations on the plot, where possible, to reduce the need to re-read captions.</p></li>
-</ul></section><section id="grouping-and-sense-making" class="level3" data-number="19.2.3"><h3 data-number="19.2.3" class="anchored" data-anchor-id="grouping-and-sense-making">
-<span class="header-section-number">19.2.3</span> Grouping and Sense-making</h3>
+</ul></section><section id="grouping-and-sense-making" class="level3" data-number="19.2.4"><h3 data-number="19.2.4" class="anchored" data-anchor-id="grouping-and-sense-making">
+<span class="header-section-number">19.2.4</span> Grouping and Sense-making</h3>
 <p>Imposing order on visual chaos.</p>
 <div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
@@ -482,10 +561,10 @@ Wait a few seconds, then expand this section
 </ul>
 <div class="tab-content">
 <div id="tabset-1-1" class="unnumbered tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
-<p>What does the figure below look like to you?</p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure"><p><img src="../images/wrangling/DuckRabbitIllusion.jpg" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Is it a rabbit, or a duck?</figcaption><p></p>
+<p>What does <a href="#fig-rabbit-duck">Figure&nbsp;<span>19.5</span></a> look like to you?</p>
+<div id="fig-rabbit-duck" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure"><p><img src="../images/wrangling/rabbitduck.png" class="img-fluid figure-img"></p>
+<p></p><figcaption class="figure-caption">Figure&nbsp;19.5: Is it a rabbit, or a duck?</figcaption><p></p>
 </figure>
 </div>
 <p>When faced with ambiguity, our brains use available context and past experience to try to tip the balance between alternate interpretations of an image. When there is still some ambiguity, many times the brain will just decide to interpret an image as one of the possible options.</p>
@@ -547,8 +626,10 @@ Danger
 <span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">State</span>, y <span class="op">=</span> <span class="va">Murder</span><span class="op">/</span><span class="va">Population</span><span class="op">*</span><span class="fl">100000</span>, fill <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">Year</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_col</span><span class="op">(</span>position <span class="op">=</span> <span class="st">"dodge"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">coord_flip</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">ylab</span><span class="op">(</span><span class="st">"Murders per 100,000 residents"</span><span class="op">)</span></span>
-<span><span class="co">## Error in ggplot(., aes(x = State, y = Murder/Population * 1e+05, fill = factor(Year))): could not find function "ggplot"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span>  <span class="fu">ylab</span><span class="op">(</span><span class="st">"Murders per 100,000 residents"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="02c-good-graphics_files/figure-html/chart-emphasis-bar-r-1.png" class="img-fluid" width="1800"></p>
+</div>
 </div>
 </div>
 <div id="tabset-2-2" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
@@ -585,8 +666,10 @@ Danger
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">Year</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1980</span>, <span class="fl">2010</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="va">Year</span>, y <span class="op">=</span> <span class="va">Murder</span><span class="op">/</span><span class="va">Population</span><span class="op">*</span><span class="fl">100000</span>, group <span class="op">=</span> <span class="va">State</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_line</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">ylab</span><span class="op">(</span><span class="st">"Murders per 100,000 residents"</span><span class="op">)</span></span>
-<span><span class="co">## Error in ggplot(., aes(x = Year, y = Murder/Population * 1e+05, group = State)): could not find function "ggplot"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span>  <span class="fu">ylab</span><span class="op">(</span><span class="st">"Murders per 100,000 residents"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="02c-good-graphics_files/figure-html/chart-emphasis-line-r-1.png" class="img-fluid" width="1800"></p>
+</div>
 </div>
 </div>
 <div id="tabset-3-2" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
@@ -614,8 +697,10 @@ Danger
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">Year</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1980</span>, <span class="fl">2010</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu">ggplot</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">Year</span><span class="op">)</span>, y <span class="op">=</span> <span class="va">Murder</span><span class="op">/</span><span class="va">Population</span><span class="op">*</span><span class="fl">100000</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu">geom_boxplot</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu">ylab</span><span class="op">(</span><span class="st">"Murders per 100,000 residents"</span><span class="op">)</span></span>
-<span><span class="co">## Error in ggplot(., aes(x = factor(Year), y = Murder/Population * 1e+05)): could not find function "ggplot"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span>  <span class="fu">ylab</span><span class="op">(</span><span class="st">"Murders per 100,000 residents"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="02c-good-graphics_files/figure-html/chart-emphasis-boxplot-r-1.png" class="img-fluid" width="1800"></p>
+</div>
 </div>
 </div>
 <div id="tabset-4-2" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
@@ -640,7 +725,13 @@ Danger
 <span class="header-section-number">19.3</span> General guidelines for accuracy</h2>
 <p>There are certain tasks which are easier for us relative to other, similar tasks.</p>
 <div class="cell">
-<pre><code>## Error in ggplot(segs, aes(x = x, xend = x, y = y1, yend = y2)): could not find function "ggplot"</code></pre>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="02c-good-graphics_files/figure-html/accuracy-guidelines-1.png" class="img-fluid figure-img" width="2100"></p>
+<p></p><figcaption class="figure-caption">Which of the lines is the longest? Shortest? It is much easier to determine the relative length of the line when the ends are aligned. In fact, the line lengths are the same in both panels.</figcaption><p></p>
+</figure>
+</div>
+</div>
 </div>
 <p>When making judgments corresponding to numerical quantities, there is an order of tasks from easiest (1) to hardest (6), with equivalent tasks at the same level.<a href="#fn4" class="footnote-ref" id="fnref4" role="doc-noteref"><sup>4</sup></a></p>
 <ol type="1">
@@ -662,6 +753,20 @@ Danger
 <span class="header-section-number">19.4</span> References</h2>
 
 
+<div id="refs" class="references csl-bib-body" role="doc-bibliography">
+<div id="ref-treisman_preattentive_1985" class="csl-entry" role="doc-biblioentry">
+<div class="csl-left-margin">[1] </div>
+<div class="csl-right-inline">A. Treisman, <span>“Preattentive processing in vision,”</span> <em>Computer Vision, Graphics, and Image Processing</em>, vol. 31, no. 2, pp. 156–177, Aug. 1985, doi: <a href="https://doi.org/10.1016/S0734-189X(85)80004-9">10.1016/S0734-189X(85)80004-9</a>. </div>
+</div>
+<div id="ref-healey_high-speed_1996" class="csl-entry" role="doc-biblioentry">
+<div class="csl-left-margin">[2] </div>
+<div class="csl-right-inline">C. G. Healey, K. S. Booth, and J. T. Enns, <span>“High-speed visual estimation using preattentive processing,”</span> <em>ACM Transactions on Computer-Human Interaction (TOCHI)</em>, vol. 3, no. 2, pp. 107–135, 1996, doi: <a href="https://doi.org/10.1145/230562.230563">10.1145/230562.230563</a>. </div>
+</div>
+<div id="ref-wikipediacontributors23c" class="csl-entry" role="doc-biblioentry">
+<div class="csl-left-margin">[3] </div>
+<div class="csl-right-inline">Wikipedia contributors, <span>“Color blindness,”</span> <em>Wikipedia</em>, May 2023. </div>
+</div>
+</div>
 </section><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><hr>
 <ol>
 <li id="fn1"><p>When the COVID-19 outbreak started, many maps were using white-to-red gradients to show case counts and/or deaths. <a href="https://www.esri.com/arcgis-blog/products/product/mapping/mapping-coronavirus-responsibly/">The emotional association between red and blood, danger, and death may have caused people to become more frightened than what was reasonable given the available information.</a><a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
