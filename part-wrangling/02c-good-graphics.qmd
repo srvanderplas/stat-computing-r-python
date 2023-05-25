@@ -11,17 +11,129 @@ Unfortunately, while our visual system is *amazing*, it is not always as accurat
 
 ## Perceptual and Cognitive Factors
 
+### Preattentive Features
+
+You've almost certainly noticed that some graphical tasks are easier than others. 
+Part of the reason for this is that certain tasks require active engagement and attention to search through the visual stimulus; others, however, just "pop" out of the background.
+We call these features that just "pop" without active work **preattentive** features; technically, they are detected within the first 250ms of viewing a stimulus [@treisman_preattentive_1985].
+
+Take a look at @fig-preattentive1; can you spot the point that is different?
+
+```{r preattentive1}
+#| echo: false
+#| fig-width: 4
+#| fig-height: 4
+#| label: fig-preattentive1
+#| fig-cap: "Two scatterplots with one point that is different. Can you easily spot the different point?"
+#| fig-subcap: 
+#|   - "Shape"
+#|   - "Color"
+#| layout-ncol: 2
+
+set.seed(153253)
+data <- data.frame(expand.grid(x=1:6, y=1:6), color=sample(c(1,2), 36, replace=TRUE))
+data$x <- data$x+rnorm(36, 0, .25)
+data$y <- data$y+rnorm(36, 0, .25)
+suppressWarnings(library(ggplot2))
+new_theme_empty <- theme_bw()
+new_theme_empty$line <- element_blank()
+# new_theme_empty$rect <- element_blank()
+new_theme_empty$strip.text <- element_blank()
+new_theme_empty$axis.text <- element_blank()
+new_theme_empty$plot.title <- element_blank()
+new_theme_empty$axis.title <- element_blank()
+# new_theme_empty$plot.margin <- structure(c(0, 0, -1, -1), unit = "lines", valid.unit = 3L, class = "unit")
+
+data$shape <- c(rep(2, 15), 1, rep(2,20))
+library(scales)
+ggplot(data=data, aes(x=x, y=y, color=factor(1, levels=c(1,2)), shape=factor(shape), size=I(5))) + 
+  geom_point() +
+  scale_shape_manual(guide="none", values=c(19, 15)) + 
+  scale_color_discrete(guide="none") + 
+  new_theme_empty
+
+data$shape <- c(rep(2, 25), 1, rep(2,10))
+ggplot(data=data, aes(x=x, y=y, color=factor(shape), shape=I(19), size=I(5)))+
+  geom_point() +  
+  scale_color_discrete(guide="none") + 
+  new_theme_empty
+```
+
+Color and shape are commonly used graphical features that are processed pre-attentively. 
+Some people suggest utilizing this to pack more dimensions into multivariate visualizations [@healey_high-speed_1996], but in general, knowing which features are processed more quickly (color/shape) and which are processed more slowly (combinations of preattentively processed features) allows you to design a chart that requires less cognitive effort to read.
+
+As awesome as it is to be able to use preattentive features to process information, we should not use combinations of preattentive features to show different variables. Take a look at @fig-preattentive2 - part (a) shows the same grouping in color and shape, part (b) shows color and shape used to encode different variables. 
+
+```{r preattentive2,echo=FALSE,include=T, fig.width=4, fig.height=4, out.width = "49.5%"}
+#| echo: false
+#| fig-width: 4
+#| fig-height: 4
+#| label: fig-preattentive2
+#| fig-cap: "Two scatterplots. Can you easily spot the different point(s)?"
+#| fig-subcap: 
+#|   - "Shape and Color (dual encoded)"
+#|   - "Shape and Color (different variables)"
+#| layout-ncol: 2
+
+suppressPackageStartupMessages(library(ggplot2))
+suppressPackageStartupMessages(library(dplyr))
+set.seed(1532534)
+data <- data.frame(expand.grid(x=1:6, y=1:6), color=sample(c(1,2), 36, replace=TRUE))
+data$x <- data$x+rnorm(36, 0, .25)
+data$y <- data$y+rnorm(36, 0, .25)
+suppressWarnings(library(ggplot2))
+new_theme_empty <- theme_bw()
+new_theme_empty$line <- element_blank()
+# new_theme_empty$rect <- element_blank()
+new_theme_empty$strip.text <- element_blank()
+new_theme_empty$axis.text <- element_blank()
+new_theme_empty$plot.title <- element_blank()
+new_theme_empty$axis.title <- element_blank()
+# new_theme_empty$plot.margin <- structure(c(0, 0, -1, -1), unit = "lines", valid.unit = 3L, class = "unit")
+
+data$shape <- data$color
+ggplot(data=data, aes(x=x, y=y, 
+                      color=factor(color), 
+                      shape=factor(shape))) + 
+  geom_point(size = 5) +
+  scale_shape_manual(guide="none", values=c(19, 15)) +
+  scale_color_discrete(guide="none") + 
+  new_theme_empty
+
+data <- data %>%
+  mutate(sample = row_number() %in% sample(1:n(), 4)) %>%
+  mutate(shape = if_else(sample, if_else(shape == 1, 2, 1), shape))
+
+ggplot(data=data, aes(x=x, y=y, 
+                      color=factor(color), 
+                      shape=factor(shape))) + 
+  geom_point(size = 5) +
+  scale_shape_manual(guide="none", values=c(19, 15)) +
+  scale_color_discrete(guide="none") + 
+  new_theme_empty
+# qplot(data=data, x=x, y=y, color=factor(color), shape=factor(shape), size=I(5))+scale_shape_manual(guide="none", values=c(19, 15)) + scale_color_discrete(guide="none") + new_theme_empty
+```
+
+Here, it is easy to differentiate the points in @fig-preattentive2(a), because they are dual-encoded. However, it is very difficult to pick out the different groups of points in @fig-preattentive2(b) because the combination of preattentive features requires active attention to sort out.
+
+#### Takeaways {-}
+
+Careful use of preattentive features can reduce the cognitive effort required for viewers to perceive a chart. 
+
+Encode only one variable using preattentive features, as combinations of preattentive features are not processed preattentively.
+
 ### Color
 
-Our eyes are optimized for perceiving the yellow/green region of the color spectrum. Why? Well, our sun produces yellow light, and plants tend to be green. It's pretty important to be able to distinguish different shades of green (evolutionarily speaking) because it impacts your ability to feed yourself. There aren't that many purple or blue predators, so there is less selection pressure to improve perception of that part of the visual spectrum.
+Our eyes are optimized for perceiving the yellow/green region of the color spectrum, as shown in @fig-sensitivity. Why? Well, our sun produces yellow light, and plants tend to be green. It's pretty important to be able to distinguish different shades of green (evolutionarily speaking) because it impacts your ability to feed yourself. There aren't that many purple or blue predators, so there is less selection pressure to improve perception of that part of the visual spectrum.
 
-![Sensitivity of the human eye to different wavelengths of visual light (Image from [Wikimedia commons](https://upload.wikimedia.org/wikipedia/commons/c/c0/Eyesensitivity.svg))](../images/wrangling/Eyesensitivity.png)
+![Sensitivity of the human eye to different wavelengths of visual light (Image from [Wikimedia commons](https://upload.wikimedia.org/wikipedia/commons/c/c0/Eyesensitivity.svg))](../images/wrangling/Eyesensitivity.png){#fig-sensitivity}
 
-Not everyone perceives color in the same way. Some individuals are [colorblind or color deficient](https://en.wikipedia.org/wiki/Color_blindness). We have 3 cones used for color detection, as well as cells called rods which detect light intensity (brightness/darkness). In about 5% of the population (10% of XY individuals, \<1% of XX individuals), one or more of the cones may be missing or malformed, leading to color blindness - a reduced ability to perceive different shades. The rods, however, function normally in almost all of the population, which means that light/dark contrasts are extremely safe, while contrasts based on the hue of the color are problematic in some instances.
+
+Not everyone perceives color in the same way. Some individuals are [colorblind or color deficient](https://en.wikipedia.org/wiki/Color_blindness) [@wikipediacontributors23c]. We have 3 cones used for color detection, as well as cells called rods, which detect light intensity (brightness/darkness). In about 5% of the population (10% of XY individuals, \<1% of XX individuals), one or more of the cones may be missing or malformed, leading to color blindness - a reduced ability to perceive different shades. The rods, however, function normally in almost all of the population, which means that light/dark contrasts are extremely safe, while contrasts based on the hue of the color are problematic in some instances.
 
 ::: {.callout-note collapse=true}
 
-#### Colorblindness Test
+#### Colorblindness Testing
 You can take a test designed to screen for colorblindness [here](https://www.eyeque.com/color-blind-test/test/)
 
 Your monitor may affect how you score on these tests - I am colorblind, but on some monitors, I can pass the test, and on some, I perform worse than normal. A different test is available [here](https://www.color-blindness.com/farnsworth-munsell-100-hue-color-vision-test/).
@@ -35,27 +147,40 @@ Your monitor may affect how you score on these tests - I am colorblind, but on s
 
 In addition to colorblindness, there are other factors than the actual color value which are important in how we experience color, such as context.
 
-```{r checker-shadow-fig, fig.cap = "The color constancy illusion. The squares marked A and B are actually the same color", out.width = "45%", echo = F}
+
+
+```{r}
+#| label: fig-checker-shadow
+#| echo: false
+#| layout: "[[70, 30]]"
+#| fig-cap: "The color constancy illusion. The squares marked A and B are actually the same color."
+#| fig-subcap: 
+#|   - "The original illusion"
+#|   - "The illusion with the checkerboard and shadow removed"
+#| out-width: "100%"
 knitr::include_graphics("../images/wrangling/CheckerShadow.png")
 knitr::include_graphics("../images/wrangling/CheckerShadow2.png")
 ```
 
-Our brains are extremely dependent on context and make excellent use of the large amounts of experience we have with the real world. As a result, we implicitly "remove" the effect of things like shadows as we make sense of the input to the visual system. This can result in odd things, like the checkerboard and shadow shown above - because we're correcting for the shadow, B looks lighter than A even though when the context is removed they are clearly the same shade.
+Our brains are extremely dependent on context and make excellent use of the large amounts of experience we have with the real world. 
+As a result, we implicitly "remove" the effect of things like shadows as we make sense of the input to the visual system. 
+This can result in odd things, like the checkerboard and shadow shown in @fig-checker-shadow - because we're correcting for the shadow, B looks lighter than A even though when the context is removed they are clearly the same shade.
 
-**Implications and Guidelines**
+#### Takeaways
 
--   Do not use rainbow color gradient schemes - because of the unequal perception of different wavelengths, these schemes are *misleading* - the color distance does not match the perceptual distance.
--   Avoid any scheme that uses green-yellow-red signaling if you have a target audience that may include colorblind people.
--   To "colorblind-proof" a graphic, you can use a couple of strategies:
-    -   double encoding - where you use color, use another aesthetic (line type, shape) as well to help your colorblind readers out
-    -   If you can print your chart out in black and white and still read it, it will be safe for colorblind users. This is the only foolproof way to do it!
-    -   If you are using a color gradient, use a monochromatic color scheme where possible. This is perceived as light -\> dark by colorblind people, so it will be correctly perceived no matter what color you use.
-    -   If you have a bidirectional scale (e.g. showing positive and negative values), the safest scheme to use is purple - white - orange. In any color scale that is multi-hue, it is important to transition through white, instead of from one color to another directly.
--   Be conscious of what certain colors "mean"
-    -   Leveraging common associations can make it easier to read a color scale and remember what it stands for (e.g. blue for cold, orange/red for hot is a natural scale, red = Republican and blue = Democrat in the US, white -\> blue gradients for showing rainfall totals)
-    -   Some colors can can provoke emotional responses that may not be desirable.[^10-graphics-2]
-    -   It is also important to be conscious of the social baggage that certain color schemes may have - the pink/blue color scheme often used to denote gender can be unnecessarily polarizing, and it may be easier to use a colder color (blue or purple) for men and a warmer color (yellow, orange, lighter green) for women[^10-graphics-3].
--   There are packages such as `RColorBrewer` and `dichromat` that have color palettes which are aesthetically pleasing, and, in many cases, colorblind friendly (`dichromat` is better for that than `RColorBrewer`). You can also take a look at other [ways to find nice color palettes](https://lisacharlotterost.de/2016/04/22/Colors-for-DataVis/).
+- Do not use rainbow color gradient schemes 
+    - because of the unequal perception of different wavelengths, these schemes are *misleading* - the color distance does not match the perceptual distance.
+- Avoid any scheme that uses green-yellow-red signaling if you have a target audience that may include colorblind people.
+- To "colorblind-proof" a graphic, you can use a couple of strategies:
+    - double encoding - where you use color, use another aesthetic (line type, shape) as well to help your colorblind readers out
+    - If you can print your chart out in black and white and still read it, it will be safe for colorblind users. This is the only foolproof way to do it!
+    - If you are using a color gradient, use a monochromatic color scheme where possible. This is perceived as light -\> dark by colorblind people, so it will be correctly perceived no matter what color you use.
+    - If you have a bidirectional scale (e.g. showing positive and negative values), the safest scheme to use is purple - white - orange. In any color scale that is multi-hue, it is important to transition through white, instead of from one color to another directly.
+- Be conscious of what certain colors "mean"
+    - Leveraging common associations can make it easier to read a color scale and remember what it stands for (e.g. blue for cold, orange/red for hot is a natural scale, red = Republican and blue = Democrat in the US, white -\> blue gradients for showing rainfall totals)
+    - Some colors can can provoke emotional responses that may not be desirable.[^10-graphics-2]
+    - It is also important to be conscious of the social baggage that certain color schemes may have - the pink/blue color scheme often used to denote gender can be unnecessarily polarizing, and it may be easier to use a colder color (blue or purple) for men and a warmer color (yellow, orange, lighter green) for women[^10-graphics-3].
+- There are packages such as `RColorBrewer` and `dichromat` that have color palettes which are aesthetically pleasing, and, in many cases, colorblind friendly (`dichromat` is better for that than `RColorBrewer`). You can also take a look at other [ways to find nice color palettes](https://lisacharlotterost.de/2016/04/22/Colors-for-DataVis/).
 
 [^10-graphics-2]: When the COVID-19 outbreak started, many maps were using white-to-red gradients to show case counts and/or deaths. [The emotional association between red and blood, danger, and death may have caused people to become more frightened than what was reasonable given the available information.](https://www.esri.com/arcgis-blog/products/product/mapping/mapping-coronavirus-responsibly/)
 
@@ -108,9 +233,9 @@ Imposing order on visual chaos.
 ::: panel-tabset
 #### Ambiguous Images {.unnumbered}
 
-What does the figure below look like to you?
+What does @fig-rabbit-duck look like to you?
 
-![Is it a rabbit, or a duck?](../images/wrangling/DuckRabbitIllusion.jpg)
+![Is it a rabbit, or a duck?](../images/wrangling/rabbitduck.png){#fig-rabbit-duck}
 
 When faced with ambiguity, our brains use available context and past experience to try to tip the balance between alternate interpretations of an image. When there is still some ambiguity, many times the brain will just decide to interpret an image as one of the possible options.
 
