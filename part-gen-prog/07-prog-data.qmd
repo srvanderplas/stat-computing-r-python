@@ -1,0 +1,737 @@
+
+# Programming With Data {#sec-programming-data}
+
+At this point, you've learned how to write functions. You know the basics of how to create new variables, how data frames and lists work, and how to use markdown.
+
+And yet... these are skills that take some practice when applied to new data. We're going to take a break from the fire-hose of syntax you've learned and focus on applying what you've learned to problems related to data. The goal is to **reinforce the skills you've already learned** and help you find your feet a bit as you work through data analysis. 
+
+I'll provide sample code for tasks like basic plots and tables that we haven't covered yet - you should feel free to modify and tinker with these chunks as you go along.
+This chapter will also provide a preview of some of the packages we're going to work with in the next few sections (because I'm going to show you some code for e.g. summarizing a dataset and plot a few things, even without having covered that material). 
+
+
+![It's 100% expected that you would be oscillating between just maybe understanding something and feeling completely lost again during this chapter. Hopefully, that feeling will get better over the next few weeks... but for now, just stick with it.](images/data-programming/What I Know.png){fig-alt='An illustrated cartoon graph with "How much I think I know" on the y-axis, with axis labels at "I know nothing" and "I know lots", versus time on the x-axis. The line varies widely between the two. Above the line are emoji-like faces, showing uncertainty and hope early on. A box is provided spanning an initial first peak, valley, and ascent to the highest peak, with a label that says "you should be about here".'}
+
+As you've probably guessed by now, this  section will primarily be focused on examples.
+
+## {{< fa bullseye >}} Objectives
+
+- Write functions to create simple plots and data summaries
+
+- Apply syntax knowledge to reference variables and observations in common data structures
+
+- Create new variables and columns or reformat existing columns in provided data structures
+
+## Artwork Dimensions
+
+The Tate Art Museum assembled a collection of 70,000 artworks (last updated in 2014). They cataloged information including accession number, artwork dimensions, units, title, date, medium, inscription, and even URLs for images of the art. 
+
+### Reading in the Data
+::: panel-tabset
+
+#### R {-}
+
+```{r read-art-data}
+library(readr)
+artwork <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-01-12/artwork.csv')
+```
+
+#### Python {-}
+
+```{python read-art-data-py}
+import pandas as pd
+artwork = pd.read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-01-12/artwork.csv')
+```
+
+:::
+
+### Visual Summaries
+
+When you first access a new dataset, it's fun to explore it a bit. I've shown a summary of the variables (character variables summarized with completion rates and # unique values, numeric variables summarized with quantiles and mean/sd) generated using the R `skimr` and Python `skimpy` packages (which we'll talk about in the next chapter). 
+
+::: panel-tabset
+
+#### R {-}
+
+You may need to run `install.packages("skimr")` in the R terminal if you have not used the package before.
+
+```{r summary-data}
+library(skimr)
+skim(artwork)
+```
+
+#### Python (pandas) {-}
+```{python summary-data-pandas}
+# Base pandas
+artwork.describe()
+```
+
+#### Python (skimpy) {-}
+
+You may need to run `pip install skimpy` in the terminal if you have not used the package before.
+
+```{python summary-data-skimpy}
+
+# Skimpy package - like skimr
+from skimpy import skim
+skim(artwork)
+```
+:::
+
+### Accessing one column
+
+First, let's pull out the year for each piece of artwork in the dataset and see what we can do with it...
+
+::: panel-tabset
+
+#### R {-}
+
+```{r access-col-data-head}
+head(artwork$year)
+```
+
+We reference a column of the dataset by name using `dataset_name$column_name`, and since our data is stored in `artwork`, and we want the column named `year`, we use `artwork$year` to get access to the data we want.
+
+#### Python {-}
+
+```{python access-col-data-head-py}
+artwork.year.head()
+```
+
+We reference a column of the dataset by name using `dataset_name.column_name` or `dataset_name['column_name']`, and since our data is stored in `artwork` and we want the column `year`, we use `artwork.year` or `artwork['year']` to access the data we want.
+
+:::
+
+
+I've used the `head` command to show only the first few values (so that the output isn't overwhelming). 
+
+### Variable Summary
+
+When we have output like this, it is useful to summarize the output in some way:
+
+::: panel-tabset
+
+#### R {-}
+
+```{r summary-data-col}
+summary(artwork$year)
+```
+
+That's much less output, but we might want to instead make a chart:
+
+```{r hist-data-col}
+hist(artwork$year, breaks = 30)
+```
+
+#### Python {-}
+
+
+```{python summary-data-col-py}
+artwork.year.describe()
+```
+
+The `df.describe()` command provides us with a 5-number summary and then some additional statistics. 
+
+We can also create a chart:
+```{python hist-data-col-py}
+artwork.year.hist(bins = 30)
+```
+
+:::
+
+Personally, I much prefer the graphical version. It's informative (though it does leave out NA values) and shows that there are pieces going back to the 1500s, but that most pieces were made in the early 1800s or late 1900s. 
+
+### Create a Histogram (base graphics/matplotlib)
+
+We might be interested in the aspect ratio of the artwork - let's take a look at the input variables and define new variables related to aspect ratio(s).
+
+::: panel-tabset
+
+####R {-}
+
+```{r hist-dims-art, fig.height = 4, fig.width = 12}
+par(mfrow=c(1, 3)) # 3 plots on one row
+hist(artwork$width, main = "width", breaks = 30)
+hist(artwork$depth, main = "depth", breaks = 30)
+hist(artwork$height, main = "height", breaks = 30)
+```
+
+#### Python {-}
+
+```{python hist-dims-art-py}
+import matplotlib.pyplot as plt
+
+fig, axes = plt.subplots(nrows=1, ncols=3) # 3 subplots
+
+artwork.width.hist(bins = 30, ax = axes[0])
+artwork.depth.hist(bins = 30, ax = axes[1])
+artwork.height.hist(bins = 30, ax= axes[2])
+
+# Set subplot titles
+axes[0].title.set_text("width")
+axes[1].title.set_text("depth")
+axes[2].title.set_text("height")
+
+plt.show()
+```
+
+:::
+
+So all of our variables are skewed quite a bit, and we know from the existence of the `units` column that they may not be in the same unit, either.
+
+### Summary Tables
+
+Let's make a table of the units column so that we can see what the frequency of various units are in the dataset.
+
+::: panel-tabset
+
+#### R {-}
+
+```{r table-art-units}
+table(artwork$units, useNA = 'ifany')
+```
+
+#### Python {-}
+
+```{python table-art-units-py}
+artwork.units.value_counts(dropna=False)
+```
+
+:::
+
+Everything that has specified units is in mm. That makes things easier.
+
+### Defining a new variable
+
+::: panel-tabset
+
+#### R {-}
+
+To define a new variable that exists on its own, we might do something like this:
+
+```{r hist-aspect-ratio-calc, fig.show = 'hold', collapse = T}
+aspect_hw <- artwork$height/artwork$width
+par(mfrow = c(1, 2))
+hist(aspect_hw, breaks = 30)
+hist(log(aspect_hw), breaks = 30)
+```
+
+
+#### Python {-}
+
+```{python hist-aspect-ratio-calc-py, fig.show = "hold"}
+import numpy as np
+
+fig, axes = plt.subplots(nrows=1, ncols=2) # 2 subplots
+
+aspect_hw = artwork.height/artwork.width
+aspect_hw.hist(bins = 30, ax = axes[0])
+np.log(aspect_hw).hist(bins = 30, ax = axes[1])
+```
+:::
+
+Most things are pretty square-ish, but there are obviously quite a few exceptions in both directions.
+
+The one problem with how we've done this is that we now have a data frame with all of our data in it, and a separate variable `aspect_hw`, that is not attached to our data frame. That's not ideal - it's easy to lose track of the variable, it's easy to accidentally "sort" the variable so that the row order isn't the same as in the original data frame... there are all sorts of potential issues.
+
+### Adding a new column
+
+The better way to define a new variable is to add a new **column** to the data frame:
+
+::: panel-tabset
+
+#### R {-}
+
+To define a new variable that exists on its own, we might do something like this:
+
+```{r art-assign-column-var}
+artwork$aspect_hw <- artwork$height/artwork$width
+```
+
+
+#### Python {-}
+```{python art-assign-column-var-py}
+artwork['aspect_hw'] = artwork.height/artwork.width
+```
+
+Note that when you create a new column in a pandas dataframe, you have to use `df['colname']` on the left hand side, even if you use `df.colname` syntax on the right hand side.
+
+:::
+
+
+(We'll learn a shorter way to do this later, but this is functional, if not pretty, for now).
+
+The downside to this is that we have to write out `artwork$aspect_hw` or `artwork.aspect_hw` each time we want to reference the variable. That is a pain, but one that's relatively temporary (we'll get to a better way to do this in a couple of weeks). A little bit of extra typing is definitely worth it if you don't lose data you want to keep.
+
+:::{.callout-important}
+### Assign your calculations to a variable or column!
+
+One mistake I see people make frequently is to calculate `height/width`, but then not assign that value to a variable. 
+
+If you're not using `<-` in R^[(or `=` or `->` if you're a total heathen)] or `=` in Python, then you're not saving that information to be referenced later - you're just calculating values temporarily and possibly printing them as output. 
+
+:::
+
+### Conclusions
+
+It's important to keep track of where you're putting the pieces you create during an analysis - just as important as keeping track of the different sub-components when you're putting a lego set together or making a complex recipe in the kitchen. Forgetting to assign your calculation to a variable is like dumping your glaze down the sink or throwing that small lego component into the trash.
+
+
+## Dogs of NYC
+
+New York City provides a whole host of open-data resources, including a [dataset of dogs licensed in the city on an annual basis](https://data.cityofnewyork.us/Health/NYC-Dog-Licensing-Dataset/nu7n-tubp) (link is to the NYC Open Data Page). 
+
+[CSV link](https://data.cityofnewyork.us/api/views/nu7n-tubp/rows.csv?accessType=DOWNLOAD) (this data is ~23 MB)
+
+###  Read in data
+
+::: panel-tabset
+
+#### R {-}
+
+```{r read-dog-data}
+library(readr)
+
+if (!file.exists("data/NYC_dogs.csv")) {
+  # if the file doesn't exist, download it!
+  download.file(
+    "https://data.cityofnewyork.us/api/views/nu7n-tubp/rows.csv?accessType=DOWNLOAD", # url for download
+    destfile = "data/NYC_dogs.csv", # location to store the file
+    mode = "wb" # need this to get downloads to work on windows
+  )
+}
+
+dogs <- read_csv("data/NYC_dogs.csv")
+head(dogs)
+```
+
+#### Python {-}
+
+```{python read-dog-data-py}
+from os.path import exists # to test whether files exist
+import requests # to download a file
+
+if ~exists("data/NYC_dogs.csv"):
+  response = requests.get("https://data.cityofnewyork.us/api/views/nu7n-tubp/rows.csv?accessType=DOWNLOAD")
+  open("data/NYC_dogs.csv", "wb").write(response.content)
+
+dogs = pd.read_csv("data/NYC_dogs.csv")
+dogs.head()
+```
+
+:::
+
+
+### Work with Dates
+
+One thing we might want to do first is to transform the license dates (`LicenseIssuedDate`, `LicenseExpiredDate`) into actual dates instead of characters. 
+
+::: panel-tabset
+
+#### R {-}
+
+We will use the `lubridate` package to do this, because it is designed to make working with dates and times very easy.
+
+You may need to run `install.packages("lubridate")` in the R console if you have not used the package before.
+
+```{r dog-data-dates}
+library(lubridate)
+head(dogs$LicenseExpiredDate) # Dates are in month-day-year format
+
+dogs$LicenseExpiredDate <- mdy(dogs$LicenseExpiredDate)
+dogs$LicenseIssuedDate <- mdy(dogs$LicenseIssuedDate)
+
+head(dogs$LicenseExpiredDate)
+```
+
+#### Python {-}
+
+You may need to run `pip install datetime` in the terminal if you have not used the package before. 
+
+```{python dog-data-dates-py}
+from datetime import date
+
+dogs[['LicenseExpiredDate','LicenseIssuedDate']].head() # Before
+
+format_str = "%m/%d/%Y" # date format in the dataset
+
+dogs['LicenseExpiredDate'] = pd.to_datetime(dogs.LicenseExpiredDate, format = format_str)
+dogs['LicenseIssuedDate'] = pd.to_datetime(dogs.LicenseIssuedDate, format = format_str)
+
+dogs[['LicenseExpiredDate','LicenseIssuedDate']].head() # After
+
+```
+
+:::
+
+It might be interesting to see when licenses have been issued over time, so let's make a histogram. This time, I'm going to use ggplot graphics with the `ggplot2` package in R and the `plotnine` package in python (which is the python version of the R package). 
+
+### Create a Histogram (ggplot2/plotnine)
+
+::: panel-tabset
+
+#### R {-}
+
+You may need to run `install.packages("ggplot2")` in the R console if you have not used ggplot2 before.
+
+```{r dog-license-hist}
+library(ggplot2)
+
+ggplot(
+  data = dogs, 
+  aes(x = LicenseIssuedDate) # Specify we want LicenseIssueDate on the x-axis
+) + 
+  geom_histogram() # Create a histogram
+
+```
+
+#### Python {-}
+
+You may need to run `pip install plotnine` in the terminal if you have not used the package before. 
+
+```{python dog-license-hist-py}
+from plotnine import *
+
+(
+  ggplot(aes(x = 'LicenseIssuedDate'), data = dogs) + 
+  geom_histogram() # Create a histogram
+)
+
+```
+
+:::
+
+There is an interesting periodicity to the license issue dates. 
+
+### Compute License Length
+
+I'm also curious about how long a license tends to be held for - we can get this information by subtracting the issue date from the expiration date.
+
+::: panel-tabset
+
+#### R
+
+```{r dog-license-length}
+dogs$LicenseLength <- dogs$LicenseExpiredDate - dogs$LicenseIssuedDate
+summary(dogs$LicenseLength)
+head(dogs$LicenseLength)
+```
+
+We can see that directly subtracting date-times gives us a license length in days. That's useful enough, I guess, but it might be more useful in years... unfortunately, that's not an option for `difftime()`
+
+```{r dog-license-length-2}
+library(ggplot2)
+dogs$LicenseLength <- difftime(dogs$LicenseExpiredDate, dogs$LicenseIssuedDate, units = "weeks")
+
+# 52 weeks in a year so we'll just convert as we plot
+ggplot(data = dogs, aes(x = LicenseLength / 52 )) + geom_histogram() + 
+  scale_x_continuous(limits = c(0,10))
+```
+
+#### Python
+
+```{python dog-license-length-py}
+dogs["License_length"] = dogs.LicenseExpiredDate - dogs.LicenseIssuedDate
+
+dogs.License_length.describe()
+dogs.License_length.head()
+
+dogs["License_length_yr"] = dogs.License_length.dt.days/365.25
+
+```
+
+
+```{python dog-license-length2-py}
+(
+  ggplot(aes(x = "License_length_yr"), data = dogs) + 
+  geom_histogram(bins = 30)+
+  scale_x_continuous(limits = (0,10))
+)
+```
+
+In python, we have to first access the "days" attribute of the `timedelta64` data type (this gives us a number) using `dogs.Licence_length.dt.days` and then divide by 365.25 (number of days in a year, on average). 
+:::
+
+### Explore Boroughs
+
+Another question that I have when looking at this dataset is a bit more superficial - are the characteristics of different areas different? The `dogs` data frame has a Borough column, but it's not actually filled in, so we'll need to get rid of it and then add Borough back in by zip code. 
+
+To look at this, we'll need a bit more data. I found a list of NYC zip codes by borough, which we can merge in with the data we already have to get puppy registrations by borough. Then, we can see if e.g. the top 10 breeds are different for different boroughs. To simplify this, I'm going to link to a file to merge in, and not show you the specifics of how I read the table from [this site](https://www.nycbynatives.com/nyc_info/new_york_city_zip_codes.php).
+
+```{r get-nyc-zip-borough, echo = F, include = F, eval = F}
+library(xml2)
+library(tidyverse)
+page <- read_html("https://www.nycbynatives.com/nyc_info/new_york_city_zip_codes.php")
+nyc_zip_borough <- data.frame(ZipCode = c(xml_find_all(page, ".//tr/td[1]"), 
+                                          xml_find_all(page, ".//tr/td[4]")) %>%
+                                purrr::map_chr(xml_text) %>% 
+                                stringr::str_trim(),
+                              Borough = c(xml_find_all(page, ".//tr/td[2]"), 
+                                          xml_find_all(page, ".//tr/td[5]")) %>%
+                                purrr::map_chr(xml_text) %>% 
+                                stringr::str_trim()) %>%
+  unique()
+write_csv(nyc_zip_borough, "data/nyc_zip_borough.csv")
+```
+
+::: panel-tabset
+
+#### R {-}
+
+```{r merge-dog-borough-info}
+borough_zip <- read_csv("https://raw.githubusercontent.com/srvanderplas/unl-stat850/main/data/nyc_zip_borough.csv")
+
+# Remove the Borough column from dogs
+dogs <- dogs[, which(names(dogs) != "Borough")]
+dogs <- merge(dogs, borough_zip, by = "ZipCode")
+head(dogs)
+```
+
+
+#### Python {-}
+
+```{python merge-dog-borough-info-py}
+borough_zip = pd.read_csv("https://raw.githubusercontent.com/srvanderplas/unl-stat850/main/data/nyc_zip_borough.csv")
+
+dogs = dogs.drop('Borough', axis = 1) # drop borough column
+dogs = pd.merge(dogs, borough_zip, on = 'ZipCode')
+dogs.head()
+```
+
+:::
+
+Now that we have borough, let's write a function that will take a dataset and spit out a list of the top 5 dog breeds registered in that area.
+
+### Custom Summary Function
+
+::: panel-tabset
+
+#### R {-}
+
+```{r dog-top-5-breeds-function}
+top_5_breeds <- function(data) {
+  # Inside the function, our dataset is called data, not dogs
+  tmp <- table(data$BreedName) 
+  return(sort(tmp, decreasing = T)[1:5]) # top 5 breeds with counts
+}
+```
+
+#### Python {-}
+
+```{python dog-top-5-breeds-function-py}
+
+def top_5_breeds(data):
+  tmp = pd.value_counts(data.BreedName)
+  return tmp.iloc[0:5]
+
+```
+
+:::
+
+
+### For Loop Summary
+
+Now, using that function, lets write a for loop that loops through the 5 boroughs and spits out the top 5 breeds in each borough:
+
+::: panel-tabset
+
+#### R {-}
+```{r dog-for-loop-breeds}
+boroughs <- unique(borough_zip$Borough) # get a list of the 5 boroughs
+for (i in boroughs) {
+  # Get subset of data frame corresponding to the Borough
+  dogs_sub <- dogs[dogs$Borough == i,]
+  # Get top 5 dog breeds
+  result <- as.data.frame(top_5_breeds(dogs_sub))
+  # set names
+  names(result) <- c("Breed", "Freq")
+  # Add Borough as a new column
+  result$Borough <- i
+  # Add rank as a new column
+  result$rank <- 1:5
+  
+  print(result)
+}
+```
+
+#### Python {-}
+
+```{python dog-for-loop-breeds-py}
+boroughs = borough_zip.Borough.unique()
+for i in boroughs:
+  # get subset of data frame corresponding to the borough
+  dogs_sub = dogs.query("Borough == @i")
+  # Get top 5 breeds
+  result = top_5_breeds(dogs_sub)
+  # Convert to DataFrame and make the index another column
+  result = result.to_frame().reset_index()
+  # Rename columns
+  result.rename(columns = {'index':'BreedName','BreedName':'count'})
+  # Add Borough column
+  result["Borough"] = i
+  # Add rank column
+  result["rank"] = range(1, 6)
+
+  print(result)
+
+```
+
+
+[More information on pandas `query` function](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.query.html) (use `\@varname` to use a variable in a query).
+
+:::
+
+### Summary Data Frame
+
+If we wanted to save these results as a summary data frame, we could totally do that!
+
+::: panel-tabset
+
+#### R {-}
+
+```{r dog-for-loop-breeds2}
+breeds_by_borough <- data.frame() # create a blank data frame
+
+for (i in boroughs) {
+  # Get subset of data frame corresponding to the Borough
+  dogs_sub <- subset(dogs, Borough == i)
+  # Get top 5 dog breeds
+  result <- as.data.frame(top_5_breeds(dogs_sub))
+  # set names
+  names(result) <- c("Breed", "Freq")
+  # Add Borough as a new column
+  result$Borough <- i
+  # Add rank as a new column
+  result$rank <- 1:5
+  
+  breeds_by_borough <- rbind(breeds_by_borough, result)
+}
+
+breeds_by_borough
+```
+
+We could even sort our data by the rank and Borough for easier comparisons:
+
+```{r dog-sort-results}
+
+breeds_by_borough[order(breeds_by_borough$rank, 
+                        breeds_by_borough$Borough),]
+
+```
+
+#### Python {-}
+
+```{python dog-for-loop-breeds2-py}
+breeds_by_borough = pd.DataFrame() # Create a blank dataframe
+
+for i in boroughs:
+  print(i)
+  # get subset of data frame corresponding to the borough
+  dogs_sub = dogs.query("Borough== @i")
+  # Get top 5 breeds
+  result = top_5_breeds(dogs_sub)
+  # Convert to DataFrame and make the index another column
+  result = result.to_frame().reset_index()
+  # Rename columns
+  result.rename(columns = {'index':'BreedName','BreedName':'count'})
+  # Add Borough column
+  result["Borough"] = i
+  # Add rank column
+  result["rank"] = range(1, 6)
+  # Append to blank dataframe
+  breeds_by_borough = breeds_by_borough.append(result)
+
+breeds_by_borough.head()
+breeds_by_borough.tail()
+
+```
+
+
+We could even sort our data by the rank and Borough for easier comparisons:
+
+```{python dog-sort-results-py}
+
+breeds_by_borough.sort_values(['rank', 'Borough'])
+
+```
+
+:::
+
+
+Soon we'll learn a much shorter set of commands to get these types of summaries, but it's important to know how a for loop connects to the concept of summarizing data by a factor (in this case, by borough).
+
+::: {.callout-tip}
+### Try it out: NYC dogs {-}
+
+Look at the name, age, or gender of dogs registered in NYC and see if you can come up with a similar function and way of summarizing the data in a for-loop. You may want to calculate the mean or quantiles (for numeric variables), or list the most common dog names/genders in each borough.
+
+:::
+
+## Swearing in Tarantino Films
+
+**Content warning:** This section contains analysis of swear words and deaths. I will not censor the words used in these movies, as they are legitimate data and could lead to an interesting analysis. Feel free to skip this example if it offends you.
+
+###  Read in data
+
+::: panel-tabset
+
+#### R {-}
+
+```{r read-tarantino-data-r}
+library(readr)
+
+tarantino <- read_csv("https://raw.githubusercontent.com/fivethirtyeight/data/master/tarantino/tarantino.csv")
+head(tarantino)
+```
+
+#### Python {-}
+
+```{python read-tarantino-data-py}
+import pandas as pd
+
+tarantino = pd.read_csv("https://raw.githubusercontent.com/fivethirtyeight/data/master/tarantino/tarantino.csv")
+tarantino.head()
+```
+
+:::
+
+
+### Create a Density Plot (ggplot2/plotnine)
+
+::: panel-tabset
+
+#### R {-}
+
+You may need to run `install.packages("ggplot2")` in the R console if you have not used ggplot2 before.
+
+```{r tarantino-hist}
+library(ggplot2)
+
+ggplot(
+  data = tarantino, 
+  aes(x = minutes_in, color = movie)
+) + 
+  geom_density() + 
+  facet_wrap(~type)
+```
+
+#### Python {-}
+
+You may need to run `pip install plotnine` in the terminal if you have not used the package before. 
+
+```{python tarantino-hist-py}
+from plotnine import *
+
+(
+  ggplot(tarantino, aes(x = 'minutes_in', color = 'movie')) + 
+  geom_density() + 
+  facet_wrap("type")
+)
+
+```
+
+:::
+
+So, from these plots, we can see that in at least two movies, there are high spikes in deaths about 1/3 and 2/3 of the way in; in another movie, most of the deaths occur in the first 25 minutes. Swearing, on the other hand, seems to be fairly evenly distributed throughout the movies. 
+
+
+XXX Under construction - I will add more as I get time. 

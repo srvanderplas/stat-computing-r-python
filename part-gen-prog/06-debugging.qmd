@@ -242,15 +242,18 @@ Describe what you see and what you'd hope to see if the code were working.
 ::: callout-caution
 ### Example: MWEs 
 
-Note: You don't need to know anything about SAS to understand this example.
-
 ::: panel-tabset
 
 #### SAS markdown
+
+Note: You don't need to know anything about SAS to understand this example.
+
+
 A long time ago, when this book covered R and SAS, I had issues with SAS graphs rendering in black and white most of the time. 
 
 I started debugging the issue with the following code chunk: 
 
+````
 ```{{r sas-cat-aes-map-07, engine="sashtml", engine.path="sas", fig.path = "image/"}}
 libname classdat "sas/";
 
@@ -270,7 +273,7 @@ SCATTER x = Population y = Assault /
 RUN;
 QUIT; 
 ```
-
+````
 
 After running the code separately in SAS and getting a figure that looked like what I'd expected, I set out to construct a reproducible example so that I could post to the [SASmarkdown github issues page](https://github.com/Hemken/SASmarkdown/issues/14) and ask for help.
 
@@ -292,7 +295,7 @@ Then, I started constructing my reproducible example.
 I ran `?sas_enginesetup` to get to a SASmarkdown help page, because I remembered it had a nice way to generate and run markdown files from R directly (without saving the Rmd file). 
 
 I copied the example from that page:
-```
+````
 indoc <- '
 ---
 title: "Basic SASmarkdown Doc"
@@ -303,15 +306,16 @@ output: html_document
 # I've deleted the intermediate chunks because they screw 
 # everything up when I print this chunk out
 '
+
 knitr::knit(text=indoc, output="test.md")
 rmarkdown::render("test.md")
-```
+````
 
 Then, I created several chunks which would do the following:
-1. Write the minimal example SAS code above to a [file](files/reprex.sas)
-2. Call that file in a SASmarkdown chunk using the `%include` macro, which dumps the listed file into the SAS program. This generates the [plot](files/SASmarkdown-reprex/unnamed-chunk-1.png) using SASmarkdown.
+1. Write the minimal example SAS code above to a [file](../files/reprex.sas)
+2. Call that file in a SASmarkdown chunk using the `%include` macro, which dumps the listed file into the SAS program. This generates the [plot](../files/SASmarkdown-reprex/unnamed-chunk-1.png) using SASmarkdown.
 3. Call the file using SAS batch mode    
-(this runs the code and produces a [plot](files/SASmarkdown-reprex/SGPlot.png) outside of SASmarkdown, to prove that the issue is SASmarkdown itself)
+(this runs the code and produces a [plot](../files/SASmarkdown-reprex/SGPlot.png) outside of SASmarkdown, to prove that the issue is SASmarkdown itself)
 
 Finally, I included the image generated from the batch mode call manually.
 
