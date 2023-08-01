@@ -1,33 +1,37 @@
 # Reproducibility and Professional Communication {#sec-docs}
 
-
 ## {{< fa bullseye >}} Objectives
 
 -   Create professional documents (slides, posters, CVs) using LaTeX and/or markdown
 
+This chapter will be shorter in length than many of the rest, but you should not devote less time to it.
+Instead, you should spend the time playing with the different options presented here and deciding which one of each is your favorite.
+Rather than detailing all of the customization options in each package, I think you'll have an easier time looking at examples, trying to customize them yourself to get the effect you want, and figuring out how to do that by reading the documentation, stackoverflow posts, and other help files -- those are the skills you'll need when you try to put this knowledge into action.
 
-
-This chapter will be shorter in length than many of the rest, but you should not devote less time to it. Instead, you should spend the time playing with the different options presented here and deciding which one of each is your favorite. Rather than detailing all of the customization options in each package, I think you'll have an easier time looking at examples, trying to customize them yourself to get the effect you want, and figuring out how to do that by reading the documentation, stackoverflow posts, and other help files -- those are the skills you'll need when you try to put this knowledge into action.
-
-At the end of this chapter there are a few extras -- for instance, how to use GitHub to host your documents, how to create a blog with `blogdown`, and more. You should feel free to investigate, but as long as you are able to create presentation slides, posters, and a CV, you're good to go.
+At the end of this chapter there are a few extras -- for instance, how to use GitHub to host your documents, how to create a blog with `blogdown`, and more.
+You should feel free to investigate, but as long as you are able to create presentation slides, posters, and a CV, you're good to go.
 
 ::: column-margin
 ![Reproducibility with Rmarkdown (by Allison Horst)](https://raw.githubusercontent.com/allisonhorst/stats-illustrations/main/rstats-artwork/reproducibility_court.png)
 :::
 
-
 ## Literate Programming, `knitr`, `rmarkdown`, and `quarto`
 
-[Literate programming](https://en.wikipedia.org/wiki/Literate_programming) is a programming method where you explain the code in natural language (e.g. English) in roughly the same space that you write the code (in a programming language). 
+[Literate programming](https://en.wikipedia.org/wiki/Literate_programming) is a programming method where you explain the code in natural language (e.g. English) in roughly the same space that you write the code (in a programming language).
 This solves two problems: code isn't always clear as to what its goals are, and natural language descriptions of algorithms aren't always clear enough to contain the details of how something is actually implemented.
 
-The `knitr`, `Rmarkdown`, and `quarto` packages are all implementations of literate programming. The packages tend to overlap a bit, because `knitr` and `Rmarkdown` were written by the same author, Yihui Xie, and `quarto` is the next generation of Rmarkdown that incorporates more options for using other data-science related programming languages.
+The `knitr`, `Rmarkdown`, and `quarto` packages are all implementations of literate programming.
+The packages tend to overlap a bit, because `knitr` and `Rmarkdown` were written by the same author, Yihui Xie, and `quarto` is the next generation of Rmarkdown that incorporates more options for using other data-science related programming languages.
 
 -   `knitr` is primarily focused on the creation of Rnw (r no weave) files, which are essentially LaTeX files with R code inside. Rnw files are compiled into pdfs.
 -   `rmarkdown` uses `Rmd` or `Rmarkdown` files, which can then be compiled into many different formats: pdf, html, markdown, Microsoft Word.
 -   `quarto` uses `qmd` files, which are compiled into many different formats: pdf, html, markdown, Microsoft Word.
 
-All of these programs work essentially the same way: code chunks are run in the specified language, figures are saved, tables are created, and the results are added to the intermediate file (.tex or .md). Then, another program (LaTeX or Pandoc) compiles the intermediate file into the final result. Understanding this process is key to being able to debug any errors you may encounter, because you need to identify which program is having the error - the code chunk? adding the results to the intermediate file? compiling from the intermediate file to the end result?
+All of these programs work essentially the same way: code chunks are run in the specified language, figures are saved, tables are created, and the results are added to the intermediate file (.tex or .md).
+Then, another program (LaTeX or Pandoc) compiles the intermediate file into the final result.
+Understanding this process is key to being able to debug any errors you may encounter, because you need to identify which program is having the error - the code chunk?
+adding the results to the intermediate file?
+compiling from the intermediate file to the end result?
 
 ::: panel-tabset
 ### `knitr`
@@ -43,11 +47,11 @@ All of these programs work essentially the same way: code chunks are run in the 
 ![quarto uses R or python to produce a markdown (.md) file, which is then compiled to PDF, DOC, HTML, or other formats using pandoc.](../images/tools/quarto-flow.png){fig-alt="Figure showing a quarto hex icon, with file.qmd containing a code chunk started by ```{r} and ended by ```. This file.qmd is processed with R or python to produce file.md, which has ![](figure.png) code containing information about a picture. The markdown file is compiled with pandoc to produce file.pdf,file.html, and/or file.doc, all of which contain a scatterplot."}
 :::
 
-One major advantage of literate programming packages from a practical perspective is that it largely removes the need to keep track of graphs and charts when you're writing a paper, making a presentation, etc. The charts and tables based on your method automatically update when the document is recompiled.
+One major advantage of literate programming packages from a practical perspective is that it largely removes the need to keep track of graphs and charts when you're writing a paper, making a presentation, etc.
+The charts and tables based on your method automatically update when the document is recompiled.
 
-You've probably been using `quarto` to submit your homework throughout the semester. 
+You've probably been using `quarto` to submit your homework throughout the semester.
 In this chapter, we're going to explore some other applications of literate programming: creating slides, posters, and more.
-
 
 ## Review: Quarto Formatting
 
@@ -58,32 +62,52 @@ This section's material is ~~stolen~~ copied directly from the Quarto documentat
 +-----------------------------------+-------------------------------+
 | Markdown Syntax                   | Output                        |
 +===================================+===============================+
-|     *italics* and **bold**        | *italics* and **bold**        |
+| ```                               | *italics* and **bold**        |
+| *italics* and **bold**            |                               |
+| ```                               |                               |
 +-----------------------------------+-------------------------------+
-|     superscript^2^ / subscript~2~ | superscript^2^ / subscript~2~ |
+| ```                               | superscript^2^ / subscript~2~ |
+| superscript^2^ / subscript~2~     |                               |
+| ```                               |                               |
 +-----------------------------------+-------------------------------+
-|     ~~strikethrough~~             | ~~strikethrough~~             |
+| ```                               | ~~strikethrough~~             |
+| ~~strikethrough~~                 |                               |
+| ```                               |                               |
 +-----------------------------------+-------------------------------+
-|     `verbatim code`               | `verbatim code`               |
+| ```                               | `verbatim code`               |
+| `verbatim code`                   |                               |
+| ```                               |                               |
 +-----------------------------------+-------------------------------+
 
 ### Headings {#headings .unnumbered}
 
-+---------------------+-----------------------------------------------+
-| Markdown Syntax     | Output                                        |
-+=====================+===============================================+
-|     # Header 1      | # Header 1 {.heading-output .unnumbered}      |
-+---------------------+-----------------------------------------------+
-|     ## Header 2     | ## Header 2 {.heading-output .unnumbered}     |
-+---------------------+-----------------------------------------------+
-|     ### Header 3    | ### Header 3 {.heading-output .unnumbered}    |
-+---------------------+-----------------------------------------------+
-|     #### Header 4   | #### Header 4 {.heading-output .unnumbered}   |
-+---------------------+-----------------------------------------------+
-|     ##### Header 5  | ##### Header 5 {.heading-output .unnumbered}  |
-+---------------------+-----------------------------------------------+
-|     ###### Header 6 | ###### Header 6 {.heading-output .unnumbered} |
-+---------------------+-----------------------------------------------+
++--------------------+-----------------------------------------------+
+| Markdown Syntax    | Output                                        |
++====================+===============================================+
+| ```                | # Header 1 {.heading-output .unnumbered}      |
+| # Header 1         |                                               |
+| ```                |                                               |
++--------------------+-----------------------------------------------+
+| ```                | ## Header 2 {.heading-output .unnumbered}     |
+| ## Header 2        |                                               |
+| ```                |                                               |
++--------------------+-----------------------------------------------+
+| ```                | ### Header 3 {.heading-output .unnumbered}    |
+| ### Header 3       |                                               |
+| ```                |                                               |
++--------------------+-----------------------------------------------+
+| ```                | #### Header 4 {.heading-output .unnumbered}   |
+| #### Header 4      |                                               |
+| ```                |                                               |
++--------------------+-----------------------------------------------+
+| ```                | ##### Header 5 {.heading-output .unnumbered}  |
+| ##### Header 5     |                                               |
+| ```                |                                               |
++--------------------+-----------------------------------------------+
+| ```                | ###### Header 6 {.heading-output .unnumbered} |
+| ###### Header 6    |                                               |
+| ```                |                                               |
++--------------------+-----------------------------------------------+
 
 ```{=html}
 <style type="text/css">
@@ -96,73 +120,88 @@ This section's material is ~~stolen~~ copied directly from the Quarto documentat
 ```
 ### Links & Images {.unnumbered}
 
-::: {.column-screen-inset-right}
-+------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------+
-| Markdown Syntax                                                  | Output                                                                                                                  |
-+==================================================================+=========================================================================================================================+
-|     <https://quarto.org>                                         | <https://quarto.org>                                                                                                    |
-+------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------+
-|     [Quarto](https://quarto.org)                                 | [Quarto](https://quarto.org)                                                                                            |
-+------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------+
-|     ![Caption](elephant.png)                                     | ![Caption](../images/tools/elephant.png){fig-alt="A line drawing of an elephant."}                                     |
-+------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------+
-|     [![Caption](elephant.png)](https://quarto.org)               | [![Caption](../images/tools/elephant.png)](https://quarto.org)                                                         |
-+------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------+
-|     [![Caption](elephant.png)](https://quarto.org "An elephant") | [![Caption](../images/tools/elephant.png "An elephant"){fig-alt="A line drawing of an elephant."}](https://quarto.org) |
-+------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------+
-|     [![](elephant.png){fig-alt="Alt text"}](https://quarto.org)  | [![](../images/tools/elephant.png){fig-alt="A line drawing of an elephant."}](https://quarto.org)                      |
-+------------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------+
-:::
++--------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------+
+| Markdown Syntax                                              | Output                                                                                                                  |
++==============================================================+=========================================================================================================================+
+| ```                                                          | <https://quarto.org>                                                                                                    |
+| <https://quarto.org>                                         |                                                                                                                         |
+| ```                                                          |                                                                                                                         |
++--------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------+
+| ```                                                          | [Quarto](https://quarto.org)                                                                                            |
+| [Quarto](https://quarto.org)                                 |                                                                                                                         |
+| ```                                                          |                                                                                                                         |
++--------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------+
+| ```                                                          | ![Caption](../images/tools/elephant.png){fig-alt="A line drawing of an elephant."}                                      |
+| ![Caption](elephant.png)                                     |                                                                                                                         |
+| ```                                                          |                                                                                                                         |
++--------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------+
+| ```                                                          | [![Caption](../images/tools/elephant.png)](https://quarto.org)                                                          |
+| [![Caption](elephant.png)](https://quarto.org)               |                                                                                                                         |
+| ```                                                          |                                                                                                                         |
++--------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------+
+| ```                                                          | [![Caption](../images/tools/elephant.png "An elephant"){fig-alt="A line drawing of an elephant."}](https://quarto.org)  |
+| [![Caption](elephant.png)](https://quarto.org "An elephant") |                                                                                                                         |
+| ```                                                          |                                                                                                                         |
++--------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------+
+| ```                                                          | [![](../images/tools/elephant.png){fig-alt="A line drawing of an elephant."}](https://quarto.org)                       |
+| [![](elephant.png){fig-alt="Alt text"}](https://quarto.org)  |                                                                                                                         |
+| ```                                                          |                                                                                                                         |
++--------------------------------------------------------------+-------------------------------------------------------------------------------------------------------------------------+
 
 ### Lists {.unnumbered}
 
-::: {.column-screen-inset-right}
-+-------------------------------------+---------------------------------+
-| Markdown Syntax                     | Output                          |
-+=====================================+=================================+
-|     * unordered list                | -   unordered list              |
-|         + sub-item 1                |                                 |
-|         + sub-item 2                |     -   sub-item 1              |
-|             - sub-sub-item 1        |                                 |
-|                                     |     -   sub-item 2              |
-|                                     |                                 |
-|                                     |         -   sub-sub-item 1      |
-+-------------------------------------+---------------------------------+
-|     *   item 2                      | -   item 2                      |
-|                                     |                                 |
-|         Continued (indent 4 spaces) |     Continued (indent 4 spaces) |
-+-------------------------------------+---------------------------------+
-|     1. ordered list                 | 1.  ordered list                |
-|     2. item 2                       |                                 |
-|         i) sub-item 1               | 2.  item 2                      |
-|              A.  sub-sub-item 1     |                                 |
-|                                     |     i)  sub-item 1              |
-|                                     |                                 |
-|                                     |         A.  sub-sub-item 1      |
-+-------------------------------------+---------------------------------+
-|     (@)  A list whose numbering     | (1) A list whose numbering      |
-|                                     |                                 |
-|     continues after                 | continues after                 |
-|                                     |                                 |
-|     (@)  an interruption            | (2) an interruption             |
-+-------------------------------------+---------------------------------+
-|     term                            | term                            |
-|     : definition                    |                                 |
-|                                     | :   definition                  |
-+-------------------------------------+---------------------------------+
-:::
++------------------------------------+---------------------------------+
+| Markdown Syntax                    | Output                          |
++====================================+=================================+
+| ```                                | -   unordered list              |
+| * unordered list                   |                                 |
+|     + sub-item 1                   |     -   sub-item 1              |
+|     + sub-item 2                   |                                 |
+|         - sub-sub-item 1           |     -   sub-item 2              |
+| ```                                |                                 |
+|                                    |         -   sub-sub-item 1      |
++------------------------------------+---------------------------------+
+| ```                                | -   item 2                      |
+| *   item 2                         |                                 |
+|                                    |     Continued (indent 4 spaces) |
+|     Continued (indent 4 spaces)    |                                 |
+| ```                                |                                 |
++------------------------------------+---------------------------------+
+| ```                                | 1.  ordered list                |
+| 1. ordered list                    |                                 |
+| 2. item 2                          | 2.  item 2                      |
+|     i) sub-item 1                  |                                 |
+|          A.  sub-sub-item 1        |     i)  sub-item 1              |
+| ```                                |                                 |
+|                                    |         A.  sub-sub-item 1      |
++------------------------------------+---------------------------------+
+| ```                                | (1) A list whose numbering      |
+| (@)  A list whose numbering        |                                 |
+|                                    | continues after                 |
+| continues after                    |                                 |
+|                                    | (2) an interruption             |
+| (@)  an interruption               |                                 |
+| ```                                |                                 |
++------------------------------------+---------------------------------+
+| ```                                | term                            |
+| term                               |                                 |
+| : definition                       | :   definition                  |
+| ```                                |                                 |
++------------------------------------+---------------------------------+
+
 
 ### Tables {.unnumbered}
 
 ::: panel-tabset
-
 #### Markdown Syntax {.unnumbered}
 
-    | Right | Left | Default | Center |
-    |------:|:-----|---------|:------:|
-    |   12  |  12  |    12   |    12  |
-    |  123  |  123 |   123   |   123  |
-    |    1  |    1 |     1   |     1  |
+```         
+| Right | Left | Default | Center |
+|------:|:-----|---------|:------:|
+|   12  |  12  |    12   |    12  |
+|  123  |  123 |   123   |   123  |
+|    1  |    1 |     1   |     1  |
+```
 
 #### Output {.unnumbered}
 
@@ -171,26 +210,31 @@ This section's material is ~~stolen~~ copied directly from the Quarto documentat
 |    12 | 12   | 12      |   12   |
 |   123 | 123  | 123     |  123   |
 |     1 | 1    | 1       |   1    |
-
 :::
 
 Learn more in the article on [Tables](https://quarto.org/docs/authoring/tables.html).
 
 ### Equations {.unnumbered}
 
-Use `$` delimiters for inline math and `$$` delimiters for display math. For example:
+Use `$` delimiters for inline math and `$$` delimiters for display math.
+For example:
 
-+-------------------------------+-------------------------+
-| Markdown Syntax               | Output                  |
-+===============================+=========================+
-|     inline math: $E = mc^{2}$ | inline math: $E=mc^{2}$ |
-+-------------------------------+-------------------------+
-|     display math:             | display math:\          |
-|                               | $$E = mc^{2}$$          |
-|     $$E = mc^{2}$$            |                         |
-+-------------------------------+-------------------------+
++------------------------------+-------------------------+
+| Markdown Syntax              | Output                  |
++==============================+=========================+
+| ```                          | inline math: $E=mc^{2}$ |
+| inline math: $E = mc^{2}$    |                         |
+| ```                          |                         |
++------------------------------+-------------------------+
+| ```                          | display math:\          |
+| display math:                | $$E = mc^{2}$$          |
+|                              |                         |
+| $$E = mc^{2}$$               |                         |
+| ```                          |                         |
++------------------------------+-------------------------+
 
-If you want to define custom TeX macros, include them within `$$` delimiters enclosed in a `.hidden` block. For example:
+If you want to define custom TeX macros, include them within `$$` delimiters enclosed in a `.hidden` block.
+For example:
 
 ``` tex
 ::: {.hidden}
@@ -211,26 +255,30 @@ LaTeX is a document preparation utility that attempts to take the focus off of l
 I'm not convinced LaTeX succeeds at freeing you from layout concerns, but it's certainly true that it is much more powerful than Word for layout purposes.
 :::
 
-The philosophy of LaTeX is that presentation shouldn't get in the way of content: you should be able to change the presentation formatting systematically, without having to mess with the content. 
+The philosophy of LaTeX is that presentation shouldn't get in the way of content: you should be able to change the presentation formatting systematically, without having to mess with the content.
 This (theoretically) allows you to switch templates easily, make document-wide changes in a single command, and more.
 
 ::: callout-tip
 ### Try it out
 
-In Rstudio, copy the text in the document below, paste it into a text file in the editor window, and name it `test.tex`. You should see a Compile PDF button show up at the top of the document. Click that button to compile the document.
+In Rstudio, copy the text in the document below, paste it into a text file in the editor window, and name it `test.tex`.
+You should see a Compile PDF button show up at the top of the document.
+Click that button to compile the document.
 
-    \documentclass{article} % this tells LaTeX what type of document to make
-    % Note, comments are prefaced by a % sign. If you need to type the actual symbol
-    % you will have to escape it with \%.
+```         
+\documentclass{article} % this tells LaTeX what type of document to make
+% Note, comments are prefaced by a % sign. If you need to type the actual symbol
+% you will have to escape it with \%.
 
-    \begin{document}
-    Hello \LaTeX!
-    \end{document}
+\begin{document}
+Hello \LaTeX!
+\end{document}
+```
 :::
 
-Most commonly, you'll use the `article` document class for papers, and `beamer` for presentations and posters. Other useful classes include `moderncv` (for CVs) and `book`. 
-::: column-margin
-There is a [LaTeX class maintained by the UNL math department for thesis formatting](https://www.math.unl.edu/graduate/nuthesis/nuthesis.zip). 
+Most commonly, you'll use the `article` document class for papers, and `beamer` for presentations and posters.
+Other useful classes include `moderncv` (for CVs) and `book`.
+::: column-margin There is a [LaTeX class maintained by the UNL math department for thesis formatting](https://www.math.unl.edu/graduate/nuthesis/nuthesis.zip).
 You can easily add R code chunks to a LaTeX file by changing the extension of any .tex file to .Rnw.
 
 The Statistics graduate students maintain a bookdown (rmarkdown) version of the UNL thesis class on github [here](https://github.com/unl-statistics/UNL-thesisdown-template).
@@ -243,9 +291,12 @@ There are several types of latex commands:
 -   **Environments**: statements with matching `\begin{xxx}` and `\end{xxx}` clauses that define a block of the document which is treated differently. Common environments include figures and tables.
 -   **Special characters**: another type of command that don't define formatting or structure, but may print special characters, e.g. `\%` to print a literal `%` character.
 
-Both declarations and environments may come with both optional and required arguments. Required arguments are placed in `{...}` brackets, while optional arguments are placed in `[...]` brackets. You can, for instance, start your document with `\documentclass[12pt]{article}` to specify the base font size.
+Both declarations and environments may come with both optional and required arguments.
+Required arguments are placed in `{...}` brackets, while optional arguments are placed in `[...]` brackets.
+You can, for instance, start your document with `\documentclass[12pt]{article}` to specify the base font size.
 
-One of the most useful features in LaTeX is math mode, which you can enter by enclosing text in `$ ... $` (for inline statements), `$$ ... $$` or `\[ ... \]` (for statements on their own line), or using other environments like `\begin{array} ... \end{array}` that come in math-specific packages. Once in math mode, you can use [math symbol commands](https://www.caam.rice.edu/~heinken/latex/symbols.pdf) to get characters like $\theta, \pi, \sum, \int, \infty$, and more.
+One of the most useful features in LaTeX is math mode, which you can enter by enclosing text in `$ ... $` (for inline statements), `$$ ... $$` or `\[ ... \]` (for statements on their own line), or using other environments like `\begin{array} ... \end{array}` that come in math-specific packages.
+Once in math mode, you can use [math symbol commands](https://www.caam.rice.edu/~heinken/latex/symbols.pdf) to get characters like $\theta, \pi, \sum, \int, \infty$, and more.
 
 ::: callout-tip
 ### Try it out
@@ -267,35 +318,37 @@ Take the sample document up above and see if you can do the following tasks: (I'
 
 #### Solution
 
-    \documentclass{article} % this tells LaTeX what type of document to make
+```         
+\documentclass{article} % this tells LaTeX what type of document to make
 
-    % Add the graphicx package so that we can include images
-    \usepackage{graphicx}
+% Add the graphicx package so that we can include images
+\usepackage{graphicx}
 
-    \begin{document}
-    Hello \LaTeX!
+\begin{document}
+Hello \LaTeX!
 
-    % Include a figure
-    \begin{figure}[h]
-    \centering
-    \includegraphics[width=.5\textwidth]{../image/IllusoryContour.png}
-    \caption{Illusory contour image}
-    \end{figure}
+% Include a figure
+\begin{figure}[h]
+\centering
+\includegraphics[width=.5\textwidth]{../image/IllusoryContour.png}
+\caption{Illusory contour image}
+\end{figure}
 
-    % Add the quadratic formula and the normal PDF to the document
-    $y = ax^2 + bx + c$ can be solved to get $$x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}$$
+% Add the quadratic formula and the normal PDF to the document
+$y = ax^2 + bx + c$ can be solved to get $$x = \frac{-b \pm \sqrt{b^2 - 4ac}}{2a}$$
 
-    The PDF of a normal distribution is $$f(x | \mu, \sigma) = \frac{1}{\sigma\sqrt{2\pi}} e^{-\frac{(x - \mu)^2}{2\sigma^2}}$$
+The PDF of a normal distribution is $$f(x | \mu, \sigma) = \frac{1}{\sigma\sqrt{2\pi}} e^{-\frac{(x - \mu)^2}{2\sigma^2}}$$
 
-    % In extremely large text, print \LaTeX
+% In extremely large text, print \LaTeX
 
-    \Huge\LaTeX
+\Huge\LaTeX
 
-    % In extremely small italic text, print your name
+% In extremely small italic text, print your name
 
-    \tiny\emph{Your name}
+\tiny\emph{Your name}
 
-    \end{document}
+\end{document}
+```
 
 You can see the compiled pdf [here](other/test.pdf).
 :::
@@ -303,32 +356,38 @@ You can see the compiled pdf [here](other/test.pdf).
 
 ### Knitr
 
-A LaTeX document has the file extension `.tex`, but it's very easy to convert a LaTeX document into a `.Rnw` (R-no-weave) document: change the file extension. Then, you can add R code chunks, and the `.Rnw` document will be compiled to a `.tex` document in R, and then the `.tex` document will be compiled to `.pdf` using LaTeX.
+A LaTeX document has the file extension `.tex`, but it's very easy to convert a LaTeX document into a `.Rnw` (R-no-weave) document: change the file extension.
+Then, you can add R code chunks, and the `.Rnw` document will be compiled to a `.tex` document in R, and then the `.tex` document will be compiled to `.pdf` using LaTeX.
 
 R code chunks are embedded in LaTeX documents using:
 
-    % start of chunk
-    <<chunk-name, ...options...>>=
+```         
+% start of chunk
+<<chunk-name, ...options...>>=
 
-    @
-    % end of chunk
+@
+% end of chunk
+```
 
 You can embed numerical results inline using `\Sexpr{...}` where your R code goes in the `...`.
 
-You could in theory use python within knitr via the `reticulate` package [@reticulate], but it will be easier by far to use `quarto`. Pick the tool that does the job well.
+You could in theory use python within knitr via the `reticulate` package [@reticulate], but it will be easier by far to use `quarto`.
+Pick the tool that does the job well.
 
 ## Slides
 
 ### Beamer (LaTeX) and knitr
 
-[Beamer](https://www.overleaf.com/learn/latex/beamer) is a powerful LaTeX class which allows you to create slides. The only change necessary to turn a beamer slide deck into a knitr slide deck is to add `fragile` as an option to any slide with verbatim content.
+[Beamer](https://www.overleaf.com/learn/latex/beamer) is a powerful LaTeX class which allows you to create slides.
+The only change necessary to turn a beamer slide deck into a knitr slide deck is to add `fragile` as an option to any slide with verbatim content.
 
-You can also create Beamer slides with Rmarkdown. [Example presentation](https://github.com/unl-statistics/Templates/blob/main/slides-beamer-markdown/beamer.pdf). Standard trade-offs (formatting details vs. document complexity) apply.
+You can also create Beamer slides with Rmarkdown.
+[Example presentation](https://github.com/unl-statistics/Templates/blob/main/slides-beamer-markdown/beamer.pdf).
+Standard trade-offs (formatting details vs. document complexity) apply.
 
 ::: column-margin
 Check out the [UNL-themed Beamer quarto template](https://github.com/unl-statistics/Templates/tree/main/slides-beamer-markdown)
 :::
-
 
 ::: callout-tip
 #### Try it out
@@ -344,33 +403,37 @@ board_games <- readr::read_csv("https://raw.githubusercontent.com/rfordatascienc
 library(ggplot2)
 ggplot(board_games, aes(x = average_rating)) + geom_density()
 ```
-
 :::
 
 ::: column-margin
 [Karl Broman has a set of slides that show how to use beamer + knitr to make reproducible slides with notes.](https://kbroman.org/Tools4RR/assets/lectures/12_talks_posters_withnotes.pdf)
 :::
 
-You can also create Beamer slides using Rmarkdown or quarto, if you want, but you may have more control over the fine details if you go straight to the Rnw file without going through markdown first. It's a trade-off -- the file will probably be simpler in markdown, but you won't have nearly as much control.
+You can also create Beamer slides using Rmarkdown or quarto, if you want, but you may have more control over the fine details if you go straight to the Rnw file without going through markdown first.
+It's a trade-off -- the file will probably be simpler in markdown, but you won't have nearly as much control.
 
 ### HTML slides
 
-RStudio has a host of other options for html slide presentations. There are some definite advantages to HTML presentations: they're easy to share (via URL), you can add gifs, emojis, and interactive graphics, and you can set up github to host the presentations as well.
+RStudio has a host of other options for html slide presentations.
+There are some definite advantages to HTML presentations: they're easy to share (via URL), you can add gifs, emojis, and interactive graphics, and you can set up github to host the presentations as well.
 
 ::: column-margin
-I have a repository for all of the presentations I've given, and I use github pages to render the html presentations. Very easy, convenient, and I never have to carry a flash drive around at a conference or mess with the conference computers.
+I have a repository for all of the presentations I've given, and I use github pages to render the html presentations.
+Very easy, convenient, and I never have to carry a flash drive around at a conference or mess with the conference computers.
 :::
 
-The downside to HTML slides is that there are approximately 100000 different javascript libraries that create HTML slides, and all of them have different capabilities. Many of these libraries have extensions that will let you create markdown slides, but they each have slightly different markdown syntax and capabilities.
+The downside to HTML slides is that there are approximately 100000 different javascript libraries that create HTML slides, and all of them have different capabilities.
+Many of these libraries have extensions that will let you create markdown slides, but they each have slightly different markdown syntax and capabilities.
 
 ![Rmarkdown slide options available by default in RStudio](../images/tools/Rmarkdown_slide_options.png)
 
-You can get the [full details](https://bookdown.org/yihui/rmarkdown/presentations.html) of any fully supported slide class in Rmarkdown by looking at the Rmarkdown book [@xieChapterPresentations2018], which is freely available online. These guidelines will give you specifics about how to customize slides, add incremental information, change transitions, print your slides to PDF, and include speaker notes.
+You can get the [full details](https://bookdown.org/yihui/rmarkdown/presentations.html) of any fully supported slide class in Rmarkdown by looking at the Rmarkdown book [@xieChapterPresentations2018], which is freely available online.
+These guidelines will give you specifics about how to customize slides, add incremental information, change transitions, print your slides to PDF, and include speaker notes.
 
-Quarto has simplified the slide options available to you - for HTML slides, you have one option, which is to use `reveal.js`. 
-While this may sound limiting, it's really not - RStudio/Posit (the company behind quarto) has done a *ton* of work to make quarto a lovely experience, and that extends to the slides. 
-I have almost entirely switched to using quarto for everything because it's so much easier to arrange figures, add alt-text, and style presentations. 
-See the quarto presentation documentation [here](https://quarto.org/docs/presentations/) [@QuartoPresentations]. 
+Quarto has simplified the slide options available to you - for HTML slides, you have one option, which is to use `reveal.js`.
+While this may sound limiting, it's really not - RStudio/Posit (the company behind quarto) has done a *ton* of work to make quarto a lovely experience, and that extends to the slides.
+I have almost entirely switched to using quarto for everything because it's so much easier to arrange figures, add alt-text, and style presentations.
+See the quarto presentation documentation [here](https://quarto.org/docs/presentations/) [@QuartoPresentations].
 If you have collaborators who are stuck on MS Office, quarto allows you to compile to a PowerPoint presentation.
 
 Rather than repeat the documentation for each slide package in this document, I think it is probably easier just to link you to the documentation and a sample presentation for each option.
@@ -386,37 +449,42 @@ Rmarkdown:
 -   [slidy](https://bookdown.org/yihui/rmarkdown/slidy-presentation.html) [Example presentation](https://rpubs.com/sdplus/vulcan74)
 -   [xaringan](https://bookdown.org/yihui/rmarkdown/xaringan.html) [Example presentation](https://slides.yihui.org/xaringan/#1), [Example presentation 2 using UNL CSS theme](http://srvanderplas.github.io/Presentations/2020-DSSV/index.html#1)
 
-If you're familiar with CSS (or happier tinkering to get the look of something exactly right) then `xaringan` and `reveal.js` are  excellent full-featured options.
+If you're familiar with CSS (or happier tinkering to get the look of something exactly right) then `xaringan` and `reveal.js` are excellent full-featured options.
 
 ::: column-margin
 I relied heavily on 2D slide layouts available in reveal.js during my PhD prelim and defense.
 :::
 
-A nice feature of reveal.js presentations is support for [2D slide layouts](https://quarto.org/docs/presentations/revealjs/advanced.html#vertical-slides), so you can have multiple sections in your presentation, and move vertically through each section, or horizontally between sections. That is useful for presentations where you may not plan on covering everything, but where you want to have all of the information available if necessary. 
+A nice feature of reveal.js presentations is support for [2D slide layouts](https://quarto.org/docs/presentations/revealjs/advanced.html#vertical-slides), so you can have multiple sections in your presentation, and move vertically through each section, or horizontally between sections.
+That is useful for presentations where you may not plan on covering everything, but where you want to have all of the information available if necessary.
 
 ::: column-margin
 UNL themed HTML presentations:
 
-- [xaringan](https://github.com/unl-statistics/Templates/tree/main/slides-markdown-xaringan) ([zip of all required files](https://github.com/unl-statistics/Templates/raw/main/slides-markdown-xaringan.zip))
-- [quarto reveal.js](https://github.com/unl-statistics/Templates/tree/main/slides-revealjs-quarto) ([zip of all required files](https://github.com/unl-statistics/Templates/raw/main/slides-revealjs-quarto.zip))
+-   [xaringan](https://github.com/unl-statistics/Templates/tree/main/slides-markdown-xaringan) ([zip of all required files](https://github.com/unl-statistics/Templates/raw/main/slides-markdown-xaringan.zip))
+-   [quarto reveal.js](https://github.com/unl-statistics/Templates/tree/main/slides-revealjs-quarto) ([zip of all required files](https://github.com/unl-statistics/Templates/raw/main/slides-revealjs-quarto.zip))
 :::
-
 
 ::: callout-tip
 ### Try it out
 
-Take a few minutes and try each of them out to see what feels right to you. Each one has a slightly different "flavor" of markdown, so read through the example to get a sense for what is different.
+Take a few minutes and try each of them out to see what feels right to you.
+Each one has a slightly different "flavor" of markdown, so read through the example to get a sense for what is different.
 :::
 
 ## Posters
 
-Posters are another common vehicle for presenting academic project results. Because posters are typically printed on paper or fabric, the standard file format is still PDF. As some venues move to digital posters, it is becoming more realistic to use HTML poster layouts that contain interactive elements. 
+Posters are another common vehicle for presenting academic project results.
+Because posters are typically printed on paper or fabric, the standard file format is still PDF.
+As some venues move to digital posters, it is becoming more realistic to use HTML poster layouts that contain interactive elements.
 
 ### LaTeX
 
 [Overleaf has a fantastic gallery of posters made in LaTeX](https://www.overleaf.com/gallery/tagged/poster).
 
-There are several LaTeX options for making scientific posters: baposter, beamerposter, tikzposter are among the most common. We'll focus on `beamerposter` here, but you are free to explore the other poster classes at will. As with beamer, you can easily integrate knitr code chunks into a document, so that you are generating your images reproducibly.
+There are several LaTeX options for making scientific posters: baposter, beamerposter, tikzposter are among the most common.
+We'll focus on `beamerposter` here, but you are free to explore the other poster classes at will.
+As with beamer, you can easily integrate knitr code chunks into a document, so that you are generating your images reproducibly.
 
 Basic code for a poster in beamer (along with the necessary style files) that I've minimally customized to meet UNL branding requirements can be found [here](https://github.com/unl-statistics/Templates/raw/main/poster-beamer.zip).
 
@@ -432,7 +500,9 @@ Download the beamer template and do the following:
 
 ### Markdown
 
-While most posters are still put together in PDF form, there is growing support for HTML posters, and many conferences have digital poster options for display. This may allow you to use interactive graphics and other features in a poster that would not translate well to PDF. Here is a [list of Rmarkdown poster options](https://gist.github.com/Pakillo/4854e5d760351206084f6be8abe476b2); some even have PDF export capabilities so that you can have the interactive version plus a static version.
+While most posters are still put together in PDF form, there is growing support for HTML posters, and many conferences have digital poster options for display.
+This may allow you to use interactive graphics and other features in a poster that would not translate well to PDF.
+Here is a [list of Rmarkdown poster options](https://gist.github.com/Pakillo/4854e5d760351206084f6be8abe476b2); some even have PDF export capabilities so that you can have the interactive version plus a static version.
 
 #### Posterdown
 
@@ -444,7 +514,9 @@ To start, install posterdown with `install.packages("posterdown")`.
 [UNL-themed posterdown template](https://github.com/unl-statistics/Templates/raw/main/poster-markdown.zip)
 :::
 
-You can also find additional customization options [here](https://github.com/brentthorne/posterdown/wiki/posterdown_html). As with other markdown items, you can customize things even more using CSS. The nice thing about HTML posters, though, is that you can directly link to them if they're hosted on a site.
+You can also find additional customization options [here](https://github.com/brentthorne/posterdown/wiki/posterdown_html).
+As with other markdown items, you can customize things even more using CSS.
+The nice thing about HTML posters, though, is that you can directly link to them if they're hosted on a site.
 
 You can also print a poster to PDF by running the following command: `pagedown::chrome_print("myfile.Rmd")`.
 
@@ -467,21 +539,25 @@ Download the pagedown template and do the following:
 
 ## Resume/CV
 
-You can also create resumes and CVs in markdown and LaTeX. There is no real substitute for playing around with these classes, but I really like [moderncv](http://www.latextemplates.com/template/moderncv-cv-and-cover-letter) in LaTeX.
+You can also create resumes and CVs in markdown and LaTeX.
+There is no real substitute for playing around with these classes, but I really like [moderncv](http://www.latextemplates.com/template/moderncv-cv-and-cover-letter) in LaTeX.
 
 ::: column-margin
-You can see my highly customized CV [here](https://github.com/srvanderplas/CV), with timelines and numbered publications. It has to be compiled multiple times to get everything right.
+You can see my highly customized CV [here](https://github.com/srvanderplas/CV), with timelines and numbered publications.
+It has to be compiled multiple times to get everything right.
 :::
 
-Pagedown also comes with a html resume template (Use the menu -\> Rmarkdown -\> From Template -\> HTML Resume) that can be printed to html and pdf simultaneously. There is also the `vitae` package, which has even more templates, integration with other packages/sites, and more. 
+Pagedown also comes with a html resume template (Use the menu -\> Rmarkdown -\> From Template -\> HTML Resume) that can be printed to html and pdf simultaneously.
+There is also the `vitae` package, which has even more templates, integration with other packages/sites, and more.
 
 ::: column-margin
-At this point, the biggest reason I haven't switched to HTML is that I really like my timeline CV and I don't have enough time to fiddle with it more. 
+At this point, the biggest reason I haven't switched to HTML is that I really like my timeline CV and I don't have enough time to fiddle with it more.
 :::
 
 ## Hosting Content with Github Pages
 
-Github will host HTML content for you using Github pages (case in point: this textbook). This means you can version control your content (for instance, presentations or your CV) and have GitHub do the hosting (so you don't have to find a webserver, buy a domain name, etc).
+Github will host HTML content for you using Github pages (case in point: this textbook).
+This means you can version control your content (for instance, presentations or your CV) and have GitHub do the hosting (so you don't have to find a webserver, buy a domain name, etc).
 
 ::: callout-note
 ### Setting up Github Pages
@@ -492,36 +568,47 @@ Github will host HTML content for you using Github pages (case in point: this te
 4.  Go to https://username.github.io and see your README.md file rendered as HTML.
 
 ::: youtube-video-container
-<iframe width="100%" height="auto" src="https://www.youtube-nocookie.com/embed/UtpR_HLA6kU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="100%" height="auto" src="https://www.youtube-nocookie.com/embed/UtpR_HLA6kU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+
+</iframe>
+:::
 :::
 
+Github will render any README.md file as actual HTML; it will also allow you to host plain HTML pages.
+By default, the README file is rendered first, but in subsequent directories, a file named index.html will be rendered as the "home page" for the subdirectory, if you have such a file.
+Otherwise you'll have to know the file name.
 
-:::
-
-
-
-Github will render any README.md file as actual HTML; it will also allow you to host plain HTML pages. By default, the README file is rendered first, but in subsequent directories, a file named index.html will be rendered as the "home page" for the subdirectory, if you have such a file. Otherwise you'll have to know the file name.
-
-I tend to separate things out into separate repositories, but you can host HTML content on other repositories too, by enabling github pages in the repository settings. On my personal page, I have repositories for my [CV](https://srvanderplas.github.io/CV/), Presentations, etc. Each repository that has pages enabled can be accessed via `https://srvanderplas.github.io/\<repository name\>/\<repository file path\>`. So, to see my `unl-stat850` repository, you'd go to https://srvanderplas.github.io/unl-stat850/.
+I tend to separate things out into separate repositories, but you can host HTML content on other repositories too, by enabling github pages in the repository settings.
+On my personal page, I have repositories for my [CV](https://srvanderplas.github.io/CV/), Presentations, etc.
+Each repository that has pages enabled can be accessed via `https://srvanderplas.github.io/\<repository name\>/\<repository file path\>`.
+So, to see my `unl-stat850` repository, you'd go to https://srvanderplas.github.io/unl-stat850/.
 
 ::: column-margin
-I've been putting my presentations on Github since 2014, so it has a pretty good record of every set of slides I've created. I highly recommend this strategy - storing everything online makes it easy to share your work with others, reference later, and more importantly, easy for you to find in 3 years.
+I've been putting my presentations on Github since 2014, so it has a pretty good record of every set of slides I've created.
+I highly recommend this strategy - storing everything online makes it easy to share your work with others, reference later, and more importantly, easy for you to find in 3 years.
 :::
 
 This mechanism provides a very convenient way to showcase your work, share information with collaborators, and more - instead of sending files, you can send a URL and no one has to download anything overtly.
 
 ::: callout-note
 ### Setting up Github Pages in an existing repository
+
 ::: youtube-video-container
-<iframe width="100%" height="auto" src="https://www.youtube-nocookie.com/embed/evwhZm8J4bs" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="100%" height="auto" src="https://www.youtube-nocookie.com/embed/evwhZm8J4bs" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+
+</iframe>
 :::
 :::
 
-If you want to track your quarto/rmarkdown code and then render the output to a separate folder, you can use the docs/ folder. Github has this as an option as well -- where we selected "main" branch above, we would select "docs/" instead (it's grayed out b/c there isn't a docs folder in the repo). That is how this book is hosted - the book compiles to the docs/ folder, and that way the book is rendered in final form and you don't have to see all of the other crud that is in the repository.
+If you want to track your quarto/rmarkdown code and then render the output to a separate folder, you can use the docs/ folder.
+Github has this as an option as well -- where we selected "main" branch above, we would select "docs/" instead (it's grayed out b/c there isn't a docs folder in the repo).
+That is how this book is hosted - the book compiles to the docs/ folder, and that way the book is rendered in final form and you don't have to see all of the other crud that is in the repository.
 
 ## Additional Resources to Explore
 
-There are many other XXXdown packages made for Rmarkdown. Quarto is more multi-functional and contains blog, book, and website capabilities in a single package. However, most of the things which worked in Rmarkdown also work in Quarto, and Quarto has clearly been built off of the success of the `___down` packages for Rmarkdown.
+There are many other XXXdown packages made for Rmarkdown.
+Quarto is more multi-functional and contains blog, book, and website capabilities in a single package.
+However, most of the things which worked in Rmarkdown also work in Quarto, and Quarto has clearly been built off of the success of the `___down` packages for Rmarkdown.
 
 -   [`blogdown`](https://bookdown.org/yihui/blogdown/)
 
@@ -533,5 +620,6 @@ There are many other XXXdown packages made for Rmarkdown. Quarto is more multi-f
 
 -   [liftr](https://nanx.me/talks/jsm2018-liftr-nanxiao.pdf) - use Docker to make persistently reproducible documents
 
-
 In addition, [\@mcanouil](github.com/mcanouil) maintains a [list of Quarto talks, topics, tools, and examples](https://github.com/mcanouil/awesome-quarto) that is worth a look.
+
+## References
