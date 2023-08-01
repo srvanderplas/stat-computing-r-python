@@ -1,0 +1,1046 @@
+# Interactive Graphics {#sec-interactive-graphics}
+
+
+# Animated and Interactive Graphics
+
+Interactive and animated graphics are one of the major advantages of using the Rmarkdown ecosystem - because you can easily create web pages in markdown (without the pain of HTML), you aren't limited by paper any more. We'll cover two different technologies that allow you to create different types of interactive charts, graphs, and interfaces.
+
+It is helpful to think about interactivity in a couple of different ways:
+
+1. What does it require? Do you need to be doing statistical calculations in the background, or can you precompute all of the data ahead of time?
+
+2. What type of activity or interactivity do you need?
+    - Zoom in/out?
+    - Provide additional information in response to user actions (mouseover, click)
+    - Provide information over time (animation)
+    - Keep track of a data point over multiple plots? (linked plots)
+    - Keep track of one or more data points and change their appearance based on user interaction (brushing)
+    - Allow the user to change the underlying statistical model or data?
+
+(This is not a full list of all of the types of interactivity, just a few of the more common options)
+
+In this section, we'll cover two ways to easily create interactive graphics or applets in R and python. There are, of course, many others -- many javascript libraries have extensions to R or python that may facilitate creating interactive graphics.
+
+
+## {{< fa bullseye >}} Objectives 
+
+- Create animated and interactive charts using appropriate tools
+
+## Plotly
+
+Plotly [@PlotlyOpenSource2022] is a graphing library that uses javascript to add interactivity to graphics. There are several different ways to create plotly graphs in R or python. Here, we'll discuss 3 approaches: 
+- [Working with plotly in R directly](https://plotly.com/r/)
+- [Working with plotly in python directly](https://plotly.com/python/)
+- [Using `ggplotly`](https://plotly.com/ggplot2/), which converts a ggplot to a plotly plot automatically
+
+Resources:
+
+- [R Plotly cheat sheet](https://images.plot.ly/plotly-documentation/images/r_cheat_sheet.pdf)
+
+- [Python Plotly cheat sheet](https://images.plot.ly/plotly-documentation/images/python_cheat_sheet.pdf)
+
+
+We'll demonstrate plotly's capabilities using the `volcanoes` data from [Tidy Tuesday](https://github.com/rfordatascience/tidytuesday/tree/master/data/2020/2020-05-12). 
+
+
+::: {.callout-caution collapse="true"}
+### Data set up
+
+::: panel-tabset
+
+#### R
+
+```{r volcano-data-setup-r, message = F, warning = F}
+if (!"plotly" %in% installed.packages()) 
+  install.packages("plotly")
+
+library(plotly)
+
+
+library(readr) # reading in data
+library(dplyr) # cleaning data
+library(tidyr) # merging data
+library(lubridate) # dates and times
+library(stringr) # string manipulation
+library(ggplot2) # plotting
+
+# all of the data is located in the same folder of a github repo
+# so let's not type it out 5x
+url_stub <- "https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-05-12/"
+volcano <- read_csv(paste0(url_stub, "volcano.csv"))
+eruptions <- read_csv(paste0(url_stub, "eruptions.csv"))
+events <- read_csv(paste0(url_stub, "events.csv"))
+sulfur <- read_csv(paste0(url_stub, "sulfur.csv"))
+trees <- read_csv(paste0(url_stub, "tree_rings.csv"))
+```
+
+#### Python
+```{python volcano-data-setup-py}
+# Uncomment and run this line if you don't have plotly installed
+# %pip install plotly
+
+import plotly.express as px
+import plotly.io as pio # this allows plotly to play nice with markdown
+
+import pandas as pd
+
+# all of the data is located in the same folder of a github repo
+# so let's not type it out 5x
+url_stub = "https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-05-12/"
+volcano = pd.read_csv(url_stub + "volcano.csv")
+eruptions = pd.read_csv(url_stub + "eruptions.csv")
+events = pd.read_csv(url_stub + "events.csv")
+sulfur = pd.read_csv(url_stub + "sulfur.csv")
+trees = pd.read_csv(url_stub + "tree_rings.csv")
+```
+:::
+
+:::
+
+Let's try out plotly while doing a bit of exploratory data analysis on this dataset.
+
+
+::: {.callout-caution collapse="true"}
+### Cleaning up `volcano`
+
+::: panel-tabset
+
+#### R
+```{r cleaning-up-volcano-r}
+volcano <- volcano %>%
+  filter(tectonic_settings != "Unknown") %>%
+  separate(tectonic_settings, into = c("zone", "crust"), 
+           sep = "/", remove = F) %>%
+  # Remove anything past the first punctuation character 
+  # catch (xx) and ?
+  mutate(volcano_type = str_remove(primary_volcano_type, 
+                                   "[[:punct:]].*$"))
+```
+
+#### Python
+
+```{python cleaning-up-volcano-py}
+volcano2 = volcano.query("tectonic_settings != 'Unknown'")
+volcano2[['zone', 'crust']] = volcano2.tectonic_settings.\
+                              str.split(" / ", expand = True)
+# Remove anything after ( as well as ? if it exists
+volcano2 = volcano2.assign(volcano_type =
+            volcano2['primary_volcano_type'].\
+            str.replace(r"(\(.*)?\??$", "", regex = True))
+```
+:::
+
+:::
+
+
+::: {.callout-caution collapse="true"}
+### Relationship Between Elevation and Zone
+
+Let's start by seeing whether the elevation of a volcano changes based on the type of zone it's on - we might expect that Rift zone volcanos (where plates are pulling away from each other) might not be as high.
+
+::: panel-tabset
+
+#### ggplotly
+
+```{r}
+p <- volcano %>%
+  ggplot(aes(x = zone, fill = zone, y = elevation)) +
+  geom_boxplot() +
+  coord_flip()
+ggplotly(p)
+```
+
+#### R + plotly
+The `plot_ly` function is pipe friendly. 
+
+Variable mappings are preceded with `~` to indicate that the visual appearance changes with the value of the variable.
+
+```{r}
+library(plotly)
+plot_ly(volcano, color= ~zone, x = ~elevation, type = "box")
+```
+
+#### Python
+
+```{python}
+fig = px.box(volcano2, x = "elevation", color = "zone")
+
+file = 'plotly-python/boxplot-volcano.html'
+pl.io.write_html(fig, file = file, auto_open = False)
+```
+
+```{r, echo = F}
+htmltools::includeHTML(py$file)
+```
+
+:::
+
+It doesn't really look like there's much difference.
+:::
+
+::: {.callout-caution collapse="true"}
+### Examining Volcano Type
+
+::: panel-tabset
+
+#### ggplotly
+
+```{r}
+p <- volcano %>%
+  ggplot(aes(x = elevation, color = volcano_type)) +
+  geom_density() +
+  # Rug plots show each observation as a tick just below the x axis
+  geom_rug()
+ggplotly(p)
+```
+
+#### R + plotly
+
+Since I'm trying to do this without the tidyverse, I'll try out the new base R pipe, `|>`, and the corresponding new anonymous function notation, `\()`.^[This is me experimentally trying to replace the tidyverse, and honestly, I'm not a fan.]
+
+```{r}
+# First, compute the density
+elevation_dens <- split(volcano, ~volcano_type) |>
+  lapply(FUN = \(df) {
+    tmp <- density(df$elevation)[c("x", "y", "bw")] |> 
+      as.data.frame()
+  }) |>
+  do.call(what = "rbind") |>
+  as.data.frame()
+elevation_dens <- cbind(volcano_type = row.names(elevation_dens), elevation_dens) |>
+  transform(volcano_type = gsub("\\.\\d{1,}$", "", volcano_type))
+
+plot_ly(data = elevation_dens, x = ~x, y = ~y, type = "scatter", mode = "line", color = ~volcano_type)
+```
+
+#### Python
+```{python}
+import plotly.figure_factory as ff
+import plotly.graph_objects as go
+import plotly as pl
+
+# This creates a list of vectors, one for each type of volcano
+volcano = volcano.groupby("volcano_type")["elevation"].count()
+type_list = volcano.groupby("volcano_type").elevation.apply(list)
+type_labels = volcano.volcano_type.unique()
+fig = ff.create_distplot(type_list, group_labels = type_labels, show_hist=False)
+
+file = 'plotly-python/distplot-volcano.html'
+pl.io.write_html(fig, file = file, auto_open = False)
+```
+```{r, echo = F}
+library(reticulate)
+htmltools::includeHTML(py$file)
+```
+
+:::
+
+
+Here, the interactivity actually helps a bit: we don't need to use the legend to see what each curve corresponds to. We can see that submarine volcanoes are typically much lower in elevation (ok, duh), but also that subglacial volcanoes are found in a very limited range. If we double-click on a legend entry, we can get rid of all other curves and examine each curve one by one.
+
+I added the rug layer after the initial bout because I was curious how much data each of these curves were based on. If we want only curves with n > 10 observations, we can do that:
+
+::: panel-tabset
+
+
+#### ggplotly
+
+
+```{r}
+p <- volcano %>%
+  group_by(volcano_type) %>% mutate(n = n()) %>%
+  filter(n > 15) %>%
+  ggplot(aes(x = elevation, color = volcano_type)) +
+  geom_density() +
+  # Rug plots show each observation as a tick just below the x axis
+  geom_rug(aes(text = paste0(volcano_name, ", ", country)))
+ggplotly(p)
+```
+
+If we want to specify additional information that should show up in the tooltip, we can do that as well by adding the `text` aesthetic even though geom_rug doesn't take a text aesthetic. You may notice that ggplot2 complains about the unknown aesthetic I've added to geom_rug: That allows us to mouse over each data point in the rug plot and see what volcano it belongs to. So we can tell from the rug plot that the tallest volcano is Ojas de Salvado, in Chile/Argentina (I believe that translates to Eyes of Salvation?).
+
+
+#### R + plotly
+
+```{r}
+# First, compute the density
+elevation_dens <- split(volcano, ~volcano_type) |>
+  lapply(FUN = \(df) {
+    tmp <- density(df$elevation)[c("x", "y", "bw")] |> 
+      as.data.frame()
+    tmp$n = nrow(df)
+    tmp
+  }) |>
+  do.call(what = "rbind") |>
+  as.data.frame()
+elevation_dens <- cbind(volcano_type = row.names(elevation_dens), elevation_dens) |>
+  transform(volcano_type = gsub("\\.\\d{1,}$", "", volcano_type)) |>
+  subset(n > 15)
+
+plot_ly(data = elevation_dens, x = ~x, y = ~y, 
+        type = "scatter", mode = "line", color = ~volcano_type)
+```
+
+#### Python
+
+```{python}
+import plotly.figure_factory as ff
+volcano = volcano.assign(count = volcano.groupby("volcano_type").\
+                                  volcano_type.transform("count"))
+
+common_volcano = volcano.query("count > 15").sort_values(["volcano_type"])
+common_volcano["label"] = common_volcano.volcano_name + ", " + common_volcano.country
+# This creates a list of vectors, one for each type of volcano
+type_list = common_volcano.groupby("volcano_type").elevation.apply(list)
+# rug_text = common_volcano.groupby("volcano_type").label.apply(list)
+type_labels = common_volcano.volcano_type.unique()
+fig = ff.create_distplot(type_list, group_labels = type_labels, rug_text = rug_text, show_hist=False)
+fig.show()
+```
+
+:::
+
+:::
+
+At any rate, there isn't nearly as much variation as I was expecting in the elevation of different types of volcanoes.
+
+
+ggplotly makes it very easy to generate plots that have a ggplot2 equivalent; you can customize these plots further using plotly functions that we'll see in the next section. But first, try the interface out on your own.
+
+::: callout-tip
+
+### Try it out 
+
+::: panel-tabset
+
+#### Problem
+
+Conduct an exploratory data analysis of the eruptions dataset. What do you find?
+
+#### ggplotly
+
+```{r}
+head(eruptions)
+
+summary(eruptions %>% mutate(eruption_category = factor(eruption_category)))
+
+
+# Historical (very historical) dates are a bit of a pain to work with, so I
+# wrote a helper function which takes year, month, and day arguments and formats
+# them properly
+
+fix_date <- function(yyyy, mm, dd) {
+  # First, negative years (BCE) are a bit of a problem.
+  neg <- yyyy < 0
+  subtract_years <- pmax(-yyyy, 0) # Years to subtract off later
+  # for now, set to 0
+  year_fixed <- pmax(yyyy, 0) # this will set anything negative to 0
+
+  # sometimes the day or month isn't known, so just use 1 for both.
+  # recorded value may be NA or 0.
+  day_fixed <- ifelse(is.na(dd), 1, pmax(dd, 1))
+  month_fixed <- ifelse(is.na(mm), 1, pmax(mm, 1))
+
+  # Need to format things precisely, so use sprintf
+  # %0xd ensures that you have at least x digits, padding the left side with 0s
+  # lubridate doesn't love having 3-digit years.
+  date_str <- sprintf("%04d/%02d/%02d", year_fixed, month_fixed, day_fixed)
+  # Then we can convert the dates and subtract off the years for pre-CE dates
+  date <- ymd(date_str) - years(subtract_years)
+}
+
+erupt <- eruptions %>%
+  # Don't work with discredited eruptions
+  filter(eruption_category == "Confirmed Eruption") %>%
+  # Create start and end dates
+  mutate(
+    start_date = fix_date(start_year, start_month, start_day),
+    end_date = fix_date(end_year, end_month, end_day),
+    # To get duration, we have to start with a time interval,
+    # convert to duration, then convert to a numeric value
+    duration = interval(start = start_date, end = end_date) %>%
+      as.duration() %>%
+      as.numeric("days"))
+```
+
+Let's start out seeing what month most eruptions occur in...
+```{r}
+# Note, I'm using the original month, so 0 = unknown
+p <- ggplot(erupt, aes(x = factor(start_month))) + geom_bar()
+ggplotly(p)
+# I could rename some of the factors to make this pretty, but... nah
+```
+
+Another numerical variable is VEI, [volcano explosivity index](https://volcanoes.usgs.gov/vsc/glossary/vei.html#:~:text=Volcanic%20Explosivity%20Index%20(VEI)%20is,to%20determine%20the%20explosivity%20value.). A VEI of 0 is non-explosive, a VEI of 4 is about what Mt. St. Helens hit in 1980, and a VEI of 5 is equivalent to the Krakatau explosion in 1883. A VEI of 8 would correspond to a major Yellowstone caldera eruption (which hasn't happened for 600,000 years). Basically, VEI increase of 1 is an order of magnitude change in the amount of material the eruption released.
+```{r}
+# VEI is volcano explosivity index,
+p <- ggplot(erupt, aes(x = vei)) + geom_bar()
+ggplotly(p)
+```
+
+We can also look at the frequency of eruptions over time. We'll expect some historical bias - we don't have exact dates for some of these eruptions, and if no one was around to write the eruption down (or the records were destroyed) there's not going to be a date listed here.
+
+```{r}
+p <- erupt %>%
+  filter(!is.na(end_date)) %>%
+  filter(start_year > 0) %>%
+
+ggplot(aes(x = start_date, xend = start_date,
+                  y = 0, yend = duration,
+                  color = evidence_method_dating)) +
+  geom_segment() +
+  geom_point(size = .5, aes(text = volcano_name)) +
+  xlab("Eruption Start") +
+  ylab("Eruption Duration (days)") +
+  facet_wrap(~vei, scales = "free_y")
+ggplotly(p)
+
+```
+
+As expected, it's pretty rare to see many eruptions before ~1800 AD, which is about when we have reliable historical records^[There are obviously exceptions - we can figure out the exact date and approximate time that there was an earthquake along the Cascadia subduction zone based on a combination of oral histories of the indigenous people and records of a massive tsunami in Japan [Excellent read, if you're interested](https://www.newyorker.com/magazine/2015/07/20/the-really-big-one), and the [Nature paper](https://www.nature.com/articles/379246a0).] for most of the world (exceptions include e.g. Vestuvius, which we have extensive written information about).
+
+```{r}
+p <- erupt %>%
+  filter(!is.na(end_date)) %>%
+  # Account for recency bias (sort of)
+  filter(start_year > 1800) %>%
+ggplot(aes(x = factor(vei), y = duration)) +
+  geom_violin() +
+  xlab("VEI") +
+  ylab("Eruption Duration (days)") +
+  scale_y_sqrt()
+ggplotly(p)
+```
+
+It seems that the really big eruptions might be less likely to last for a long time, but it is hard to tell because there aren't that many of them (thankfully).
+
+#### R + plotly
+
+```{r}
+head(eruptions)
+
+# Historical (very historical) dates are a bit of a pain to work with, so I
+# wrote a helper function which takes year, month, and day arguments and formats
+# them properly
+
+fix_date <- function(yyyy, mm, dd) {
+  # First, negative years (BCE) are a bit of a problem.
+  neg <- yyyy < 0
+  subtract_years <- pmax(-yyyy, 0) # Years to subtract off later
+  # for now, set to 0
+  year_fixed <- pmax(yyyy, 0) # this will set anything negative to 0
+
+  # sometimes the day or month isn't known, so just use 1 for both.
+  # recorded value may be NA or 0.
+  day_fixed <- ifelse(is.na(dd), 1, pmax(dd, 1))
+  month_fixed <- ifelse(is.na(mm), 1, pmax(mm, 1))
+
+  # Need to format things precisely, so use sprintf
+  # %0xd ensures that you have at least x digits, padding the left side with 0s
+  # lubridate doesn't love having 3-digit years.
+  date_str <- sprintf("%04d/%02d/%02d", year_fixed, month_fixed, day_fixed)
+  # Then we can convert the dates and subtract off the years for pre-CE dates
+  date <- ymd(date_str) - years(subtract_years)
+}
+
+erupt <- eruptions %>%
+  # Don't work with discredited eruptions
+  filter(eruption_category == "Confirmed Eruption") %>%
+  # Create start and end dates
+  mutate(
+    start_date = fix_date(start_year, start_month, start_day),
+    end_date = fix_date(end_year, end_month, end_day),
+    # To get duration, we have to start with a time interval,
+    # convert to duration, then convert to a numeric value
+    duration = interval(start = start_date, end = end_date) %>%
+      as.duration() %>%
+      as.numeric("days"))
+```
+
+Let's start out seeing what month most eruptions occur in...
+
+```{r}
+# Note, I'm using the original month, so 0 = unknown
+erupt %>%
+  count(start_month) %>%
+  plot_ly(
+    data = .,
+    x = ~start_month,
+    y = ~n,
+    type = "bar"
+)
+```
+
+Another numerical variable is VEI, [volcano explosivity index](https://volcanoes.usgs.gov/vsc/glossary/vei.html#:~:text=Volcanic%20Explosivity%20Index%20(VEI)%20is,to%20determine%20the%20explosivity%20value.). A VEI of 0 is non-explosive, a VEI of 4 is about what Mt. St. Helens hit in 1980, and a VEI of 5 is equivalent to the Krakatau explosion in 1883. A VEI of 8 would correspond to a major Yellowstone caldera eruption (which hasn't happened for 600,000 years). Basically, VEI increase of 1 is an order of magnitude change in the amount of material the eruption released.
+
+```{r}
+# VEI is volcano explosivity index
+erupt %>%
+  count(vei) %>%
+  plot_ly(x = ~vei, y = ~n, type = "bar")
+```
+
+
+```{r}
+erupt %>%
+  filter(!is.na(end_date)) %>%
+  # Account for recency bias (sort of)
+  filter(start_year > 1800) %>%
+  plot_ly(x = ~ factor(vei),
+          y = ~ duration, 
+          split = ~factor(vei),
+          type = "violin") %>%
+  layout(yaxis = list(type="log"))
+```
+
+It seems that the really big eruptions might be less likely to last for a long time, but it is hard to tell because there aren't that many of them (thankfully).
+
+#### Python
+
+In Python, negative dates are even more of a pain to work with if you're using standard libraries, so we'll install the `astropy` class with `pip install astropy`. BCE dates are still a pain in the ... but they at least work.
+
+```{python}
+eruptions.head()
+
+# Historical (very historical) dates are a bit of a pain to work with, so I
+# wrote a helper function which takes year, month, and day arguments and formats
+# them properly
+
+from astropy.time import Time,TimeDelta
+import numpy as np
+import math
+
+def fix_date(yyyy, mm, dd):
+  # The zero, one columns allow using pd.max(axis = 1) where we'd use pmax in R
+  neg = yyyy <= 0
+  nyear = -yyyy
+  
+  year = max([yyyy, 1])
+  subtract_year = max([nyear, 0]) + neg
+  
+  day = dd
+  month = mm
+  
+  if math.isnan(day): 
+    day = 1
+  if math.isnan(month): 
+    month = 1
+      
+  if day == 0: 
+    day = 1
+  if month == 0: 
+    month = 1
+  
+  dateformat = "%04d-%02d-%02d" % (year, month, day)
+  
+  date = Time(dateformat, format = "iso", scale = 'ut1')
+  datefix = date - TimeDelta(subtract_year*365, format= 'jd')
+  return datefix
+
+erupt = eruptions.query("eruption_category == 'Confirmed Eruption'")
+erupt.fillna(0, inplace = True)
+erupt['start_date'] = erupt.apply(lambda x: fix_date(x.start_year, x.start_month, x.start_day), axis = 1)
+erupt['end_date'] = erupt.apply(lambda x: fix_date(x.end_year, x.end_month, x.end_day), axis = 1)
+erupt['duration'] = erupt.end_date - erupt.start_date
+# Convert back to numeric
+erupt['duration'] = erupt.duration.apply(lambda x: x.to_value("jd", "decimal")) # Julian day
+```
+
+Let's start out seeing what month most eruptions occur in...
+
+```{python}
+import plotly.express as px
+tmp = erupt.groupby("start_month").count()
+tmp = tmp.reset_index()
+# Note, I'm using the original month, so 0 = unknown
+fig = px.bar(tmp, x = 'start_month', y = 'volcano_number')
+
+file = 'plotly-python/eruptplot-volcano.html'
+pl.io.write_html(fig, file = file, auto_open = False)
+```
+
+```{r, echo = F}
+htmltools::includeHTML(py$file)
+```
+
+Another numerical variable is VEI, [volcano explosivity index](https://volcanoes.usgs.gov/vsc/glossary/vei.html#:~:text=Volcanic%20Explosivity%20Index%20(VEI)%20is,to%20determine%20the%20explosivity%20value.). A VEI of 0 is non-explosive, a VEI of 4 is about what Mt. St. Helens hit in 1980, and a VEI of 5 is equivalent to the Krakatau explosion in 1883. A VEI of 8 would correspond to a major Yellowstone caldera eruption (which hasn't happened for 600,000 years). Basically, VEI increase of 1 is an order of magnitude change in the amount of material the eruption released.
+
+```{python}
+# VEI is volcano explosivity index
+fig = px.bar(
+  erupt.groupby("vei").count().reset_index(),
+  x = "vei", y = "volcano_number")
+
+file = 'plotly-python/vei-volcano.html'
+pl.io.write_html(fig, file = file, auto_open = False)
+```
+```{r, echo = F}
+htmltools::includeHTML(py$file)
+```
+
+
+```{python}
+erupt["duration_yr"] = erupt.duration/365.25
+fig = px.box(
+  erupt,
+  x = "vei",
+  y = "duration_yr",
+  points = "all"
+)
+
+file = 'plotly-python/vei-duration-volcano.html'
+pl.io.write_html(fig, file = file, auto_open = False)
+```
+```{r, echo = F}
+htmltools::includeHTML(py$file)
+```
+
+It seems that the really big eruptions might be less likely to last for a long time, but it is hard to tell because there aren't that many of them (thankfully)
+:::
+
+:::
+
+::: {.callout-caution collapse="true"}
+
+### Customizing Interactivity
+
+Plotly integration with ggplot2 is nice, but obviously not a universal summary of what it can do. Let's look at another example of plotly in R/python without ggplot2 integration.
+
+We start with a scatterplot of volcanoes along the earth's surface:
+
+::: panel-tabset
+
+#### R
+
+```{r}
+plot_ly(type = "scattergeo", lon = volcano$longitude, lat = volcano$latitude)
+```
+
+#### Python
+
+```{python}
+fig = px.scatter_geo(volcano, lon = "longitude", lat = "latitude")
+
+file = 'plotly-python/scatter-volcano.html'
+pl.io.write_html(fig, file = file, auto_open = False)
+```
+```{r, echo = F}
+htmltools::includeHTML(py$file)
+```
+:::
+
+And then we can start customizing.
+
+::: panel-tabset
+#### R
+
+```{r}
+plot_ly(type = "scattergeo", lon = volcano$longitude, 
+        lat = volcano$latitude,
+        mode = "markers",
+        # Add information to mouseover
+        text = ~paste(volcano$volcano_name, "\n",
+                      "Last Erupted: ", volcano$last_eruption_year),
+        # Change the markers because why not?
+        marker = list(color = "#d00000", opacity = 0.25)
+        )
+```
+
+#### Python
+
+
+```{python}
+fig = px.scatter_geo(volcano, 
+  lon = "longitude", lat = "latitude",
+  hover_name = "volcano_name",
+  hover_data = ["last_eruption_year"])
+fig.update_traces(marker=dict(size=12, opacity = 0.25, color = 'red'),
+                  selector=dict(mode='markers'))
+
+file = 'plotly-python/scatter-hover-volcano.html'
+pl.io.write_html(fig, file = file, auto_open = False)
+```
+```{r, echo = F}
+htmltools::includeHTML(py$file)
+```
+
+:::
+
+Plotly will handle some variable mappings for you, depending on which "trace" (type of plot) you're using.
+
+::: panel-tabset
+
+#### R
+
+The `plot_ly` function is also pipe friendly. Variable mappings are preceded with `~` to indicate that the visual appearance changes with the value of the variable.
+
+```{r}
+# Load RColorBrewer for palettes
+library(RColorBrewer)
+
+volcano %>%
+  group_by(volcano_type) %>% 
+  mutate(n = n()) %>%
+  filter(n > 15) %>%
+plot_ly(type = "scattergeo", lon = ~longitude, lat = ~latitude,
+        mode = "markers",
+        # Add information to mouseover
+        text = ~paste(volcano_name, "\n",
+                      "Last Erupted: ", last_eruption_year),
+        color = ~ volcano_type,
+        # Specify a palette
+        colors = brewer.pal(length(unique(.$volcano_type)), "Paired"),
+        # Change the markers because why not?
+        marker = list(opacity = 0.5)
+        )
+```
+
+#### Python
+
+```{python}
+volc_sub = volcano.groupby("volcano_type").agg({'volcano_number': ['size']})
+volc_sub.columns = ["n"]
+volc_sub = volc_sub.reset_index()
+volc_sub = volc_sub.query("n >= 15")
+volc_sub = pd.merge(volc_sub['volcano_type'], volcano, on = 'volcano_type', how = 'inner')
+
+fig = px.scatter_geo(volc_sub, 
+  lon = "longitude", lat = "latitude", 
+  color = "volcano_type",
+  hover_name = "volcano_name",
+  hover_data = ["last_eruption_year"])
+fig.update_traces(marker=dict(size=12, opacity = 0.25),
+                  selector=dict(mode='markers'))
+
+file = 'plotly-python/scatter-hover-update-volcano.html'
+pl.io.write_html(fig, file = file, auto_open = False)
+```
+```{r, echo = F}
+htmltools::includeHTML(py$file)
+```
+:::
+
+:::
+
+<!-- ::: callout-warn -->
+<!-- #### Plotly in R -->
+<!-- The plotly documentation often uses `plyr` and `reshape2` -- which are older versions of `dplyr` and `tidyr`. If you load `plyr` and `reshape2`, it may seriously mess up your day -- a lot of the function names are the same. So, instead, here's a shortcut: `cast` is `pivot_wider` and `melt` is `pivot_longer`. That should at least help with understanding what the code is doing. -->
+
+<!-- If you do accidentally load `plyr` or `reshape2`, that's fine: just restart your R session so that your loaded packages are cleared and you can start over. Or, if you must, you can reference a `plyr` function using `plyr::function_name` without loading the package -- that's a safe way to use the plotly demo code as-is. -->
+<!-- ::: -->
+
+<!-- <details><summary>Let's explore traces a bit.</summary> -->
+<!-- According to the plotly documentation, -->
+
+<!-- > A trace is just the name we give a collection of data and the specifications of which we want that data plotted. Notice that a trace will also be an object itself, and these will be named according to how you want the data displayed on the plotting surface -->
+
+<!-- In ggplot2 terms, it seems that a trace is somewhat akin to a geom. -->
+<!-- ```{r} -->
+<!-- trace0 <- rnorm(100, mean = 5) -->
+<!-- trace1 <- rnorm(100, mean = 0) -->
+<!-- trace2 <- rnorm(100, mean = -5) -->
+
+<!-- data <- tibble(x = 1:100, trace0, trace1, trace2) -->
+
+<!-- # Let's see how this goes with one trace -->
+<!-- plot_ly(data, x = ~x) %>% -->
+<!--   add_trace(y = ~trace0, name = 'trace0', mode = 'lines') -->
+
+<!-- # Adding some more traces -->
+<!-- plot_ly(data, x = ~x) %>% -->
+<!--   add_trace(y = ~trace0, name = 'trace0', mode = 'lines') %>% -->
+<!--   add_trace(y = ~trace1, name = "trace1", mode = 'lines+markers') %>% -->
+<!--   add_trace(y = ~trace2, name = "trace2", mode = 'markers') -->
+<!-- ``` -->
+
+<!-- But, if you want all of the variables to be shown with the same trace type, it's probably easier to get to long form: -->
+
+<!-- ```{r} -->
+<!-- data %>% -->
+<!--   pivot_longer(matches("trace"), names_to = "trace", names_prefix = "trace", values_to = "y") %>% -->
+<!--   plot_ly(x = ~x, y = ~y, color = ~trace, mode = "lines+markers") -->
+<!-- ``` -->
+<!-- </details> -->
+<!-- There are many different trace types in plotly, but your best bet is to check the [documentation](plotly.com/r/) to see what is available. -->
+
+<!-- ### Animation -->
+
+<!-- <details><summary>Plotly can also animate your plots for you. </summary> -->
+
+<!-- ```{r} -->
+<!-- library(classdata) -->
+<!-- data(fbi) -->
+
+<!-- fbi %>% -->
+<!--   mutate(State = factor(State), -->
+<!--          Rate_100k = Count/Population*100000) %>% -->
+<!--   filter(Type == "Aggravated.assault") %>% -->
+<!--   arrange(Year, State, Type) %>% -->
+<!--   plot_ly( -->
+<!--     x = ~State, -->
+<!--     y = ~Rate_100k, -->
+<!--     color = ~Type, -->
+<!--     frame = ~Year, -->
+<!--     type = "scatter", -->
+<!--     mode = "markers" -->
+<!--   ) -->
+
+<!-- ``` -->
+<!-- Sometimes the animations get a bit trippy, don't they? -->
+
+<!-- You can even animate by something other than time, if you're so inclined, though it's not necessarily going to make sense if there isn't any context shared between successive observations. So animating over space might make sense, but animating over a factor makes a lot less sense. -->
+<!-- ```{r} -->
+<!-- fbi %>% -->
+<!--   mutate(State = factor(State), -->
+<!--          Rate_100k = Count/Population*100000) %>% -->
+<!--   arrange(Year, State, Type) %>% -->
+<!--   plot_ly( -->
+<!--     x = ~Year, -->
+<!--     y = ~Rate_100k, -->
+<!--     color = ~Type, -->
+<!--     frame = ~State, -->
+<!--     type = "scatter", -->
+<!--     mode = "lines" -->
+<!--   ) -->
+<!-- ``` -->
+<!-- </details> -->
+<!-- There are [other types of animations as well](https://plotly.com/r/animations/), including the ability to change plot formats, trace types, and more. -->
+
+
+
+
+## Leaflet maps
+
+::: column-margin
+I'm sorry, but I haven't managed to redo this part of the chapter in python as well as R. Hopefully I'll get to it soon. You can find a tutorial for Python + Leaflet [here](https://programminghistorian.org/en/lessons/mapping-with-python-leaflet) [@phamWebMappingPython2017].
+:::
+
+Leaflet is another javascript library that allows for interactive data visualization. We're only going to briefly talk about it here, but there is [extensive documentation](https://rstudio.github.io/leaflet/) that includes details of how to work with different types of geographical data, chloropleth maps, plugins, and more.
+
+::: {.callout-caution collapse="true"}
+### Bigfoot Sightings
+
+To explore the leaflet package, we'll start out playing with a [dataset of Bigfoot sightings](https://data.world/timothyrenner/bfro-sightings-data) assembled from the Bigfoot Field Researchers Organization's [Google earth tool](http://www.bfro.net/news/google_earth.asp)
+
+```{r leaflet-setup, echo = F}
+if (!"leaflet" %in% installed.packages()) install.packages("leaflet")
+
+library(leaflet)
+library(readr)
+
+bigfoot_data <- read_csv("https://query.data.world/s/egnaxxvegdkzzrhfhdh4izb6etmlms")
+```
+```{r leaflet-setup, eval = F}
+```
+
+We can start out by plotting a map with the location of each sighting. I've colored the points in a seasonal color scheme, and added the description of each incident as a mouseover label.
+```{r}
+bigfoot_data %>%
+  filter(classification == "Class A") %>%
+  mutate(seasoncolor = str_replace_all(season, c("Fall" = "orange",
+                                                 "Winter" = "skyblue",
+                                                 "Spring" = "green",
+                                                 "Summer" = "yellow")),
+         # This code just wraps the description to the width of the R terminal
+         # and inserts HTML for a line break into the text at appropriate points
+         desc_wrap = purrr::map(observed, ~strwrap(.) %>%
+                                  paste(collapse = "<br/>") %>%
+                                  htmltools::HTML())) %>%
+leaflet() %>%
+  addTiles() %>%
+  addCircleMarkers(~longitude, ~latitude, color = ~seasoncolor, label = ~desc_wrap)
+```
+:::
+
+
+::: {.callout-caution collapse="true"}
+### Squirrels of New York City
+
+Of course, because this is an interactive map library, we aren't limited to any one scale. We can also plot data at the city level:
+
+```{r}
+if(!"nycsquirrels18" %in% installed.packages()) {
+  devtools::install_github("mine-cetinkaya-rundel/nycsquirrels18")
+}
+
+library(nycsquirrels18)
+
+data(squirrels)
+
+head(squirrels)
+
+squirrels %>%
+  mutate(color = tolower(primary_fur_color)) %>%
+  leaflet() %>%
+  addTiles() %>%
+  addCircleMarkers(~long, ~lat, color = ~color)
+```
+:::
+
+
+::: {.callout-caution collapse="true"}
+### Ecological Regions
+
+We can also plot regions, instead of just points. I downloaded a dataset released by the US Forest Service, [Bailey's Ecoregions and Subregions](https://catalog.data.gov/dataset/baileys-ecoregions-and-subregions-dataset-7dd69) dataset, which categorizes the US into different climate and ecological zones.
+
+To map colors to variables, we have to define a color palette and variable mapping ourselves, and pass that function into the leaflet object we're adding.
+
+I've set this chunk to not evaluate because it causes the book to be painfully large.
+```{r, eval = F}
+library(sf)
+ecoregions <- st_read("data/Bailey_s_Ecoregions_and_Subregions_Dataset.geojson")
+
+# Define a palette
+region_pal <- colorFactor(c("#E67E22", "#0B5345", "#229954", "#B3B6B7"), ecoregions$DOMAIN)
+
+ecoregions %>%
+leaflet() %>%
+  addTiles() %>%
+  addPolygons(stroke = TRUE, fillOpacity = 0.25,
+              fillColor = ~region_pal(DOMAIN), color = ~region_pal(DOMAIN), label = ~SECTION)
+```
+:::
+
+::: callout-tip
+
+### Try it out
+
+::: panel-tabset
+
+#### Problem
+
+Download the Shapefiles for the [116th Congress Congressional Districts](https://www2.census.gov/geo/tiger/GENZ2018/shp/cb_2018_us_cd116_5m.zip). Unzip the file and read it in using the code below (you'll have to change the file path).
+Use the [MIT Election Data and Science Lab's US House election results](https://dataverse.harvard.edu/dataset.xhtml?persistentId=doi:10.7910/DVN/IG0UN2), and merge this data with the shapefiles to plot the results of the 2018 midterms in a way that you think is useful (you can use any of the available data).
+
+Some notes:
+
+- FIPS codes are used to identify the state and district, with [00 indicating at-large districts (one district for the state) and 98 indicating non-voting districts](https://www.census.gov/geographies/mapping-files/2019/dec/rdo/116-congressional-district-bef.html).
+- If you would like to add in the number of citizens of voting age, you can get that information [here](https://www.census.gov/data/tables/time-series/demo/voting-and-registration/congressional-voting-tables.html) but you will have to do some cleaning in order to join the table with the others.
+- Minnesota's Democratic-farmer-labor party caucuses with the Democrats but maintains its name for historical reasons. You can safely recode this if you want to.
+
+
+#### Starter R code
+
+```{r}
+library(sf)
+# Read in the districts
+ziptemp <- tempfile(fileext=".zip")
+shapeurl <- "https://www2.census.gov/geo/tiger/GENZ2018/shp/cb_2018_us_cd116_5m.zip"
+download.file(shapeurl, destfile = ziptemp, mode = "wb")
+unzip(ziptemp, exdir = "data/116_congress")
+congress_districts <- st_read("data/116_congress/cb_2018_us_cd116_5m.shp")
+
+# Read in the results
+election_results <- read_csv("data/1976-2020-house.csv") %>%
+  filter(year == 2018) %>%
+  mutate(state_fips = sprintf("%02d", as.integer(state_fips)),
+         district = sprintf("%02d", as.integer(district)))
+
+# Clean up congress districts
+congress_districts <- congress_districts %>%
+  # Convert factors to characters
+  mutate(across(where(is.factor), as.character)) %>%
+  # Handle at-large districts
+  mutate(district = ifelse(CD116FP == "00", "01", CD116FP))
+```
+
+#### R solution
+
+```{r}
+library(sf)
+library(htmltools) # to mark labels as html code
+
+# Read in the results
+election_results <- election_results %>%
+  group_by(state, state_fips, state_po, district, stage) %>%
+  arrange(candidatevotes) %>%
+  mutate(pct = candidatevotes/totalvotes) %>%
+  mutate(party = str_to_lower(party)) %>%
+  # Keep the winner only
+  filter(pct == max(pct)) %>%
+  # Fix Minnesota
+  mutate(party = ifelse(party == "democratic-farmer-labor", "democrat", party))
+
+# Read in the districts
+congress_districts <- st_read("data/116_congress/cb_2018_us_cd116_5m.shp") %>%
+  mutate(geometry = st_transform(geometry, crs = st_crs("+proj=longlat +datum=WGS84")))
+
+# Clean up congress districts
+congress_districts <- congress_districts %>%
+  # Convert factors to characters
+  mutate(across(where(is.factor), as.character)) %>%
+  # Handle at-large districts
+  mutate(district = ifelse(CD116FP == "00", "01", CD116FP))
+
+# Merge
+congress_districts <- congress_districts %>%
+  left_join(election_results, by = c("STATEFP" = "state_fips", "CD116FP" = "district")) %>%
+  mutate(party = factor(party, levels = c("republican", "democrat")),
+         short_party = ifelse(party == "republican", "R", "D"),
+         label = paste0(state_po, "-", district, candidate, " (", short_party, ")"))
+
+# Define a palette
+region_pal <- colorFactor(c("#e9141d", "#0015bc"), congress_districts$party)
+
+congress_districts %>%
+leaflet() %>%
+  addTiles() %>%
+  addPolygons(stroke = TRUE, fillOpacity = ~pct/2,
+              # still want to see what's underneath, even in safe districts
+              fillColor = ~region_pal(party), color = ~region_pal(party),
+              label = ~label)
+```
+
+:::
+
+:::
+
+
+
+## Shiny
+
+Take a few minutes and poke around the [RStudio Shiny user showcase](https://shiny.rstudio.com/gallery/#user-showcase). 
+It helps to have some motivation, and to get a sense of what is possible before you start learning something. 
+
+::: column-margin
+One of the more amusing ones I found was [an exploration of lego demographics](https://kaplanas.shinyapps.io/living_in_the_lego_world/).
+:::
+
+Shiny is a framework for building interactive web applications in R (and now in Python too!).
+Unlike plotly and other graphics engines, Shiny depends on an R instance on a server to do computations. 
+This means Shiny is much more powerful and has more capabilities, but also that it's harder to share and deploy - you have to have access to a web server with R installed on it. 
+If you happen to have a server like that, though, Shiny is pretty awesome. 
+Posit runs a service called shinyapps.io that will provide some limited free hosting, as well as paid plans for apps that have more web traffic, but you can also create Shiny apps for local use - I often do this for model debugging when I'm using neural networks, because they're so complicated.
+
+Posit has a set of well produced video tutorials to introduce Shiny. I'd recommend you at least listen to the [introduction](https://shiny.posit.com/tutorial/) if you're a visual/audio learner (the whole tutorial is about 2 hours long). 
+There is also a [written tutorial](https://shiny.posit.com/tutorial/written-tutorial/lesson1/) if you prefer to learn in written form (7 lessons, each is about 20 minutes long).
+
+I generally think it's better to send you to the source when there are well-produced resources, rather than trying to rehash something to put my own spin on it.
+
+One other interesting feature to keep in mind when using Shiny - you can integrate Shiny reactivity into Rmarkdown by adding `runtime: shiny` to the markdown header.
+
+
+::: {.callout-note collapse=true}
+
+## Additional Resources
+
+- [Shiny articles](https://shiny.posit.com/articles/)
+
+- [Reactivity in Shiny](https://www.youtube.com/watch?v=cqOUpnF-Lco)
+
+- [Leaflet introduction for R](https://rstudio.github.io/leaflet/)
+
+### Other interactive tools
+
+- [htmlwidgets](https://www.htmlwidgets.org/) - a generic wrapper for any Javascript library (htmlwidgets is used under the hood in both Leaflet and Plotly R integration)
+
+- [dash](https://dashr.plotly.com/) - Another dashboard program supported by plotly. `dash` is the python equivalent of `shiny`, but also has R integration (though I'm not sure how well it's supported).
+
+### Debugging
+
+- [Debugging with Dean - Shiny debugging](https://www.youtube.com/watch?reload=9&v=sP_VB9OFJP0) - YouTube video with debugging in realtime.
+
+- [ShinyJS - Using Shiny and JavaScript together](https://www.youtube.com/watch?v=fPY13maWKKE)
+
+- [Using Shiny in Production](https://www.youtube.com/watch?v=Wy3TY0gOmJw) - Joe Cheng
+:::
