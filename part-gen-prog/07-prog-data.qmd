@@ -736,5 +736,65 @@ from plotnine import *
 
 So, from these plots, we can see that in at least two movies, there are high spikes in deaths about 1/3 and 2/3 of the way in; in another movie, most of the deaths occur in the first 25 minutes. Swearing, on the other hand, seems to be fairly evenly distributed throughout the movies. 
 
+### Compare Swear Words Used by Movie
+
+As there are a very large number of swear words and variants in Tarantino movies, let's work with only the 6 most common swear words in the data set. 
+To do this, we have to: 
+
+1. Select only rows that have words (as opposed to deaths)
+2. Assemble a list of the 6 most common words
+3. Select only rows with those words
+
+
+::: panel-tabset
+
+#### R {-}
+
+
+```{r tarantino-stacked-bar}
+library(ggplot2)
+library(dplyr)
+# Step 1
+tarantino_words <- tarantino[tarantino$type == "word",]
+
+# Step 2
+word_freq <- sort(table(tarantino_words$word), decreasing = T)
+# word_freq has the counts of how many times the words appear
+# we need the names that are above those counts
+swear6 <- names(word_freq)[1:6]
+
+# Step 3
+word_6 <- tarantino_words[tarantino_words$word %in% swear6,]
+
+
+
+ggplot(
+  data = word_6, 
+  aes(x = movie, fill = word)
+) + 
+  geom_bar() + 
+  coord_flip()
+```
+
+#### Python {-}
+
+```{python tarantino-stacked-bar-py}
+from plotnine import *
+
+# Step 1 - remove deaths
+tarantino_words = tarantino.query("type == 'word'")
+
+# Step 2 - 6 most common words
+
+
+(
+  ggplot(tarantino, aes(x = 'minutes_in', color = 'movie')) + 
+  geom_density() + 
+  facet_wrap("type")
+)
+
+```
+
+:::
 
 XXX Under construction - I will add more as I get time. 
