@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.2.313">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="dcterms.date" content="2023-08-31">
+<meta name="dcterms.date" content="2023-09-18">
 <title>Statistical Computing using R and Python - 13&nbsp; Writing Functions</title>
 <style>
 code{white-space: pre-wrap;}
@@ -417,7 +417,7 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">August 31, 2023</p>
+      <p class="date">September 18, 2023</p>
     </div>
   </div>
   
@@ -497,22 +497,23 @@ Example: Turning Code into Functions
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="co">## No module named 'pandas'</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame({</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">'a'</span>: np.random.randn(<span class="dv">10</span>), </span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">'b'</span>: np.random.randn(<span class="dv">10</span>), </span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">'c'</span>: np.random.randn(<span class="dv">10</span>), </span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="st">'d'</span>: np.random.randn(<span class="dv">10</span>)})</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co">## name 'pd' is not defined</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>df.a <span class="op">=</span> (df.a <span class="op">-</span> <span class="bu">min</span>(df.a))<span class="op">/</span>(<span class="bu">max</span>(df.a) <span class="op">-</span> <span class="bu">min</span>(df.a))</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co">## name 'df' is not defined</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>df.b <span class="op">=</span> (df.b <span class="op">-</span> <span class="bu">min</span>(df.b))<span class="op">/</span>(<span class="bu">max</span>(df.b) <span class="op">-</span> <span class="bu">min</span>(df.a))</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co">## name 'df' is not defined</span></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>df.c <span class="op">=</span> (df.c <span class="op">-</span> <span class="bu">min</span>(df.c))<span class="op">/</span>(<span class="bu">max</span>(df.c) <span class="op">-</span> <span class="bu">min</span>(df.c))</span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="co">## name 'df' is not defined</span></span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>df.d <span class="op">=</span> (df.d <span class="op">-</span> <span class="bu">min</span>(df.d))<span class="op">/</span>(<span class="bu">max</span>(df.d) <span class="op">-</span> <span class="bu">min</span>(df.d))</span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="co">## name 'df' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co">## No module named 'numpy'</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame({</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">'a'</span>: np.random.randn(<span class="dv">10</span>), </span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">'b'</span>: np.random.randn(<span class="dv">10</span>), </span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="st">'c'</span>: np.random.randn(<span class="dv">10</span>), </span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="st">'d'</span>: np.random.randn(<span class="dv">10</span>)})</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co">## name 'pd' is not defined</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>df.a <span class="op">=</span> (df.a <span class="op">-</span> <span class="bu">min</span>(df.a))<span class="op">/</span>(<span class="bu">max</span>(df.a) <span class="op">-</span> <span class="bu">min</span>(df.a))</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co">## name 'df' is not defined</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>df.b <span class="op">=</span> (df.b <span class="op">-</span> <span class="bu">min</span>(df.b))<span class="op">/</span>(<span class="bu">max</span>(df.b) <span class="op">-</span> <span class="bu">min</span>(df.a))</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="co">## name 'df' is not defined</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>df.c <span class="op">=</span> (df.c <span class="op">-</span> <span class="bu">min</span>(df.c))<span class="op">/</span>(<span class="bu">max</span>(df.c) <span class="op">-</span> <span class="bu">min</span>(df.c))</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="co">## name 'df' is not defined</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>df.d <span class="op">=</span> (df.d <span class="op">-</span> <span class="bu">min</span>(df.d))<span class="op">/</span>(<span class="bu">max</span>(df.d) <span class="op">-</span> <span class="bu">min</span>(df.d))</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="co">## name 'df' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
@@ -557,8 +558,8 @@ Example: Turning Code into Functions
 <span></span>
 <span><span class="op">(</span><span class="va">x</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">x</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">/</span> </span>
 <span>  <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">x</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">x</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">##  [1] 0.70888084 0.09325534 0.32039156 0.70362540 0.19671020 0.43268840</span></span>
-<span><span class="co">##  [7] 0.70002261 1.00000000 0.00000000 0.69627919</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span><span class="co">##  [1] 0.52733708 0.85557820 1.00000000 0.84186816 0.00000000 0.91920360</span></span>
+<span><span class="co">##  [7] 0.50600348 0.51095257 0.77934841 0.09559992</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div id="tabset-3-2" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
@@ -586,8 +587,8 @@ Example: Turning Code into Functions
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">rng</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/range.html">range</a></span><span class="op">(</span><span class="va">x</span>, na.rm <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
 <span></span>
 <span><span class="op">(</span><span class="va">x</span> <span class="op">-</span> <span class="va">rng</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span><span class="op">/</span><span class="op">(</span><span class="va">rng</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span> <span class="op">-</span> <span class="va">rng</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="co">##  [1] 0.70888084 0.09325534 0.32039156 0.70362540 0.19671020 0.43268840</span></span>
-<span><span class="co">##  [7] 0.70002261 1.00000000 0.00000000 0.69627919</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span><span class="co">##  [1] 0.52733708 0.85557820 1.00000000 0.84186816 0.00000000 0.91920360</span></span>
+<span><span class="co">##  [7] 0.50600348 0.51095257 0.77934841 0.09559992</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div id="tabset-4-2" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
@@ -620,8 +621,8 @@ Example: Turning Code into Functions
 <span><span class="op">}</span></span>
 <span></span>
 <span><span class="fu">rescale01</span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">a</span><span class="op">)</span></span>
-<span><span class="co">##  [1] 0.70888084 0.09325534 0.32039156 0.70362540 0.19671020 0.43268840</span></span>
-<span><span class="co">##  [7] 0.70002261 1.00000000 0.00000000 0.69627919</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span><span class="co">##  [1] 0.52733708 0.85557820 1.00000000 0.84186816 0.00000000 0.91920360</span></span>
+<span><span class="co">##  [7] 0.50600348 0.51095257 0.77934841 0.09559992</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <ul>
 <li>The name of the function, <code>rescale01</code>, describes what the function does - it rescales the data to between 0 and 1.</li>
