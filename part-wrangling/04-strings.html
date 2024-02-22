@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.2.313">
+<meta name="generator" content="quarto-1.4.515">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <meta name="dcterms.date" content="2024-02-22">
 <title>Statistical Computing using R and Python - 23&nbsp; Working with Strings</title>
@@ -15,11 +15,12 @@ div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
   width: 0.8em;
-  margin: 0 0.8em 0.2em -1.6em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -44,48 +45,20 @@ pre.numberSource code > span > a:first-child::before
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
     padding: 0 4px; width: 4em;
-    color: #aaaaaa;
   }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
 div.sourceCode
   {   }
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { color: #7d9029; } /* Attribute */
-code span.bn { color: #40a070; } /* BaseN */
-code span.bu { color: #008000; } /* BuiltIn */
-code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #4070a0; } /* Char */
-code span.cn { color: #880000; } /* Constant */
-code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code span.dt { color: #902000; } /* DataType */
-code span.dv { color: #40a070; } /* DecVal */
-code span.er { color: #ff0000; font-weight: bold; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #40a070; } /* Float */
-code span.fu { color: #06287e; } /* Function */
-code span.im { color: #008000; font-weight: bold; } /* Import */
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code span.op { color: #666666; } /* Operator */
-code span.ot { color: #007020; } /* Other */
-code span.pp { color: #bc7a00; } /* Preprocessor */
-code span.sc { color: #4070a0; } /* SpecialChar */
-code span.ss { color: #bb6688; } /* SpecialString */
-code span.st { color: #4070a0; } /* String */
-code span.va { color: #19177c; } /* Variable */
-code span.vs { color: #4070a0; } /* VerbatimString */
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+/* CSS for citations */
 div.csl-bib-body { }
 div.csl-entry {
   clear: both;
+  margin-bottom: 0em;
 }
-.hanging div.csl-entry {
+.hanging-indent div.csl-entry {
   margin-left:2em;
   text-indent:-2em;
 }
@@ -99,8 +72,7 @@ div.csl-right-inline {
 }
 div.csl-indent {
   margin-left: 2em;
-}
-</style>
+}</style>
 
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../site_libs/quarto-nav/headroom.min.js"></script>
@@ -130,7 +102,13 @@ div.csl-indent {
   "collapse-after": 3,
   "panel-placement": "start",
   "type": "textbox",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -140,7 +118,8 @@ div.csl-indent {
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
     "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit"
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
   }
 }</script><script async="" src="https://www.googletagmanager.com/gtag/js?id=G-4ZFBDKXJXP"></script><script type="text/javascript">
 
@@ -153,249 +132,306 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
 <body class="nav-sidebar floating slimcontent">
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top"><nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }"><div class="container-fluid d-flex justify-content-between">
-      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Working with Strings</span></h1>
-      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
-        <i class="bi bi-chevron-right"></i>
+  <header id="quarto-header" class="headroom fixed-top"><nav class="quarto-secondary-nav"><div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../part-wrangling/00-wrangling.html">Part III: Data Wrangling</a></li><li class="breadcrumb-item"><a href="../part-wrangling/04-strings.html"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Working with Strings</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
       </button>
     </div>
   </nav></header><!-- content --><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto"><div class="pt-lg-2 mt-2 text-left sidebar-header">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto"><div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="../">Statistical Computing using R and Python</a> 
         <div class="sidebar-tools-main">
-    <a href="https://github.com/srvanderplas/stat-computing-r-python/" title="Source Code" class="sidebar-tool px-1"><i class="bi bi-github"></i></a>
-  <a href="" class="quarto-color-scheme-toggle sidebar-tool" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+    <a href="https://github.com/srvanderplas/stat-computing-r-python/" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
 </div>
     </div>
       </div>
-      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="mt-2 flex-shrink-0 align-items-center">
         <div class="sidebar-search">
         <div id="quarto-search" class="" title="Search"></div>
         </div>
-      </div>
+        </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
 <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../index.html" class="sidebar-item-text sidebar-link">Preface</a>
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
   </div>
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../part-tools/00-tools-intro.html" class="sidebar-item-text sidebar-link">Part I: Tools</a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <a href="../part-tools/00-tools-intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Part I: Tools</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">
 <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-tools/01-computer-basics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Computer Basics</span></a>
+  <a href="../part-tools/01-computer-basics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Computer Basics</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-tools/02-setting-up-computer.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Setting Up Your Computer</span></a>
+  <a href="../part-tools/02-setting-up-computer.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Setting Up Your Computer</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-tools/03-Rstudio-interface.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">RStudio’s Interface</span></a>
+  <a href="../part-tools/03-Rstudio-interface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">RStudio’s Interface</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-tools/04-scripts-notebooks.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Scripts and Notebooks</span></a>
+  <a href="../part-tools/04-scripts-notebooks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Scripts and Notebooks</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-tools/05-git-and-github.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Version Control with Git</span></a>
+  <a href="../part-tools/05-git-and-github.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Version Control with Git</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-tools/06-documents.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Reproducibility and Professional Communication</span></a>
+  <a href="../part-tools/06-documents.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Reproducibility and Professional Communication</span></span></a>
   </div>
 </li>
       </ul>
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../part-gen-prog/00-gen-prog.html" class="sidebar-item-text sidebar-link">Part II: General Programming</a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+            <a href="../part-gen-prog/00-gen-prog.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Part II: General Programming</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">
 <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/00-intro.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Introduction to Programming</span></a>
+  <a href="../part-gen-prog/00-intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Introduction to Programming</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/01-basic-var-types.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Variables and Basic Data Types</span></a>
+  <a href="../part-gen-prog/01-basic-var-types.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Variables and Basic Data Types</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/02-prog-functions.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Using Functions and Libraries</span></a>
+  <a href="../part-gen-prog/02-prog-functions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Using Functions and Libraries</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/03-data-struct.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Data Structures</span></a>
+  <a href="../part-gen-prog/03-data-struct.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Data Structures</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/035-matrix-calcs.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Matrix Calculations</span></a>
+  <a href="../part-gen-prog/035-matrix-calcs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Matrix Calculations</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/04-control-struct.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Control Structures</span></a>
+  <a href="../part-gen-prog/04-control-struct.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Control Structures</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/05-functions.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Writing Functions</span></a>
+  <a href="../part-gen-prog/05-functions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Writing Functions</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/06-debugging.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Debugging</span></a>
+  <a href="../part-gen-prog/06-debugging.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Debugging</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/07-prog-data.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Programming With Data</span></a>
+  <a href="../part-gen-prog/07-prog-data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Programming With Data</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/99-extra.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Other Helpful Programming Resources</span></a>
+  <a href="../part-gen-prog/99-extra.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Other Helpful Programming Resources</span></span></a>
   </div>
 </li>
       </ul>
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../part-wrangling/00-wrangling.html" class="sidebar-item-text sidebar-link">Part III: Data Wrangling</a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+            <a href="../part-wrangling/00-wrangling.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Part III: Data Wrangling</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">
 <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/01-data-input.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Data Input</span></a>
+  <a href="../part-wrangling/01-data-input.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Data Input</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/02-basic-data-vis.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Data Visualization Basics</span></a>
+  <a href="../part-wrangling/02-basic-data-vis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Data Visualization Basics</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/02a-eda.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Exploratory Data Analysis</span></a>
+  <a href="../part-wrangling/02a-eda.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Exploratory Data Analysis</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/02b-graphics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Data Visualization</span></a>
+  <a href="../part-wrangling/02b-graphics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Data Visualization</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/02c-good-graphics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Creating Good Charts</span></a>
+  <a href="../part-wrangling/02c-good-graphics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Creating Good Charts</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/03-data-cleaning.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Data Cleaning</span></a>
+  <a href="../part-wrangling/03-data-cleaning.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Data Cleaning</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/04-strings.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Working with Strings</span></a>
+  <a href="../part-wrangling/04-strings.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Working with Strings</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/05-data-reshape.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Reshaping Data</span></a>
+  <a href="../part-wrangling/05-data-reshape.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Reshaping Data</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/06-data-join.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Joining Data</span></a>
+  <a href="../part-wrangling/06-data-join.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Joining Data</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/07-datetime.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Dates and Times</span></a>
+  <a href="../part-wrangling/07-datetime.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Dates and Times</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/08-functional-prog.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Functional Programming</span></a>
+  <a href="../part-wrangling/08-functional-prog.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Functional Programming</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/09-spatial-formats.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Spatial data</span></a>
+  <a href="../part-wrangling/09-spatial-formats.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Spatial data</span></span></a>
   </div>
 </li>
       </ul>
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../part-advanced-topics/00-advanced.html" class="sidebar-item-text sidebar-link">Part IV: Advanced Topics</a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">
+            <a href="../part-advanced-topics/00-advanced.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Part IV: Advanced Topics</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">
 <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-advanced-topics/01-simulation.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Simulation and Reproducibility</span></a>
+  <a href="../part-advanced-topics/01-simulation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Simulation and Reproducibility</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-advanced-topics/06-interactive-graphics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">30</span>&nbsp; <span class="chapter-title">Interactive Graphics</span></a>
+  <a href="../part-advanced-topics/06-interactive-graphics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">30</span>&nbsp; <span class="chapter-title">Interactive Graphics</span></span></a>
   </div>
 </li>
       </ul>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../graveyard.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">31</span>&nbsp; <span class="chapter-title">Other Topics</span></a>
+  <a href="../graveyard.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">31</span>&nbsp; <span class="chapter-title">Other Topics</span></span></a>
   </div>
 </li>
     </ul>
 </div>
-</nav><!-- margin-sidebar --><div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+</nav><div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active"><h2 id="toc-title">Table of contents</h2>
    
   <ul>
-<li><a href="#fa-bullseye-objectives" id="toc-fa-bullseye-objectives" class="nav-link active" data-scroll-target="#fa-bullseye-objectives"><span class="toc-section-number">23.1</span>  <i class="fa-solid fa-bullseye" aria-label="bullseye"></i> Objectives</a></li>
-  <li><a href="#basic-operations" id="toc-basic-operations" class="nav-link" data-scroll-target="#basic-operations"><span class="toc-section-number">23.2</span>  Basic Operations</a></li>
-  <li><a href="#converting-strings-to-numbers" id="toc-converting-strings-to-numbers" class="nav-link" data-scroll-target="#converting-strings-to-numbers"><span class="toc-section-number">23.3</span>  Converting strings to numbers</a></li>
-  <li><a href="#find-and-replace" id="toc-find-and-replace" class="nav-link" data-scroll-target="#find-and-replace"><span class="toc-section-number">23.4</span>  Find and replace</a></li>
-  <li><a href="#separating-multi-variable-columns" id="toc-separating-multi-variable-columns" class="nav-link" data-scroll-target="#separating-multi-variable-columns"><span class="toc-section-number">23.5</span>  Separating multi-variable columns</a></li>
-  <li><a href="#joining-columns" id="toc-joining-columns" class="nav-link" data-scroll-target="#joining-columns"><span class="toc-section-number">23.6</span>  Joining columns</a></li>
-  <li><a href="#regular-expressions" id="toc-regular-expressions" class="nav-link" data-scroll-target="#regular-expressions"><span class="toc-section-number">23.7</span>  Regular Expressions</a></li>
-  <li><a href="#sec-strings-refs" id="toc-sec-strings-refs" class="nav-link" data-scroll-target="#sec-strings-refs"><span class="toc-section-number">23.8</span>  References</a></li>
-  </ul><div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/srvanderplas/stat-computing-r-python/edit/main/part-wrangling/04-strings.qmd" class="toc-action">Edit this page</a></p></div></div></nav>
+<li><a href="#objectives" id="toc-objectives" class="nav-link active" data-scroll-target="#objectives"><span class="header-section-number">23.1</span> <i class="fa-solid fa-bullseye" aria-label="bullseye"></i> Objectives</a></li>
+  <li><a href="#basic-operations" id="toc-basic-operations" class="nav-link" data-scroll-target="#basic-operations"><span class="header-section-number">23.2</span> Basic Operations</a></li>
+  <li><a href="#converting-strings-to-numbers" id="toc-converting-strings-to-numbers" class="nav-link" data-scroll-target="#converting-strings-to-numbers"><span class="header-section-number">23.3</span> Converting strings to numbers</a></li>
+  <li>
+<a href="#find-and-replace" id="toc-find-and-replace" class="nav-link" data-scroll-target="#find-and-replace"><span class="header-section-number">23.4</span> Find and replace</a>
+  <ul class="collapse">
+<li><a href="#example-locale-find-and-replace" id="toc-example-locale-find-and-replace" class="nav-link" data-scroll-target="#example-locale-find-and-replace"><span class="header-section-number">23.4.1</span> Example: Locale find-and-replace</a></li>
+  </ul>
+</li>
+  <li><a href="#separating-multi-variable-columns" id="toc-separating-multi-variable-columns" class="nav-link" data-scroll-target="#separating-multi-variable-columns"><span class="header-section-number">23.5</span> Separating multi-variable columns</a></li>
+  <li><a href="#joining-columns" id="toc-joining-columns" class="nav-link" data-scroll-target="#joining-columns"><span class="header-section-number">23.6</span> Joining columns</a></li>
+  <li>
+<a href="#regular-expressions" id="toc-regular-expressions" class="nav-link" data-scroll-target="#regular-expressions"><span class="header-section-number">23.7</span> Regular Expressions</a>
+  <ul class="collapse">
+<li><a href="#regular-expression-basics" id="toc-regular-expression-basics" class="nav-link" data-scroll-target="#regular-expression-basics"><span class="header-section-number">23.7.1</span> Regular Expression Basics</a></li>
+  <li><a href="#specifying-repetition" id="toc-specifying-repetition" class="nav-link" data-scroll-target="#specifying-repetition"><span class="header-section-number">23.7.2</span> Specifying repetition</a></li>
+  <li><a href="#matching-locations" id="toc-matching-locations" class="nav-link" data-scroll-target="#matching-locations"><span class="header-section-number">23.7.3</span> Matching Locations</a></li>
+  <li><a href="#capturing-information" id="toc-capturing-information" class="nav-link" data-scroll-target="#capturing-information"><span class="header-section-number">23.7.4</span> Capturing Information</a></li>
+  <li><a href="#putting-it-all-together" id="toc-putting-it-all-together" class="nav-link" data-scroll-target="#putting-it-all-together"><span class="header-section-number">23.7.5</span> Putting it all Together</a></li>
+  </ul>
+</li>
+  <li><a href="#sec-strings-refs" id="toc-sec-strings-refs" class="nav-link" data-scroll-target="#sec-strings-refs"><span class="header-section-number">23.8</span> References</a></li>
+  </ul><div class="toc-actions"><ul><li><a href="https://github.com/srvanderplas/stat-computing-r-python/edit/main/part-wrangling/04-strings.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content page-columns page-full" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><div class="quarto-title">
-<h1 class="title"><span id="sec-strings" class="quarto-section-identifier d-none d-lg-block"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Working with Strings</span></span></h1>
+<main class="content page-columns page-full" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../part-wrangling/00-wrangling.html">Part III: Data Wrangling</a></li><li class="breadcrumb-item"><a href="../part-wrangling/04-strings.html"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Working with Strings</span></a></li></ol></nav><div class="quarto-title">
+<h1 class="title"><span id="sec-strings" class="quarto-section-identifier"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Working with Strings</span></span></h1>
 </div>
 
 
@@ -414,9 +450,10 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
   </div>
   
 
+
 </header><p>One of the most common types of “messy” data involves strings. If the data is input by humans, well, … we suck at spelling <span class="citation" data-cites="norvigHowWriteSpelling2007"><a href="#ref-norvigHowWriteSpelling2007" role="doc-biblioref">[1]</a></span>, typing, and data input, so… it’s going to be messy. But, another type of messy data involves situations where multiple variables are stored in the same column, or where the same variable is stored across two different columns. Usually, when this type of messy data occurs, the data is stored in a string/character variable.</p>
 <p>This chapter will teach you how to work with both messy spelling/data entry and multiple values in a single string, but we’ll focus on the second - you’ll learn the tools to handle the first case along the way.</p>
-<section id="fa-bullseye-objectives" class="level2" data-number="23.1"><h2 data-number="23.1" class="anchored" data-anchor-id="fa-bullseye-objectives">
+<section id="objectives" class="level2" data-number="23.1"><h2 data-number="23.1" class="anchored" data-anchor-id="objectives">
 <span class="header-section-number">23.1</span> <i class="fa-solid fa-bullseye" aria-label="bullseye"></i> Objectives</h2>
 <ul>
 <li>Use functions to perform find-and-replace operations</li>
@@ -424,9 +461,8 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
 <li>Use functions to join string data from multiple columns/variables into a single column/variable</li>
 </ul>
 <div class="quarto-figure quarto-figure-center">
-<figure class="figure"><p><img src="../images/wrangling/string_processing_starbucks.jpeg" class="img-fluid figure-img" style="width:50.0%" alt="A sign at a bar/coffee shop that says '// If you can read this code, tell your bartender the secret word of the day for a free drink on us'. 'var your_drink;' 'var reverse = function(s) { return s.split('').reverse().join('');' var bartender = { str 1: 'ers', str 2: reverse('rap'), str3: 'amet', request: function(preference) {return preference + '.Secret word:' + this.str2 + this.str3 + this.str1;}};' 'bartender.request(your_drink);'"></p>
-<p></p><figcaption class="figure-caption">Perhaps one day you’ll be able to put this knowledge to use in a practical setting!</figcaption><p></p>
-</figure>
+<figure class="figure"><p><img src="../images/wrangling/string_processing_starbucks.jpeg" class="img-fluid figure-img" style="width:50.0%"></p>
+<figcaption>Perhaps one day you’ll be able to put this knowledge to use in a practical setting!</figcaption></figure>
 </div>
 </section><section id="basic-operations" class="level2" data-number="23.2"><h2 data-number="23.2" class="anchored" data-anchor-id="basic-operations">
 <span class="header-section-number">23.2</span> Basic Operations</h2>
@@ -436,13 +472,14 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
 </blockquote>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure"><p><img src="https://imgs.xkcd.com/comics/perl_problems.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Alternately, the xkcd version of the above quote</figcaption><p></p>
-</figure>
+<figcaption>Alternately, the xkcd version of the above quote</figcaption></figure>
 </div>
 <p>The <a href="https://github.com/rstudio/cheatsheets/blob/main/strings.pdf">stringr cheatsheet</a> by RStudio may be helpful as you complete tasks related to this section - it may even be useful in Python as the 2nd page has a nice summary of regular expressions.</p>
 <div id="tbl-string-function" class="anchored">
+<figure class="quarto-float quarto-float-tbl figure"><figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-string-function-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;23.1: Table of string functions in R and python. <code>x</code> is the string or vector of strings, <code>pattern</code> is a pattern to be found within the string, <code>a</code> and <code>b</code> are indexes, and <code>encoding</code> is a string encoding, such as UTF8 or ASCII.
+</figcaption><div aria-describedby="tbl-string-function-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <table class="table">
-<caption>Table&nbsp;23.1: Table of string functions in R and python. <code>x</code> is the string or vector of strings, <code>pattern</code> is a pattern to be found within the string, <code>a</code> and <code>b</code> are indexes, and <code>encoding</code> is a string encoding, such as UTF8 or ASCII.</caption>
 <colgroup>
 <col style="width: 24%">
 <col style="width: 38%">
@@ -557,14 +594,17 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
 </tbody>
 </table>
 </div>
-<p>In <a href="#tbl-string-function">Table&nbsp;<span>23.1</span></a>, multiple functions are provided for e.g.&nbsp;common packages and situations. Pandas methods are specifically those which work in some sort of vectorized manner. Base methods (in R) do not require additional packages, where stringr methods require the <code>stringr</code> package, which is included in the tidyverse<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>.</p>
+</figure>
+</div>
+<p>In <a href="#tbl-string-function" class="quarto-xref">Table&nbsp;<span>23.1</span></a>, multiple functions are provided for e.g.&nbsp;common packages and situations. Pandas methods are specifically those which work in some sort of vectorized manner. Base methods (in R) do not require additional packages, where stringr methods require the <code>stringr</code> package, which is included in the tidyverse<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>.</p>
 </section><section id="converting-strings-to-numbers" class="level2 page-columns page-full" data-number="23.3"><h2 data-number="23.3" class="anchored" data-anchor-id="converting-strings-to-numbers">
 <span class="header-section-number">23.3</span> Converting strings to numbers</h2>
 <p>One of the most common tasks when reading in and tidying messy data is that numeric-ish data can come in many forms that are read (by default) as strings. The data frame below provides an example of a few types of data which may be read in in unexpected ways. How do we tell R or Python that we want all of these columns to be treated as numbers?</p>
-<div class="cell">
-<div id="tbl-parse-numbers" class="anchored">
-<table class="table table-sm table-striped">
-<caption>Table&nbsp;23.2: Different “messy” number formats</caption>
+<div id="tbl-parse-numbers" class="cell anchored">
+<figure class="quarto-float quarto-float-tbl figure"><figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-parse-numbers-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;23.2: Different “messy” number formats
+</figcaption><div aria-describedby="tbl-parse-numbers-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="cell table table-sm table-striped small">
 <thead><tr class="header">
 <th></th>
 <th style="text-align: right;">int_col</th>
@@ -624,22 +664,12 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
 </tbody>
 </table>
 </div>
+</figure>
 </div>
 <p><a href="https://docs.oracle.com/cd/E19455-01/806-0169/overview-8/index.html">Numbers</a>, currencies, dates, and times are written differently based on what country you’re in <span class="citation" data-cites="ashourConciseGuideNumber2022"><a href="#ref-ashourConciseGuideNumber2022" role="doc-biblioref">[2]</a></span>. In computer terms, this is the <strong>locale</strong>, and it affects everything from how your computer formats the date/time to what character set it will try to use to display things <span class="citation" data-cites="LocaleComputerSoftware2022"><a href="#ref-LocaleComputerSoftware2022" role="doc-biblioref">[3]</a></span>.</p>
 <p>Locales are something you may want to skip if you’re just starting out and you don’t work with code written by people in other countries. If you’re collaborating internationally, however, you may want to at least skim the section below to be aware of potential issues when locale-related problems crop up.</p>
 <div class="page-columns page-full"><p></p><div class="no-row-height column-margin column-container"><span class="">If you’ve never had to deal with the complexities of working on a laptop designed for one country using another country’s conventions, know that it isn’t necessarily the easiest thing to do.</span></div></div>
-<div class="callout-advanced callout callout-style-default no-icon callout-captioned">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-caption-container flex-fill">
-Advanced: Locales
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-1" class="callout-1-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
+<section id="advanced-locales" class="level4 unnumbered callout-advanced" data-collapse="true"><h4 class="unnumbered anchored" data-anchor-id="advanced-locales">Advanced: Locales</h4>
 <section id="find-your-locale" class="level5 unnumbered"><h5 class="unnumbered anchored" data-anchor-id="find-your-locale">Find your locale</h5>
 <ul>
 <li>
@@ -655,24 +685,20 @@ Advanced: Locales
 </li>
 <li>
 <i class="fa-brands fa-apple"></i> <a href="https://9to5mac.com/2018/08/09/mac-how-to-change-language-and-region/">Change locales</a>. Installing or creating new locales seems to be <a href="https://stackoverflow.com/questions/9991603/add-a-locale-in-mac-osx">more complicated</a>, and since I do not have a mac, I can’t test this out easily myself.</li>
-</ul></section>
-</div>
-</div>
-</div>
-<p>We’ll use <a href="#tbl-parse-numbers">Table&nbsp;<span>23.2</span></a> to explore different string operations focused specifically on converting strings to numbers.</p>
-<div class="panel-tabset">
+</ul></section></section><p>We’ll use <a href="#tbl-parse-numbers" class="quarto-xref">Table&nbsp;<span>23.2</span></a> to explore different string operations focused specifically on converting strings to numbers.</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" aria-current="page">Get the data: Python</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">R</a></li>
 </ul>
 <div class="tab-content">
-<div id="tabset-1-1" class="unnumbered tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_csv(<span class="st">"https://raw.githubusercontent.com/srvanderplas/unl-stat850/main/data/number-formats.csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
-<div id="tabset-1-2" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
 <div class="cell">
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.csv</a></span><span class="op">(</span><span class="st">"https://raw.githubusercontent.com/srvanderplas/unl-stat850/main/data/number-formats.csv"</span>, colClasses <span class="op">=</span> <span class="st">"character"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -680,18 +706,18 @@ Advanced: Locales
 </div>
 </div>
 </div>
-<div class="callout-caution callout callout-style-default callout-captioned">
+<div class="callout callout-style-default callout-caution callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-caption-container flex-fill">
+<div class="callout-title-container flex-fill">
 Converting Columns Using Your Best Guess
 </div>
 </div>
 <div class="callout-body-container callout-body">
 <p>Both R and Python have ways to “guess” what type a column is and read the data in as that type. When we initially read in the data above, I had to explicitly disable this behavior in R. If you’re working with data that is already read in, how do you get R and Python to guess what type something is?</p>
-<div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">R</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">Python</a></li>
@@ -772,18 +798,18 @@ Converting Columns Using Your Best Guess
 </div>
 </div>
 </div>
-<div class="callout-caution callout callout-style-default callout-captioned">
+<div class="callout callout-style-default callout-caution callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-caption-container flex-fill">
+<div class="callout-title-container flex-fill">
 Converting Columns Directly
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Obviously, we can also convert some strings to numbers using type conversion functions that we discussed in <a href="../part-gen-prog/01-basic-var-types.html#sec-type-conversions"><span>Section&nbsp;8.5</span></a>. This is fairly easy in R, but a bit more complex in Python, because Python has several different types of ‘missing’ or NA variables that are not necessarily compatible.</p>
-<div class="panel-tabset">
+<p>Obviously, we can also convert some strings to numbers using type conversion functions that we discussed in <a href="../part-gen-prog/01-basic-var-types.html#sec-type-conversions" class="quarto-xref"><span>Section&nbsp;8.5</span></a>. This is fairly easy in R, but a bit more complex in Python, because Python has several different types of ‘missing’ or NA variables that are not necessarily compatible.</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">R</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">Python</a></li>
@@ -826,12 +852,12 @@ Converting Columns Directly
 </div>
 </div>
 </div>
-<div class="callout-caution callout callout-style-default callout-captioned">
+<div class="callout callout-style-default callout-caution callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-caption-container flex-fill">
+<div class="callout-title-container flex-fill">
 Example: Converting Y/N data
 </div>
 </div>
@@ -843,7 +869,7 @@ Example: Converting Y/N data
 <li>We could take a less nuanced approach and just find-replace and then convert to a number.</li>
 </ul>
 <p>Some of these solutions are more kludgy than others, but I’ve used all 3 approaches when dealing with categorical data in the past, depending on what I wanted to do with it afterwards.</p>
-<div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true">R</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false">Python</a></li>
@@ -911,18 +937,18 @@ Example: Converting Y/N data
 <span class="header-section-number">23.4</span> Find and replace</h2>
 <p>Another way to fix some issues is to just find-and-replace the problematic characters. This is not always the best solution<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>, and may introduce bugs if you use the same code to analyze new data with characters you haven’t anticipated, but in so many cases it’s also the absolute easiest, fastest, simplest way forward and easily solves many different problems.</p>
 <div class="page-columns page-full"><p></p><div class="no-row-height column-margin column-container"><span class="">I’ll show you how to correct all of the issues reading in the data using solutions shown above, but please do consider reading <span class="citation" data-cites="herrmannHowDealInternational2021"><a href="#ref-herrmannHowDealInternational2021" role="doc-biblioref">[4]</a></span> so that you know why find-and-replace isn’t (necessarily) the best option for locale-specific formatting.</span></div></div>
-<div class="callout-caution callout callout-style-default callout-captioned">
+<div class="callout callout-style-default callout-caution callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-caption-container flex-fill">
+<div class="callout-title-container flex-fill">
 Example: find and replace
 </div>
 </div>
 <div class="callout-body-container callout-body">
 <p>Let’s start with the money column.</p>
-<div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-5-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-1" role="tab" aria-controls="tabset-5-1" aria-selected="true">R</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-2" role="tab" aria-controls="tabset-5-2" aria-selected="false">Python</a></li>
@@ -988,18 +1014,10 @@ Example: find and replace
 </div>
 </div>
 </div>
-<div class="callout-advanced callout callout-style-default no-icon callout-captioned">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-caption-container flex-fill">
-Example: Locale find-and-replace
-</div>
-</div>
-<div class="callout-body-container callout-body">
+<section id="example-locale-find-and-replace" class="level3 callout-advanced" data-number="23.4.1"><h3 data-number="23.4.1" class="anchored" data-anchor-id="example-locale-find-and-replace">
+<span class="header-section-number">23.4.1</span> Example: Locale find-and-replace</h3>
 <p>We could also handle the locale issues using find-and-replace, if we wanted to…</p>
-<div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-6-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-1" role="tab" aria-controls="tabset-6-1" aria-selected="true">R</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-2" role="tab" aria-controls="tabset-6-2" aria-selected="false">Python</a></li>
@@ -1061,24 +1079,22 @@ Example: Locale find-and-replace
 </div>
 </div>
 </div>
-</div>
-</div>
-</section><section id="separating-multi-variable-columns" class="level2" data-number="23.5"><h2 data-number="23.5" class="anchored" data-anchor-id="separating-multi-variable-columns">
+</section></section><section id="separating-multi-variable-columns" class="level2" data-number="23.5"><h2 data-number="23.5" class="anchored" data-anchor-id="separating-multi-variable-columns">
 <span class="header-section-number">23.5</span> Separating multi-variable columns</h2>
 <p>Another common situation is to have multiple variables in one column. This can happen, for instance, when conducting a factorial experiment: Instead of having separate columns for each factor, researchers sometimes combine several different factors into a single label for a condition to simplify data entry.</p>
 <p>In pandas, we use <code>x.str.split()</code> to split columns in a DataFrame, in R we use the <code>tidyr</code> package’s <code>separate_wider_xxx()</code> series of functions.</p>
-<div class="callout-caution callout callout-style-default callout-captioned">
+<div class="callout callout-style-default callout-caution callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-caption-container flex-fill">
+<div class="callout-title-container flex-fill">
 Example: Separating columns
 </div>
 </div>
 <div class="callout-body-container callout-body">
 <p>We’ll use the <code>table3</code> object included in <code>dplyr</code> for this example. You can load it in R and then load the <code>reticuate</code> package to be able to access the object in python as <code>r.table3</code>.</p>
-<div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-7-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-1" role="tab" aria-controls="tabset-7-1" aria-selected="true">Picture the operation</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-2" role="tab" aria-controls="tabset-7-2" aria-selected="false">R</a></li>
@@ -1087,9 +1103,8 @@ Example: Separating columns
 <div class="tab-content">
 <div id="tabset-7-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-7-1-tab">
 <div class="quarto-figure quarto-figure-center">
-<figure class="figure"><p><img src="../images/wrangling/tidyr_separate.png" class="img-fluid figure-img" alt="An image showing table 3 from the messy data examples, with the rate column containing data formatted as xxx/yyy. The picture shows the transition to a similarly structured data with two new columns: cases, which contains the xxx data, and pop, which contains the yyy data."></p>
-<p></p><figcaption class="figure-caption">We want to separate the rate column into two new columns, cases and population.</figcaption><p></p>
-</figure>
+<figure class="figure"><p><img src="../images/wrangling/tidyr_separate.png" class="img-fluid figure-img"></p>
+<figcaption>We want to separate the rate column into two new columns, cases and population.</figcaption></figure>
 </div>
 </div>
 <div id="tabset-7-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-2-tab">
@@ -1132,18 +1147,18 @@ Example: Separating columns
 </section><section id="joining-columns" class="level2" data-number="23.6"><h2 data-number="23.6" class="anchored" data-anchor-id="joining-columns">
 <span class="header-section-number">23.6</span> Joining columns</h2>
 <p>It’s also not uncommon to need to join information stored in two columns into one column. A good example of a situation in which you might need to do this is when we store first and last name separately and then need to have a ‘name’ column that has both pieces of information together.</p>
-<div class="callout-caution callout callout-style-default callout-captioned">
+<div class="callout callout-style-default callout-caution callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-caption-container flex-fill">
+<div class="callout-title-container flex-fill">
 Example: Joining columns
 </div>
 </div>
 <div class="callout-body-container callout-body">
 <p>We’ll use the <code>table5</code> object included in <code>dplyr</code> for this example. You can load it in R and then load the <code>reticuate</code> package to be able to access the object in python as <code>r.table5</code>.</p>
-<div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-8-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-1" role="tab" aria-controls="tabset-8-1" aria-selected="true">Picture the operation</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-8-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-2" role="tab" aria-controls="tabset-8-2" aria-selected="false">R</a></li>
@@ -1152,9 +1167,8 @@ Example: Joining columns
 <div class="tab-content">
 <div id="tabset-8-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-8-1-tab">
 <div class="quarto-figure quarto-figure-center">
-<figure class="figure"><p><img src="../images/wrangling/tidyr_unite.png" class="img-fluid figure-img" alt="An image showing table 5 from the messy data examples, with century and year columns. The picture shows the transition to a similarly structured data set with a single column, year, which contains the century and the year pasted together as a single number."></p>
-<p></p><figcaption class="figure-caption">We want to join the century and year columns into a new column, yyyy.</figcaption><p></p>
-</figure>
+<figure class="figure"><p><img src="../images/wrangling/tidyr_unite.png" class="img-fluid figure-img"></p>
+<figcaption>We want to join the century and year columns into a new column, yyyy.</figcaption></figure>
 </div>
 </div>
 <div id="tabset-8-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-8-2-tab">
@@ -1212,9 +1226,8 @@ Example: Joining columns
 
 <div class="no-row-height column-margin column-container"><div class="">
 <div class="quarto-figure quarto-figure-center">
-<figure class="figure"><p><img src="../images/wrangling/perl_problems.png" class="img-fluid figure-img" alt="A stick figure with sunglasses says to another stick figure: 'If you're havin' perl problems I feel bad for you, son.' 'I got 99 problems,' 'So I used regular expressions.' 'Now I have 100 problems'."></p>
-<p></p><figcaption class="figure-caption">To generate #1 albums, ‘jay –help’ recommends the -z flag. <br><a href="https://xkcd.com/1171/">XKCD comics by Randall Munroe</a> CC-A-NC 2.5.</figcaption><p></p>
-</figure>
+<figure class="figure"><p><img src="../images/wrangling/perl_problems.png" class="img-fluid figure-img"></p>
+<figcaption>To generate #1 albums, ‘jay –help’ recommends the -z flag. <br><a href="https://xkcd.com/1171/">XKCD comics by Randall Munroe</a> CC-A-NC 2.5.</figcaption></figure>
 </div>
 </div></div><p>A <strong>regular expression</strong> is a sequence of characters that specify a match pattern to search for in a larger text <span class="citation" data-cites="RegularExpression2023"><a href="#ref-RegularExpression2023" role="doc-biblioref">[5]</a></span>. Regular expressions may be used to specify find or find-and-replace operations on strings.</p>
 <p>Regular expressions can be extremely useful for cleaning and extracting data: they can replace misspellings, extract pieces of information from longer strings, and flexibly handle different ways people may input data. They may be incredibly powerful, but they can also be complicated to create and the expressions themselves may be cryptic and nearly impossible to decode.</p>
@@ -1238,18 +1251,8 @@ Example: Joining columns
 </div>
 </div></div><p>The following demonstrations are intended for advanced students: if you are just learning how to program, you may want to come back to these when you need them.</p>
 <p>There is also an excellent site which helps you learn regular expressions via interactive tutorials, <span class="citation" data-cites="regexoneRegexOne"><a href="#ref-regexoneRegexOne" role="doc-biblioref">[9]</a></span>. Another useful tool is <span class="citation" data-cites="leaverouRegExplained2017"><a href="#ref-leaverouRegExplained2017" role="doc-biblioref">[10]</a></span></p>
-<div class="callout-advanced callout callout-style-default no-icon callout-captioned">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-caption-container flex-fill">
-Regular Expression Basics
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-9" class="callout-9-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
+<section id="regular-expression-basics" class="level3 callout-advanced" data-number="23.7.1" data-collapse="true"><h3 data-number="23.7.1" class="anchored" data-anchor-id="regular-expression-basics">
+<span class="header-section-number">23.7.1</span> Regular Expression Basics</h3>
 <p>You may find it helpful to follow along with this section using this <a href="https://spannbaueradam.shinyapps.io/r_regex_tester/">web app</a> built to test R regular expressions for R. A similar application for Perl compatible regular expressions (used by SAS and Python) can be found <a href="https://regex101.com/">here</a>. The subset of regular expression syntax we’re going to cover here is fairly limited (and common to SAS, Python, and R, with a few adjustments), but <a href="https://stackoverflow.com/questions/tagged/regex?tab=Votes">you can find regular expressions to do just about anything string-related</a>. As with any tool, there are situations where it’s useful, and situations where you should not use a regular expression, no matter how much you want to.</p>
 <p>Here are the basics of regular expressions:</p>
 <ul>
@@ -1266,13 +1269,13 @@ Ex: <code>[abc]</code> will match any single character <code>a</code>, <code>b</
 <code>.</code> matches any character (except a newline)</li>
 <li>To match special characters, escape them using <code>\</code> (in most languages) or <code>\\</code> (in R). So <code>\.</code> or <code>\\.</code> will match a literal <code>.</code>, <code>\$</code> or <code>\\$</code> will match a literal <code>$</code>.</li>
 </ul>
-<div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-9-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-1" role="tab" aria-controls="tabset-9-1" aria-selected="true">R</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-9-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-2" role="tab" aria-controls="tabset-9-2" aria-selected="false">Python</a></li>
 </ul>
 <div class="tab-content">
-<div id="tabset-9-1" class="unnumbered tab-pane active" role="tabpanel" aria-labelledby="tabset-9-1-tab">
+<div id="tabset-9-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-9-1-tab">
 <div class="cell">
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">num_string</span> <span class="op">&lt;-</span> <span class="st">"phone: 123-456-7890, nuid: 12345678, ssn: 123-45-6789"</span></span>
 <span></span>
@@ -1281,7 +1284,7 @@ Ex: <code>[abc]</code> will match any single character <code>a</code>, <code>b</
 <span><span class="co">## [1] "123-45-6789"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
-<div id="tabset-9-2" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-9-2-tab">
+<div id="tabset-9-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-9-2-tab">
 <p>In python, a regular expression is indicated by putting the character ‘r’ right before the quoted expression. This tells python that any backslashes in the string should be left alone – if R had that feature, we wouldn’t have to escape all the backslashes!</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> re</span>
@@ -1295,21 +1298,8 @@ Ex: <code>[abc]</code> will match any single character <code>a</code>, <code>b</
 </div>
 </div>
 </div>
-</div>
-</div>
-</div>
-<div class="callout-advanced callout callout-style-default no-icon callout-captioned">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-caption-container flex-fill">
-Specifying repetition
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-10" class="callout-10-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
+</section><section id="specifying-repetition" class="level3 callout-advanced" data-number="23.7.2" data-collapse="true"><h3 data-number="23.7.2" class="anchored" data-anchor-id="specifying-repetition">
+<span class="header-section-number">23.7.2</span> Specifying repetition</h3>
 <p>Listing out all of those numbers can get repetitive, though. How do we specify repetition?</p>
 <ul>
 <li>
@@ -1321,13 +1311,13 @@ Specifying repetition
 <li>
 <code>{a, b}</code> means repeat between <code>a</code> and <code>b</code> times, where <code>a</code> and <code>b</code> are integers. <code>b</code> can be blank. So <code>[abc]{3,}</code> will match <code>abc</code>, <code>aaaa</code>, <code>cbbaa</code>, but not <code>ab</code>, <code>bb</code>, or <code>a</code>. For a single number of repeated characters, you can use <code>{a}</code>. So <code>{3, }</code> means “3 or more times” and <code>{3}</code> means “exactly 3 times”</li>
 </ul>
-<div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-10-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-10-1" role="tab" aria-controls="tabset-10-1" aria-selected="true">R</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-10-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-10-2" role="tab" aria-controls="tabset-10-2" aria-selected="false">Python</a></li>
 </ul>
 <div class="tab-content">
-<div id="tabset-10-1" class="unnumbered tab-pane active" role="tabpanel" aria-labelledby="tabset-10-1-tab">
+<div id="tabset-10-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-10-1-tab">
 <div class="cell">
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://stringr.tidyverse.org">stringr</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://stringr.tidyverse.org/reference/str_extract.html">str_extract</a></span><span class="op">(</span><span class="st">"banana"</span>, <span class="st">"[a-z]{1,}"</span><span class="op">)</span> <span class="co"># match any sequence of lowercase characters</span></span>
@@ -1357,7 +1347,7 @@ Specifying repetition
 <span><span class="co">## [1] "$50,000,000.23"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
-<div id="tabset-10-2" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-10-2-tab">
+<div id="tabset-10-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-10-2-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> re</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>re.search(<span class="vs">r"[a-z]{1,}"</span>, <span class="st">"banana"</span>) <span class="co"># match any sequence of lowercase characters</span></span>
@@ -1390,21 +1380,8 @@ Specifying repetition
 </div>
 </div>
 </div>
-</div>
-</div>
-</div>
-<div class="callout-advanced callout callout-style-default no-icon callout-captioned">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-caption-container flex-fill">
-Matching Locations
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-11" class="callout-11-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
+</section><section id="matching-locations" class="level3 callout-advanced" data-number="23.7.3" data-collapse="true"><h3 data-number="23.7.3" class="anchored" data-anchor-id="matching-locations">
+<span class="header-section-number">23.7.3</span> Matching Locations</h3>
 <p>There are also ways to “anchor” a pattern to a part of the string (e.g.&nbsp;the beginning or the end)</p>
 <ul>
 <li>
@@ -1418,13 +1395,13 @@ Matching Locations
 <code>$</code> means the end of a string</li>
 </ul>
 <p>Combined with pre and post-processing, these let you make sense out of semi-structured string data, such as addresses.</p>
-<div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-11-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-11-1" role="tab" aria-controls="tabset-11-1" aria-selected="true">R</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-11-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-11-2" role="tab" aria-controls="tabset-11-2" aria-selected="false">Python</a></li>
 </ul>
 <div class="tab-content">
-<div id="tabset-11-1" class="unnumbered tab-pane active" role="tabpanel" aria-labelledby="tabset-11-1-tab">
+<div id="tabset-11-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-11-1-tab">
 <div class="cell">
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">address</span> <span class="op">&lt;-</span> <span class="st">"1600 Pennsylvania Ave NW, Washington D.C., 20500"</span></span>
 <span></span>
@@ -1439,7 +1416,7 @@ Matching Locations
 <span><span class="va">zip</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_extract.html">str_extract</a></span><span class="op">(</span><span class="va">address</span>, <span class="st">"[0-9-]{5,10}$"</span><span class="op">)</span> <span class="co"># match 5 and 9 digit zip codes</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
-<div id="tabset-11-2" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-11-2-tab">
+<div id="tabset-11-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-11-2-tab">
 <p>Python match objects contain 3 things: <code>.span()</code>, which has the start and end positions of the match, <code>.string</code>, which contains the original string passed into the function, and <code>.group()</code>, which contains the actual matching portion of the string.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> re</span>
@@ -1459,21 +1436,8 @@ Matching Locations
 </div>
 </div>
 </div>
-</div>
-</div>
-</div>
-<div class="callout-advanced callout callout-style-default no-icon callout-captioned">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-caption-container flex-fill">
-Capturing Information
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-12" class="callout-12-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
+</section><section id="capturing-information" class="level3 callout-advanced" data-number="23.7.4" data-collapse="true"><h3 data-number="23.7.4" class="anchored" data-anchor-id="capturing-information">
+<span class="header-section-number">23.7.4</span> Capturing Information</h3>
 <ul>
 <li>
 <code>()</code> are used to capture information. So <code>([0-9]{4})</code> captures any 4-digit number</li>
@@ -1482,13 +1446,13 @@ Capturing Information
 </ul>
 <p>If you’ve captured information using (), you can reference that information using <strong>backreferences</strong>.</p>
 <p>In most languages, backreferences look like this: <code>\1</code> for the first reference, <code>\9</code> for the ninth. In R, backreferences are <code>\\1</code> through <code>\\9</code>.</p>
-<div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-12-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-12-1" role="tab" aria-controls="tabset-12-1" aria-selected="true">R</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-12-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-12-2" role="tab" aria-controls="tabset-12-2" aria-selected="false">Python</a></li>
 </ul>
 <div class="tab-content">
-<div id="tabset-12-1" class="unnumbered tab-pane active" role="tabpanel" aria-labelledby="tabset-12-1-tab">
+<div id="tabset-12-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-12-1-tab">
 <p>In R, the <code>\</code> character is special, so you have to escape it. So in R, <code>\\1</code> is the first reference, and <code>\\2</code> is the second, and so on.</p>
 <div class="cell">
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">phone_num_variants</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"(123) 456-7980"</span>, <span class="st">"123.456.7890"</span>, <span class="st">"+1 123-456-7890"</span><span class="op">)</span></span>
@@ -1515,7 +1479,7 @@ Capturing Information
 <span><span class="co">## [1] "walk"  "treat"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
-<div id="tabset-12-2" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-12-2-tab">
+<div id="tabset-12-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-12-2-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> re</span>
@@ -1543,29 +1507,16 @@ Capturing Information
 </div>
 </div>
 </div>
-</div>
-</div>
-</div>
-<div class="callout-advanced callout callout-style-default no-icon callout-captioned">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-13-contents" aria-controls="callout-13" aria-expanded="false" aria-label="Toggle callout">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-caption-container flex-fill">
-Putting it all Together
-</div>
-<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
-</div>
-<div id="callout-13" class="callout-13-contents callout-collapse collapse">
-<div class="callout-body-container callout-body">
+</section><section id="putting-it-all-together" class="level3 callout-advanced" data-number="23.7.5" data-collapse="true"><h3 data-number="23.7.5" class="anchored" data-anchor-id="putting-it-all-together">
+<span class="header-section-number">23.7.5</span> Putting it all Together</h3>
 <p>We can test our regular expressions to ensure that they are specific enough to pull out what we want, while not pulling out other similar information:</p>
-<div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-13-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-13-1" role="tab" aria-controls="tabset-13-1" aria-selected="true">R</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-13-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-13-2" role="tab" aria-controls="tabset-13-2" aria-selected="false">Python</a></li>
 </ul>
 <div class="tab-content">
-<div id="tabset-13-1" class="unnumbered tab-pane active" role="tabpanel" aria-labelledby="tabset-13-1-tab">
+<div id="tabset-13-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-13-1-tab">
 <div class="cell">
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">strings</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"abcdefghijklmnopqrstuvwxyzABAB"</span>,</span>
 <span><span class="st">"banana orange strawberry apple"</span>,</span>
@@ -1596,7 +1547,7 @@ Putting it all Together
 <span><span class="co">## 6 1600 Pennsylvania Ave NW, Washington D.C., 20500       FALSE FALSE TRUE  FALSE</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
-<div id="tabset-13-2" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-13-2-tab">
+<div id="tabset-13-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-13-2-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> re</span>
@@ -1637,62 +1588,59 @@ Putting it all Together
 </div>
 </div>
 </div>
-</div>
-</div>
-</div>
-</section><section id="sec-strings-refs" class="level2" data-number="23.8"><h2 data-number="23.8" class="anchored" data-anchor-id="sec-strings-refs">
+</section></section><section id="sec-strings-refs" class="level2" data-number="23.8"><h2 data-number="23.8" class="anchored" data-anchor-id="sec-strings-refs">
 <span class="header-section-number">23.8</span> References</h2>
 
 
-<div id="refs" class="references csl-bib-body" role="doc-bibliography">
-<div id="ref-norvigHowWriteSpelling2007" class="csl-entry" role="doc-biblioentry">
+<div id="refs" class="references csl-bib-body" data-entry-spacing="0" role="list">
+<div id="ref-norvigHowWriteSpelling2007" class="csl-entry" role="listitem">
 <div class="csl-left-margin">[1] </div>
 <div class="csl-right-inline">P. Norvig, <span>“How to write a spelling corrector. Norvig.com,”</span> Feb. 01, 2007. [Online]. Available: <a href="http://norvig.com/spell-correct.html">http://norvig.com/spell-correct.html</a>. [Accessed: Mar. 08, 2023]</div>
 </div>
-<div id="ref-ashourConciseGuideNumber2022" class="csl-entry" role="doc-biblioentry">
+<div id="ref-ashourConciseGuideNumber2022" class="csl-entry" role="listitem">
 <div class="csl-left-margin">[2] </div>
 <div class="csl-right-inline">M. Ashour, <span>“A <span>Concise</span> <span>Guide</span> to <span>Number</span> <span>Localization</span>,”</span> <em>Phrase</em>. Feb. 2022 [Online]. Available: <a href="https://phrase.com/blog/posts/number-localization/">https://phrase.com/blog/posts/number-localization/</a>. [Accessed: Jul. 25, 2022]</div>
 </div>
-<div id="ref-LocaleComputerSoftware2022" class="csl-entry" role="doc-biblioentry">
+<div id="ref-LocaleComputerSoftware2022" class="csl-entry" role="listitem">
 <div class="csl-left-margin">[3] </div>
 <div class="csl-right-inline">Wikipedia Contributors, <span>“Locale (computer software),”</span> <em>Wikipedia</em>. Apr. 2022 [Online]. Available: <a href="https://en.wikipedia.org/w/index.php?title=Locale_(computer_software)&amp;oldid=1082900932">https://en.wikipedia.org/w/index.php?title=Locale_(computer_software)&amp;oldid=1082900932</a>. [Accessed: Jul. 25, 2022]</div>
 </div>
-<div id="ref-herrmannHowDealInternational2021" class="csl-entry" role="doc-biblioentry">
+<div id="ref-herrmannHowDealInternational2021" class="csl-entry" role="listitem">
 <div class="csl-left-margin">[4] </div>
 <div class="csl-right-inline">A. Herrmann, <span>“How to deal with international data formats in <span>Python</span>,”</span> <em>herrmann.tech</em>. Feb. 2021 [Online]. Available: <a href="https://herrmann.tech/en/blog/2021/02/05/how-to-deal-with-international-data-formats-in-python.html">https://herrmann.tech/en/blog/2021/02/05/how-to-deal-with-international-data-formats-in-python.html</a>. [Accessed: Jul. 25, 2022]</div>
 </div>
-<div id="ref-RegularExpression2023" class="csl-entry" role="doc-biblioentry">
+<div id="ref-RegularExpression2023" class="csl-entry" role="listitem">
 <div class="csl-left-margin">[5] </div>
 <div class="csl-right-inline">
 <span>“Regular expression,”</span> <em>Wikipedia</em>. Feb. 28, 2023 [Online]. Available: <a href="https://en.wikipedia.org/w/index.php?title=Regular_expression&amp;oldid=1142135804">https://en.wikipedia.org/w/index.php?title=Regular_expression&amp;oldid=1142135804</a>. [Accessed: Mar. 09, 2023]</div>
 </div>
-<div id="ref-atwoodRegexUseVs2005" class="csl-entry" role="doc-biblioentry">
+<div id="ref-atwoodRegexUseVs2005" class="csl-entry" role="listitem">
 <div class="csl-left-margin">[6] </div>
 <div class="csl-right-inline">J. Atwood, <span>“Regex use vs. Regex abuse. Coding horror,”</span> Feb. 16, 2005. [Online]. Available: <a href="https://blog.codinghorror.com/regex-use-vs-regex-abuse/">https://blog.codinghorror.com/regex-use-vs-regex-abuse/</a>. [Accessed: Mar. 09, 2023]</div>
 </div>
-<div id="ref-cristianguerreroAnswerRegularExpression2017" class="csl-entry" role="doc-biblioentry">
+<div id="ref-cristianguerreroAnswerRegularExpression2017" class="csl-entry" role="listitem">
 <div class="csl-left-margin">[7] </div>
 <div class="csl-right-inline">CristianGuerrero, <span>“Answer to "regular expression for first and last name". Stack overflow,”</span> Aug. 24, 2017. [Online]. Available: <a href="https://stackoverflow.com/a/45871742">https://stackoverflow.com/a/45871742</a>. [Accessed: Mar. 09, 2023]</div>
 </div>
-<div id="ref-risticValidateEmailAddresses2021" class="csl-entry" role="doc-biblioentry">
+<div id="ref-risticValidateEmailAddresses2021" class="csl-entry" role="listitem">
 <div class="csl-left-margin">[8] </div>
 <div class="csl-right-inline">L. Ristic, <span>“Validate email addresses with regular expressions in <span>JavaScript</span>. Stack abuse,”</span> Oct. 14, 2021. [Online]. Available: <a href="https://stackabuse.com/validate-email-addresses-with-regular-expressions-in-javascript/">https://stackabuse.com/validate-email-addresses-with-regular-expressions-in-javascript/</a>. [Accessed: Mar. 09, 2023]</div>
 </div>
-<div id="ref-regexoneRegexOne" class="csl-entry" role="doc-biblioentry">
+<div id="ref-regexoneRegexOne" class="csl-entry" role="listitem">
 <div class="csl-left-margin">[9] </div>
 <div class="csl-right-inline">RegexOne, <span>“<span>RegexOne</span>.”</span> [Online]. Available: <a href="https://regexone.com/">https://regexone.com/</a>. [Accessed: Apr. 20, 2023]</div>
 </div>
-<div id="ref-leaverouRegExplained2017" class="csl-entry" role="doc-biblioentry">
+<div id="ref-leaverouRegExplained2017" class="csl-entry" role="listitem">
 <div class="csl-left-margin">[10] </div>
 <div class="csl-right-inline">Lea Verou, <span>“Reg explained. /a(b)/g,”</span> 2017. [Online]. Available: <a href="https://projects.verou.me/regexplained/">https://projects.verou.me/regexplained/</a>. [Accessed: Apr. 20, 2023]</div>
 </div>
 </div>
-</section><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><hr>
+</section><aside id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><hr>
 <ol>
 <li id="fn1"><p>Many functions from <code>stringr</code> have somewhat faster functional equivalents in the <code>stringi</code> package, but the <code>stringi</code> package has a less “tidy” API, so it may be worth the slight slowdown to use <code>stringr</code> if your data isn’t huge because your code will be more readable.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn2"><p>It’s particularly hackish when you’re working with locale-specific settings <span class="citation" data-cites="herrmannHowDealInternational2021"><a href="#ref-herrmannHowDealInternational2021" role="doc-biblioref">[4]</a></span>, and in many cases you can handle locale issues much more elegantly.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn3"><p>Note that these are written in generic regular expression text - to use them in R you will have to escape each and every <code>\</code> with another <code>\</code>.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-</ol></section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
+</ol></aside></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
     const mode = bsSheetEl.getAttribute("data-mode");
@@ -1733,6 +1681,33 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       } else {
         el.classList.add('notransition');
       }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
     }
   }
   const toggleColorMode = (alternate) => {
@@ -1801,13 +1776,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       return localAlternateSentinel;
     }
   }
-  let localAlternateSentinel = 'default';
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
   // Dark / light mode switch
   window.quartoToggleColorScheme = () => {
     // Read the current dark / light value 
     let toAlternate = !hasAlternateSentinel();
     toggleColorMode(toAlternate);
     setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
   };
   // Ensure there is a toggle, if there isn't float one in the top right
   if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
@@ -1834,9 +1811,23 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     icon: icon
   };
   anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
   const clipboard = new window.ClipboardJS('.code-copy-button', {
-    target: function(trigger) {
-      return trigger.previousElementSibling;
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
     }
   });
   clipboard.on('success', function(e) {
@@ -1872,10 +1863,9 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // clear code selection
     e.clearSelection();
   });
-  function tippyHover(el, contentFn) {
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -1885,8 +1875,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -1901,6 +1900,248 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       return note.innerHTML;
     });
   }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    const typesetMath = (el) => {
+      if (window.MathJax) {
+        // MathJax Typeset
+        window.MathJax.typeset([el]);
+      } else if (window.katex) {
+        // KaTeX Render
+        var mathElements = el.getElementsByClassName("math");
+        var macros = [];
+        for (var i = 0; i < mathElements.length; i++) {
+          var texText = mathElements[i].firstChild;
+          if (mathElements[i].tagName == "SPAN") {
+            window.katex.render(texText.data, mathElements[i], {
+              displayMode: mathElements[i].classList.contains('display'),
+              throwOnError: false,
+              macros: macros,
+              fleqn: false
+            });
+          }
+        }
+      }
+    }
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        typesetMath(container);
+        return container.innerHTML
+      } else {
+        typesetMath(note);
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      typesetMath(note);
+      return note.innerHTML;
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
   const findCites = (el) => {
     const parentEl = el.parentElement;
     if (parentEl) {
@@ -1940,20 +2181,25 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script><script src="https://giscus.app/client.js" data-repo="srvanderplas/stat-computing-r-python" data-repo-id="R_kgDOIvwd2g" data-category="General" data-category-id="DIC_kwDOIvwd2s4CTksR" data-mapping="pathname" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="light" data-lang="en" crossorigin="anonymous" async="">
-</script><nav class="page-navigation"><div class="nav-page nav-page-previous">
-      <a href="../part-wrangling/03-data-cleaning.html" class="pagination-link">
+</script><input type="hidden" id="giscus-base-theme" value="light"><input type="hidden" id="giscus-alt-theme" value="dark"><nav class="page-navigation"><div class="nav-page nav-page-previous">
+      <a href="../part-wrangling/03-data-cleaning.html" class="pagination-link  aria-label=" cleaning="">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Data Cleaning</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../part-wrangling/05-data-reshape.html" class="pagination-link">
+      <a href="../part-wrangling/05-data-reshape.html" class="pagination-link" aria-label="<span class='chapter-number'>24</span>&nbsp; <span class='chapter-title'>Reshaping Data</span>">
         <span class="nav-page-text"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Reshaping Data</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
 </div> <!-- /content -->
 <footer class="footer"><div class="nav-footer">
-    <div class="nav-footer-left">Copyright 2023, Susan Vanderplas</div>   
+    <div class="nav-footer-left">
+<p>Copyright 2023, Susan Vanderplas</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
     <div class="nav-footer-right">
       <ul class="footer-items list-unstyled">
 <li class="nav-item compact">

@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.2.313">
+<meta name="generator" content="quarto-1.4.515">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <meta name="dcterms.date" content="2024-02-22">
 <title>Statistical Computing using R and Python - 26&nbsp; Dates and Times</title>
@@ -15,11 +15,12 @@ div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
   width: 0.8em;
-  margin: 0 0.8em 0.2em -1.6em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -44,48 +45,20 @@ pre.numberSource code > span > a:first-child::before
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
     padding: 0 4px; width: 4em;
-    color: #aaaaaa;
   }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
 div.sourceCode
   {   }
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { color: #7d9029; } /* Attribute */
-code span.bn { color: #40a070; } /* BaseN */
-code span.bu { color: #008000; } /* BuiltIn */
-code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #4070a0; } /* Char */
-code span.cn { color: #880000; } /* Constant */
-code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code span.dt { color: #902000; } /* DataType */
-code span.dv { color: #40a070; } /* DecVal */
-code span.er { color: #ff0000; font-weight: bold; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #40a070; } /* Float */
-code span.fu { color: #06287e; } /* Function */
-code span.im { color: #008000; font-weight: bold; } /* Import */
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code span.op { color: #666666; } /* Operator */
-code span.ot { color: #007020; } /* Other */
-code span.pp { color: #bc7a00; } /* Preprocessor */
-code span.sc { color: #4070a0; } /* SpecialChar */
-code span.ss { color: #bb6688; } /* SpecialString */
-code span.st { color: #4070a0; } /* String */
-code span.va { color: #19177c; } /* Variable */
-code span.vs { color: #4070a0; } /* VerbatimString */
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+/* CSS for citations */
 div.csl-bib-body { }
 div.csl-entry {
   clear: both;
+  margin-bottom: 0em;
 }
-.hanging div.csl-entry {
+.hanging-indent div.csl-entry {
   margin-left:2em;
   text-indent:-2em;
 }
@@ -99,8 +72,7 @@ div.csl-right-inline {
 }
 div.csl-indent {
   margin-left: 2em;
-}
-</style>
+}</style>
 
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../site_libs/quarto-nav/headroom.min.js"></script>
@@ -130,7 +102,13 @@ div.csl-indent {
   "collapse-after": 3,
   "panel-placement": "start",
   "type": "textbox",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -140,7 +118,8 @@ div.csl-indent {
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
     "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit"
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
   }
 }</script><script async="" src="https://www.googletagmanager.com/gtag/js?id=G-4ZFBDKXJXP"></script><script type="text/javascript">
 
@@ -153,260 +132,304 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
 <body class="nav-sidebar floating slimcontent">
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top"><nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }"><div class="container-fluid d-flex justify-content-between">
-      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Dates and Times</span></h1>
-      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
-        <i class="bi bi-chevron-right"></i>
+  <header id="quarto-header" class="headroom fixed-top"><nav class="quarto-secondary-nav"><div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../part-wrangling/00-wrangling.html">Part III: Data Wrangling</a></li><li class="breadcrumb-item"><a href="../part-wrangling/07-datetime.html"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Dates and Times</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
       </button>
     </div>
   </nav></header><!-- content --><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto"><div class="pt-lg-2 mt-2 text-left sidebar-header">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto"><div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="../">Statistical Computing using R and Python</a> 
         <div class="sidebar-tools-main">
-    <a href="https://github.com/srvanderplas/stat-computing-r-python/" title="Source Code" class="sidebar-tool px-1"><i class="bi bi-github"></i></a>
-  <a href="" class="quarto-color-scheme-toggle sidebar-tool" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+    <a href="https://github.com/srvanderplas/stat-computing-r-python/" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
 </div>
     </div>
       </div>
-      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="mt-2 flex-shrink-0 align-items-center">
         <div class="sidebar-search">
         <div id="quarto-search" class="" title="Search"></div>
         </div>
-      </div>
+        </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
 <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../index.html" class="sidebar-item-text sidebar-link">Preface</a>
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
   </div>
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../part-tools/00-tools-intro.html" class="sidebar-item-text sidebar-link">Part I: Tools</a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <a href="../part-tools/00-tools-intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Part I: Tools</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">
 <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-tools/01-computer-basics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Computer Basics</span></a>
+  <a href="../part-tools/01-computer-basics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Computer Basics</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-tools/02-setting-up-computer.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Setting Up Your Computer</span></a>
+  <a href="../part-tools/02-setting-up-computer.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Setting Up Your Computer</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-tools/03-Rstudio-interface.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">RStudio’s Interface</span></a>
+  <a href="../part-tools/03-Rstudio-interface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">RStudio’s Interface</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-tools/04-scripts-notebooks.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Scripts and Notebooks</span></a>
+  <a href="../part-tools/04-scripts-notebooks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Scripts and Notebooks</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-tools/05-git-and-github.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Version Control with Git</span></a>
+  <a href="../part-tools/05-git-and-github.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Version Control with Git</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-tools/06-documents.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Reproducibility and Professional Communication</span></a>
+  <a href="../part-tools/06-documents.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Reproducibility and Professional Communication</span></span></a>
   </div>
 </li>
       </ul>
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../part-gen-prog/00-gen-prog.html" class="sidebar-item-text sidebar-link">Part II: General Programming</a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+            <a href="../part-gen-prog/00-gen-prog.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Part II: General Programming</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">
 <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/00-intro.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Introduction to Programming</span></a>
+  <a href="../part-gen-prog/00-intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Introduction to Programming</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/01-basic-var-types.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Variables and Basic Data Types</span></a>
+  <a href="../part-gen-prog/01-basic-var-types.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Variables and Basic Data Types</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/02-prog-functions.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Using Functions and Libraries</span></a>
+  <a href="../part-gen-prog/02-prog-functions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Using Functions and Libraries</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/03-data-struct.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Data Structures</span></a>
+  <a href="../part-gen-prog/03-data-struct.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Data Structures</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/035-matrix-calcs.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Matrix Calculations</span></a>
+  <a href="../part-gen-prog/035-matrix-calcs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Matrix Calculations</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/04-control-struct.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Control Structures</span></a>
+  <a href="../part-gen-prog/04-control-struct.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Control Structures</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/05-functions.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Writing Functions</span></a>
+  <a href="../part-gen-prog/05-functions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Writing Functions</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/06-debugging.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Debugging</span></a>
+  <a href="../part-gen-prog/06-debugging.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Debugging</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/07-prog-data.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Programming With Data</span></a>
+  <a href="../part-gen-prog/07-prog-data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Programming With Data</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/99-extra.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Other Helpful Programming Resources</span></a>
+  <a href="../part-gen-prog/99-extra.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Other Helpful Programming Resources</span></span></a>
   </div>
 </li>
       </ul>
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../part-wrangling/00-wrangling.html" class="sidebar-item-text sidebar-link">Part III: Data Wrangling</a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+            <a href="../part-wrangling/00-wrangling.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Part III: Data Wrangling</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">
 <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/01-data-input.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Data Input</span></a>
+  <a href="../part-wrangling/01-data-input.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Data Input</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/02-basic-data-vis.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Data Visualization Basics</span></a>
+  <a href="../part-wrangling/02-basic-data-vis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Data Visualization Basics</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/02a-eda.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Exploratory Data Analysis</span></a>
+  <a href="../part-wrangling/02a-eda.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Exploratory Data Analysis</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/02b-graphics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Data Visualization</span></a>
+  <a href="../part-wrangling/02b-graphics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Data Visualization</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/02c-good-graphics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Creating Good Charts</span></a>
+  <a href="../part-wrangling/02c-good-graphics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Creating Good Charts</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/03-data-cleaning.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Data Cleaning</span></a>
+  <a href="../part-wrangling/03-data-cleaning.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Data Cleaning</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/04-strings.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Working with Strings</span></a>
+  <a href="../part-wrangling/04-strings.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Working with Strings</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/05-data-reshape.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Reshaping Data</span></a>
+  <a href="../part-wrangling/05-data-reshape.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Reshaping Data</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/06-data-join.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Joining Data</span></a>
+  <a href="../part-wrangling/06-data-join.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Joining Data</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/07-datetime.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Dates and Times</span></a>
+  <a href="../part-wrangling/07-datetime.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Dates and Times</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/08-functional-prog.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Functional Programming</span></a>
+  <a href="../part-wrangling/08-functional-prog.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Functional Programming</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/09-spatial-formats.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Spatial data</span></a>
+  <a href="../part-wrangling/09-spatial-formats.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Spatial data</span></span></a>
   </div>
 </li>
       </ul>
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../part-advanced-topics/00-advanced.html" class="sidebar-item-text sidebar-link">Part IV: Advanced Topics</a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">
+            <a href="../part-advanced-topics/00-advanced.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Part IV: Advanced Topics</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">
 <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-advanced-topics/01-simulation.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Simulation and Reproducibility</span></a>
+  <a href="../part-advanced-topics/01-simulation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Simulation and Reproducibility</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-advanced-topics/06-interactive-graphics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">30</span>&nbsp; <span class="chapter-title">Interactive Graphics</span></a>
+  <a href="../part-advanced-topics/06-interactive-graphics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">30</span>&nbsp; <span class="chapter-title">Interactive Graphics</span></span></a>
   </div>
 </li>
       </ul>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../graveyard.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">31</span>&nbsp; <span class="chapter-title">Other Topics</span></a>
+  <a href="../graveyard.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">31</span>&nbsp; <span class="chapter-title">Other Topics</span></span></a>
   </div>
 </li>
     </ul>
 </div>
-</nav><!-- margin-sidebar --><div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+</nav><div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active"><h2 id="toc-title">Table of contents</h2>
    
   <ul>
-<li><a href="#fa-bullseye-objectives" id="toc-fa-bullseye-objectives" class="nav-link active" data-scroll-target="#fa-bullseye-objectives"><span class="toc-section-number">26.1</span>  <i class="fa-solid fa-bullseye" aria-label="bullseye"></i> Objectives</a></li>
-  <li><a href="#why-dates-and-times-are-hard" id="toc-why-dates-and-times-are-hard" class="nav-link" data-scroll-target="#why-dates-and-times-are-hard"><span class="toc-section-number">26.2</span>  Why Dates and Times are hard</a></li>
-  <li><a href="#getting-started" id="toc-getting-started" class="nav-link" data-scroll-target="#getting-started"><span class="toc-section-number">26.3</span>  Getting Started</a></li>
+<li><a href="#objectives" id="toc-objectives" class="nav-link active" data-scroll-target="#objectives"><span class="header-section-number">26.1</span> <i class="fa-solid fa-bullseye" aria-label="bullseye"></i> Objectives</a></li>
+  <li><a href="#why-dates-and-times-are-hard" id="toc-why-dates-and-times-are-hard" class="nav-link" data-scroll-target="#why-dates-and-times-are-hard"><span class="header-section-number">26.2</span> Why Dates and Times are hard</a></li>
+  <li><a href="#getting-started" id="toc-getting-started" class="nav-link" data-scroll-target="#getting-started"><span class="header-section-number">26.3</span> Getting Started</a></li>
   <li>
-<a href="#creating-dates-and-times" id="toc-creating-dates-and-times" class="nav-link" data-scroll-target="#creating-dates-and-times"><span class="toc-section-number">26.4</span>  Creating Dates and Times</a>
+<a href="#creating-dates-and-times" id="toc-creating-dates-and-times" class="nav-link" data-scroll-target="#creating-dates-and-times"><span class="header-section-number">26.4</span> Creating Dates and Times</a>
   <ul class="collapse">
-<li><a href="#creation-from-strings" id="toc-creation-from-strings" class="nav-link" data-scroll-target="#creation-from-strings"><span class="toc-section-number">26.4.1</span>  Creation from Strings</a></li>
-  <li><a href="#creation-from-components" id="toc-creation-from-components" class="nav-link" data-scroll-target="#creation-from-components"><span class="toc-section-number">26.4.2</span>  Creation from Components</a></li>
-  <li><a href="#creation-from-other-objects" id="toc-creation-from-other-objects" class="nav-link" data-scroll-target="#creation-from-other-objects"><span class="toc-section-number">26.4.3</span>  Creation from Other Objects</a></li>
+<li><a href="#creation-from-strings" id="toc-creation-from-strings" class="nav-link" data-scroll-target="#creation-from-strings"><span class="header-section-number">26.4.1</span> Creation from Strings</a></li>
+  <li><a href="#creation-from-components" id="toc-creation-from-components" class="nav-link" data-scroll-target="#creation-from-components"><span class="header-section-number">26.4.2</span> Creation from Components</a></li>
+  <li><a href="#creation-from-other-objects" id="toc-creation-from-other-objects" class="nav-link" data-scroll-target="#creation-from-other-objects"><span class="header-section-number">26.4.3</span> Creation from Other Objects</a></li>
   </ul>
 </li>
   <li>
-<a href="#working-with-dates-and-times" id="toc-working-with-dates-and-times" class="nav-link" data-scroll-target="#working-with-dates-and-times"><span class="toc-section-number">26.5</span>  Working with Dates and Times</a>
+<a href="#working-with-dates-and-times" id="toc-working-with-dates-and-times" class="nav-link" data-scroll-target="#working-with-dates-and-times"><span class="header-section-number">26.5</span> Working with Dates and Times</a>
   <ul class="collapse">
-<li><a href="#time-zones" id="toc-time-zones" class="nav-link" data-scroll-target="#time-zones"><span class="toc-section-number">26.5.1</span>  Time Zones</a></li>
-  <li><a href="#time-spans" id="toc-time-spans" class="nav-link" data-scroll-target="#time-spans"><span class="toc-section-number">26.5.2</span>  Time Spans</a></li>
+<li><a href="#getting-the-data" id="toc-getting-the-data" class="nav-link" data-scroll-target="#getting-the-data"><span class="header-section-number">26.5.1</span> Getting the Data</a></li>
+  <li><a href="#time-zones" id="toc-time-zones" class="nav-link" data-scroll-target="#time-zones"><span class="header-section-number">26.5.2</span> Time Zones</a></li>
+  <li><a href="#time-spans" id="toc-time-spans" class="nav-link" data-scroll-target="#time-spans"><span class="header-section-number">26.5.3</span> Time Spans</a></li>
   </ul>
 </li>
-  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references"><span class="toc-section-number">26.6</span>  References</a></li>
-  </ul><div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/srvanderplas/stat-computing-r-python/edit/main/part-wrangling/07-datetime.qmd" class="toc-action">Edit this page</a></p></div></div></nav>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references"><span class="header-section-number">26.6</span> References</a></li>
+  </ul><div class="toc-actions"><ul><li><a href="https://github.com/srvanderplas/stat-computing-r-python/edit/main/part-wrangling/07-datetime.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content page-columns page-full" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><div class="quarto-title">
-<h1 class="title"><span id="sec-datetime" class="quarto-section-identifier d-none d-lg-block"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Dates and Times</span></span></h1>
+<main class="content page-columns page-full" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../part-wrangling/00-wrangling.html">Part III: Data Wrangling</a></li><li class="breadcrumb-item"><a href="../part-wrangling/07-datetime.html"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Dates and Times</span></a></li></ol></nav><div class="quarto-title">
+<h1 class="title"><span id="sec-datetime" class="quarto-section-identifier"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Dates and Times</span></span></h1>
 </div>
 
 
@@ -425,7 +448,8 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
   </div>
   
 
-</header><section id="fa-bullseye-objectives" class="level2" data-number="26.1"><h2 data-number="26.1" class="anchored" data-anchor-id="fa-bullseye-objectives">
+
+</header><section id="objectives" class="level2" data-number="26.1"><h2 data-number="26.1" class="anchored" data-anchor-id="objectives">
 <span class="header-section-number">26.1</span> <i class="fa-solid fa-bullseye" aria-label="bullseye"></i> Objectives</h2>
 <ul>
 <li>Understand the complexities of working with datetime data</li>
@@ -440,17 +464,17 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
 </div>
 <p>There is also an excellent StackOverflow question <span class="citation" data-cites="freewindWhySubtractingThese2021"><a href="#ref-freewindWhySubtractingThese2021" role="doc-biblioref">[1]</a></span> and answers <span class="citation" data-cites="skeetAnswerWhySubtracting2011"><a href="#ref-borgwardtAnswerWhySubtracting2011" role="doc-biblioref">[3]</a></span> demonstrating exactly how times and time zones can get very confusing even in relatively simple circumstances.</p>
 <p>Long story short, we will be using libraries in R and python which handle some of these complexities for us, because dates, times, and timezones are <strong>hard</strong> and we <em>really</em> don’t want to know exactly how hard they are. The libraries I’ve chosen for this are <code>datetime</code> in Python (used by Pandas), and <code>lubridate</code> in R.</p>
-<div class="callout-tip callout callout-style-default callout-captioned">
+<div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-caption-container flex-fill">
+<div class="callout-title-container flex-fill">
 Try It Out - Getting Set up
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" aria-current="page">R</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Python</a></li>
@@ -504,8 +528,10 @@ Try It Out - Getting Set up
 </ul>
 <p>Now, let’s think about all of the different ways we can specify dates. The table below has examples along with <code>strptime</code> formats that are used in both <code>R</code> and <code>python</code> for telling the computer which date format is used.</p>
 <div id="tbl-formats" class="anchored">
+<figure class="quarto-float quarto-float-tbl figure"><figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-formats-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;26.1: Different ways to specify dates and times.
+</figcaption><div aria-describedby="tbl-formats-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <table class="table">
-<caption>Table&nbsp;26.1: Different ways to specify dates and times.</caption>
 <colgroup>
 <col style="width: 11%">
 <col style="width: 20%">
@@ -606,7 +632,9 @@ or %T</td>
 </tbody>
 </table>
 </div>
-<p>Note that rows 4 and 5 of <a href="#tbl-formats">Table&nbsp;<span>26.1</span></a> are ambiguous if you don’t know what location your data comes from - the dates could refer to December 1, 2023 or January 12, 2023. This only gets worse if you use 2-digit years.</p>
+</figure>
+</div>
+<p>Note that rows 4 and 5 of <a href="#tbl-formats" class="quarto-xref">Table&nbsp;<span>26.1</span></a> are ambiguous if you don’t know what location your data comes from - the dates could refer to December 1, 2023 or January 12, 2023. This only gets worse if you use 2-digit years.</p>
 <p>There are three main ways that you might want to create a date/time <span class="citation" data-cites="grolemundDatesTimes"><a href="#ref-grolemundDatesTimes" role="doc-biblioref">[4]</a></span>:</p>
 <ul>
 <li>From a string</li>
@@ -617,18 +645,10 @@ or %T</td>
 <section id="creation-from-strings" class="level3" data-number="26.4.1"><h3 data-number="26.4.1" class="anchored" data-anchor-id="creation-from-strings">
 <span class="header-section-number">26.4.1</span> Creation from Strings</h3>
 <p>Dates and times are often stored in tabular formats as strings. In some cases, these are read in and automatically formatted as date-times, but in other situations, you have to specify the format yourself.</p>
-<div class="callout-demo callout callout-style-default no-icon callout-captioned">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-caption-container flex-fill">
-Demo: Datetimes from Strings
-</div>
-</div>
-<div class="callout-body-container callout-body">
+<section id="demo-datetimes-from-strings" class="level4 callout-demo" data-number="26.4.1.1"><h4 data-number="26.4.1.1" class="anchored" data-anchor-id="demo-datetimes-from-strings">
+<span class="header-section-number">26.4.1.1</span> Demo: Datetimes from Strings</h4>
 <p>Let’s use some data from the US Geological Service with records of earthquakes with magnitude greater than 6 on the Richter scale that occurred between January 1, 2000 and January 1, 2023. You can pull this data yourself using https://earthquake.usgs.gov/earthquakes/map/, but you can also access a CSV of the data <a href="https://github.com/srvanderplas/datasets/raw/main/raw/earthquakes2000.csv">here</a>.</p>
-<div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">R + lubridate</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">Base R</a></li>
@@ -726,7 +746,7 @@ Demo: Datetimes from Strings
 <div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
 <p>As lovely as the lubridate package is, there are some situations where using the tidyverse may not be desirable or even allowed. It is helpful to know how to solve this problem in base R, even if 99% of the time we can use the much easier-to-remember lubridate package.</p>
 <p>In this case, we would use the <code>as.POSIXct</code> function, and we probably want to have the reference page up (run <code><a href="https://rdrr.io/r/base/strptime.html">?strptime</a></code> in the R console to pull up the help page).</p>
-<p>We’ll need to get the codes that tell R what format our datetimes use - you can use <a href="#tbl-formats">Table&nbsp;<span>26.1</span></a>, if you like, or read the <code>as.POSIXct</code> help page to see all possible format codes.</p>
+<p>We’ll need to get the codes that tell R what format our datetimes use - you can use <a href="#tbl-formats" class="quarto-xref">Table&nbsp;<span>26.1</span></a>, if you like, or read the <code>as.POSIXct</code> help page to see all possible format codes.</p>
 <div class="cell">
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">quake</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html">read.csv</a></span><span class="op">(</span><span class="st">"https://github.com/srvanderplas/datasets/raw/main/raw/earthquakes2000.csv"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html">str</a></span><span class="op">(</span><span class="va">quake</span><span class="op">)</span></span>
@@ -786,20 +806,18 @@ Demo: Datetimes from Strings
 </div>
 </div>
 </div>
-</div>
-</div>
-<div class="callout-tip callout callout-style-default callout-captioned">
+</section><div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-caption-container flex-fill">
+<div class="callout-title-container flex-fill">
 Try it Out - Datetimes from Strings
 </div>
 </div>
 <div class="callout-body-container callout-body">
 <p>It’s usually important for new parents to keep a log of the new baby’s feeds, to ensure that the baby is getting enough liquids and isn’t getting dehydrated. I used an app to keep track of my daughter’s feeds from birth (though here, we’ll only work with <a href="https://raw.githubusercontent.com/srvanderplas/datasets/main/raw/feeds_initial.csv">the first 3 months of data</a>), and it used a reasonable, if not standard way to store dates and times.</p>
-<div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">Problem</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">R solution</a></li>
@@ -850,7 +868,10 @@ This data was created by a <em>highly</em> unreliable and error prone couple of 
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_y_continuous</a></span><span class="op">(</span>breaks <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="07-datetime_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid" width="1800"></p>
+<div>
+<figure class="figure"><p><img src="07-datetime_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="1800"></p>
+</figure>
+</div>
 </div>
 </div>
 <div class="cell" data-fig.caption="Feeds in the first 90 days of an infant's life, by hour of the day.">
@@ -867,7 +888,10 @@ This data was created by a <em>highly</em> unreliable and error prone couple of 
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_continuous</a></span><span class="op">(</span><span class="st">"Hour of the day"</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="07-datetime_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid" width="1800"></p>
+<div>
+<figure class="figure"><p><img src="07-datetime_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="1800"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>We can also calculate the duration of each feed and look at the distributions for each type of feed.</p>
@@ -880,7 +904,10 @@ This data was created by a <em>highly</em> unreliable and error prone couple of 
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"none"</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">xlab</a></span><span class="op">(</span><span class="st">"Feed duration, in seconds"</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">Type</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="07-datetime_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid" width="2100"></p>
+<div>
+<figure class="figure"><p><img src="07-datetime_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>We can see a few suspiciously long feeds - 9000 seconds is 2.5 hours, which is not unheard of for a baby to breastfeed, but would be an exceptionally long bottle feed (unless a parent fell asleep before hitting “stop” on the feed, which is much more likely).</p>
@@ -953,17 +980,9 @@ This data was created by a <em>highly</em> unreliable and error prone couple of 
 </section><section id="creation-from-components" class="level3" data-number="26.4.2"><h3 data-number="26.4.2" class="anchored" data-anchor-id="creation-from-components">
 <span class="header-section-number">26.4.2</span> Creation from Components</h3>
 <p>Sometimes, instead of a single string, you’ll have the individual components of the date-time spread across columns. The <code>nycflights13</code> data is a good example of this.</p>
-<div class="callout-demo callout callout-style-default no-icon callout-captioned">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-caption-container flex-fill">
-Demo: Datetimes from Components
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<div class="panel-tabset">
+<section id="demo-datetimes-from-components" class="level4 callout-demo" data-number="26.4.2.1"><h4 data-number="26.4.2.1" class="anchored" data-anchor-id="demo-datetimes-from-components">
+<span class="header-section-number">26.4.2.1</span> Demo: Datetimes from Components</h4>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true">R + lubridate</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false">Base R</a></li>
@@ -1035,25 +1054,14 @@ Demo: Datetimes from Components
 </div>
 </div>
 </div>
-</div>
-</div>
-<!-- ## Creation from other objects -->
-</section><section id="creation-from-other-objects" class="level3" data-number="26.4.3"><h3 data-number="26.4.3" class="anchored" data-anchor-id="creation-from-other-objects">
+</section><!-- ## Creation from other objects --></section><section id="creation-from-other-objects" class="level3" data-number="26.4.3"><h3 data-number="26.4.3" class="anchored" data-anchor-id="creation-from-other-objects">
 <span class="header-section-number">26.4.3</span> Creation from Other Objects</h3>
 <p>Sometimes, you may have information in one type of variable (e.g.&nbsp;a datetime) and want to split it into a date and a time, separately.</p>
 <p>Some systems store datetimes as the number of seconds from a specific point (commonly, the <strong>Unix Epoch</strong>, midnight on 1970-01-01). You may have to convert from seconds since this epoch (or some other epoch <span class="citation" data-cites="wikipediacontributorsEpochComputing2023"><a href="#ref-wikipediacontributorsEpochComputing2023" role="doc-biblioref">[5]</a></span>) to an actual date-time that is human readable.</p>
 <p>If you ever have to convert dates and times that were stored in Microsoft Excel, it can be helpful to know that Microsoft stores dates as the number of days since January 1, 1900 <span class="citation" data-cites="microsoftsupportDATEVALUEFunctionMicrosoft2023"><a href="#ref-microsoftsupportDATEVALUEFunctionMicrosoft2023" role="doc-biblioref">[6]</a></span> (or if the spreadsheet was created on a Mac, January 1, 1904) <span class="citation" data-cites="elizabethmottWhyDatesCome2013"><a href="#ref-elizabethmottWhyDatesCome2013" role="doc-biblioref">[7]</a></span>. Yes, this is as confusing as it sounds. Don’t use MS Excel for handling dates <span class="citation" data-cites="caudillExcelHellCautionary2018 chris88888888ExcelStillSucks2020"><a href="#ref-caudillExcelHellCautionary2018" role="doc-biblioref">[8]</a>, <a href="#ref-chris88888888ExcelStillSucks2020" role="doc-biblioref">[9]</a></span> (or really, at all, now that you know better tools). Geneticists have actually renamed genes because Microsoft won’t fix Excel to handle dates properly <span class="citation" data-cites="vincentScientistsRenameHuman2020"><a href="#ref-vincentScientistsRenameHuman2020" role="doc-biblioref">[10]</a></span>.</p>
-<div class="callout-demo callout callout-style-default no-icon callout-captioned">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-caption-container flex-fill">
-Demo: Creation from Other Objects
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<div class="panel-tabset">
+<section id="demo-creation-from-other-objects" class="level4 callout-demo" data-number="26.4.3.1"><h4 data-number="26.4.3.1" class="anchored" data-anchor-id="demo-creation-from-other-objects">
+<span class="header-section-number">26.4.3.1</span> Demo: Creation from Other Objects</h4>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-5-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-1" role="tab" aria-controls="tabset-5-1" aria-selected="true">R + lubridate</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-2" role="tab" aria-controls="tabset-5-2" aria-selected="false">Base R</a></li>
@@ -1127,25 +1135,15 @@ Demo: Creation from Other Objects
 </div>
 </div>
 </div>
-</div>
-</div>
-</section></section><section id="working-with-dates-and-times" class="level2 page-columns page-full" data-number="26.5"><h2 data-number="26.5" class="anchored" data-anchor-id="working-with-dates-and-times">
+</section></section></section><section id="working-with-dates-and-times" class="level2 page-columns page-full" data-number="26.5"><h2 data-number="26.5" class="anchored" data-anchor-id="working-with-dates-and-times">
 <span class="header-section-number">26.5</span> Working with Dates and Times</h2>
 <p>In this section, we’ll work with comments by famous Reddit artist <code>Shitty_Watercolour</code>, who responds to people’s comments with a quickly created watercolor-style painting.</p>
 
 <div class="no-row-height column-margin column-container"><div class="">
 <p>Here’s one of Shitty Watercolour’s works: <img src="../images/wrangling/watercolor_example.jpeg" class="img-fluid" alt="A watercolor painting of a dog imagining touching a different dog through a laptop screen. The dogs apparently see each other once a month and facetime once a week."></p>
-</div></div><div class="callout-demo callout callout-style-default no-icon callout-captioned">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-caption-container flex-fill">
-Getting the Data
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<div class="panel-tabset">
+</div></div><section id="getting-the-data" class="level3 callout-demo" data-number="26.5.1"><h3 data-number="26.5.1" class="anchored" data-anchor-id="getting-the-data">
+<span class="header-section-number">26.5.1</span> Getting the Data</h3>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-6-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-1" role="tab" aria-controls="tabset-6-1" aria-selected="true">R</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-2" role="tab" aria-controls="tabset-6-2" aria-selected="false">Python</a></li>
@@ -1169,10 +1167,8 @@ Getting the Data
 </div>
 </div>
 </div>
-</div>
-</div>
-<section id="time-zones" class="level3" data-number="26.5.1"><h3 data-number="26.5.1" class="anchored" data-anchor-id="time-zones">
-<span class="header-section-number">26.5.1</span> Time Zones</h3>
+</section><section id="time-zones" class="level3" data-number="26.5.2"><h3 data-number="26.5.2" class="anchored" data-anchor-id="time-zones">
+<span class="header-section-number">26.5.2</span> Time Zones</h3>
 <p>We often store data in UTC<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>, but we may want to represent the data in a more familiar time zone for interpretation’s purposes.</p>
 <table class="table">
 <caption>Working with Time Zones. Here, <code>time</code> is a placeholder for whatever variable is being converted.</caption>
@@ -1209,17 +1205,17 @@ Getting the Data
 </tr>
 </tbody>
 </table>
-<div class="callout-tip callout callout-style-default callout-captioned">
+<div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-caption-container flex-fill">
+<div class="callout-title-container flex-fill">
 Try it Out - Formatting Dates
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-7-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-1" role="tab" aria-controls="tabset-7-1" aria-selected="true">Problem</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-2" role="tab" aria-controls="tabset-7-2" aria-selected="false">R Solution</a></li>
@@ -1278,21 +1274,21 @@ Try it Out - Formatting Dates
 </div>
 </div>
 </div>
-</section><section id="time-spans" class="level3" data-number="26.5.2"><h3 data-number="26.5.2" class="anchored" data-anchor-id="time-spans">
-<span class="header-section-number">26.5.2</span> Time Spans</h3>
+</section><section id="time-spans" class="level3" data-number="26.5.3"><h3 data-number="26.5.3" class="anchored" data-anchor-id="time-spans">
+<span class="header-section-number">26.5.3</span> Time Spans</h3>
 <p>Dates and times can be added and subtracted - after all, underneath, they’re usually implemented as a number of XXX from the reference time point, where XXX is usually seconds for datetimes and days for dates.</p>
 <p>In R, the difference between two timestamps is called a <strong>duration</strong> and is implemented in the <strong>duration</strong> class <span class="citation" data-cites="r4ds">See <a href="#ref-r4ds" role="doc-biblioref">[11, Ch. 16.4.1]</a> for more info</span>. In Python, a similar class exists and is called a <strong>timedelta</strong> <span class="citation" data-cites="pythonfoundationDatetimeBasicDate2023"><a href="#ref-pythonfoundationDatetimeBasicDate2023" role="doc-biblioref">[12]</a></span>.</p>
-<div class="callout-tip callout callout-style-default callout-captioned">
+<div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-caption-container flex-fill">
+<div class="callout-title-container flex-fill">
 Try it Out - Datetime Math
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-8-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-1" role="tab" aria-controls="tabset-8-1" aria-selected="true">Problem</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-8-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-2" role="tab" aria-controls="tabset-8-2" aria-selected="false">R Solution</a></li>
@@ -1316,7 +1312,10 @@ Try it Out - Datetime Math
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ylab</a></span><span class="op">(</span><span class="st">"# Posts"</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_log10</a></span><span class="op">(</span>breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">15</span>, <span class="fl">30</span>, <span class="fl">60</span>, <span class="fl">1440</span>, <span class="fl">10080</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="07-datetime_files/figure-html/unnamed-chunk-32-1.png" class="img-fluid" width="2100"></p>
+<div>
+<figure class="figure"><p><img src="07-datetime_files/figure-html/unnamed-chunk-32-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>Most of the time, <code>Shitty_Watercolour</code> takes at least 15 minutes to generate a new comment. There is also a noticable peak just before 1440 minutes, indicating that as with most users, <code>Shitty_Watercolour</code> is active at approximately the same time each day for a few hours. The final break shown, 10080, is the number of minutes in a week, indicating that occasionally, <code>Shitty_Watercolour</code> goes more than a week between posts.</p>
@@ -1359,60 +1358,60 @@ Try it Out - Datetime Math
 <span class="header-section-number">26.6</span> References</h2>
 
 
-<div id="refs" class="references csl-bib-body" role="doc-bibliography">
-<div id="ref-freewindWhySubtractingThese2021" class="csl-entry" role="doc-biblioentry">
+<div id="refs" class="references csl-bib-body" data-entry-spacing="0" role="list">
+<div id="ref-freewindWhySubtractingThese2021" class="csl-entry" role="listitem">
 <div class="csl-left-margin">[1] </div>
 <div class="csl-right-inline">Freewind, <span>“Why is subtracting these two times (in 1927) giving a strange result? Stack overflow,”</span> May 22, 2021. [Online]. Available: <a href="https://stackoverflow.com/q/6841333/2859168">https://stackoverflow.com/q/6841333/2859168</a>. [Accessed: Jan. 21, 2023]</div>
 </div>
-<div id="ref-skeetAnswerWhySubtracting2011" class="csl-entry" role="doc-biblioentry">
+<div id="ref-skeetAnswerWhySubtracting2011" class="csl-entry" role="listitem">
 <div class="csl-left-margin">[2] </div>
 <div class="csl-right-inline">J. Skeet, <span>“Answer to "why is subtracting these two times (in 1927) giving a strange result?". Stack overflow,”</span> Jul. 27, 2011. [Online]. Available: <a href="https://stackoverflow.com/a/6841479/2859168">https://stackoverflow.com/a/6841479/2859168</a>. [Accessed: Jan. 21, 2023]</div>
 </div>
-<div id="ref-borgwardtAnswerWhySubtracting2011" class="csl-entry" role="doc-biblioentry">
+<div id="ref-borgwardtAnswerWhySubtracting2011" class="csl-entry" role="listitem">
 <div class="csl-left-margin">[3] </div>
 <div class="csl-right-inline">M. Borgwardt, <span>“Answer to "why is subtracting these two times (in 1927) giving a strange result?". Stack overflow,”</span> Jul. 27, 2011. [Online]. Available: <a href="https://stackoverflow.com/a/6841572/2859168">https://stackoverflow.com/a/6841572/2859168</a>. [Accessed: Jan. 21, 2023]</div>
 </div>
-<div id="ref-grolemundDatesTimes" class="csl-entry" role="doc-biblioentry">
+<div id="ref-grolemundDatesTimes" class="csl-entry" role="listitem">
 <div class="csl-left-margin">[4] </div>
 <div class="csl-right-inline">H. W. {and}. G. Grolemund, <span>“Dates and times,”</span> in <em>R for data science</em>, 1st ed., O’Reilly Media, p. 518 [Online]. Available: <a href="https://r4ds.had.co.nz/dates-and-times.html">https://r4ds.had.co.nz/dates-and-times.html</a>. [Accessed: Jan. 23, 2023]</div>
 </div>
-<div id="ref-wikipediacontributorsEpochComputing2023" class="csl-entry" role="doc-biblioentry">
+<div id="ref-wikipediacontributorsEpochComputing2023" class="csl-entry" role="listitem">
 <div class="csl-left-margin">[5] </div>
 <div class="csl-right-inline">Wikipedia contributors, <span>“Epoch (computing),”</span> <em>Wikipedia</em>. Mar. 23, 2023 [Online]. Available: <a href="https://en.wikipedia.org/w/index.php?title=Epoch_(computing)&amp;oldid=1146251518">https://en.wikipedia.org/w/index.php?title=Epoch_(computing)&amp;oldid=1146251518</a>. [Accessed: Apr. 04, 2023]</div>
 </div>
-<div id="ref-microsoftsupportDATEVALUEFunctionMicrosoft2023" class="csl-entry" role="doc-biblioentry">
+<div id="ref-microsoftsupportDATEVALUEFunctionMicrosoft2023" class="csl-entry" role="listitem">
 <div class="csl-left-margin">[6] </div>
 <div class="csl-right-inline">Microsoft Support, <span>“<span>DATEVALUE</span> function - <span>Microsoft Support</span>,”</span> 2023. [Online]. Available: <a href="https://support.microsoft.com/en-us/office/datevalue-function-df8b07d4-7761-4a93-bc33-b7471bbff252">https://support.microsoft.com/en-us/office/datevalue-function-df8b07d4-7761-4a93-bc33-b7471bbff252</a>. [Accessed: Apr. 04, 2023]</div>
 </div>
-<div id="ref-elizabethmottWhyDatesCome2013" class="csl-entry" role="doc-biblioentry">
+<div id="ref-elizabethmottWhyDatesCome2013" class="csl-entry" role="listitem">
 <div class="csl-left-margin">[7] </div>
 <div class="csl-right-inline">Elizabeth Mott, <span>“Why <span>Do Dates Come</span> in <span>Different</span> in <span>Excel From</span> a <span>Mac</span> to a <span>PC</span>?”</span> Jun. 12, 2013. [Online]. Available: <a href="https://smallbusiness.chron.com/dates-come-different-excel-mac-pc-68917.html">https://smallbusiness.chron.com/dates-come-different-excel-mac-pc-68917.html</a>. [Accessed: Apr. 04, 2023]</div>
 </div>
-<div id="ref-caudillExcelHellCautionary2018" class="csl-entry" role="doc-biblioentry">
+<div id="ref-caudillExcelHellCautionary2018" class="csl-entry" role="listitem">
 <div class="csl-left-margin">[8] </div>
 <div class="csl-right-inline">H. Caudill, <span>“Excel <span>Hell</span>: <span>A</span> cautionary tale,”</span> Dec. 19, 2018. [Online]. Available: <a href="https://medium.com/all-the-things/a-single-infinitely-customizable-app-for-everything-else-9abed7c5b5e7">https://medium.com/all-the-things/a-single-infinitely-customizable-app-for-everything-else-9abed7c5b5e7</a>. [Accessed: Apr. 04, 2023]</div>
 </div>
-<div id="ref-chris88888888ExcelStillSucks2020" class="csl-entry" role="doc-biblioentry">
+<div id="ref-chris88888888ExcelStillSucks2020" class="csl-entry" role="listitem">
 <div class="csl-left-margin">[9] </div>
 <div class="csl-right-inline">Chris88888888, <span>“Excel <span>Still Sucks</span> at <span>Recognizing Dates</span>.”</span> Apr. 15, 2020. [Online]. Available: <a href="https://answers.microsoft.com/en-us/msoffice/forum/all/excel-still-sucks-at-recognizing-dates/5305f6db-8211-49d5-932d-c4871df27fc7">https://answers.microsoft.com/en-us/msoffice/forum/all/excel-still-sucks-at-recognizing-dates/5305f6db-8211-49d5-932d-c4871df27fc7</a>. [Accessed: Apr. 04, 2023]</div>
 </div>
-<div id="ref-vincentScientistsRenameHuman2020" class="csl-entry" role="doc-biblioentry">
+<div id="ref-vincentScientistsRenameHuman2020" class="csl-entry" role="listitem">
 <div class="csl-left-margin">[10] </div>
 <div class="csl-right-inline">J. Vincent, <span>“Scientists rename human genes to stop <span>Microsoft Excel</span> from misreading them as dates,”</span> Aug. 06, 2020. [Online]. Available: <a href="https://www.theverge.com/2020/8/6/21355674/human-genes-rename-microsoft-excel-misreading-dates">https://www.theverge.com/2020/8/6/21355674/human-genes-rename-microsoft-excel-misreading-dates</a>. [Accessed: Apr. 04, 2023]</div>
 </div>
-<div id="ref-r4ds" class="csl-entry" role="doc-biblioentry">
+<div id="ref-r4ds" class="csl-entry" role="listitem">
 <div class="csl-left-margin">[11] </div>
 <div class="csl-right-inline">G. Grolemund and H. Wickham, <em>R for <span>Data</span> <span>Science</span></em>, 1st ed. O’Reilly Media, 2017 [Online]. Available: <a href="https://r4ds.had.co.nz/">https://r4ds.had.co.nz/</a>. [Accessed: May 09, 2022]</div>
 </div>
-<div id="ref-pythonfoundationDatetimeBasicDate2023" class="csl-entry" role="doc-biblioentry">
+<div id="ref-pythonfoundationDatetimeBasicDate2023" class="csl-entry" role="listitem">
 <div class="csl-left-margin">[12] </div>
 <div class="csl-right-inline">Python Foundation, <span>“Datetime <span>Basic</span> date and time types,”</span> Apr. 05, 2023. [Online]. Available: <a href="https://docs.python.org/3/library/datetime.html">https://docs.python.org/3/library/datetime.html</a>. [Accessed: Apr. 05, 2023]</div>
 </div>
 </div>
-</section><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><hr>
+</section><aside id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><hr>
 <ol>
 <li id="fn1"><p>Coordinated Universal Time, but the acronym is in a different language and the words are thus in a different order.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-</ol></section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
+</ol></aside></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
     const mode = bsSheetEl.getAttribute("data-mode");
@@ -1453,6 +1452,33 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       } else {
         el.classList.add('notransition');
       }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
     }
   }
   const toggleColorMode = (alternate) => {
@@ -1521,13 +1547,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       return localAlternateSentinel;
     }
   }
-  let localAlternateSentinel = 'default';
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
   // Dark / light mode switch
   window.quartoToggleColorScheme = () => {
     // Read the current dark / light value 
     let toAlternate = !hasAlternateSentinel();
     toggleColorMode(toAlternate);
     setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
   };
   // Ensure there is a toggle, if there isn't float one in the top right
   if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
@@ -1554,9 +1582,23 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     icon: icon
   };
   anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
   const clipboard = new window.ClipboardJS('.code-copy-button', {
-    target: function(trigger) {
-      return trigger.previousElementSibling;
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
     }
   });
   clipboard.on('success', function(e) {
@@ -1592,10 +1634,9 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // clear code selection
     e.clearSelection();
   });
-  function tippyHover(el, contentFn) {
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -1605,8 +1646,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -1621,6 +1671,248 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       return note.innerHTML;
     });
   }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    const typesetMath = (el) => {
+      if (window.MathJax) {
+        // MathJax Typeset
+        window.MathJax.typeset([el]);
+      } else if (window.katex) {
+        // KaTeX Render
+        var mathElements = el.getElementsByClassName("math");
+        var macros = [];
+        for (var i = 0; i < mathElements.length; i++) {
+          var texText = mathElements[i].firstChild;
+          if (mathElements[i].tagName == "SPAN") {
+            window.katex.render(texText.data, mathElements[i], {
+              displayMode: mathElements[i].classList.contains('display'),
+              throwOnError: false,
+              macros: macros,
+              fleqn: false
+            });
+          }
+        }
+      }
+    }
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        typesetMath(container);
+        return container.innerHTML
+      } else {
+        typesetMath(note);
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      typesetMath(note);
+      return note.innerHTML;
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
   const findCites = (el) => {
     const parentEl = el.parentElement;
     if (parentEl) {
@@ -1660,20 +1952,25 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script><script src="https://giscus.app/client.js" data-repo="srvanderplas/stat-computing-r-python" data-repo-id="R_kgDOIvwd2g" data-category="General" data-category-id="DIC_kwDOIvwd2s4CTksR" data-mapping="pathname" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="light" data-lang="en" crossorigin="anonymous" async="">
-</script><nav class="page-navigation"><div class="nav-page nav-page-previous">
-      <a href="../part-wrangling/06-data-join.html" class="pagination-link">
+</script><input type="hidden" id="giscus-base-theme" value="light"><input type="hidden" id="giscus-alt-theme" value="dark"><nav class="page-navigation"><div class="nav-page nav-page-previous">
+      <a href="../part-wrangling/06-data-join.html" class="pagination-link  aria-label=" data="">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Joining Data</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../part-wrangling/08-functional-prog.html" class="pagination-link">
+      <a href="../part-wrangling/08-functional-prog.html" class="pagination-link" aria-label="<span class='chapter-number'>27</span>&nbsp; <span class='chapter-title'>Functional Programming</span>">
         <span class="nav-page-text"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Functional Programming</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
 </div> <!-- /content -->
 <footer class="footer"><div class="nav-footer">
-    <div class="nav-footer-left">Copyright 2023, Susan Vanderplas</div>   
+    <div class="nav-footer-left">
+<p>Copyright 2023, Susan Vanderplas</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
     <div class="nav-footer-right">
       <ul class="footer-items list-unstyled">
 <li class="nav-item compact">

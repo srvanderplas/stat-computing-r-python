@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.2.313">
+<meta name="generator" content="quarto-1.4.515">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <meta name="dcterms.date" content="2024-02-22">
 <title>Statistical Computing using R and Python - 6&nbsp; Reproducibility and Professional Communication</title>
@@ -15,11 +15,12 @@ div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
   width: 0.8em;
-  margin: 0 0.8em 0.2em -1.6em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -44,48 +45,20 @@ pre.numberSource code > span > a:first-child::before
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
     padding: 0 4px; width: 4em;
-    color: #aaaaaa;
   }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
 div.sourceCode
   {   }
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { color: #7d9029; } /* Attribute */
-code span.bn { color: #40a070; } /* BaseN */
-code span.bu { color: #008000; } /* BuiltIn */
-code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #4070a0; } /* Char */
-code span.cn { color: #880000; } /* Constant */
-code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code span.dt { color: #902000; } /* DataType */
-code span.dv { color: #40a070; } /* DecVal */
-code span.er { color: #ff0000; font-weight: bold; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #40a070; } /* Float */
-code span.fu { color: #06287e; } /* Function */
-code span.im { color: #008000; font-weight: bold; } /* Import */
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code span.op { color: #666666; } /* Operator */
-code span.ot { color: #007020; } /* Other */
-code span.pp { color: #bc7a00; } /* Preprocessor */
-code span.sc { color: #4070a0; } /* SpecialChar */
-code span.ss { color: #bb6688; } /* SpecialString */
-code span.st { color: #4070a0; } /* String */
-code span.va { color: #19177c; } /* Variable */
-code span.vs { color: #4070a0; } /* VerbatimString */
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+/* CSS for citations */
 div.csl-bib-body { }
 div.csl-entry {
   clear: both;
+  margin-bottom: 0em;
 }
-.hanging div.csl-entry {
+.hanging-indent div.csl-entry {
   margin-left:2em;
   text-indent:-2em;
 }
@@ -99,8 +72,7 @@ div.csl-right-inline {
 }
 div.csl-indent {
   margin-left: 2em;
-}
-</style>
+}</style>
 
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../site_libs/quarto-nav/headroom.min.js"></script>
@@ -130,7 +102,13 @@ div.csl-indent {
   "collapse-after": 3,
   "panel-placement": "start",
   "type": "textbox",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -140,7 +118,8 @@ div.csl-indent {
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
     "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit"
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
   }
 }</script><script async="" src="https://www.googletagmanager.com/gtag/js?id=G-4ZFBDKXJXP"></script><script type="text/javascript">
 
@@ -148,245 +127,288 @@ window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
-</script><script src="https://kit.fontawesome.com/baac5f0610.js" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script><link rel="stylesheet" href="../build_deps/style.css">
+</script><script src="https://kit.fontawesome.com/baac5f0610.js" crossorigin="anonymous"></script><script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script><script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script><link rel="stylesheet" href="../build_deps/style.css">
 </head>
 <body class="nav-sidebar floating slimcontent">
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top"><nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }"><div class="container-fluid d-flex justify-content-between">
-      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Reproducibility and Professional Communication</span></h1>
-      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
-        <i class="bi bi-chevron-right"></i>
+  <header id="quarto-header" class="headroom fixed-top"><nav class="quarto-secondary-nav"><div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../part-tools/00-tools-intro.html">Part I: Tools</a></li><li class="breadcrumb-item"><a href="../part-tools/06-documents.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Reproducibility and Professional Communication</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
       </button>
     </div>
   </nav></header><!-- content --><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto"><div class="pt-lg-2 mt-2 text-left sidebar-header">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto"><div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="../">Statistical Computing using R and Python</a> 
         <div class="sidebar-tools-main">
-    <a href="https://github.com/srvanderplas/stat-computing-r-python/" title="Source Code" class="sidebar-tool px-1"><i class="bi bi-github"></i></a>
-  <a href="" class="quarto-color-scheme-toggle sidebar-tool" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+    <a href="https://github.com/srvanderplas/stat-computing-r-python/" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
 </div>
     </div>
       </div>
-      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="mt-2 flex-shrink-0 align-items-center">
         <div class="sidebar-search">
         <div id="quarto-search" class="" title="Search"></div>
         </div>
-      </div>
+        </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
 <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../index.html" class="sidebar-item-text sidebar-link">Preface</a>
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
   </div>
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../part-tools/00-tools-intro.html" class="sidebar-item-text sidebar-link">Part I: Tools</a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <a href="../part-tools/00-tools-intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Part I: Tools</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">
 <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-tools/01-computer-basics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Computer Basics</span></a>
+  <a href="../part-tools/01-computer-basics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Computer Basics</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-tools/02-setting-up-computer.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Setting Up Your Computer</span></a>
+  <a href="../part-tools/02-setting-up-computer.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Setting Up Your Computer</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-tools/03-Rstudio-interface.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">RStudio’s Interface</span></a>
+  <a href="../part-tools/03-Rstudio-interface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">RStudio’s Interface</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-tools/04-scripts-notebooks.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Scripts and Notebooks</span></a>
+  <a href="../part-tools/04-scripts-notebooks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Scripts and Notebooks</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-tools/05-git-and-github.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Version Control with Git</span></a>
+  <a href="../part-tools/05-git-and-github.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Version Control with Git</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-tools/06-documents.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Reproducibility and Professional Communication</span></a>
+  <a href="../part-tools/06-documents.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Reproducibility and Professional Communication</span></span></a>
   </div>
 </li>
       </ul>
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../part-gen-prog/00-gen-prog.html" class="sidebar-item-text sidebar-link">Part II: General Programming</a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+            <a href="../part-gen-prog/00-gen-prog.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Part II: General Programming</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">
 <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/00-intro.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Introduction to Programming</span></a>
+  <a href="../part-gen-prog/00-intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Introduction to Programming</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/01-basic-var-types.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Variables and Basic Data Types</span></a>
+  <a href="../part-gen-prog/01-basic-var-types.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Variables and Basic Data Types</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/02-prog-functions.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Using Functions and Libraries</span></a>
+  <a href="../part-gen-prog/02-prog-functions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Using Functions and Libraries</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/03-data-struct.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Data Structures</span></a>
+  <a href="../part-gen-prog/03-data-struct.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Data Structures</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/035-matrix-calcs.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Matrix Calculations</span></a>
+  <a href="../part-gen-prog/035-matrix-calcs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Matrix Calculations</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/04-control-struct.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Control Structures</span></a>
+  <a href="../part-gen-prog/04-control-struct.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Control Structures</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/05-functions.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Writing Functions</span></a>
+  <a href="../part-gen-prog/05-functions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Writing Functions</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/06-debugging.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Debugging</span></a>
+  <a href="../part-gen-prog/06-debugging.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Debugging</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/07-prog-data.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Programming With Data</span></a>
+  <a href="../part-gen-prog/07-prog-data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Programming With Data</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/99-extra.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Other Helpful Programming Resources</span></a>
+  <a href="../part-gen-prog/99-extra.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Other Helpful Programming Resources</span></span></a>
   </div>
 </li>
       </ul>
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../part-wrangling/00-wrangling.html" class="sidebar-item-text sidebar-link">Part III: Data Wrangling</a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+            <a href="../part-wrangling/00-wrangling.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Part III: Data Wrangling</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">
 <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/01-data-input.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Data Input</span></a>
+  <a href="../part-wrangling/01-data-input.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Data Input</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/02-basic-data-vis.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Data Visualization Basics</span></a>
+  <a href="../part-wrangling/02-basic-data-vis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Data Visualization Basics</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/02a-eda.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Exploratory Data Analysis</span></a>
+  <a href="../part-wrangling/02a-eda.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Exploratory Data Analysis</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/02b-graphics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Data Visualization</span></a>
+  <a href="../part-wrangling/02b-graphics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Data Visualization</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/02c-good-graphics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Creating Good Charts</span></a>
+  <a href="../part-wrangling/02c-good-graphics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Creating Good Charts</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/03-data-cleaning.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Data Cleaning</span></a>
+  <a href="../part-wrangling/03-data-cleaning.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Data Cleaning</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/04-strings.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Working with Strings</span></a>
+  <a href="../part-wrangling/04-strings.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Working with Strings</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/05-data-reshape.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Reshaping Data</span></a>
+  <a href="../part-wrangling/05-data-reshape.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Reshaping Data</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/06-data-join.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Joining Data</span></a>
+  <a href="../part-wrangling/06-data-join.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Joining Data</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/07-datetime.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Dates and Times</span></a>
+  <a href="../part-wrangling/07-datetime.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Dates and Times</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/08-functional-prog.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Functional Programming</span></a>
+  <a href="../part-wrangling/08-functional-prog.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Functional Programming</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/09-spatial-formats.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Spatial data</span></a>
+  <a href="../part-wrangling/09-spatial-formats.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Spatial data</span></span></a>
   </div>
 </li>
       </ul>
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../part-advanced-topics/00-advanced.html" class="sidebar-item-text sidebar-link">Part IV: Advanced Topics</a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">
+            <a href="../part-advanced-topics/00-advanced.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Part IV: Advanced Topics</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">
 <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-advanced-topics/01-simulation.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Simulation and Reproducibility</span></a>
+  <a href="../part-advanced-topics/01-simulation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Simulation and Reproducibility</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-advanced-topics/06-interactive-graphics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">30</span>&nbsp; <span class="chapter-title">Interactive Graphics</span></a>
+  <a href="../part-advanced-topics/06-interactive-graphics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">30</span>&nbsp; <span class="chapter-title">Interactive Graphics</span></span></a>
   </div>
 </li>
       </ul>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../graveyard.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">31</span>&nbsp; <span class="chapter-title">Other Topics</span></a>
+  <a href="../graveyard.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">31</span>&nbsp; <span class="chapter-title">Other Topics</span></span></a>
   </div>
 </li>
     </ul>
 </div>
-</nav><!-- margin-sidebar --><div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+</nav><div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active"><h2 id="toc-title">Table of contents</h2>
    
   <ul>
-<li><a href="#fa-bullseye-objectives" id="toc-fa-bullseye-objectives" class="nav-link active" data-scroll-target="#fa-bullseye-objectives"><span class="toc-section-number">6.1</span>  <i class="fa-solid fa-bullseye" aria-label="bullseye"></i> Objectives</a></li>
-  <li><a href="#literate-programming-knitr-rmarkdown-and-quarto" id="toc-literate-programming-knitr-rmarkdown-and-quarto" class="nav-link" data-scroll-target="#literate-programming-knitr-rmarkdown-and-quarto"><span class="toc-section-number">6.2</span>  Literate Programming, <code>knitr</code>, <code>rmarkdown</code>, and <code>quarto</code></a></li>
+<li><a href="#objectives" id="toc-objectives" class="nav-link active" data-scroll-target="#objectives"><span class="header-section-number">6.1</span> <i class="fa-solid fa-bullseye" aria-label="bullseye"></i> Objectives</a></li>
+  <li><a href="#literate-programming-knitr-rmarkdown-and-quarto" id="toc-literate-programming-knitr-rmarkdown-and-quarto" class="nav-link" data-scroll-target="#literate-programming-knitr-rmarkdown-and-quarto"><span class="header-section-number">6.2</span> Literate Programming, <code>knitr</code>, <code>rmarkdown</code>, and <code>quarto</code></a></li>
   <li>
-<a href="#review-quarto-formatting" id="toc-review-quarto-formatting" class="nav-link" data-scroll-target="#review-quarto-formatting"><span class="toc-section-number">6.3</span>  Review: Quarto Formatting</a>
+<a href="#review-quarto-formatting" id="toc-review-quarto-formatting" class="nav-link" data-scroll-target="#review-quarto-formatting"><span class="header-section-number">6.3</span> Review: Quarto Formatting</a>
   <ul class="collapse">
 <li><a href="#text-formatting" id="toc-text-formatting" class="nav-link" data-scroll-target="#text-formatting">Text Formatting</a></li>
   <li><a href="#headings" id="toc-headings" class="nav-link" data-scroll-target="#headings">Headings</a></li>
@@ -397,34 +419,34 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
   </ul>
 </li>
   <li>
-<a href="#a-very-brief-introduction-to-latex" id="toc-a-very-brief-introduction-to-latex" class="nav-link" data-scroll-target="#a-very-brief-introduction-to-latex"><span class="toc-section-number">6.4</span>  A Very Brief Introduction to LaTeX</a>
+<a href="#a-very-brief-introduction-to-latex" id="toc-a-very-brief-introduction-to-latex" class="nav-link" data-scroll-target="#a-very-brief-introduction-to-latex"><span class="header-section-number">6.4</span> A Very Brief Introduction to LaTeX</a>
   <ul class="collapse">
-<li><a href="#knitr-1" id="toc-knitr-1" class="nav-link" data-scroll-target="#knitr-1"><span class="toc-section-number">6.4.1</span>  Knitr</a></li>
+<li><a href="#knitr-1" id="toc-knitr-1" class="nav-link" data-scroll-target="#knitr-1"><span class="header-section-number">6.4.1</span> Knitr</a></li>
   </ul>
 </li>
   <li>
-<a href="#slides" id="toc-slides" class="nav-link" data-scroll-target="#slides"><span class="toc-section-number">6.5</span>  Slides</a>
+<a href="#slides" id="toc-slides" class="nav-link" data-scroll-target="#slides"><span class="header-section-number">6.5</span> Slides</a>
   <ul class="collapse">
-<li><a href="#beamer-latex-and-knitr" id="toc-beamer-latex-and-knitr" class="nav-link" data-scroll-target="#beamer-latex-and-knitr"><span class="toc-section-number">6.5.1</span>  Beamer (LaTeX) and knitr</a></li>
-  <li><a href="#html-slides" id="toc-html-slides" class="nav-link" data-scroll-target="#html-slides"><span class="toc-section-number">6.5.2</span>  HTML slides</a></li>
+<li><a href="#beamer-latex-and-knitr" id="toc-beamer-latex-and-knitr" class="nav-link" data-scroll-target="#beamer-latex-and-knitr"><span class="header-section-number">6.5.1</span> Beamer (LaTeX) and knitr</a></li>
+  <li><a href="#html-slides" id="toc-html-slides" class="nav-link" data-scroll-target="#html-slides"><span class="header-section-number">6.5.2</span> HTML slides</a></li>
   </ul>
 </li>
   <li>
-<a href="#posters" id="toc-posters" class="nav-link" data-scroll-target="#posters"><span class="toc-section-number">6.6</span>  Posters</a>
+<a href="#posters" id="toc-posters" class="nav-link" data-scroll-target="#posters"><span class="header-section-number">6.6</span> Posters</a>
   <ul class="collapse">
-<li><a href="#latex" id="toc-latex" class="nav-link" data-scroll-target="#latex"><span class="toc-section-number">6.6.1</span>  LaTeX</a></li>
-  <li><a href="#markdown" id="toc-markdown" class="nav-link" data-scroll-target="#markdown"><span class="toc-section-number">6.6.2</span>  Markdown</a></li>
+<li><a href="#latex" id="toc-latex" class="nav-link" data-scroll-target="#latex"><span class="header-section-number">6.6.1</span> LaTeX</a></li>
+  <li><a href="#markdown" id="toc-markdown" class="nav-link" data-scroll-target="#markdown"><span class="header-section-number">6.6.2</span> Markdown</a></li>
   </ul>
 </li>
-  <li><a href="#resumecv" id="toc-resumecv" class="nav-link" data-scroll-target="#resumecv"><span class="toc-section-number">6.7</span>  Resume/CV</a></li>
-  <li><a href="#hosting-content-with-github-pages" id="toc-hosting-content-with-github-pages" class="nav-link" data-scroll-target="#hosting-content-with-github-pages"><span class="toc-section-number">6.8</span>  Hosting Content with Github Pages</a></li>
-  <li><a href="#additional-resources-to-explore" id="toc-additional-resources-to-explore" class="nav-link" data-scroll-target="#additional-resources-to-explore"><span class="toc-section-number">6.9</span>  Additional Resources to Explore</a></li>
-  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references"><span class="toc-section-number">6.10</span>  References</a></li>
-  </ul><div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/srvanderplas/stat-computing-r-python/edit/main/part-tools/06-documents.qmd" class="toc-action">Edit this page</a></p></div></div></nav>
+  <li><a href="#resumecv" id="toc-resumecv" class="nav-link" data-scroll-target="#resumecv"><span class="header-section-number">6.7</span> Resume/CV</a></li>
+  <li><a href="#hosting-content-with-github-pages" id="toc-hosting-content-with-github-pages" class="nav-link" data-scroll-target="#hosting-content-with-github-pages"><span class="header-section-number">6.8</span> Hosting Content with Github Pages</a></li>
+  <li><a href="#additional-resources-to-explore" id="toc-additional-resources-to-explore" class="nav-link" data-scroll-target="#additional-resources-to-explore"><span class="header-section-number">6.9</span> Additional Resources to Explore</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references"><span class="header-section-number">6.10</span> References</a></li>
+  </ul><div class="toc-actions"><ul><li><a href="https://github.com/srvanderplas/stat-computing-r-python/edit/main/part-tools/06-documents.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content page-columns page-full" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><div class="quarto-title">
-<h1 class="title"><span id="sec-docs" class="quarto-section-identifier d-none d-lg-block"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Reproducibility and Professional Communication</span></span></h1>
+<main class="content page-columns page-full" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../part-tools/00-tools-intro.html">Part I: Tools</a></li><li class="breadcrumb-item"><a href="../part-tools/06-documents.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Reproducibility and Professional Communication</span></a></li></ol></nav><div class="quarto-title">
+<h1 class="title"><span id="sec-docs" class="quarto-section-identifier"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Reproducibility and Professional Communication</span></span></h1>
 </div>
 
 
@@ -443,7 +465,8 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
   </div>
   
 
-</header><section id="fa-bullseye-objectives" class="level2 page-columns page-full" data-number="6.1"><h2 data-number="6.1" class="anchored" data-anchor-id="fa-bullseye-objectives">
+
+</header><section id="objectives" class="level2 page-columns page-full" data-number="6.1"><h2 data-number="6.1" class="anchored" data-anchor-id="objectives">
 <span class="header-section-number">6.1</span> <i class="fa-solid fa-bullseye" aria-label="bullseye"></i> Objectives</h2>
 <ul>
 <li>Create professional documents (slides, posters, CVs) using LaTeX and/or markdown</li>
@@ -454,8 +477,7 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
 <div class="no-row-height column-margin column-container"><div class="">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure"><p><img src="https://raw.githubusercontent.com/allisonhorst/stats-illustrations/main/rstats-artwork/reproducibility_court.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Reproducibility with Rmarkdown (by Allison Horst)</figcaption><p></p>
-</figure>
+<figcaption>Reproducibility with Rmarkdown (by Allison Horst)</figcaption></figure>
 </div>
 </div></div></section><section id="literate-programming-knitr-rmarkdown-and-quarto" class="level2" data-number="6.2"><h2 data-number="6.2" class="anchored" data-anchor-id="literate-programming-knitr-rmarkdown-and-quarto">
 <span class="header-section-number">6.2</span> Literate Programming, <code>knitr</code>, <code>rmarkdown</code>, and <code>quarto</code>
@@ -471,7 +493,7 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
 <code>quarto</code> uses <code>qmd</code> files, which are compiled into many different formats: pdf, html, markdown, Microsoft Word.</li>
 </ul>
 <p>All of these programs work essentially the same way: code chunks are run in the specified language, figures are saved, tables are created, and the results are added to the intermediate file (.tex or .md). Then, another program (LaTeX or Pandoc) compiles the intermediate file into the final result. Understanding this process is key to being able to debug any errors you may encounter, because you need to identify which program is having the error - the code chunk? adding the results to the intermediate file? compiling from the intermediate file to the end result?</p>
-<div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" aria-current="page"><code>knitr</code></a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false"><code>rmarkdown</code></a></li>
@@ -480,23 +502,20 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <div class="quarto-figure quarto-figure-center">
-<figure class="figure"><p><img src="../images/tools/knitr-flow.png" class="img-fluid figure-img" alt="Figure showing a knitr hex icon, with file.Rnw containing a code chunk started by <<...>>= and ended by @. This file.Rnw is processed with R to produce file.tex, which has \begin{figure}\end{figure} code containing information about a picture. The tex file is compiled with LaTeX to produce file.pdf, which has a scatterplot."></p>
-<p></p><figcaption class="figure-caption">Knitr uses R to produce a tex (.tex) file, which is then compiled to PDF using LaTeX.</figcaption><p></p>
-</figure>
+<figure class="figure"><p><img src="../images/tools/knitr-flow.png" class="img-fluid figure-img"></p>
+<figcaption>Knitr uses R to produce a tex (.tex) file, which is then compiled to PDF using LaTeX.</figcaption></figure>
 </div>
 </div>
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
 <div class="quarto-figure quarto-figure-center">
-<figure class="figure"><p><img src="../images/tools/rmarkdown-flow.png" class="img-fluid figure-img" alt="Figure showing a rmarkdown hex icon, with file.Rmd containing a code chunk started by ```{r} and ended by ```. This file.Rmd is processed with R to produce file.md, which has ![](figure.png) code containing information about a picture. The markdown file is compiled with pandoc to produce file.pdf,file.html, and/or file.doc, all of which contain a scatterplot."></p>
-<p></p><figcaption class="figure-caption">rmarkdown uses R to produce a markdown (.md) file, which is then compiled to PDF, DOC, HTML, or other formats using pandoc.</figcaption><p></p>
-</figure>
+<figure class="figure"><p><img src="../images/tools/rmarkdown-flow.png" class="img-fluid figure-img"></p>
+<figcaption>rmarkdown uses R to produce a markdown (.md) file, which is then compiled to PDF, DOC, HTML, or other formats using pandoc.</figcaption></figure>
 </div>
 </div>
 <div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
 <div class="quarto-figure quarto-figure-center">
-<figure class="figure"><p><img src="../images/tools/quarto-flow.png" class="img-fluid figure-img" alt="Figure showing a quarto hex icon, with file.qmd containing a code chunk started by ```{r} and ended by ```. This file.qmd is processed with R or python to produce file.md, which has ![](figure.png) code containing information about a picture. The markdown file is compiled with pandoc to produce file.pdf,file.html, and/or file.doc, all of which contain a scatterplot."></p>
-<p></p><figcaption class="figure-caption">quarto uses R or python to produce a markdown (.md) file, which is then compiled to PDF, DOC, HTML, or other formats using pandoc.</figcaption><p></p>
-</figure>
+<figure class="figure"><p><img src="../images/tools/quarto-flow.png" class="img-fluid figure-img"></p>
+<figcaption>quarto uses R or python to produce a markdown (.md) file, which is then compiled to PDF, DOC, HTML, or other formats using pandoc.</figcaption></figure>
 </div>
 </div>
 </div>
@@ -597,7 +616,10 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
 </tr>
 <tr class="odd">
 <td><pre><code>![Caption](elephant.png)</code></pre></td>
-<td><img src="../images/tools/elephant.png" title="fig:" class="img-fluid" alt="A line drawing of an elephant."></td>
+<td><div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="../images/tools/elephant.png" class="img-fluid figure-img"></p>
+<figcaption>Caption</figcaption></figure>
+</div></td>
 </tr>
 <tr class="even">
 <td><pre><code>[![Caption](elephant.png)](https://quarto.org)</code></pre></td>
@@ -702,20 +724,20 @@ continues after
 </tr>
 </tbody>
 </table></section><section id="tables" class="level3 unnumbered"><h3 class="unnumbered anchored" data-anchor-id="tables">Tables</h3>
-<div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">Markdown Syntax</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">Output</a></li>
 </ul>
 <div class="tab-content">
-<div id="tabset-2-1" class="unnumbered tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
+<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
 <pre><code>| Right | Left | Default | Center |
 |------:|:-----|---------|:------:|
 |   12  |  12  |    12   |    12  |
 |  123  |  123 |   123   |   123  |
 |    1  |    1 |     1   |     1  |</code></pre>
 </div>
-<div id="tabset-2-2" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
+<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
 <table class="table">
 <thead><tr class="header">
 <th style="text-align: right;">Right</th>
@@ -789,12 +811,12 @@ $$E = mc^{2}$$</code></pre></td>
 <div class="no-row-height column-margin column-container"><div class="">
 <p>I’m not convinced LaTeX succeeds at freeing you from layout concerns, but it’s certainly true that it is much more powerful than Word for layout purposes.</p>
 </div></div><p>The philosophy of LaTeX is that presentation shouldn’t get in the way of content: you should be able to change the presentation formatting systematically, without having to mess with the content. This (theoretically) allows you to switch templates easily, make document-wide changes in a single command, and more.</p>
-<div class="callout-tip callout callout-style-default callout-captioned">
+<div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-caption-container flex-fill">
+<div class="callout-title-container flex-fill">
 Try it out
 </div>
 </div>
@@ -822,18 +844,18 @@ Hello \LaTeX!
 </ul>
 <p>Both declarations and environments may come with both optional and required arguments. Required arguments are placed in <code>{...}</code> brackets, while optional arguments are placed in <code>[...]</code> brackets. You can, for instance, start your document with <code>\documentclass[12pt]{article}</code> to specify the base font size.</p>
 <p>One of the most useful features in LaTeX is math mode, which you can enter by enclosing text in <code>$ ... $</code> (for inline statements), <code>$$ ... $$</code> or <code>\[ ... \]</code> (for statements on their own line), or using other environments like <code>\begin{array} ... \end{array}</code> that come in math-specific packages. Once in math mode, you can use <a href="https://www.caam.rice.edu/~heinken/latex/symbols.pdf">math symbol commands</a> to get characters like <span class="math inline">\(\theta, \pi, \sum, \int, \infty\)</span>, and more.</p>
-<div class="callout-tip callout callout-style-default callout-captioned">
+<div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-caption-container flex-fill">
+<div class="callout-title-container flex-fill">
 Try it out
 </div>
 </div>
 <div class="callout-body-container callout-body">
 <p>With any document creation software, the easiest way to learn how to do it is to find a sample document, tinker with it, see if you can make things the way you want them to be, and then google the errors when you inevitably screw something up.</p>
-<div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">Problem</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">Solution</a></li>
@@ -904,12 +926,12 @@ The PDF of a normal distribution is $$f(x | \mu, \sigma) = \frac{1}{\sigma\sqrt{
 
 <div class="no-row-height column-margin column-container"><div class="">
 <p>Check out the <a href="https://github.com/unl-statistics/Templates/tree/main/slides-beamer-markdown">UNL-themed Beamer quarto template</a></p>
-</div></div><div class="callout-tip callout callout-style-default callout-captioned">
+</div></div><div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-caption-container flex-fill">
+<div class="callout-title-container flex-fill">
 Try it out
 </div>
 </div>
@@ -935,8 +957,7 @@ Try it out
 </div></div><p>The downside to HTML slides is that there are approximately 100000 different javascript libraries that create HTML slides, and all of them have different capabilities. Many of these libraries have extensions that will let you create markdown slides, but they each have slightly different markdown syntax and capabilities.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure"><p><img src="../images/tools/Rmarkdown_slide_options.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Rmarkdown slide options available by default in RStudio</figcaption><p></p>
-</figure>
+<figcaption>Rmarkdown slide options available by default in RStudio</figcaption></figure>
 </div>
 <p>You can get the <a href="https://bookdown.org/yihui/rmarkdown/presentations.html">full details</a> of any fully supported slide class in Rmarkdown by looking at the Rmarkdown book <span class="citation" data-cites="xieChapterPresentations2018"><a href="#ref-xieChapterPresentations2018" role="doc-biblioref">[3]</a></span>, which is freely available online. These guidelines will give you specifics about how to customize slides, add incremental information, change transitions, print your slides to PDF, and include speaker notes.</p>
 <p>Quarto has simplified the slide options available to you - for HTML slides, you have one option, which is to use <code>reveal.js</code>. While this may sound limiting, it’s really not - RStudio/Posit (the company behind quarto) has done a <em>ton</em> of work to make quarto a lovely experience, and that extends to the slides. I have almost entirely switched to using quarto for everything because it’s so much easier to arrange figures, add alt-text, and style presentations. See the quarto presentation documentation <a href="https://quarto.org/docs/presentations/">here</a> <span class="citation" data-cites="QuartoPresentations"><a href="#ref-QuartoPresentations" role="doc-biblioref">[4]</a></span>. If you have collaborators who are stuck on MS Office, quarto allows you to compile to a PowerPoint presentation.</p>
@@ -976,12 +997,12 @@ Try it out
 <li>
 <a href="https://github.com/unl-statistics/Templates/tree/main/slides-revealjs-quarto">quarto reveal.js</a> (<a href="https://github.com/unl-statistics/Templates/raw/main/slides-revealjs-quarto.zip">zip of all required files</a>)</li>
 </ul>
-</div></div><div class="callout-tip callout callout-style-default callout-captioned">
+</div></div><div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-caption-container flex-fill">
+<div class="callout-title-container flex-fill">
 Try it out
 </div>
 </div>
@@ -997,12 +1018,12 @@ Try it out
 <p><a href="https://www.overleaf.com/gallery/tagged/poster">Overleaf has a fantastic gallery of posters made in LaTeX</a>.</p>
 <p>There are several LaTeX options for making scientific posters: baposter, beamerposter, tikzposter are among the most common. We’ll focus on <code>beamerposter</code> here, but you are free to explore the other poster classes at will. As with beamer, you can easily integrate knitr code chunks into a document, so that you are generating your images reproducibly.</p>
 <p>Basic code for a poster in beamer (along with the necessary style files) that I’ve minimally customized to meet UNL branding requirements can be found <a href="https://github.com/unl-statistics/Templates/raw/main/poster-beamer.zip">here</a>.</p>
-<div class="callout-tip callout callout-style-default callout-captioned">
+<div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-caption-container flex-fill">
+<div class="callout-title-container flex-fill">
 Try it out
 </div>
 </div>
@@ -1023,8 +1044,7 @@ Try it out
 <p>To start, install posterdown with <code>install.packages("posterdown")</code>.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure"><p><img src="../images/tools/Rstudio-posterdown-setup.gif" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Use the RStudio menu to create a posterdown presentation file – with a prefilled template</figcaption><p></p>
-</figure>
+<figcaption>Use the RStudio menu to create a posterdown presentation file – with a prefilled template</figcaption></figure>
 </div>
 
 <div class="no-row-height column-margin column-container"><div class="">
@@ -1035,12 +1055,12 @@ Try it out
 <span class="header-section-number">6.6.2.2</span> Pagedown</h4>
 <p>The <code>pagedown</code> package also has a couple of poster templates, including <a href="https://pagedown.rbind.io/poster-relaxed">poster-relaxed</a> and <a href="https://user-images.githubusercontent.com/163582/49780277-7b326780-fcd3-11e8-9eb6-69e46292158c.png">poster-jacobs</a>.</p>
 <p>There are also templates for letters, business cards, and more in pagedown, if you’re feeling ambitious.</p>
-<div class="callout-tip callout callout-style-default callout-captioned">
+<div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-caption-container flex-fill">
+<div class="callout-title-container flex-fill">
 Try it out
 </div>
 </div>
@@ -1067,12 +1087,12 @@ Try it out
 </div></div></section><section id="hosting-content-with-github-pages" class="level2 page-columns page-full" data-number="6.8"><h2 data-number="6.8" class="anchored" data-anchor-id="hosting-content-with-github-pages">
 <span class="header-section-number">6.8</span> Hosting Content with Github Pages</h2>
 <p>Github will host HTML content for you using Github pages (case in point: this textbook). This means you can version control your content (for instance, presentations or your CV) and have GitHub do the hosting (so you don’t have to find a webserver, buy a domain name, etc).</p>
-<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-caption-container flex-fill">
+<div class="callout-title-container flex-fill">
 Setting up Github Pages
 </div>
 </div>
@@ -1095,12 +1115,12 @@ Setting up Github Pages
 <div class="no-row-height column-margin column-container"><div class="">
 <p>I’ve been putting my presentations on Github since 2014, so it has a pretty good record of every set of slides I’ve created. I highly recommend this strategy - storing everything online makes it easy to share your work with others, reference later, and more importantly, easy for you to find in 3 years.</p>
 </div></div><p>This mechanism provides a very convenient way to showcase your work, share information with collaborators, and more - instead of sending files, you can send a URL and no one has to download anything overtly.</p>
-<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-caption-container flex-fill">
+<div class="callout-title-container flex-fill">
 Setting up Github Pages in an existing repository
 </div>
 </div>
@@ -1127,21 +1147,21 @@ Setting up Github Pages in an existing repository
 <span class="header-section-number">6.10</span> References</h2>
 
 
-<div id="refs" class="references csl-bib-body" role="doc-bibliography">
-<div id="ref-MarkdownBasics20221017" class="csl-entry" role="doc-biblioentry">
+<div id="refs" class="references csl-bib-body" data-entry-spacing="0" role="list">
+<div id="ref-MarkdownBasics20221017" class="csl-entry" role="listitem">
 <div class="csl-left-margin">[1] </div>
 <div class="csl-right-inline">Posit, <span>“Markdown <span>Basics</span>,”</span> <em>Quarto</em>. [Online]. Available: <a href="https://quarto.org/docs/authoring/markdown-basics.html#text-formatting">https://quarto.org/docs/authoring/markdown-basics.html#text-formatting</a>. [Accessed: Oct. 17, 2022]</div>
 </div>
-<div id="ref-reticulate" class="csl-entry" role="doc-biblioentry">
+<div id="ref-reticulate" class="csl-entry" role="listitem">
 <div class="csl-left-margin">[2] </div>
 <div class="csl-right-inline">K. Ushey, J. Allaire, and Y. Tang, <em>Reticulate: Interface to ’python’</em>. 2022 [Online]. Available: <a href="https://CRAN.R-project.org/package=reticulate">https://CRAN.R-project.org/package=reticulate</a>
 </div>
 </div>
-<div id="ref-xieChapterPresentations2018" class="csl-entry" role="doc-biblioentry">
+<div id="ref-xieChapterPresentations2018" class="csl-entry" role="listitem">
 <div class="csl-left-margin">[3] </div>
 <div class="csl-right-inline">Y. Xie, J. J. Allaire, and G. Grolemund, <span>“Chapter 4 <span>Presentations</span>,”</span> in <em>R <span>Markdown</span>: <span>The</span> <span>Definitive</span> <span>Guide</span></em>, 1st ed., CRC Press, 2018 [Online]. Available: <a href="https://bookdown.org/yihui/rmarkdown/presentations.html">https://bookdown.org/yihui/rmarkdown/presentations.html</a>. [Accessed: Sep. 28, 2022]</div>
 </div>
-<div id="ref-QuartoPresentations" class="csl-entry" role="doc-biblioentry">
+<div id="ref-QuartoPresentations" class="csl-entry" role="listitem">
 <div class="csl-left-margin">[4] </div>
 <div class="csl-right-inline">Posit, <span>“Quarto - <span>Presentations</span>,”</span> <em>Quarto</em>. [Online]. Available: <a href="https://quarto.org/docs/presentations/">https://quarto.org/docs/presentations/</a>. [Accessed: Sep. 28, 2022]</div>
 </div>
@@ -1187,6 +1207,33 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       } else {
         el.classList.add('notransition');
       }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
     }
   }
   const toggleColorMode = (alternate) => {
@@ -1255,13 +1302,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       return localAlternateSentinel;
     }
   }
-  let localAlternateSentinel = 'default';
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
   // Dark / light mode switch
   window.quartoToggleColorScheme = () => {
     // Read the current dark / light value 
     let toAlternate = !hasAlternateSentinel();
     toggleColorMode(toAlternate);
     setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
   };
   // Ensure there is a toggle, if there isn't float one in the top right
   if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
@@ -1288,9 +1337,23 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     icon: icon
   };
   anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
   const clipboard = new window.ClipboardJS('.code-copy-button', {
-    target: function(trigger) {
-      return trigger.previousElementSibling;
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
     }
   });
   clipboard.on('success', function(e) {
@@ -1326,10 +1389,9 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // clear code selection
     e.clearSelection();
   });
-  function tippyHover(el, contentFn) {
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -1339,8 +1401,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -1355,6 +1426,248 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       return note.innerHTML;
     });
   }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    const typesetMath = (el) => {
+      if (window.MathJax) {
+        // MathJax Typeset
+        window.MathJax.typeset([el]);
+      } else if (window.katex) {
+        // KaTeX Render
+        var mathElements = el.getElementsByClassName("math");
+        var macros = [];
+        for (var i = 0; i < mathElements.length; i++) {
+          var texText = mathElements[i].firstChild;
+          if (mathElements[i].tagName == "SPAN") {
+            window.katex.render(texText.data, mathElements[i], {
+              displayMode: mathElements[i].classList.contains('display'),
+              throwOnError: false,
+              macros: macros,
+              fleqn: false
+            });
+          }
+        }
+      }
+    }
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        typesetMath(container);
+        return container.innerHTML
+      } else {
+        typesetMath(note);
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      typesetMath(note);
+      return note.innerHTML;
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
   const findCites = (el) => {
     const parentEl = el.parentElement;
     if (parentEl) {
@@ -1394,20 +1707,25 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script><script src="https://giscus.app/client.js" data-repo="srvanderplas/stat-computing-r-python" data-repo-id="R_kgDOIvwd2g" data-category="General" data-category-id="DIC_kwDOIvwd2s4CTksR" data-mapping="pathname" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="light" data-lang="en" crossorigin="anonymous" async="">
-</script><nav class="page-navigation"><div class="nav-page nav-page-previous">
-      <a href="../part-tools/05-git-and-github.html" class="pagination-link">
+</script><input type="hidden" id="giscus-base-theme" value="light"><input type="hidden" id="giscus-alt-theme" value="dark"><nav class="page-navigation"><div class="nav-page nav-page-previous">
+      <a href="../part-tools/05-git-and-github.html" class="pagination-link  aria-label=" control="" with="" git="">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Version Control with Git</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../part-gen-prog/00-gen-prog.html" class="pagination-link">
+      <a href="../part-gen-prog/00-gen-prog.html" class="pagination-link" aria-label="Part II: General Programming">
         <span class="nav-page-text">Part II: General Programming</span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
 </div> <!-- /content -->
 <footer class="footer"><div class="nav-footer">
-    <div class="nav-footer-left">Copyright 2023, Susan Vanderplas</div>   
+    <div class="nav-footer-left">
+<p>Copyright 2023, Susan Vanderplas</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
     <div class="nav-footer-right">
       <ul class="footer-items list-unstyled">
 <li class="nav-item compact">

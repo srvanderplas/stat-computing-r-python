@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.2.313">
+<meta name="generator" content="quarto-1.4.515">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <meta name="dcterms.date" content="2024-02-22">
 <title>Statistical Computing using R and Python - 17&nbsp; Data Input</title>
@@ -15,11 +15,12 @@ div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
   width: 0.8em;
-  margin: 0 0.8em 0.2em -1.6em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -44,48 +45,20 @@ pre.numberSource code > span > a:first-child::before
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
     padding: 0 4px; width: 4em;
-    color: #aaaaaa;
   }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
 div.sourceCode
   {   }
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { color: #7d9029; } /* Attribute */
-code span.bn { color: #40a070; } /* BaseN */
-code span.bu { color: #008000; } /* BuiltIn */
-code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #4070a0; } /* Char */
-code span.cn { color: #880000; } /* Constant */
-code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code span.dt { color: #902000; } /* DataType */
-code span.dv { color: #40a070; } /* DecVal */
-code span.er { color: #ff0000; font-weight: bold; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #40a070; } /* Float */
-code span.fu { color: #06287e; } /* Function */
-code span.im { color: #008000; font-weight: bold; } /* Import */
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code span.op { color: #666666; } /* Operator */
-code span.ot { color: #007020; } /* Other */
-code span.pp { color: #bc7a00; } /* Preprocessor */
-code span.sc { color: #4070a0; } /* SpecialChar */
-code span.ss { color: #bb6688; } /* SpecialString */
-code span.st { color: #4070a0; } /* String */
-code span.va { color: #19177c; } /* Variable */
-code span.vs { color: #4070a0; } /* VerbatimString */
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+/* CSS for citations */
 div.csl-bib-body { }
 div.csl-entry {
   clear: both;
+  margin-bottom: 0em;
 }
-.hanging div.csl-entry {
+.hanging-indent div.csl-entry {
   margin-left:2em;
   text-indent:-2em;
 }
@@ -99,8 +72,7 @@ div.csl-right-inline {
 }
 div.csl-indent {
   margin-left: 2em;
-}
-</style>
+}</style>
 
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../site_libs/quarto-nav/headroom.min.js"></script>
@@ -130,7 +102,13 @@ div.csl-indent {
   "collapse-after": 3,
   "panel-placement": "start",
   "type": "textbox",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -140,7 +118,8 @@ div.csl-indent {
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
     "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit"
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
   }
 }</script><script async="" src="https://www.googletagmanager.com/gtag/js?id=G-4ZFBDKXJXP"></script><script type="text/javascript">
 
@@ -153,258 +132,308 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
 <body class="nav-sidebar floating">
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top"><nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }"><div class="container-fluid d-flex justify-content-between">
-      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Data Input</span></h1>
-      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
-        <i class="bi bi-chevron-right"></i>
+  <header id="quarto-header" class="headroom fixed-top"><nav class="quarto-secondary-nav"><div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../part-wrangling/00-wrangling.html">Part III: Data Wrangling</a></li><li class="breadcrumb-item"><a href="../part-wrangling/01-data-input.html"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Data Input</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
       </button>
     </div>
   </nav></header><!-- content --><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto"><div class="pt-lg-2 mt-2 text-left sidebar-header">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto"><div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="../">Statistical Computing using R and Python</a> 
         <div class="sidebar-tools-main">
-    <a href="https://github.com/srvanderplas/stat-computing-r-python/" title="Source Code" class="sidebar-tool px-1"><i class="bi bi-github"></i></a>
-  <a href="" class="quarto-color-scheme-toggle sidebar-tool" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+    <a href="https://github.com/srvanderplas/stat-computing-r-python/" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
 </div>
     </div>
       </div>
-      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="mt-2 flex-shrink-0 align-items-center">
         <div class="sidebar-search">
         <div id="quarto-search" class="" title="Search"></div>
         </div>
-      </div>
+        </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
 <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../index.html" class="sidebar-item-text sidebar-link">Preface</a>
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
   </div>
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../part-tools/00-tools-intro.html" class="sidebar-item-text sidebar-link">Part I: Tools</a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <a href="../part-tools/00-tools-intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Part I: Tools</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">
 <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-tools/01-computer-basics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Computer Basics</span></a>
+  <a href="../part-tools/01-computer-basics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Computer Basics</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-tools/02-setting-up-computer.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Setting Up Your Computer</span></a>
+  <a href="../part-tools/02-setting-up-computer.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Setting Up Your Computer</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-tools/03-Rstudio-interface.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">RStudio’s Interface</span></a>
+  <a href="../part-tools/03-Rstudio-interface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">RStudio’s Interface</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-tools/04-scripts-notebooks.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Scripts and Notebooks</span></a>
+  <a href="../part-tools/04-scripts-notebooks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Scripts and Notebooks</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-tools/05-git-and-github.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Version Control with Git</span></a>
+  <a href="../part-tools/05-git-and-github.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Version Control with Git</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-tools/06-documents.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Reproducibility and Professional Communication</span></a>
+  <a href="../part-tools/06-documents.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Reproducibility and Professional Communication</span></span></a>
   </div>
 </li>
       </ul>
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../part-gen-prog/00-gen-prog.html" class="sidebar-item-text sidebar-link">Part II: General Programming</a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+            <a href="../part-gen-prog/00-gen-prog.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Part II: General Programming</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">
 <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/00-intro.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Introduction to Programming</span></a>
+  <a href="../part-gen-prog/00-intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Introduction to Programming</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/01-basic-var-types.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Variables and Basic Data Types</span></a>
+  <a href="../part-gen-prog/01-basic-var-types.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Variables and Basic Data Types</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/02-prog-functions.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Using Functions and Libraries</span></a>
+  <a href="../part-gen-prog/02-prog-functions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Using Functions and Libraries</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/03-data-struct.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Data Structures</span></a>
+  <a href="../part-gen-prog/03-data-struct.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Data Structures</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/035-matrix-calcs.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Matrix Calculations</span></a>
+  <a href="../part-gen-prog/035-matrix-calcs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Matrix Calculations</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/04-control-struct.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Control Structures</span></a>
+  <a href="../part-gen-prog/04-control-struct.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Control Structures</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/05-functions.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Writing Functions</span></a>
+  <a href="../part-gen-prog/05-functions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Writing Functions</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/06-debugging.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Debugging</span></a>
+  <a href="../part-gen-prog/06-debugging.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Debugging</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/07-prog-data.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Programming With Data</span></a>
+  <a href="../part-gen-prog/07-prog-data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Programming With Data</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/99-extra.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Other Helpful Programming Resources</span></a>
+  <a href="../part-gen-prog/99-extra.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Other Helpful Programming Resources</span></span></a>
   </div>
 </li>
       </ul>
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../part-wrangling/00-wrangling.html" class="sidebar-item-text sidebar-link">Part III: Data Wrangling</a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+            <a href="../part-wrangling/00-wrangling.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Part III: Data Wrangling</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">
 <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/01-data-input.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Data Input</span></a>
+  <a href="../part-wrangling/01-data-input.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Data Input</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/02-basic-data-vis.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Data Visualization Basics</span></a>
+  <a href="../part-wrangling/02-basic-data-vis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Data Visualization Basics</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/02a-eda.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Exploratory Data Analysis</span></a>
+  <a href="../part-wrangling/02a-eda.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Exploratory Data Analysis</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/02b-graphics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Data Visualization</span></a>
+  <a href="../part-wrangling/02b-graphics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Data Visualization</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/02c-good-graphics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Creating Good Charts</span></a>
+  <a href="../part-wrangling/02c-good-graphics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Creating Good Charts</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/03-data-cleaning.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Data Cleaning</span></a>
+  <a href="../part-wrangling/03-data-cleaning.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Data Cleaning</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/04-strings.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Working with Strings</span></a>
+  <a href="../part-wrangling/04-strings.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Working with Strings</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/05-data-reshape.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Reshaping Data</span></a>
+  <a href="../part-wrangling/05-data-reshape.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Reshaping Data</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/06-data-join.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Joining Data</span></a>
+  <a href="../part-wrangling/06-data-join.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Joining Data</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/07-datetime.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Dates and Times</span></a>
+  <a href="../part-wrangling/07-datetime.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Dates and Times</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/08-functional-prog.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Functional Programming</span></a>
+  <a href="../part-wrangling/08-functional-prog.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Functional Programming</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/09-spatial-formats.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Spatial data</span></a>
+  <a href="../part-wrangling/09-spatial-formats.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Spatial data</span></span></a>
   </div>
 </li>
       </ul>
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../part-advanced-topics/00-advanced.html" class="sidebar-item-text sidebar-link">Part IV: Advanced Topics</a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">
+            <a href="../part-advanced-topics/00-advanced.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Part IV: Advanced Topics</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">
 <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-advanced-topics/01-simulation.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Simulation and Reproducibility</span></a>
+  <a href="../part-advanced-topics/01-simulation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Simulation and Reproducibility</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-advanced-topics/06-interactive-graphics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">30</span>&nbsp; <span class="chapter-title">Interactive Graphics</span></a>
+  <a href="../part-advanced-topics/06-interactive-graphics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">30</span>&nbsp; <span class="chapter-title">Interactive Graphics</span></span></a>
   </div>
 </li>
       </ul>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../graveyard.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">31</span>&nbsp; <span class="chapter-title">Other Topics</span></a>
+  <a href="../graveyard.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">31</span>&nbsp; <span class="chapter-title">Other Topics</span></span></a>
   </div>
 </li>
     </ul>
 </div>
-</nav><!-- margin-sidebar --><div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+</nav><div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active"><h2 id="toc-title">Table of contents</h2>
    
   <ul>
-<li><a href="#fa-bullseye-objectives" id="toc-fa-bullseye-objectives" class="nav-link active" data-scroll-target="#fa-bullseye-objectives"><span class="toc-section-number">17.1</span>  <i class="fa-solid fa-bullseye" aria-label="bullseye"></i> Objectives</a></li>
-  <li><a href="#overview-data-formats" id="toc-overview-data-formats" class="nav-link" data-scroll-target="#overview-data-formats"><span class="toc-section-number">17.2</span>  Overview: Data Formats</a></li>
+<li><a href="#objectives" id="toc-objectives" class="nav-link active" data-scroll-target="#objectives"><span class="header-section-number">17.1</span> <i class="fa-solid fa-bullseye" aria-label="bullseye"></i> Objectives</a></li>
+  <li><a href="#overview-data-formats" id="toc-overview-data-formats" class="nav-link" data-scroll-target="#overview-data-formats"><span class="header-section-number">17.2</span> Overview: Data Formats</a></li>
   <li>
-<a href="#text-files" id="toc-text-files" class="nav-link" data-scroll-target="#text-files"><span class="toc-section-number">17.3</span>  Text Files</a>
+<a href="#text-files" id="toc-text-files" class="nav-link" data-scroll-target="#text-files"><span class="header-section-number">17.3</span> Text Files</a>
   <ul class="collapse">
-<li><a href="#fixed-width-files" id="toc-fixed-width-files" class="nav-link" data-scroll-target="#fixed-width-files"><span class="toc-section-number">17.3.1</span>  Fixed-width files</a></li>
-  <li><a href="#delimited-text-files" id="toc-delimited-text-files" class="nav-link" data-scroll-target="#delimited-text-files"><span class="toc-section-number">17.3.2</span>  Delimited Text Files</a></li>
+<li><a href="#fixed-width-files" id="toc-fixed-width-files" class="nav-link" data-scroll-target="#fixed-width-files"><span class="header-section-number">17.3.1</span> Fixed-width files</a></li>
+  <li><a href="#delimited-text-files" id="toc-delimited-text-files" class="nav-link" data-scroll-target="#delimited-text-files"><span class="header-section-number">17.3.2</span> Delimited Text Files</a></li>
   </ul>
 </li>
   <li>
-<a href="#spreadsheets" id="toc-spreadsheets" class="nav-link" data-scroll-target="#spreadsheets"><span class="toc-section-number">17.4</span>  Spreadsheets</a>
+<a href="#spreadsheets" id="toc-spreadsheets" class="nav-link" data-scroll-target="#spreadsheets"><span class="header-section-number">17.4</span> Spreadsheets</a>
   <ul class="collapse">
-<li><a href="#google-sheets" id="toc-google-sheets" class="nav-link" data-scroll-target="#google-sheets"><span class="toc-section-number">17.4.1</span>  Google Sheets</a></li>
+<li><a href="#spreadsheet-io" id="toc-spreadsheet-io" class="nav-link" data-scroll-target="#spreadsheet-io"><span class="header-section-number">17.4.1</span> Spreadsheet IO</a></li>
+  <li><a href="#google-sheets" id="toc-google-sheets" class="nav-link" data-scroll-target="#google-sheets"><span class="header-section-number">17.4.2</span> Google Sheets</a></li>
   </ul>
 </li>
-  <li><a href="#binary-files" id="toc-binary-files" class="nav-link" data-scroll-target="#binary-files"><span class="toc-section-number">17.5</span>  Binary Files</a></li>
-  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references"><span class="toc-section-number">17.6</span>  References</a></li>
-  </ul><div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/srvanderplas/stat-computing-r-python/edit/main/part-wrangling/01-data-input.qmd" class="toc-action">Edit this page</a></p></div></div></nav>
+  <li>
+<a href="#binary-files" id="toc-binary-files" class="nav-link" data-scroll-target="#binary-files"><span class="header-section-number">17.5</span> Binary Files</a>
+  <ul class="collapse">
+<li><a href="#binary-file-io" id="toc-binary-file-io" class="nav-link" data-scroll-target="#binary-file-io"><span class="header-section-number">17.5.1</span> Binary File IO</a></li>
+  </ul>
+</li>
+  <li><a href="#learn-more" id="toc-learn-more" class="nav-link" data-scroll-target="#learn-more"><span class="header-section-number">17.6</span> Learn more</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references"><span class="header-section-number">17.7</span> References</a></li>
+  </ul><div class="toc-actions"><ul><li><a href="https://github.com/srvanderplas/stat-computing-r-python/edit/main/part-wrangling/01-data-input.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><div class="quarto-title">
-<h1 class="title"><span id="sec-data-input" class="quarto-section-identifier d-none d-lg-block"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Data Input</span></span></h1>
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../part-wrangling/00-wrangling.html">Part III: Data Wrangling</a></li><li class="breadcrumb-item"><a href="../part-wrangling/01-data-input.html"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Data Input</span></a></li></ol></nav><div class="quarto-title">
+<h1 class="title"><span id="sec-data-input" class="quarto-section-identifier"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Data Input</span></span></h1>
 </div>
 
 
@@ -423,18 +452,19 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
   </div>
   
 
-</header><section id="fa-bullseye-objectives" class="level2" data-number="17.1"><h2 data-number="17.1" class="anchored" data-anchor-id="fa-bullseye-objectives">
+
+</header><section id="objectives" class="level2" data-number="17.1"><h2 data-number="17.1" class="anchored" data-anchor-id="objectives">
 <span class="header-section-number">17.1</span> <i class="fa-solid fa-bullseye" aria-label="bullseye"></i> Objectives</h2>
 <ul>
 <li>Read in data from common formats into R or Python</li>
 <li>Identify delimiters, headers, and other essential components of files</li>
 </ul>
-<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-caption-container flex-fill">
+<div class="callout-title-container flex-fill">
 Cheatsheets!
 </div>
 </div>
@@ -461,12 +491,12 @@ Cheatsheets!
 </li>
 <li><p><strong>in a spreadsheet</strong>. Spreadsheets, such as those created by MS Excel, Google Sheets, or LibreOffice Calc, are not binary formats, but they’re also not raw text files either. They’re a hybrid - a special type of markup that is specific to the filetype and the program it’s designed to work with. Practically, they may function like a poorly laid-out database, a text file, or a total nightmare, depending on who designed the spreadsheet.</p></li>
 </ul>
-<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-caption-container flex-fill">
+<div class="callout-title-container flex-fill">
 Note
 </div>
 </div>
@@ -481,8 +511,8 @@ Also, there’s this amazing comic:<br><a href="https://xkcd.com/1667/"><img src
 </ul>
 <p>There are, of course, many other non-tabular data formats – some open and easy to work with, some inpenetrable. A few which you may come across:</p>
 <ul>
-<li><p><strong>Web data structures</strong>: XML (eXtensible markup language), JSON (JavaScript Object Notation), YAML. These structures have their own formats and field delimiters, but more importantly, are not necessarily easily converted to tabular structures. They are, however, useful for handling nested objects, such as trees. When read into R or SAS, these file formats are usually treated as lists, and may be restructured afterwards into a format useful for statistical analysis. See <a href="08-functional-prog.html"><span>Chapter&nbsp;27</span></a> for some tools to work with these files.</p></li>
-<li><p><strong>Spatial files</strong>: Shapefiles are the most common version of spatial files, though there are a seemingly infinite number of different formats, and new formats pop up at the most inconvenient times. Spatial files often include structured encodings of geographic information plus corresponding tabular format data that goes with the geographic information. <a href="09-spatial-formats.html"><span>Chapter&nbsp;28</span></a> covers some of the tools available for working with spatial data.</p></li>
+<li><p><strong>Web data structures</strong>: XML (eXtensible markup language), JSON (JavaScript Object Notation), YAML. These structures have their own formats and field delimiters, but more importantly, are not necessarily easily converted to tabular structures. They are, however, useful for handling nested objects, such as trees. When read into R or SAS, these file formats are usually treated as lists, and may be restructured afterwards into a format useful for statistical analysis. See <a href="08-functional-prog.html" class="quarto-xref"><span>Chapter&nbsp;27</span></a> for some tools to work with these files.</p></li>
+<li><p><strong>Spatial files</strong>: Shapefiles are the most common version of spatial files, though there are a seemingly infinite number of different formats, and new formats pop up at the most inconvenient times. Spatial files often include structured encodings of geographic information plus corresponding tabular format data that goes with the geographic information. <a href="09-spatial-formats.html" class="quarto-xref"><span>Chapter&nbsp;28</span></a> covers some of the tools available for working with spatial data.</p></li>
 </ul>
 <p>To be minimally functional in R and Python, it’s important to know how to read in text files (CSV, tab-delimited, etc.). It can be helpful to also know how to read in XLSX files. We will briefly discuss binary files and databases, but it is less critical to remember how to read these in without consulting an online reference.</p>
 </section><section id="text-files" class="level2" data-number="17.3"><h2 data-number="17.3" class="anchored" data-anchor-id="text-files">
@@ -494,24 +524,16 @@ Also, there’s this amazing comic:<br><a href="https://xkcd.com/1667/"><img src
  3.4     4.2     5.4
 27.3    -2.4    15.9</code></pre>
 <p>In a fixed-width text file, the position of the data indicates which field (variable/column) it belongs to. These files are fairly common outputs from older FORTRAN-based programs, but may be found elsewhere as well - if you have a very large amount of data, a fixed-width format may be more efficient to read, because you can select only the portions of the file which matter for a particular analysis (and so you don’t have to read the whole thing into memory).</p>
-<div class="callout-demo callout callout-style-default no-icon callout-captioned">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-caption-container flex-fill">
-Fixed Width File IO
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<div class="panel-tabset">
+<section id="fixed-width-file-io" class="level4 callout-demo" data-number="17.3.1.1"><h4 data-number="17.3.1.1" class="anchored" data-anchor-id="fixed-width-file-io">
+<span class="header-section-number">17.3.1.1</span> Fixed Width File IO</h4>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" aria-current="page">Base R</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false"><code>readr</code></a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false">Python</a></li>
 </ul>
 <div class="tab-content">
-<div id="tabset-1-1" class="unnumbered tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <p>In base R (no extra packages), you can read fixed-width files in using <code>read.fwf</code>, but you must specify the column breaks yourself, which can be painful.</p>
 <div class="cell">
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co">## url &lt;- "https://www.mesonet.org/index.php/dataMdfMts/dataController/getFile/202206070000/mdf/TEXT/"</span></span>
@@ -537,12 +559,12 @@ Fixed Width File IO
 <span><span class="co">## 6 29.1 26.6 24.3   20.5 1.59 1.47    1.40</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>You can count all of those spaces by hand (not shown), you can use a different function, or you can write code to do it for you.</p>
-<div class="callout-warning callout callout-style-default callout-captioned">
+<div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-caption-container flex-fill">
+<div class="callout-title-container flex-fill">
 Code for counting field width
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
@@ -617,7 +639,7 @@ Code for counting field width
 <span><span class="fu"><a href="https://rdrr.io/pkg/gdata/man/write.fwf.html">write.fwf</a></span><span class="op">(</span><span class="va">mtcars</span>, file <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html">tempfile</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
-<div id="tabset-1-2" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
 <p>The <code>readr</code> package creates data-frame like objects called tibbles (a souped-up data frame), but it is <em>much</em> friendlier to use.</p>
 <div class="cell">
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://readr.tidyverse.org">readr</a></span><span class="op">)</span> <span class="co"># Better data importing in R</span></span>
@@ -642,7 +664,7 @@ Code for counting field width
 <span><span class="co">## #   TR25 &lt;dbl&gt;, TR60 &lt;dbl&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
-<div id="tabset-1-3" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
+<div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
 <p>By default, pandas’ <code>read_fwf</code> will guess at the format of your fixed-width file.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
@@ -654,29 +676,19 @@ Code for counting field width
 </div>
 </div>
 </div>
-</div>
-</div>
-</section><section id="delimited-text-files" class="level3" data-number="17.3.2"><h3 data-number="17.3.2" class="anchored" data-anchor-id="delimited-text-files">
+</section></section><section id="delimited-text-files" class="level3" data-number="17.3.2"><h3 data-number="17.3.2" class="anchored" data-anchor-id="delimited-text-files">
 <span class="header-section-number">17.3.2</span> Delimited Text Files</h3>
 <p>Delimited text files are files where fields are separated by a specific character, such as space, comma, semicolon, tabs, etc. Often, delimited text files will have the column names as the first row in the file.</p>
-<div class="callout-demo callout callout-style-default no-icon callout-captioned">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-caption-container flex-fill">
-Comma Delimited Files
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<div class="panel-tabset">
+<section id="comma-delimited-files" class="level4 callout-demo" data-number="17.3.2.1"><h4 data-number="17.3.2.1" class="anchored" data-anchor-id="comma-delimited-files">
+<span class="header-section-number">17.3.2.1</span> Comma Delimited Files</h4>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">Base R</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false"><code>readr</code></a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-3" role="tab" aria-controls="tabset-2-3" aria-selected="false">Python</a></li>
 </ul>
 <div class="tab-content">
-<div id="tabset-2-1" class="unnumbered tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
+<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
 <div class="cell">
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">url</span> <span class="op">&lt;-</span> <span class="st">"https://raw.githubusercontent.com/srvanderplas/datasets/main/clean/pokemon_gen_1-9.csv"</span></span>
 <span></span>
@@ -707,7 +719,7 @@ Comma Delimited Files
 </div>
 </div>
 </div>
-<div id="tabset-2-2" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
+<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
 <p>There is a family of <code>read_xxx</code> functions in <code>readr</code> to read files delimited with commas (<code>read_csv</code>), tabs (<code>read_tsv</code>), or generic delimited files (<code>read_delim</code>).</p>
 <p>The most common delimited text format is CSV: comma-separated value.</p>
 <div class="cell">
@@ -728,7 +740,7 @@ Comma Delimited Files
 </div>
 </div>
 </div>
-<div id="tabset-2-3" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-2-3-tab">
+<div id="tabset-2-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-3-tab">
 <p>There is a family of <code>read_xxx</code> functions in <code>pandas</code> including functions to read files delimited with commas (<code>read_csv</code>) as well as generic delimited files (<code>read_table</code>).</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -751,27 +763,17 @@ Comma Delimited Files
 </div>
 </div>
 </div>
-</div>
-</div>
-<p>Sometimes, data is available in files that use other characters as delimiters. This can happen when commas are an important part of the data stored in the file, but can also just be a choice made by the person generating the file. Either way, we can’t let it keep us from accessing the data.</p>
-<div class="callout-demo callout callout-style-default no-icon callout-captioned">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-caption-container flex-fill">
-Other Character Delimited Files
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<div class="panel-tabset">
+</section><p>Sometimes, data is available in files that use other characters as delimiters. This can happen when commas are an important part of the data stored in the file, but can also just be a choice made by the person generating the file. Either way, we can’t let it keep us from accessing the data.</p>
+<section id="other-character-delimited-files" class="level4 callout-demo" data-number="17.3.2.2"><h4 data-number="17.3.2.2" class="anchored" data-anchor-id="other-character-delimited-files">
+<span class="header-section-number">17.3.2.2</span> Other Character Delimited Files</h4>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">Base R</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false"><code>readr</code></a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-3" role="tab" aria-controls="tabset-3-3" aria-selected="false">Python</a></li>
 </ul>
 <div class="tab-content">
-<div id="tabset-3-1" class="unnumbered tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
+<div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
 <div class="cell">
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Download from web</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/download.file.html">download.file</a></span><span class="op">(</span><span class="st">"https://geonames.usgs.gov/docs/stategaz/NE_Features.zip"</span>, destfile <span class="op">=</span> <span class="st">'../data/NE_Features.zip'</span><span class="op">)</span></span>
@@ -807,7 +809,7 @@ Other Character Delimited Files
 <span><span class="co">## 6    Sedgwick</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
-<div id="tabset-3-2" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
+<div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
 <p>There is a family of <code>read_xxx</code> functions in <code>readr</code> to read files delimited with commas (<code>read_csv</code>), tabs (<code>read_tsv</code>), or generic delimited files (<code>read_delim</code>).</p>
 <div class="cell">
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Download from web</span></span>
@@ -852,7 +854,7 @@ Other Character Delimited Files
 <span><span class="co">## 6     182690 Sedgwick Draw   Valley        CO          08            Sedgwick</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
-<div id="tabset-3-3" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-3-3-tab">
+<div id="tabset-3-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-3-tab">
 <p>There is a family of <code>read_xxx</code> functions in <code>pandas</code> including functions to read files delimited with commas (<code>read_csv</code>) as well as generic delimited files (<code>read_table</code>).</p>
 <p>Pandas can access zipped data files and unzip them while reading the data in, so we don’t have to download the file and unzip it first.</p>
 <div class="cell">
@@ -867,37 +869,35 @@ Other Character Delimited Files
 </div>
 </div>
 </div>
-</div>
-</div>
-<div class="callout-tip callout callout-style-default callout-captioned">
+</section><div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-caption-container flex-fill">
+<div class="callout-title-container flex-fill">
 Try it out: Reading CSV files
 </div>
 </div>
 <div class="callout-body-container callout-body">
 <p>Rebrickable.com contains tables of almost any information imaginable concerning Lego sets, conveniently available at their <a href="https://rebrickable.com/downloads/">download page</a>. Because these data sets are comparatively large, they are available as compressed CSV files - that is, the .gz extension is a gzip compression applied to the CSV.</p>
-<div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true">Problem</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false">R Solution</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-3" role="tab" aria-controls="tabset-4-3" aria-selected="false">Python Solution</a></li>
 </ul>
 <div class="tab-content">
-<div id="tabset-4-1" class="unnumbered tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
+<div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
 <p>The <code>readr</code> package and <code>pandas</code> can handle .csv.gz files with no problems. Try reading in the data using the appropriate function from that package. Can you save the data as an uncompressed csv?</p>
 </div>
-<div id="tabset-4-2" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
+<div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
 <div class="cell">
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://readr.tidyverse.org">readr</a></span><span class="op">)</span></span>
 <span><span class="va">legosets</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html">read_csv</a></span><span class="op">(</span><span class="st">"https://cdn.rebrickable.com/media/downloads/sets.csv.gz"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://readr.tidyverse.org/reference/write_delim.html">write_csv</a></span><span class="op">(</span><span class="va">legosets</span>, <span class="st">"../data/lego_sets.csv"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
-<div id="tabset-4-3" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-4-3-tab">
+<div id="tabset-4-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-3-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -911,24 +911,16 @@ Try it out: Reading CSV files
 </div>
 </section></section><section id="spreadsheets" class="level2" data-number="17.4"><h2 data-number="17.4" class="anchored" data-anchor-id="spreadsheets">
 <span class="header-section-number">17.4</span> Spreadsheets</h2>
-<div class="callout-demo callout callout-style-default no-icon callout-captioned">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-caption-container flex-fill">
-Spreadsheet IO
-</div>
-</div>
-<div class="callout-body-container callout-body">
+<section id="spreadsheet-io" class="level3 callout-demo" data-number="17.4.1"><h3 data-number="17.4.1" class="anchored" data-anchor-id="spreadsheet-io">
+<span class="header-section-number">17.4.1</span> Spreadsheet IO</h3>
 <p>This example uses from <a href="https://www.instagram.com/nycslice/">NYC SLice</a>. The author maintains a google sheet of the slices he has photographed, which we can download as an excel sheet and import.</p>
-<div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-5-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-1" role="tab" aria-controls="tabset-5-1" aria-selected="true">R <code>readxl</code></a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-2" role="tab" aria-controls="tabset-5-2" aria-selected="false">Python</a></li>
 </ul>
 <div class="tab-content">
-<div id="tabset-5-1" class="unnumbered tab-pane active" role="tabpanel" aria-labelledby="tabset-5-1-tab">
+<div id="tabset-5-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-5-1-tab">
 <p>In R, the easiest way to read Excel data in is to use the <code>readxl</code> package. There are many other packages with different features, however - I have used <code>openxlsx</code> in the past to format spreadsheets to send to clients, for instance. By far and away you are more likely to have problems with the arcane format of the Excel spreadsheet than with the package used to read the data in. It is usually helpful to open the spreadsheet up in a graphical program first to make sure the formatting is as you expected it to be.</p>
 <div class="cell">
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="st">"readxl"</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/utils/installed.packages.html">installed.packages</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"readxl"</span><span class="op">)</span></span>
@@ -959,7 +951,7 @@ Spreadsheet IO
 <span><span class="co">## # ℹ 1 more variable: `Date Expanded (times in EST)` &lt;chr&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
-<div id="tabset-5-2" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-5-2-tab">
+<div id="tabset-5-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-2-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="co">## Error: ModuleNotFoundError: No module named 'pandas'</span></span>
@@ -971,31 +963,29 @@ Spreadsheet IO
 </div>
 </div>
 </div>
-</div>
-</div>
-<p>In general, it is better to avoid working in Excel, as it is not easy to reproduce the results (and Excel is horrible about dates and times, among other issues). Saving your data in more reproducible formats will make writing reproducible code much easier.</p>
-<div class="callout-tip callout callout-style-default callout-captioned">
+</section><p>In general, it is better to avoid working in Excel, as it is not easy to reproduce the results (and Excel is horrible about dates and times, among other issues). Saving your data in more reproducible formats will make writing reproducible code much easier.</p>
+<div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-caption-container flex-fill">
+<div class="callout-title-container flex-fill">
 Try it out
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-6-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-1" role="tab" aria-controls="tabset-6-1" aria-selected="true">Problem</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-2" role="tab" aria-controls="tabset-6-2" aria-selected="false">R Solution</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-3" role="tab" aria-controls="tabset-6-3" aria-selected="false">Python Solution</a></li>
 </ul>
 <div class="tab-content">
-<div id="tabset-6-1" class="unnumbered tab-pane active" role="tabpanel" aria-labelledby="tabset-6-1-tab">
+<div id="tabset-6-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-6-1-tab">
 <p>The Nebraska Department of Motor Vehicles <a href="https://dmv.nebraska.gov/about/dmv-searchable-data">publishes a database of vehicle registrations</a> by type of license plate. <a href="https://dmv.nebraska.gov/about/dmv-searchable-data">Link</a></p>
 <p>Read in the data using your language(s) of choice. Be sure to look at the structure of the excel file, so that you can read the data in properly!</p>
 </div>
-<div id="tabset-6-2" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-6-2-tab">
+<div id="tabset-6-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-2-tab">
 <div class="cell">
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">url</span> <span class="op">&lt;-</span> <span class="st">"https://dmv.nebraska.gov/sites/dmv.nebraska.gov/files/doc/data/ld-totals/NE_Licensed_Drivers_by_Type_2021.xls"</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/download.file.html">download.file</a></span><span class="op">(</span><span class="va">url</span>, destfile <span class="op">=</span> <span class="st">"../data/NE_Licensed_Drivers_by_Type_2021.xls"</span>, mode <span class="op">=</span> <span class="st">"wb"</span><span class="op">)</span></span>
@@ -1021,7 +1011,7 @@ Try it out
 <span><span class="co">## # ℹ 2 more variables: `Commercial Driver's License` &lt;chr&gt;, ...6 &lt;chr&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
-<div id="tabset-6-3" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-6-3-tab">
+<div id="tabset-6-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-3-tab">
 <p>You may need to install <code>xlrd</code> via pip for this code to work.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
@@ -1036,35 +1026,17 @@ Try it out
 </div>
 </div>
 </div>
-<section id="google-sheets" class="level3" data-number="17.4.1"><h3 data-number="17.4.1" class="anchored" data-anchor-id="google-sheets">
-<span class="header-section-number">17.4.1</span> Google Sheets</h3>
+<section id="google-sheets" class="level3" data-number="17.4.2"><h3 data-number="17.4.2" class="anchored" data-anchor-id="google-sheets">
+<span class="header-section-number">17.4.2</span> Google Sheets</h3>
 <p>Of course, some spreadsheets are available online via Google sheets. There are specific R and python packages to interface with Google sheets, and these can do more than just read data in - they can create, format, and otherwise manipulate Google sheets programmatically. We’re not going to get into the power of these packages just now, but it’s worth a look if you’re working with collaborators who use Google sheets.</p>
-<div class="callout-advanced callout callout-style-default no-icon callout-captioned">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-caption-container flex-fill">
-Advanced
-</div>
-</div>
-<div class="callout-body-container callout-body">
+<div class="callout-advanced">
 <p>This section is provided for reference, but the details of API authentication are a bit too complicated to require of anyone who is just learning to program. Feel free to skip it and come back later if you need it.</p>
 <p>The first two tabs below show authentication-free options for publicly available spreadsheets. For anything that is privately available, you will have to use API authentication via <code>GSpread</code> or <code>googlesheets4</code> in python and R respectively.</p>
 </div>
-</div>
-<div class="callout-demo callout callout-style-default no-icon callout-captioned">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-caption-container flex-fill">
-Reading Google Sheets
-</div>
-</div>
-<div class="callout-body-container callout-body">
+<section id="reading-google-sheets" class="level4 callout-demo" data-number="17.4.2.1"><h4 data-number="17.4.2.1" class="anchored" data-anchor-id="reading-google-sheets">
+<span class="header-section-number">17.4.2.1</span> Reading Google Sheets</h4>
 <p>Let’s demonstrate reading in data from google sheets in R and python using the <a href="https://docs.google.com/spreadsheets/d/1wZhPLMCHKJvwOkP4juclhjFgqIY8fQFMemwKL2c64vk/edit#gid=0">Data Is Plural</a> archive.</p>
-<div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-7-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-1" role="tab" aria-controls="tabset-7-1" aria-selected="true">Python</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-2" role="tab" aria-controls="tabset-7-2" aria-selected="false">R</a></li>
@@ -1072,7 +1044,7 @@ Reading Google Sheets
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-4" role="tab" aria-controls="tabset-7-4" aria-selected="false">Python: <code>GSpread</code></a></li>
 </ul>
 <div class="tab-content">
-<div id="tabset-7-1" class="unnumbered tab-pane active" role="tabpanel" aria-labelledby="tabset-7-1-tab">
+<div id="tabset-7-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-7-1-tab">
 <p>One simple hack-ish way to read google sheets in Python (so long as the sheet is publicly available) is to modify the sheet url to export the data to CSV and then just read that into pandas as usual. This method is described in <span class="citation" data-cites="schaferReadDataGoogle2020"><a href="#ref-schaferReadDataGoogle2020" role="doc-biblioref">[2]</a></span>.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
@@ -1086,7 +1058,7 @@ Reading Google Sheets
 </div>
 <p>This method would likely work just as well in R and would not require the <code>googlesheets4</code> package.</p>
 </div>
-<div id="tabset-7-2" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-7-2-tab">
+<div id="tabset-7-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-2-tab">
 <p>This method is described in <span class="citation" data-cites="schaferReadDataGoogle2020"><a href="#ref-schaferReadDataGoogle2020" role="doc-biblioref">[2]</a></span> for Python, but I have adapted the code to use in R.</p>
 <div class="cell">
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://readr.tidyverse.org">readr</a></span><span class="op">)</span></span>
@@ -1097,7 +1069,7 @@ Reading Google Sheets
 <span><span class="va">data_is_plural</span> <span class="op">=</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html">read_csv</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
-<div id="tabset-7-3" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-7-3-tab">
+<div id="tabset-7-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-3-tab">
 <p>This code is set not to run when the textbook is compiled because it requires some interactive authentication.</p>
 <p>Copy this code and run it on your computer to read in a sheet from google drive directly. You will see a prompt in the R console that you’ll have to interact with, and there may also be a browser pop-up where you will need to sign in to google.</p>
 <!-- How to authenticate on google actions/rsconnect: https://gargle.r-lib.org/articles/non-interactive-auth.html -->
@@ -1107,7 +1079,7 @@ Reading Google Sheets
 <span><span class="va">data_is_plural</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://googlesheets4.tidyverse.org/reference/range_read.html">read_sheet</a></span><span class="op">(</span><span class="st">"https://docs.google.com/spreadsheets/d/1wZhPLMCHKJvwOkP4juclhjFgqIY8fQFMemwKL2c64vk/edit#gid=0"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
-<div id="tabset-7-4" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-7-4-tab">
+<div id="tabset-7-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-4-tab">
 <p>These instructions are derived from <span class="citation" data-cites="clarkeHowReadGoogle2021"><a href="#ref-clarkeHowReadGoogle2021" role="doc-biblioref">[3]</a></span>. We will have to install the <code>GSpread</code> package: type <code>pip install gspread</code> into the terminal.</p>
 <p>Then, you will need to obtain a client token JSON file following <a href="https://towardsdatascience.com/how-to-import-google-sheets-data-into-a-pandas-dataframe-using-googles-api-v4-2020-f50e84ea4530">these instructions</a>.</p>
 <div class="cell">
@@ -1118,19 +1090,17 @@ Reading Google Sheets
 </div>
 </div>
 </div>
-</div>
-</div>
-<div class="callout-tip callout callout-style-default callout-captioned">
+</section><div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-caption-container flex-fill">
+<div class="callout-title-container flex-fill">
 Try It Out!
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-8-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-1" role="tab" aria-controls="tabset-8-1" aria-selected="true">Problem</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-8-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-2" role="tab" aria-controls="tabset-8-2" aria-selected="false">Solution</a></li>
@@ -1149,17 +1119,9 @@ Try It Out!
 </section></section><section id="binary-files" class="level2" data-number="17.5"><h2 data-number="17.5" class="anchored" data-anchor-id="binary-files">
 <span class="header-section-number">17.5</span> Binary Files</h2>
 <p>R has binary file formats which store data in a more compact form. It is relatively common for government websites, in particular, to provide SAS data in binary form. Python, as a more general computing language, has many different ways to interact with binary data files, as each programmer and application might want to save their data in binary form in a different way. As a result, there is not a general-purpose binary data format for Python data. If you are interested in reading binary data in Python, see <span class="citation" data-cites="maierleLoadingBinaryData2020"><a href="#ref-maierleLoadingBinaryData2020" role="doc-biblioref">[4]</a></span>.</p>
-<div class="callout-demo callout callout-style-default no-icon callout-captioned">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-caption-container flex-fill">
-Binary File IO
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<div class="panel-tabset">
+<section id="binary-file-io" class="level3 callout-demo" data-number="17.5.1"><h3 data-number="17.5.1" class="anchored" data-anchor-id="binary-file-io">
+<span class="header-section-number">17.5.1</span> Binary File IO</h3>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-9-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-1" role="tab" aria-controls="tabset-9-1" aria-selected="true">R formats in R</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-9-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-2" role="tab" aria-controls="tabset-9-2" aria-selected="false">R formats in Python</a></li>
@@ -1167,7 +1129,7 @@ Binary File IO
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-9-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-4" role="tab" aria-controls="tabset-9-4" aria-selected="false">SAS format in Python</a></li>
 </ul>
 <div class="tab-content">
-<div id="tabset-9-1" class="unnumbered tab-pane active" role="tabpanel" aria-labelledby="tabset-9-1-tab">
+<div id="tabset-9-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-9-1-tab">
 <p><code>.Rdata</code> is perhaps the most common R binary data format, and can store several objects (along with their names) in the same file.</p>
 <div class="cell">
 <div class="sourceCode" id="cb33"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">legos</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html">read_csv</a></span><span class="op">(</span><span class="st">"../data/lego_sets.csv"</span><span class="op">)</span></span>
@@ -1208,7 +1170,7 @@ Binary File IO
 </div>
 <p>Because RDS formats don’t save the object name, you can be sure that you’re not over-writing some object in your workspace by loading a different file. The downside to this is that you have to save each object to its own RDS file separately.</p>
 </div>
-<div id="tabset-9-2" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-9-2-tab">
+<div id="tabset-9-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-9-2-tab">
 <p>We first need to install the <code>pyreadr</code> package by running <code>pip install pyreadr</code> in the terminal.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pyreadr</span>
@@ -1225,7 +1187,7 @@ Binary File IO
 <span id="cb36-12"><a href="#cb36-12" aria-hidden="true" tabindex="-1"></a><span class="co">## Error: NameError: name 'rds_result' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
-<div id="tabset-9-3" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-9-3-tab">
+<div id="tabset-9-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-9-3-tab">
 <p>First, let’s download the NHTS data.</p>
 <div class="cell">
 <div class="sourceCode" id="cb37"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://httr.r-lib.org/">httr</a></span><span class="op">)</span></span>
@@ -1250,7 +1212,7 @@ Binary File IO
 </div>
 <p>If you are curious about what this data means, then by all means, take a look at the <a href="https://query.data.world/s/k4g2u42ltuqhkw56htbfheg5ouoyiu">codebook</a> (XLSX file). For now, it’s enough that we can see roughly how it’s structured.</p>
 </div>
-<div id="tabset-9-4" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-9-4-tab">
+<div id="tabset-9-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-9-4-tab">
 <p>First, we need to download the SAS data file. This required writing a function to actually write the file downloaded from the URL, which is what this code chunk does.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Source: https://stackoverflow.com/questions/16694907/download-large-file-in-python-with-requests</span></span>
@@ -1281,33 +1243,31 @@ Binary File IO
 </div>
 </div>
 </div>
-</div>
-</div>
-<div class="callout-tip callout callout-style-default callout-captioned">
+</section><div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-caption-container flex-fill">
+<div class="callout-title-container flex-fill">
 Try it out
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-10-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-10-1" role="tab" aria-controls="tabset-10-1" aria-selected="true">Problem</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-10-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-10-2" role="tab" aria-controls="tabset-10-2" aria-selected="false">R Solution</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-10-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-10-3" role="tab" aria-controls="tabset-10-3" aria-selected="false">Python Solution</a></li>
 </ul>
 <div class="tab-content">
-<div id="tabset-10-1" class="unnumbered tab-pane active" role="tabpanel" aria-labelledby="tabset-10-1-tab">
+<div id="tabset-10-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-10-1-tab">
 <p>Read in two of the files from an earlier example, and save the results as an Rdata file with two objects. Then save each one as an RDS file. (Obviously, use R for this)</p>
 <p>In RStudio, go to Session -&gt; Clear Workspace. (This will clear your environment)</p>
 <p>Now, using your RDS files, load the objects back into R with different names.</p>
 <p>Finally, load your Rdata file. Are the two objects the same? (You can actually test this with <code><a href="https://rdrr.io/r/base/all.equal.html">all.equal()</a></code> if you’re curious)</p>
 <p>Then, load the two RDS files and the Rdata file in Python. Are the objects the same?</p>
 </div>
-<div id="tabset-10-2" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-10-2-tab">
+<div id="tabset-10-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-10-2-tab">
 <div class="cell">
 <div class="sourceCode" id="cb41"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://readxl.tidyverse.org">readxl</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://readr.tidyverse.org">readr</a></span><span class="op">)</span></span>
@@ -1332,7 +1292,7 @@ Try it out
 <span><span class="co">## [1] TRUE</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
-<div id="tabset-10-3" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-10-3-tab">
+<div id="tabset-10-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-10-3-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pyreadr</span>
 <span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="co">## Error: ModuleNotFoundError: No module named 'pyreadr'</span></span>
@@ -1356,45 +1316,34 @@ Try it out
 </div>
 </div>
 </div>
-<div class="callout-learnmore callout callout-style-default no-icon callout-captioned">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-caption-container flex-fill">
-Learn more
-</div>
-</div>
-<div class="callout-body-container callout-body">
+</section><section id="learn-more" class="level2 callout-learnmore" data-number="17.6"><h2 data-number="17.6" class="anchored" data-anchor-id="learn-more">
+<span class="header-section-number">17.6</span> Learn more</h2>
 <ul>
 <li>
 <a href="https://speakerdeck.com/jennybc/spreadsheets">Slides from Jenny Bryan’s talk on spreadsheets</a> (sadly, no audio. It was a good talk.)</li>
 <li>The <a href="https://www.tidyverse.org/blog/2019/05/vroom-1-0-0/"><code>vroom</code> package</a> works like <code>read_csv</code> but allows you to read in and write to many files at incredible speeds.</li>
-</ul>
-</div>
-</div>
-</section><section id="references" class="level2" data-number="17.6"><h2 data-number="17.6" class="anchored" data-anchor-id="references">
-<span class="header-section-number">17.6</span> References</h2>
+</ul></section><section id="references" class="level2" data-number="17.7"><h2 data-number="17.7" class="anchored" data-anchor-id="references">
+<span class="header-section-number">17.7</span> References</h2>
 
 
-<div id="refs" class="references csl-bib-body" role="doc-bibliography">
-<div id="ref-betterexplainedLittleDiddyBinary2017" class="csl-entry" role="doc-biblioentry">
+<div id="refs" class="references csl-bib-body" data-entry-spacing="0" role="list">
+<div id="ref-betterexplainedLittleDiddyBinary2017" class="csl-entry" role="listitem">
 <div class="csl-left-margin">[1] </div>
 <div class="csl-right-inline">BetterExplained, <span>“A little diddy about binary file formats – <span>BetterExplained</span>. Better explained,”</span> 2017. [Online]. Available: <a href="https://betterexplained.com/articles/a-little-diddy-about-binary-file-formats/">https://betterexplained.com/articles/a-little-diddy-about-binary-file-formats/</a>. [Accessed: Jan. 13, 2023]</div>
 </div>
-<div id="ref-schaferReadDataGoogle2020" class="csl-entry" role="doc-biblioentry">
+<div id="ref-schaferReadDataGoogle2020" class="csl-entry" role="listitem">
 <div class="csl-left-margin">[2] </div>
 <div class="csl-right-inline">M. Schäfer, <span>“Read <span>Data</span> from <span>Google</span> <span>Sheets</span> into <span>Pandas</span> without the <span>Google</span> <span>Sheets</span> <span>API</span>,”</span> <em>Towards Data Science</em>. Dec. 2020 [Online]. Available: <a href="https://towardsdatascience.com/read-data-from-google-sheets-into-pandas-without-the-google-sheets-api-5c468536550">https://towardsdatascience.com/read-data-from-google-sheets-into-pandas-without-the-google-sheets-api-5c468536550</a>. [Accessed: Jun. 07, 2022]</div>
 </div>
-<div id="ref-clarkeHowReadGoogle2021" class="csl-entry" role="doc-biblioentry">
+<div id="ref-clarkeHowReadGoogle2021" class="csl-entry" role="listitem">
 <div class="csl-left-margin">[3] </div>
 <div class="csl-right-inline">M. Clarke, <span>“How to read <span>Google</span> <span>Sheets</span> data in <span>Pandas</span> with <span>GSpread</span>,”</span> <em>Practical Data Science</em>. Jun. 2021 [Online]. Available: <a href="https://practicaldatascience.co.uk/data-science/how-to-read-google-sheets-data-in-pandas-with-gspread">https://practicaldatascience.co.uk/data-science/how-to-read-google-sheets-data-in-pandas-with-gspread</a>. [Accessed: Jun. 07, 2022]</div>
 </div>
-<div id="ref-maierleLoadingBinaryData2020" class="csl-entry" role="doc-biblioentry">
+<div id="ref-maierleLoadingBinaryData2020" class="csl-entry" role="listitem">
 <div class="csl-left-margin">[4] </div>
 <div class="csl-right-inline">C. Maierle, <span>“Loading binary data to <span>NumPy</span>/<span>Pandas</span>,”</span> <em>Towards Data Science</em>. Jul. 2020 [Online]. Available: <a href="https://towardsdatascience.com/loading-binary-data-to-numpy-pandas-9caa03eb0672">https://towardsdatascience.com/loading-binary-data-to-numpy-pandas-9caa03eb0672</a>. [Accessed: Jun. 07, 2022]</div>
 </div>
-<div id="ref-usdepartmentoftransportationNationalHouseholdTravel2018" class="csl-entry" role="doc-biblioentry">
+<div id="ref-usdepartmentoftransportationNationalHouseholdTravel2018" class="csl-entry" role="listitem">
 <div class="csl-left-margin">[5] </div>
 <div class="csl-right-inline">US Department of Transportation, <span>“National <span>Household</span> <span>Travel</span> <span>Survey</span> (<span>NHTS</span>) 2009,”</span> <em>data.world</em>. Mar. 2018 [Online]. Available: <a href="https://data.world/dot/national-household-travel-survey-nhts-2009">https://data.world/dot/national-household-travel-survey-nhts-2009</a>. [Accessed: Jun. 13, 2022]</div>
 </div>
@@ -1440,6 +1389,33 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       } else {
         el.classList.add('notransition');
       }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
     }
   }
   const toggleColorMode = (alternate) => {
@@ -1508,13 +1484,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       return localAlternateSentinel;
     }
   }
-  let localAlternateSentinel = 'default';
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
   // Dark / light mode switch
   window.quartoToggleColorScheme = () => {
     // Read the current dark / light value 
     let toAlternate = !hasAlternateSentinel();
     toggleColorMode(toAlternate);
     setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
   };
   // Ensure there is a toggle, if there isn't float one in the top right
   if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
@@ -1541,9 +1519,23 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     icon: icon
   };
   anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
   const clipboard = new window.ClipboardJS('.code-copy-button', {
-    target: function(trigger) {
-      return trigger.previousElementSibling;
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
     }
   });
   clipboard.on('success', function(e) {
@@ -1579,10 +1571,9 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // clear code selection
     e.clearSelection();
   });
-  function tippyHover(el, contentFn) {
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -1592,8 +1583,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -1608,6 +1608,248 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       return note.innerHTML;
     });
   }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    const typesetMath = (el) => {
+      if (window.MathJax) {
+        // MathJax Typeset
+        window.MathJax.typeset([el]);
+      } else if (window.katex) {
+        // KaTeX Render
+        var mathElements = el.getElementsByClassName("math");
+        var macros = [];
+        for (var i = 0; i < mathElements.length; i++) {
+          var texText = mathElements[i].firstChild;
+          if (mathElements[i].tagName == "SPAN") {
+            window.katex.render(texText.data, mathElements[i], {
+              displayMode: mathElements[i].classList.contains('display'),
+              throwOnError: false,
+              macros: macros,
+              fleqn: false
+            });
+          }
+        }
+      }
+    }
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        typesetMath(container);
+        return container.innerHTML
+      } else {
+        typesetMath(note);
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      typesetMath(note);
+      return note.innerHTML;
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
   const findCites = (el) => {
     const parentEl = el.parentElement;
     if (parentEl) {
@@ -1647,20 +1889,25 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script><script src="https://giscus.app/client.js" data-repo="srvanderplas/stat-computing-r-python" data-repo-id="R_kgDOIvwd2g" data-category="General" data-category-id="DIC_kwDOIvwd2s4CTksR" data-mapping="pathname" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="light" data-lang="en" crossorigin="anonymous" async="">
-</script><nav class="page-navigation"><div class="nav-page nav-page-previous">
-      <a href="../part-wrangling/00-wrangling.html" class="pagination-link">
+</script><input type="hidden" id="giscus-base-theme" value="light"><input type="hidden" id="giscus-alt-theme" value="dark"><nav class="page-navigation"><div class="nav-page nav-page-previous">
+      <a href="../part-wrangling/00-wrangling.html" class="pagination-link  aria-label=" part="" iii:="" data="" wrangling="">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Part III: Data Wrangling</span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../part-wrangling/02-basic-data-vis.html" class="pagination-link">
+      <a href="../part-wrangling/02-basic-data-vis.html" class="pagination-link" aria-label="<span class='chapter-number'>18</span>&nbsp; <span class='chapter-title'>Data Visualization Basics</span>">
         <span class="nav-page-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Data Visualization Basics</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
 </div> <!-- /content -->
 <footer class="footer"><div class="nav-footer">
-    <div class="nav-footer-left">Copyright 2023, Susan Vanderplas</div>   
+    <div class="nav-footer-left">
+<p>Copyright 2023, Susan Vanderplas</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
     <div class="nav-footer-right">
       <ul class="footer-items list-unstyled">
 <li class="nav-item compact">

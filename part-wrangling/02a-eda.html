@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.2.313">
+<meta name="generator" content="quarto-1.4.515">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <meta name="dcterms.date" content="2024-02-22">
 <title>Statistical Computing using R and Python - 19&nbsp; Exploratory Data Analysis</title>
@@ -15,11 +15,12 @@ div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
   width: 0.8em;
-  margin: 0 0.8em 0.2em -1.6em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -44,48 +45,20 @@ pre.numberSource code > span > a:first-child::before
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
     padding: 0 4px; width: 4em;
-    color: #aaaaaa;
   }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
 div.sourceCode
   {   }
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { color: #7d9029; } /* Attribute */
-code span.bn { color: #40a070; } /* BaseN */
-code span.bu { color: #008000; } /* BuiltIn */
-code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #4070a0; } /* Char */
-code span.cn { color: #880000; } /* Constant */
-code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code span.dt { color: #902000; } /* DataType */
-code span.dv { color: #40a070; } /* DecVal */
-code span.er { color: #ff0000; font-weight: bold; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #40a070; } /* Float */
-code span.fu { color: #06287e; } /* Function */
-code span.im { color: #008000; font-weight: bold; } /* Import */
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code span.op { color: #666666; } /* Operator */
-code span.ot { color: #007020; } /* Other */
-code span.pp { color: #bc7a00; } /* Preprocessor */
-code span.sc { color: #4070a0; } /* SpecialChar */
-code span.ss { color: #bb6688; } /* SpecialString */
-code span.st { color: #4070a0; } /* String */
-code span.va { color: #19177c; } /* Variable */
-code span.vs { color: #4070a0; } /* VerbatimString */
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+/* CSS for citations */
 div.csl-bib-body { }
 div.csl-entry {
   clear: both;
+  margin-bottom: 0em;
 }
-.hanging div.csl-entry {
+.hanging-indent div.csl-entry {
   margin-left:2em;
   text-indent:-2em;
 }
@@ -99,8 +72,7 @@ div.csl-right-inline {
 }
 div.csl-indent {
   margin-left: 2em;
-}
-</style>
+}</style>
 
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../site_libs/quarto-nav/headroom.min.js"></script>
@@ -130,7 +102,13 @@ div.csl-indent {
   "collapse-after": 3,
   "panel-placement": "start",
   "type": "textbox",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -140,7 +118,8 @@ div.csl-indent {
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
     "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit"
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
   }
 }</script><script async="" src="https://www.googletagmanager.com/gtag/js?id=G-4ZFBDKXJXP"></script><script type="text/javascript">
 
@@ -148,258 +127,302 @@ window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
-</script><script src="https://kit.fontawesome.com/baac5f0610.js" crossorigin="anonymous"></script><script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script><link rel="stylesheet" href="../build_deps/style.css">
+</script><script src="https://kit.fontawesome.com/baac5f0610.js" crossorigin="anonymous"></script><script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script><script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script><link rel="stylesheet" href="../build_deps/style.css">
 </head>
 <body class="nav-sidebar floating slimcontent">
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top"><nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }"><div class="container-fluid d-flex justify-content-between">
-      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Exploratory Data Analysis</span></h1>
-      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
-        <i class="bi bi-chevron-right"></i>
+  <header id="quarto-header" class="headroom fixed-top"><nav class="quarto-secondary-nav"><div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../part-wrangling/00-wrangling.html">Part III: Data Wrangling</a></li><li class="breadcrumb-item"><a href="../part-wrangling/02a-eda.html"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Exploratory Data Analysis</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
       </button>
     </div>
   </nav></header><!-- content --><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto"><div class="pt-lg-2 mt-2 text-left sidebar-header">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto"><div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="../">Statistical Computing using R and Python</a> 
         <div class="sidebar-tools-main">
-    <a href="https://github.com/srvanderplas/stat-computing-r-python/" title="Source Code" class="sidebar-tool px-1"><i class="bi bi-github"></i></a>
-  <a href="" class="quarto-color-scheme-toggle sidebar-tool" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+    <a href="https://github.com/srvanderplas/stat-computing-r-python/" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
 </div>
     </div>
       </div>
-      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="mt-2 flex-shrink-0 align-items-center">
         <div class="sidebar-search">
         <div id="quarto-search" class="" title="Search"></div>
         </div>
-      </div>
+        </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
 <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../index.html" class="sidebar-item-text sidebar-link">Preface</a>
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
   </div>
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../part-tools/00-tools-intro.html" class="sidebar-item-text sidebar-link">Part I: Tools</a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <a href="../part-tools/00-tools-intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Part I: Tools</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">
 <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-tools/01-computer-basics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Computer Basics</span></a>
+  <a href="../part-tools/01-computer-basics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Computer Basics</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-tools/02-setting-up-computer.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Setting Up Your Computer</span></a>
+  <a href="../part-tools/02-setting-up-computer.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Setting Up Your Computer</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-tools/03-Rstudio-interface.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">RStudio’s Interface</span></a>
+  <a href="../part-tools/03-Rstudio-interface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">RStudio’s Interface</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-tools/04-scripts-notebooks.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Scripts and Notebooks</span></a>
+  <a href="../part-tools/04-scripts-notebooks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Scripts and Notebooks</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-tools/05-git-and-github.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Version Control with Git</span></a>
+  <a href="../part-tools/05-git-and-github.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Version Control with Git</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-tools/06-documents.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Reproducibility and Professional Communication</span></a>
+  <a href="../part-tools/06-documents.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Reproducibility and Professional Communication</span></span></a>
   </div>
 </li>
       </ul>
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../part-gen-prog/00-gen-prog.html" class="sidebar-item-text sidebar-link">Part II: General Programming</a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+            <a href="../part-gen-prog/00-gen-prog.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Part II: General Programming</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">
 <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/00-intro.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Introduction to Programming</span></a>
+  <a href="../part-gen-prog/00-intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Introduction to Programming</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/01-basic-var-types.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Variables and Basic Data Types</span></a>
+  <a href="../part-gen-prog/01-basic-var-types.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Variables and Basic Data Types</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/02-prog-functions.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Using Functions and Libraries</span></a>
+  <a href="../part-gen-prog/02-prog-functions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Using Functions and Libraries</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/03-data-struct.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Data Structures</span></a>
+  <a href="../part-gen-prog/03-data-struct.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Data Structures</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/035-matrix-calcs.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Matrix Calculations</span></a>
+  <a href="../part-gen-prog/035-matrix-calcs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Matrix Calculations</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/04-control-struct.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Control Structures</span></a>
+  <a href="../part-gen-prog/04-control-struct.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Control Structures</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/05-functions.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Writing Functions</span></a>
+  <a href="../part-gen-prog/05-functions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Writing Functions</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/06-debugging.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Debugging</span></a>
+  <a href="../part-gen-prog/06-debugging.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Debugging</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/07-prog-data.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Programming With Data</span></a>
+  <a href="../part-gen-prog/07-prog-data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Programming With Data</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/99-extra.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Other Helpful Programming Resources</span></a>
+  <a href="../part-gen-prog/99-extra.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Other Helpful Programming Resources</span></span></a>
   </div>
 </li>
       </ul>
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../part-wrangling/00-wrangling.html" class="sidebar-item-text sidebar-link">Part III: Data Wrangling</a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+            <a href="../part-wrangling/00-wrangling.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Part III: Data Wrangling</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">
 <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/01-data-input.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Data Input</span></a>
+  <a href="../part-wrangling/01-data-input.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Data Input</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/02-basic-data-vis.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Data Visualization Basics</span></a>
+  <a href="../part-wrangling/02-basic-data-vis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Data Visualization Basics</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/02a-eda.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Exploratory Data Analysis</span></a>
+  <a href="../part-wrangling/02a-eda.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Exploratory Data Analysis</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/02b-graphics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Data Visualization</span></a>
+  <a href="../part-wrangling/02b-graphics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Data Visualization</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/02c-good-graphics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Creating Good Charts</span></a>
+  <a href="../part-wrangling/02c-good-graphics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Creating Good Charts</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/03-data-cleaning.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Data Cleaning</span></a>
+  <a href="../part-wrangling/03-data-cleaning.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Data Cleaning</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/04-strings.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Working with Strings</span></a>
+  <a href="../part-wrangling/04-strings.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Working with Strings</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/05-data-reshape.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Reshaping Data</span></a>
+  <a href="../part-wrangling/05-data-reshape.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Reshaping Data</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/06-data-join.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Joining Data</span></a>
+  <a href="../part-wrangling/06-data-join.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Joining Data</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/07-datetime.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Dates and Times</span></a>
+  <a href="../part-wrangling/07-datetime.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Dates and Times</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/08-functional-prog.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Functional Programming</span></a>
+  <a href="../part-wrangling/08-functional-prog.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Functional Programming</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/09-spatial-formats.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Spatial data</span></a>
+  <a href="../part-wrangling/09-spatial-formats.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Spatial data</span></span></a>
   </div>
 </li>
       </ul>
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../part-advanced-topics/00-advanced.html" class="sidebar-item-text sidebar-link">Part IV: Advanced Topics</a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">
+            <a href="../part-advanced-topics/00-advanced.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Part IV: Advanced Topics</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">
 <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-advanced-topics/01-simulation.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Simulation and Reproducibility</span></a>
+  <a href="../part-advanced-topics/01-simulation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Simulation and Reproducibility</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-advanced-topics/06-interactive-graphics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">30</span>&nbsp; <span class="chapter-title">Interactive Graphics</span></a>
+  <a href="../part-advanced-topics/06-interactive-graphics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">30</span>&nbsp; <span class="chapter-title">Interactive Graphics</span></span></a>
   </div>
 </li>
       </ul>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../graveyard.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">31</span>&nbsp; <span class="chapter-title">Other Topics</span></a>
+  <a href="../graveyard.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">31</span>&nbsp; <span class="chapter-title">Other Topics</span></span></a>
   </div>
 </li>
     </ul>
 </div>
-</nav><!-- margin-sidebar --><div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+</nav><div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active"><h2 id="toc-title">Table of contents</h2>
    
   <ul>
-<li><a href="#fa-bullseye-objectives" id="toc-fa-bullseye-objectives" class="nav-link active" data-scroll-target="#fa-bullseye-objectives"><span class="toc-section-number">19.1</span>  <i class="fa-solid fa-bullseye" aria-label="bullseye"></i> Objectives</a></li>
-  <li><a href="#a-note-on-language-philosophies" id="toc-a-note-on-language-philosophies" class="nav-link" data-scroll-target="#a-note-on-language-philosophies"><span class="toc-section-number">19.2</span>  A Note on Language Philosophies</a></li>
-  <li><a href="#generating-eda-questions" id="toc-generating-eda-questions" class="nav-link" data-scroll-target="#generating-eda-questions"><span class="toc-section-number">19.3</span>  Generating EDA Questions</a></li>
+<li><a href="#objectives" id="toc-objectives" class="nav-link active" data-scroll-target="#objectives"><span class="header-section-number">19.1</span> <i class="fa-solid fa-bullseye" aria-label="bullseye"></i> Objectives</a></li>
+  <li><a href="#extra-reading" id="toc-extra-reading" class="nav-link" data-scroll-target="#extra-reading">Extra Reading</a></li>
+  <li><a href="#a-note-on-language-philosophies" id="toc-a-note-on-language-philosophies" class="nav-link" data-scroll-target="#a-note-on-language-philosophies"><span class="header-section-number">19.2</span> A Note on Language Philosophies</a></li>
+  <li><a href="#generating-eda-questions" id="toc-generating-eda-questions" class="nav-link" data-scroll-target="#generating-eda-questions"><span class="header-section-number">19.3</span> Generating EDA Questions</a></li>
   <li>
-<a href="#useful-eda-techniques" id="toc-useful-eda-techniques" class="nav-link" data-scroll-target="#useful-eda-techniques"><span class="toc-section-number">19.4</span>  Useful EDA Techniques</a>
+<a href="#useful-eda-techniques" id="toc-useful-eda-techniques" class="nav-link" data-scroll-target="#useful-eda-techniques"><span class="header-section-number">19.4</span> Useful EDA Techniques</a>
   <ul class="collapse">
-<li><a href="#numerical-summary-statistics" id="toc-numerical-summary-statistics" class="nav-link" data-scroll-target="#numerical-summary-statistics"><span class="toc-section-number">19.4.1</span>  Numerical Summary Statistics</a></li>
-  <li><a href="#assessing-distributions" id="toc-assessing-distributions" class="nav-link" data-scroll-target="#assessing-distributions"><span class="toc-section-number">19.4.2</span>  Assessing Distributions</a></li>
-  <li><a href="#relationships-between-variables" id="toc-relationships-between-variables" class="nav-link" data-scroll-target="#relationships-between-variables"><span class="toc-section-number">19.4.3</span>  Relationships Between Variables</a></li>
+<li><a href="#numerical-summary-statistics" id="toc-numerical-summary-statistics" class="nav-link" data-scroll-target="#numerical-summary-statistics"><span class="header-section-number">19.4.1</span> Numerical Summary Statistics</a></li>
+  <li><a href="#assessing-distributions" id="toc-assessing-distributions" class="nav-link" data-scroll-target="#assessing-distributions"><span class="header-section-number">19.4.2</span> Assessing Distributions</a></li>
+  <li><a href="#relationships-between-variables" id="toc-relationships-between-variables" class="nav-link" data-scroll-target="#relationships-between-variables"><span class="header-section-number">19.4.3</span> Relationships Between Variables</a></li>
   </ul>
 </li>
-  <li><a href="#sec-eda-refs" id="toc-sec-eda-refs" class="nav-link" data-scroll-target="#sec-eda-refs"><span class="toc-section-number">19.5</span>  References</a></li>
-  </ul><div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/srvanderplas/stat-computing-r-python/edit/main/part-wrangling/02a-eda.qmd" class="toc-action">Edit this page</a></p></div></div></nav>
+  <li><a href="#sec-eda-refs" id="toc-sec-eda-refs" class="nav-link" data-scroll-target="#sec-eda-refs"><span class="header-section-number">19.5</span> References</a></li>
+  </ul><div class="toc-actions"><ul><li><a href="https://github.com/srvanderplas/stat-computing-r-python/edit/main/part-wrangling/02a-eda.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content page-columns page-full" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><div class="quarto-title">
-<h1 class="title"><span id="sec-eda" class="quarto-section-identifier d-none d-lg-block"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Exploratory Data Analysis</span></span></h1>
+<main class="content page-columns page-full" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../part-wrangling/00-wrangling.html">Part III: Data Wrangling</a></li><li class="breadcrumb-item"><a href="../part-wrangling/02a-eda.html"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Exploratory Data Analysis</span></a></li></ol></nav><div class="quarto-title">
+<h1 class="title"><span id="sec-eda" class="quarto-section-identifier"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Exploratory Data Analysis</span></span></h1>
 </div>
 
 
@@ -418,26 +441,15 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
   </div>
   
 
-</header><section id="fa-bullseye-objectives" class="level2" data-number="19.1"><h2 data-number="19.1" class="anchored" data-anchor-id="fa-bullseye-objectives">
+
+</header><section id="objectives" class="level2" data-number="19.1"><h2 data-number="19.1" class="anchored" data-anchor-id="objectives">
 <span class="header-section-number">19.1</span> <i class="fa-solid fa-bullseye" aria-label="bullseye"></i> Objectives</h2>
 <ul>
 <li>Understand the main goals of exploratory data analysis</li>
 <li>Generate and answer questions about a new dataset using charts, tables, and numerical summaries</li>
-</ul>
-<div class="callout-learnmore callout callout-style-default no-icon callout-captioned">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-caption-container flex-fill">
-Extra Reading
-</div>
-</div>
-<div class="callout-body-container callout-body">
+</ul></section><section id="extra-reading" class="level2 unnumbered callout-learnmore"><h2 class="unnumbered anchored" data-anchor-id="extra-reading">Extra Reading</h2>
 <p><a href="https://r4ds.had.co.nz/exploratory-data-analysis.html">The EDA chapter in R for Data Science</a> <span class="citation" data-cites="r4ds"><a href="#ref-r4ds" role="doc-biblioref">[1]</a></span> is very good at explaining what the goals of EDA are, and what types of questions you will typically need to answer in EDA. Much of the material in this chapter is based at least in part on the R4DS chapter.</p>
-</div>
-</div>
-<p><img src="../images/wrangling/an-EDA-lifecycle.png" class="img-fluid" style="width:75.0%" data-fig-align="center" alt="(Image from https://www.mrdbourke.com) The EDA lifecycle starts with data collection and is primarily a cycle between checking data types, assessing distributions, feature engineering, and model iteration. These tasks are supported by summary statistics, visualization, and modeling."><!-- https://www.mrdbourke.com/content/images/size/w1000/2019/09/an-EDA-lifecycle.png --></p>
+</section><p><img src="../images/wrangling/an-EDA-lifecycle.png" class="img-fluid quarto-figure quarto-figure-center" style="width:75.0%" alt="(Image from https://www.mrdbourke.com) The EDA lifecycle starts with data collection and is primarily a cycle between checking data types, assessing distributions, feature engineering, and model iteration. These tasks are supported by summary statistics, visualization, and modeling."><!-- https://www.mrdbourke.com/content/images/size/w1000/2019/09/an-EDA-lifecycle.png --></p>
 <p>Major components of Exploratory Data Analysis (EDA):</p>
 <ul>
 <li>generating questions about your data</li>
@@ -450,7 +462,7 @@ Extra Reading
 <div class=".callout-note">
 <p>In this section, I will mostly be using the plot commands that come with base R/python and require no extra packages. The R for Data Science book <span class="citation" data-cites="r4ds"><a href="#ref-r4ds" role="doc-biblioref">[1]</a></span> shows plot commands which use the <code>ggplot2</code> library. I’ll show you some plots from ggplot here as well, but you don’t have to understand how to generate them yet. We will learn more about ggplot2 later, though if you want to start using it now, you may.</p>
 </div>
-</section><section id="a-note-on-language-philosophies" class="level2" data-number="19.2"><h2 data-number="19.2" class="anchored" data-anchor-id="a-note-on-language-philosophies">
+<section id="a-note-on-language-philosophies" class="level2" data-number="19.2"><h2 data-number="19.2" class="anchored" data-anchor-id="a-note-on-language-philosophies">
 <span class="header-section-number">19.2</span> A Note on Language Philosophies</h2>
 <p>It is usually relatively easy to get summary statistics from a dataset, but the “flow” of EDA is somewhat different depending on the language patterns.</p>
 <blockquote class="blockquote">
@@ -495,27 +507,26 @@ Extra Reading
 <div class="no-row-height column-margin column-container"><div class="">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure"><p><a href="https://commons.wikimedia.org/wiki/File:International_Pok%C3%A9mon_logo.svg%22"><img src="../images/wrangling/International_Pokemon_logo.png" class="img-fluid figure-img" alt="Pokemon logo"></a></p>
-<p></p><figcaption class="figure-caption">Nintendo, Creatures, Game Freak, The Pokémon Company, Public domain, via Wikimedia Commons</figcaption><p></p>
-</figure>
+<figcaption>Nintendo, Creatures, Game Freak, The Pokémon Company, Public domain, via Wikimedia Commons</figcaption></figure>
 </div>
-</div></div><div class="callout-caution callout callout-style-default callout-captioned">
+</div></div><div class="callout callout-style-default callout-caution callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-caption-container flex-fill">
+<div class="callout-title-container flex-fill">
 Example: Generations of Pokemon
 </div>
 </div>
 <div class="callout-body-container callout-body">
 <p>Suppose we want to explore Pokemon. There’s not just the original 150 (gotta catch ’em all!) - now there are over 1000! Let’s start out by looking at the proportion of Pokemon added in each of the 9 generations.</p>
-<div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" aria-current="page">R setup</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Python setup</a></li>
 </ul>
 <div class="tab-content">
-<div id="tabset-1-1" class="unnumbered tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <div class="cell">
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://readr.tidyverse.org">readr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span></span>
@@ -527,7 +538,7 @@ Example: Generations of Pokemon
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>generation <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">gen</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
-<div id="tabset-1-2" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>poke <span class="op">=</span> pd.read_csv(<span class="st">"https://raw.githubusercontent.com/srvanderplas/datasets/main/clean/pokemon_gen_1-9.csv"</span>)</span>
@@ -541,7 +552,7 @@ Example: Generations of Pokemon
 <p>This data has several categorical and continuous variables that should allow for a reasonable demonstration of a number of techniques for exploring data.</p>
 <section id="numerical-summary-statistics" class="level3" data-number="19.4.1"><h3 data-number="19.4.1" class="anchored" data-anchor-id="numerical-summary-statistics">
 <span class="header-section-number">19.4.1</span> Numerical Summary Statistics</h3>
-<div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">R: summary</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">Python: describe</a></li>
@@ -549,7 +560,7 @@ Example: Generations of Pokemon
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-4" role="tab" aria-controls="tabset-2-4" aria-selected="false">python: skimpy</a></li>
 </ul>
 <div class="tab-content">
-<div id="tabset-2-1" class="unnumbered tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
+<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
 <p>The first, and most basic EDA command in R is <code><a href="https://rdrr.io/r/base/summary.html">summary()</a></code>.</p>
 <p>For numeric variables, <code>summary</code> provides 5-number summaries plus the mean. For categorical variables, <code>summary</code> provides the length of the variable and the Class and Mode. For factors, <code>summary</code> provides a table of the most common values, as well as a catch-all “other” category.</p>
 <div class="cell">
@@ -616,7 +627,7 @@ Example: Generations of Pokemon
 </div>
 <p>This is the last row of our data frame, and this pokemon appears to have many missing values.</p>
 </div>
-<div id="tabset-2-2" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
+<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
 <p>The most basic EDA command in pandas is <code>df.describe()</code> (which operates on a DataFrame named <code>df</code>). Like <code><a href="https://rdrr.io/r/base/summary.html">summary()</a></code> in R, <code>describe()</code> provides a 5-number summary for numeric variables. For categorical variables, <code>describe()</code> provides the number of unique values, the most common value, and the frequency of that common value.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Split types into two columns</span></span>
@@ -653,13 +664,13 @@ Example: Generations of Pokemon
 <span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a><span class="co">## Name: type_2, dtype: object</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
-<div id="tabset-2-3" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-2-3-tab">
+<div id="tabset-2-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-3-tab">
 <p>An R package that is incredibly useful for this type of dataset exploration is <code>skimr</code>.</p>
 <div class="cell">
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://docs.ropensci.org/skimr/">skimr</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://docs.ropensci.org/skimr/reference/skim.html">skim</a></span><span class="op">(</span><span class="va">poke</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<table class="table table-sm table-striped">
+<table class="table table-sm table-striped small">
 <caption>Data summary</caption>
 <tbody>
 <tr class="odd">
@@ -705,7 +716,7 @@ Example: Generations of Pokemon
 </tbody>
 </table>
 <p><strong>Variable type: character</strong></p>
-<table class="table table-sm table-striped">
+<table class="table table-sm table-striped small">
 <colgroup>
 <col style="width: 19%">
 <col style="width: 13%">
@@ -770,7 +781,7 @@ Example: Generations of Pokemon
 </tbody>
 </table>
 <p><strong>Variable type: factor</strong></p>
-<table class="table table-sm table-striped">
+<table class="table table-sm table-striped small">
 <colgroup>
 <col style="width: 14%">
 <col style="width: 10%">
@@ -815,7 +826,7 @@ Example: Generations of Pokemon
 </tbody>
 </table>
 <p><strong>Variable type: numeric</strong></p>
-<table class="table table-sm table-striped">
+<table class="table table-sm table-striped small">
 <colgroup>
 <col style="width: 15%">
 <col style="width: 10%">
@@ -992,7 +1003,7 @@ Example: Generations of Pokemon
 </div>
 <p><code>skim</code> provides a beautiful table of summary statistics along with a sparklines-style histogram of values, giving you a sneak peek at the distribution.</p>
 </div>
-<div id="tabset-2-4" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-2-4-tab">
+<div id="tabset-2-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-4-tab">
 <p>There is a similar package to <code>skimr</code> in R called <code>skimpy</code> in Python.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> skimpy <span class="im">import</span> skim</span>
@@ -1068,13 +1079,13 @@ Example: Generations of Pokemon
 <span class="header-section-number">19.4.2.1</span> Categorical Variables</h4>
 <p>One useful way to assess the distribution of values is to generate a cross-tabular view of the data. This is mostly important for variables with a relatively low number of categories - otherwise, it is usually easier to use a graphical summary method.</p>
 <section id="tabular-summaries" class="level5 unnumbered"><h5 class="unnumbered anchored" data-anchor-id="tabular-summaries">Tabular Summaries</h5>
-<div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">R</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">Python</a></li>
 </ul>
 <div class="tab-content">
-<div id="tabset-3-1" class="unnumbered tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
+<div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
 <p>We can generate cross-tabs for variables that we know are discrete (such as generation, which will always be a whole number). We can even generate cross-tabular views for a combination of two variables (or theoretically more, but this gets hard to read and track).</p>
 <div class="cell">
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">poke</span><span class="op">$</span><span class="va">generation</span><span class="op">)</span></span>
@@ -1125,7 +1136,7 @@ Example: Generations of Pokemon
 <span><span class="co">##   Water        12   4      0      4      11    6     1     0</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
-<div id="tabset-3-2" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
+<div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co"># For only one factor, use .groupby('colname')['colname'].count()</span></span>
@@ -1173,7 +1184,7 @@ Example: Generations of Pokemon
 </div>
 </div>
 </section><section id="frequency-plots" class="level5 unnumbered"><h5 class="unnumbered anchored" data-anchor-id="frequency-plots">Frequency Plots</h5>
-<div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true">Base R</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false">R: ggplot2</a></li>
@@ -1181,15 +1192,18 @@ Example: Generations of Pokemon
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-4" role="tab" aria-controls="tabset-4-4" aria-selected="false">Python: plotnine</a></li>
 </ul>
 <div class="tab-content">
-<div id="tabset-4-1" class="unnumbered tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
+<div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
 <div class="cell">
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">poke</span><span class="op">$</span><span class="va">generation</span><span class="op">)</span><span class="op">)</span> <span class="co"># bar plot</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02a-eda_files/figure-html/poke-distribution-plots-1.png" class="img-fluid" width="2100"></p>
+<div>
+<figure class="figure"><p><img src="02a-eda_files/figure-html/poke-distribution-plots-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
 </div>
 </div>
 </div>
-<div id="tabset-4-2" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
+</div>
+<div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
 <p>We generate a bar chart using <code>geom_bar</code>. It helps to tell R that generation (despite appearances) is categorical by declaring it a factor variable. This ensures that we get a break on the x-axis at each generation.</p>
 <div class="cell">
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span></span>
@@ -1198,11 +1212,14 @@ Example: Generations of Pokemon
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_bar</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">xlab</a></span><span class="op">(</span><span class="st">"Generation"</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ylab</a></span><span class="op">(</span><span class="st">"# Pokemon"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02a-eda_files/figure-html/poke-dist-plots-ggplot2-1.png" class="img-fluid" width="2100"></p>
+<div>
+<figure class="figure"><p><img src="02a-eda_files/figure-html/poke-dist-plots-ggplot2-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
 </div>
 </div>
 </div>
-<div id="tabset-4-3" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-4-3-tab">
+</div>
+<div id="tabset-4-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-3-tab">
 <p>We generate a bar chart using the contingency table we generated earlier combined with matplotlib’s <code>plt.bar()</code>.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
@@ -1215,11 +1232,14 @@ Example: Generations of Pokemon
 <span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"# Pokemon"</span>)</span>
 <span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02a-eda_files/figure-html/matplotlib-categorical-chart-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure"><p><img src="02a-eda_files/figure-html/matplotlib-categorical-chart-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
 </div>
 </div>
 </div>
-<div id="tabset-4-4" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-4-4-tab">
+</div>
+<div id="tabset-4-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-4-tab">
 <p>Plotnine is a ggplot2 clone for python, and for the most part, the code looks almost exactly the same, minus a few python-specific tweaks to account for different syntax conventions in each language.</p>
 <p>We generate a bar chart using <code>geom_bar</code>. It helps to tell R that generation (despite appearances) is categorical by declaring it a factor variable. This ensures that we get a break on the x-axis at each generation.</p>
 <div class="cell">
@@ -1230,7 +1250,10 @@ Example: Generations of Pokemon
 <span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  xlab(<span class="st">"Generation"</span>) <span class="op">+</span> ylab(<span class="st">"# Pokemon"</span>))</span>
 <span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="co">## &lt;Figure Size: (640 x 480)&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02a-eda_files/figure-html/poke-dist-plots-plotnine-3.png" class="img-fluid" width="614"></p>
+<div>
+<figure class="figure"><p><img src="02a-eda_files/figure-html/poke-dist-plots-plotnine-3.png" class="img-fluid figure-img" width="614"></p>
+</figure>
+</div>
 </div>
 </div>
 </div>
@@ -1239,12 +1262,12 @@ Example: Generations of Pokemon
 </section></section><section id="quantitative-variables" class="level4" data-number="19.4.2.2"><h4 data-number="19.4.2.2" class="anchored" data-anchor-id="quantitative-variables">
 <span class="header-section-number">19.4.2.2</span> Quantitative Variables</h4>
 <p>We covered some numerical summary statistics in the numerical summary statistic section above. In this section, we will primarily focus on visualization methods for assessing the distribution of quantitative variables.</p>
-<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-caption-container flex-fill">
+<div class="callout-title-container flex-fill">
 Note: R pipe
 </div>
 </div>
@@ -1252,13 +1275,12 @@ Note: R pipe
 <p>The code in this section uses the R pipe, <code>%&gt;%</code>. The left side of the pipe is passed as an argument to the right side. This makes code easier to read because it becomes a step-wise “recipe” instead of a nested mess of functions and parentheses.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure"><p><img src="../images/wrangling/Pipe_baking_magrittr_backAssign.gif" class="img-fluid figure-img" style="width:50.0%"></p>
-<p></p><figcaption class="figure-caption">In each step, the left hand side of the pipe is put into the first argument of the function. Source: <a href="https://github.com/arthurwelle/VIS/blob/master/Pipe_Cake/">Arthur Welle (Github)</a></figcaption><p></p>
-</figure>
+<figcaption>In each step, the left hand side of the pipe is put into the first argument of the function. Source: <a href="https://github.com/arthurwelle/VIS/blob/master/Pipe_Cake/">Arthur Welle (Github)</a></figcaption></figure>
 </div>
 </div>
 </div>
 <p>We can generate histograms<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a> or kernel density plots (a continuous version of the histogram) to show us the distribution of a continuous variable.</p>
-<div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-5-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-1" role="tab" aria-controls="tabset-5-1" aria-selected="true">Base R</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-2" role="tab" aria-controls="tabset-5-2" aria-selected="false">Python: matplotlib</a></li>
@@ -1266,16 +1288,18 @@ Note: R pipe
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-4" role="tab" aria-controls="tabset-5-4" aria-selected="false">Python: plotnine</a></li>
 </ul>
 <div class="tab-content">
-<div id="tabset-5-1" class="unnumbered tab-pane active" role="tabpanel" aria-labelledby="tabset-5-1-tab">
+<div id="tabset-5-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-5-1-tab">
 <p>By default, R uses ranges of <span class="math inline">\((a, b]\)</span> in histograms, so we specify which breaks will give us a desirable result. If we do not specify breaks, R will pick them for us.</p>
 <div class="cell">
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html">hist</a></span><span class="op">(</span><span class="va">poke</span><span class="op">$</span><span class="va">hp</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02a-eda_files/figure-html/poke-hp-out-5.png" class="img-fluid" style="width:48.0%"></p>
+<div>
+<figure class="figure"><p><img src="02a-eda_files/figure-html/poke-hp-out-5.png" class="img-fluid figure-img" style="width:48.0%"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>For continuous variables, we can use histograms, or we can examine kernel density plots.</p>
-<div>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://magrittr.tidyverse.org">magrittr</a></span><span class="op">)</span> <span class="co"># This provides the pipe command, %&gt;%</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html">hist</a></span><span class="op">(</span><span class="va">poke</span><span class="op">$</span><span class="va">weight_kg</span><span class="op">)</span></span>
@@ -1295,37 +1319,25 @@ Note: R pipe
 <span>  <span class="fu"><a href="https://rdrr.io/r/stats/density.html">density</a></span><span class="op">(</span>na.rm <span class="op">=</span> <span class="cn">T</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="co"># Compute the density ignoring missing values</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span>main <span class="op">=</span> <span class="st">"Density of Log10 pokemon weight in Kg"</span><span class="op">)</span> <span class="co"># Plot the result,</span></span>
 <span>    <span class="co"># changing the title of the plot to a meaningful value</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell quarto-layout-panel">
+<div class="cell quarto-layout-panel" data-layout-ncol="2">
 <div class="quarto-layout-row quarto-layout-valign-top">
-<div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
-<div class="quarto-figure quarto-figure-center">
+<div class="quarto-figure quarto-figure-center quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
 <figure class="figure"><p><img src="02a-eda_files/figure-html/poke-graphs-base-cts-1.png" class="img-fluid figure-img" width="900"></p>
-<p></p><figcaption class="figure-caption">Histogram of Pokemon Height (m)</figcaption><p></p>
-</figure>
+<figcaption>Histogram of Pokemon Height (m)</figcaption></figure>
 </div>
-</div>
-<div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
-<div class="quarto-figure quarto-figure-center">
+<div class="quarto-figure quarto-figure-center quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
 <figure class="figure"><p><img src="02a-eda_files/figure-html/poke-graphs-base-cts-2.png" class="img-fluid figure-img" width="900"></p>
-<p></p><figcaption class="figure-caption">Histogram of Pokemon Height (m, log 10)</figcaption><p></p>
-</figure>
-</div>
+<figcaption>Histogram of Pokemon Height (m, log 10)</figcaption></figure>
 </div>
 </div>
 <div class="quarto-layout-row quarto-layout-valign-top">
-<div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
-<div class="quarto-figure quarto-figure-center">
+<div class="quarto-figure quarto-figure-center quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
 <figure class="figure"><p><img src="02a-eda_files/figure-html/poke-graphs-base-cts-3.png" class="img-fluid figure-img" width="900"></p>
-<p></p><figcaption class="figure-caption">Density of Pokemon Height (m)</figcaption><p></p>
-</figure>
+<figcaption>Density of Pokemon Height (m)</figcaption></figure>
 </div>
-</div>
-<div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
-<div class="quarto-figure quarto-figure-center">
+<div class="quarto-figure quarto-figure-center quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
 <figure class="figure"><p><img src="02a-eda_files/figure-html/poke-graphs-base-cts-4.png" class="img-fluid figure-img" width="900"></p>
-<p></p><figcaption class="figure-caption">Density of Pokemon Height (m, log 10)</figcaption><p></p>
-</figure>
-</div>
+<figcaption>Density of Pokemon Height (m, log 10)</figcaption></figure>
 </div>
 </div>
 <div class="quarto-layout-row quarto-layout-valign-top">
@@ -1335,8 +1347,7 @@ Note: R pipe
 </div>
 </div>
 </div>
-</div>
-<div id="tabset-5-2" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-5-2-tab">
+<div id="tabset-5-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-2-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -1363,14 +1374,12 @@ Note: R pipe
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure"><p><img src="02a-eda_files/figure-html/poke-graphs-matplotlib-cts-1.png" class="img-fluid figure-img" width="672"></p>
-<p></p><figcaption class="figure-caption">Histogram and density plots of weight and log10 weight of different pokemon. The untransformed data are highly skewed, the transformed data are significantly less skewed.</figcaption><p></p>
-</figure>
+<figcaption>Histogram and density plots of weight and log10 weight of different pokemon. The untransformed data are highly skewed, the transformed data are significantly less skewed.</figcaption></figure>
 </div>
 </div>
 </div>
 </div>
 <div id="tabset-5-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-3-tab">
-<div>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">poke</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">height_m</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_histogram.html">geom_histogram</a></span><span class="op">(</span>bins <span class="op">=</span> <span class="fl">30</span><span class="op">)</span></span>
@@ -1382,37 +1391,25 @@ Note: R pipe
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">poke</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">height_m</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_density.html">geom_density</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_log10</a></span><span class="op">(</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell quarto-layout-panel">
+<div class="cell quarto-layout-panel" data-layout-ncol="2" data-layout-align="center">
 <div class="quarto-layout-row quarto-layout-valign-top">
-<div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
-<div class="quarto-figure quarto-figure-center">
+<div class="quarto-figure quarto-figure-center quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
 <figure class="figure"><p><img src="02a-eda_files/figure-html/poke-ggplot2-cts-r-3.png" class="img-fluid figure-img" width="900"></p>
-<p></p><figcaption class="figure-caption">Density of Pokemon Height (m)</figcaption><p></p>
-</figure>
+<figcaption>Density of Pokemon Height (m)</figcaption></figure>
 </div>
-</div>
-<div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
-<div class="quarto-figure quarto-figure-center">
+<div class="quarto-figure quarto-figure-center quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
 <figure class="figure"><p><img src="02a-eda_files/figure-html/poke-ggplot2-cts-r-4.png" class="img-fluid figure-img" width="900"></p>
-<p></p><figcaption class="figure-caption">Density of Pokemon Height (m, log 10)</figcaption><p></p>
-</figure>
-</div>
+<figcaption>Density of Pokemon Height (m, log 10)</figcaption></figure>
 </div>
 </div>
 <div class="quarto-layout-row quarto-layout-valign-top">
-<div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
-<div class="quarto-figure quarto-figure-center">
+<div class="quarto-figure quarto-figure-center quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
 <figure class="figure"><p><img src="02a-eda_files/figure-html/poke-ggplot2-cts-r-5.png" class="img-fluid figure-img" width="900"></p>
-<p></p><figcaption class="figure-caption">Histogram of Pokemon Height (m)</figcaption><p></p>
-</figure>
+<figcaption>Histogram of Pokemon Height (m)</figcaption></figure>
 </div>
-</div>
-<div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
-<div class="quarto-figure quarto-figure-center">
+<div class="quarto-figure quarto-figure-center quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
 <figure class="figure"><p><img src="02a-eda_files/figure-html/poke-ggplot2-cts-r-6.png" class="img-fluid figure-img" width="900"></p>
-<p></p><figcaption class="figure-caption">Histogram of Pokemon Height (m, log 10)</figcaption><p></p>
-</figure>
-</div>
+<figcaption>Histogram of Pokemon Height (m, log 10)</figcaption></figure>
 </div>
 </div>
 <div class="quarto-layout-row quarto-layout-valign-top">
@@ -1421,11 +1418,9 @@ Note: R pipe
 </div>
 </div>
 </div>
-</div>
 <p>Notice that in ggplot2/plotnine, we transform the axes instead of the data. This means that the units on the axis are true to the original, unlike in base R and matplotlib.</p>
 </div>
 <div id="tabset-5-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-4-tab">
-<div>
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>ggplot(poke, aes(x <span class="op">=</span> <span class="st">'height_m'</span>)) <span class="op">+</span> geom_histogram(bins <span class="op">=</span> <span class="dv">30</span>)</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="co">## &lt;Figure Size: (640 x 480)&gt;</span></span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>(ggplot(poke, aes(x <span class="op">=</span> <span class="st">'height_m'</span>)) <span class="op">+</span></span>
@@ -1439,43 +1434,30 @@ Note: R pipe
 <span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>  geom_density() <span class="op">+</span></span>
 <span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>  scale_x_log10())</span>
 <span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a><span class="co">## &lt;Figure Size: (640 x 480)&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell quarto-layout-panel">
+<div class="cell quarto-layout-panel" data-layout-ncol="2" data-layout-align="center">
 <div class="quarto-layout-row quarto-layout-valign-top">
-<div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
-<div class="quarto-figure quarto-figure-center">
+<div class="quarto-figure quarto-figure-center quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
 <figure class="figure"><p><img src="02a-eda_files/figure-html/poke-ggplot2-cts-py-1.png" class="img-fluid figure-img" width="614"></p>
-<p></p><figcaption class="figure-caption">Histogram of Pokemon Height (m)</figcaption><p></p>
-</figure>
+<figcaption>Histogram of Pokemon Height (m)</figcaption></figure>
 </div>
-</div>
-<div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
-<div class="quarto-figure quarto-figure-center">
+<div class="quarto-figure quarto-figure-center quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
 <figure class="figure"><p><img src="02a-eda_files/figure-html/poke-ggplot2-cts-py-2.png" class="img-fluid figure-img" width="614"></p>
-<p></p><figcaption class="figure-caption">Histogram of Pokemon Height (m, log 10)</figcaption><p></p>
-</figure>
-</div>
+<figcaption>Histogram of Pokemon Height (m, log 10)</figcaption></figure>
 </div>
 </div>
 <div class="quarto-layout-row quarto-layout-valign-top">
-<div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
-<div class="quarto-figure quarto-figure-center">
+<div class="quarto-figure quarto-figure-center quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
 <figure class="figure"><p><img src="02a-eda_files/figure-html/poke-ggplot2-cts-py-3.png" class="img-fluid figure-img" width="614"></p>
-<p></p><figcaption class="figure-caption">Density of Pokemon Height (m)</figcaption><p></p>
-</figure>
+<figcaption>Density of Pokemon Height (m)</figcaption></figure>
 </div>
-</div>
-<div class="cell-output-display quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
-<div class="quarto-figure quarto-figure-center">
+<div class="quarto-figure quarto-figure-center quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
 <figure class="figure"><p><img src="02a-eda_files/figure-html/poke-ggplot2-cts-py-4.png" class="img-fluid figure-img" width="614"></p>
-<p></p><figcaption class="figure-caption">Density of Pokemon Height (m, log 10)</figcaption><p></p>
-</figure>
-</div>
+<figcaption>Density of Pokemon Height (m, log 10)</figcaption></figure>
 </div>
 </div>
 <div class="quarto-layout-row quarto-layout-valign-top">
 <div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
 <p>Histogram and density plots of height and log10 height of different pokemon. The untransformed data are highly skewed, the transformed data are significantly less skewed.</p>
-</div>
 </div>
 </div>
 </div>
@@ -1487,7 +1469,7 @@ Note: R pipe
 <span class="header-section-number">19.4.3</span> Relationships Between Variables</h3>
 <section id="categorical---categorical-relationships" class="level4" data-number="19.4.3.1"><h4 data-number="19.4.3.1" class="anchored" data-anchor-id="categorical---categorical-relationships">
 <span class="header-section-number">19.4.3.1</span> Categorical - Categorical Relationships</h4>
-<div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-6-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-1" role="tab" aria-controls="tabset-6-1" aria-selected="true">R: ggplot2</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-2" role="tab" aria-controls="tabset-6-2" aria-selected="false">Base R</a></li>
@@ -1495,7 +1477,7 @@ Note: R pipe
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-4" role="tab" aria-controls="tabset-6-4" aria-selected="false">Python: plotnine</a></li>
 </ul>
 <div class="tab-content">
-<div id="tabset-6-1" class="unnumbered tab-pane active" role="tabpanel" aria-labelledby="tabset-6-1-tab">
+<div id="tabset-6-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-6-1-tab">
 <p>We can generate a (simple) mosaic plot (the equivalent of a 2-dimensional cross-tabular view) using <code>geom_bar</code> with <code>position = 'fill'</code>, which scales each bar so that it ends at 1. I’ve flipped the axes using <code>coord_flip</code> so that you can read the labels more easily.</p>
 <div class="cell">
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span></span>
@@ -1505,7 +1487,10 @@ Note: R pipe
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">xlab</a></span><span class="op">(</span><span class="st">"Type 1"</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ylab</a></span><span class="op">(</span><span class="st">"Proportion of Pokemon w/ Type 2"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_flip.html">coord_flip</a></span><span class="op">(</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02a-eda_files/figure-html/poke-dist-plots-ggplot2-mosaic-9.png" class="img-fluid" width="2100"></p>
+<div>
+<figure class="figure"><p><img src="02a-eda_files/figure-html/poke-dist-plots-ggplot2-mosaic-9.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>Another way to look at this data is to bin it in x and y and shade the resulting bins by the number of data points in each bin. We can even add in labels so that this is at least as clear as the tabular view!</p>
@@ -1519,21 +1504,27 @@ Note: R pipe
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_gradient.html">scale_fill_gradient2</a></span><span class="op">(</span>limits <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">100</span><span class="op">)</span>, low <span class="op">=</span> <span class="st">"white"</span>, high <span class="op">=</span> <span class="st">"blue"</span>, na.value <span class="op">=</span> <span class="st">"white"</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">90</span>, hjust <span class="op">=</span> <span class="fl">1</span>, vjust <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02a-eda_files/figure-html/poke-dist-plots-ggplot2-tile-1.png" class="img-fluid" width="2100"></p>
+<div>
+<figure class="figure"><p><img src="02a-eda_files/figure-html/poke-dist-plots-ggplot2-tile-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
 </div>
 </div>
 </div>
-<div id="tabset-6-2" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-6-2-tab">
+</div>
+<div id="tabset-6-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-2-tab">
 <p>Base R mosaic plots aren’t nearly as pretty as the ggplot version, but I will at least show you how to create them.</p>
 <div class="cell">
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">poke</span><span class="op">$</span><span class="va">type_1</span>, <span class="va">poke</span><span class="op">$</span><span class="va">type_2</span><span class="op">)</span><span class="op">)</span> </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02a-eda_files/figure-html/mosaic-base-r-1.png" class="img-fluid" width="2100"></p>
+<div>
+<figure class="figure"><p><img src="02a-eda_files/figure-html/mosaic-base-r-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
 </div>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># mosaic plot - hard to read b/c too many categories</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
-<div id="tabset-6-3" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-6-3-tab">
+<div id="tabset-6-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-3-tab">
 <p>To get a mosaicplot, we need an additional library, called <code>statsmodels</code>, which we install with <code>pip install statsmodels</code> in the terminal.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
@@ -1543,12 +1534,15 @@ Note: R pipe
 <span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="co">## (&lt;Figure size 700x500 with 3 Axes&gt;, {('Grass', 'Poison'): (0.0, 0.0, 0.06915143624291603, 0.22180599369085174), ('Grass', 'Flying'): (0.0, 0.22496056782334384, 0.06915143624291603, 0.11829652996845426), ('Grass', 'Dragon'): (0.0, 0.34641167192429023, 0.06915143624291603, 0.0887223974763407), ('Grass', 'Normal'): (0.0, 0.438288643533123, 0.06915143624291603, 0.04436119873817035), ('Grass', 'Psychic'): (0.0, 0.48580441640378547, 0.06915143624291603, 0.04436119873817035), ('Grass', 'Steel'): (0.0, 0.533320189274448, 0.06915143624291603, 0.04436119873817035), ('Grass', 'Ground'): (0.0, 0.5808359621451105, 0.06915143624291603, 0.014787066246056782), ('Grass', 'Fairy'): (0.0, 0.5987776025236593, 0.06915143624291603, 0.07393533123028391), ('Grass', 'Grass'): (0.0, 0.6758675078864353, 0.06915143624291603, 0.0), ('Grass', 'Rock'): (0.0, 0.6790220820189274, 0.06915143624291603, 0.0), ('Grass', 'Fighting'): (0.0, 0.6821766561514195, 0.06915143624291603, 0.10350946372239749), ('Grass', 'Electric'): (0.0, 0.7888406940063091, 0.06915143624291603, 0.0), ('Grass', 'Ice'): (0.0, 0.7919952681388013, 0.06915143624291603, 0.04436119873817035), ('Grass', 'Dark'): (0.0, 0.8395110410094637, 0.06915143624291603, 0.07393533123028391), ('Grass', 'Ghost'): (0.0, 0.9166009463722398, 0.06915143624291603, 0.05914826498422713), ('Grass', 'Fire'): (0.0, 0.9789037854889591, 0.06915143624291603, 0.014787066246056782), ('Grass', 'Water'): (0.0, 0.9968454258675078, 0.06915143624291603, 0.0), ('Grass', 'Bug'): (0.0, 1.0, 0.06915143624291603, 0.0), ('Fire', 'Poison'): (0.0737597311737916, 0.0, 0.05294406837348259, 0.019313719178523144), ('Fire', 'Flying'): (0.0737597311737916, 0.02246829331101526, 0.05294406837348259, 0.2124509109637546), ('Fire', 'Dragon'): (0.0737597311737916, 0.23807377840726196, 0.05294406837348259, 0.03862743835704628), ('Fire', 'Normal'): (0.0737597311737916, 0.27985579089680035, 0.05294406837348259, 0.03862743835704628), ('Fire', 'Psychic'): (0.0737597311737916, 0.32163780338633874, 0.05294406837348259, 0.11588231507113889), ('Fire', 'Steel'): (0.0737597311737916, 0.4406746925899698, 0.05294406837348259, 0.019313719178523165), ('Fire', 'Ground'): (0.0737597311737916, 0.46314298590098507, 0.05294406837348259, 0.05794115753556944), ('Fire', 'Fairy'): (0.0737597311737916, 0.5242387175690466, 0.05294406837348259, 0.0), ('Fire', 'Grass'): (0.0737597311737916, 0.5273932917015387, 0.05294406837348259, 0.0), ('Fire', 'Rock'): (0.0737597311737916, 0.5305478658340308, 0.05294406837348259, 0.09656859589261572), ('Fire', 'Fighting'): (0.0737597311737916, 0.6302710358591387, 0.05294406837348259, 0.13519603424966195), ('Fire', 'Electric'): (0.0737597311737916, 0.7686216442412926, 0.05294406837348259, 0.0), ('Fire', 'Ice'): (0.0737597311737916, 0.7717762183737849, 0.05294406837348259, 0.0), ('Fire', 'Dark'): (0.0737597311737916, 0.7749307925062769, 0.05294406837348259, 0.019313719178523165), ('Fire', 'Ghost'): (0.0737597311737916, 0.7973990858172922, 0.05294406837348259, 0.13519603424966206), ('Fire', 'Fire'): (0.0737597311737916, 0.9357496941994464, 0.05294406837348259, 0.0), ('Fire', 'Water'): (0.0737597311737916, 0.9389042683319385, 0.05294406837348259, 0.01931371917852306), ('Fire', 'Bug'): (0.0737597311737916, 0.9613725616429537, 0.05294406837348259, 0.03862743835704633), ('Bug', 'Poison'): (0.1313120944781498, 0.0, 0.08211733053846279, 0.14942719574962643), ('Bug', 'Flying'): (0.1313120944781498, 0.15258176988211852, 0.08211733053846279, 0.1743317283745642), ('Bug', 'Dragon'): (0.1313120944781498, 0.33006807238917485, 0.08211733053846279, 0.0), ('Bug', 'Normal'): (0.1313120944781498, 0.33322264652166694, 0.08211733053846279, 0.0), ('Bug', 'Psychic'): (0.1313120944781498, 0.33637722065415904, 0.08211733053846279, 0.03735679893740662), ('Bug', 'Steel'): (0.1313120944781498, 0.3768885937240578, 0.08211733053846279, 0.16187946206209533), ('Bug', 'Ground'): (0.1313120944781498, 0.5419226299186453, 0.08211733053846279, 0.049809065249875425), ('Bug', 'Fairy'): (0.1313120944781498, 0.5948862693010127, 0.08211733053846279, 0.024904532624937713), ('Bug', 'Grass'): (0.1313120944781498, 0.6229453760584426, 0.08211733053846279, 0.09961813049975095), ('Bug', 'Rock'): (0.1313120944781498, 0.7257180806906857, 0.08211733053846279, 0.04980906524987553), ('Bug', 'Fighting'): (0.1313120944781498, 0.7786817200730534, 0.08211733053846279, 0.062261331562344334), ('Bug', 'Electric'): (0.1313120944781498, 0.8440976257678897, 0.08211733053846279, 0.04980906524987553), ('Bug', 'Ice'): (0.1313120944781498, 0.8970612651502574, 0.08211733053846279, 0.0), ('Bug', 'Dark'): (0.1313120944781498, 0.9002158392827495, 0.08211733053846279, 0.012452266312468803), ('Bug', 'Ghost'): (0.1313120944781498, 0.9158226797277104, 0.08211733053846279, 0.012452266312468908), ('Bug', 'Fire'): (0.1313120944781498, 0.9314295201726716, 0.08211733053846279, 0.024904532624937713), ('Bug', 'Water'): (0.1313120944781498, 0.9594886269301012, 0.08211733053846279, 0.03735679893740662), ('Bug', 'Bug'): (0.1313120944781498, 1.0, 0.08211733053846279, 0.0), ('Normal', 'Poison'): (0.21803771994748813, 0.0, 0.06915143624291603, 0.0), ('Normal', 'Flying'): (0.21803771994748813, 0.003154574132492114, 0.06915143624291603, 0.48797318611987384), ('Normal', 'Dragon'): (0.21803771994748813, 0.4942823343848581, 0.06915143624291603, 0.014787066246056782), ('Normal', 'Normal'): (0.21803771994748813, 0.512223974763407, 0.06915143624291603, 0.0), ('Normal', 'Psychic'): (0.21803771994748813, 0.5153785488958991, 0.06915143624291603, 0.0887223974763407), ('Normal', 'Steel'): (0.21803771994748813, 0.607255520504732, 0.06915143624291603, 0.0), ('Normal', 'Ground'): (0.21803771994748813, 0.610410094637224, 0.06915143624291603, 0.014787066246056782), ('Normal', 'Fairy'): (0.21803771994748813, 0.6283517350157729, 0.06915143624291603, 0.07393533123028391), ('Normal', 'Grass'): (0.21803771994748813, 0.7054416403785488, 0.06915143624291603, 0.11829652996845426), ('Normal', 'Rock'): (0.21803771994748813, 0.8268927444794953, 0.06915143624291603, 0.0), ('Normal', 'Fighting'): (0.21803771994748813, 0.8300473186119874, 0.06915143624291603, 0.07393533123028391), ('Normal', 'Electric'): (0.21803771994748813, 0.9071372239747634, 0.06915143624291603, 0.0), ('Normal', 'Ice'): (0.21803771994748813, 0.9102917981072556, 0.06915143624291603, 0.0), ('Normal', 'Dark'): (0.21803771994748813, 0.9134463722397477, 0.06915143624291603, 0.0), ('Normal', 'Ghost'): (0.21803771994748813, 0.9166009463722398, 0.06915143624291603, 0.05914826498422713), ('Normal', 'Fire'): (0.21803771994748813, 0.9789037854889591, 0.06915143624291603, 0.0), ('Normal', 'Water'): (0.21803771994748813, 0.982058359621451, 0.06915143624291603, 0.014787066246056782), ('Normal', 'Bug'): (0.21803771994748813, 1.0, 0.06915143624291603, 0.0), ('Dark', 'Poison'): (0.29179745112127975, 0.0, 0.05078308599089144, 0.060406738707295786), ('Dark', 'Flying'): (0.29179745112127975, 0.0635613128397879, 0.05078308599089144, 0.1610846365527888), ('Dark', 'Dragon'): (0.29179745112127975, 0.2278005235250688, 0.05078308599089144, 0.0805423182763944), ('Dark', 'Normal'): (0.29179745112127975, 0.31149741593395536, 0.05078308599089144, 0.18122021612188732), ('Dark', 'Psychic'): (0.29179745112127975, 0.4958722061883347, 0.05078308599089144, 0.04027115913819725), ('Dark', 'Steel'): (0.29179745112127975, 0.5392979394590242, 0.05078308599089144, 0.06040673870729577), ('Dark', 'Ground'): (0.29179745112127975, 0.602859252298812, 0.05078308599089144, 0.020135579569098627), ('Dark', 'Fairy'): (0.29179745112127975, 0.6261494060004027, 0.05078308599089144, 0.06040673870729577), ('Dark', 'Grass'): (0.29179745112127975, 0.6897107188401906, 0.05078308599089144, 0.04027115913819715), ('Dark', 'Rock'): (0.29179745112127975, 0.73313645211088, 0.05078308599089144, 0.0), ('Dark', 'Fighting'): (0.29179745112127975, 0.7362910262433721, 0.05078308599089144, 0.04027115913819725), ('Dark', 'Electric'): (0.29179745112127975, 0.7797167595140614, 0.05078308599089144, 0.0), ('Dark', 'Ice'): (0.29179745112127975, 0.7828713336465536, 0.05078308599089144, 0.0805423182763944), ('Dark', 'Dark'): (0.29179745112127975, 0.86656822605544, 0.05078308599089144, 0.0), ('Dark', 'Ghost'): (0.29179745112127975, 0.8697228001879321, 0.05078308599089144, 0.04027115913819715), ('Dark', 'Fire'): (0.29179745112127975, 0.9131485334586215, 0.05078308599089144, 0.0805423182763944), ('Dark', 'Water'): (0.29179745112127975, 0.9968454258675078, 0.05078308599089144, 0.0), ('Dark', 'Bug'): (0.29179745112127975, 1.0, 0.05078308599089144, 0.0), ('Electric', 'Poison'): (0.3471888320430468, 0.0, 0.08535880411234952, 0.05989697719921735), ('Electric', 'Flying'): (0.3471888320430468, 0.06305155133170946, 0.08535880411234952, 0.22760851335702592), ('Electric', 'Dragon'): (0.3471888320430468, 0.2938146388212275, 0.08535880411234952, 0.03593818631953039), ('Electric', 'Normal'): (0.3471888320430468, 0.33290739927325, 0.08535880411234952, 0.023958790879686963), ('Electric', 'Psychic'): (0.3471888320430468, 0.36002076428542906, 0.08535880411234952, 0.02395879087968691), ('Electric', 'Steel'): (0.3471888320430468, 0.3871341292976081, 0.08535880411234952, 0.04791758175937387), ('Electric', 'Ground'): (0.3471888320430468, 0.43820628518947413, 0.08535880411234952, 0.011979395439843481), ('Electric', 'Fairy'): (0.3471888320430468, 0.45334025476180967, 0.08535880411234952, 0.023958790879686963), ('Electric', 'Grass'): (0.3471888320430468, 0.4804536197739887, 0.08535880411234952, 0.1197939543984347), ('Electric', 'Rock'): (0.3471888320430468, 0.6034021483049156, 0.08535880411234952, 0.0), ('Electric', 'Fighting'): (0.3471888320430468, 0.6065567224374077, 0.08535880411234952, 0.023958790879686963), ('Electric', 'Electric'): (0.3471888320430468, 0.6336700874495867, 0.08535880411234952, 0.0), ('Electric', 'Ice'): (0.3471888320430468, 0.636824661582079, 0.08535880411234952, 0.08385576807890421), ('Electric', 'Dark'): (0.3471888320430468, 0.7238350037934752, 0.08535880411234952, 0.047917581759373926), ('Electric', 'Ghost'): (0.3471888320430468, 0.7749071596853412, 0.08535880411234952, 0.07187637263906078), ('Electric', 'Fire'): (0.3471888320430468, 0.8499381064568942, 0.08535880411234952, 0.07187637263906088), ('Electric', 'Water'): (0.3471888320430468, 0.9249690532284471, 0.08535880411234952, 0.07187637263906078), ('Electric', 'Bug'): (0.3471888320430468, 1.0, 0.08535880411234952, 0.0), ('Ice', 'Poison'): (0.4371559310862718, 0.0, 0.03241473573886688, 0.0), ('Ice', 'Flying'): (0.4371559310862718, 0.003154574132492114, 0.03241473573886688, 0.09463722397476342), ('Ice', 'Dragon'): (0.4371559310862718, 0.10094637223974764, 0.03241473573886688, 0.0), ('Ice', 'Normal'): (0.4371559310862718, 0.10410094637223975, 0.03241473573886688, 0.0), ('Ice', 'Psychic'): (0.4371559310862718, 0.10725552050473187, 0.03241473573886688, 0.15772870662460567), ('Ice', 'Steel'): (0.4371559310862718, 0.26813880126182965, 0.03241473573886688, 0.12618296529968456), ('Ice', 'Ground'): (0.4371559310862718, 0.39747634069400634, 0.03241473573886688, 0.09463722397476339), ('Ice', 'Fairy'): (0.4371559310862718, 0.4952681388012618, 0.03241473573886688, 0.06309148264984225), ('Ice', 'Grass'): (0.4371559310862718, 0.5615141955835962, 0.03241473573886688, 0.0), ('Ice', 'Rock'): (0.4371559310862718, 0.5646687697160884, 0.03241473573886688, 0.06309148264984225), ('Ice', 'Fighting'): (0.4371559310862718, 0.6309148264984227, 0.03241473573886688, 0.0), ('Ice', 'Electric'): (0.4371559310862718, 0.6340694006309148, 0.03241473573886688, 0.0), ('Ice', 'Ice'): (0.4371559310862718, 0.637223974763407, 0.03241473573886688, 0.0), ('Ice', 'Dark'): (0.4371559310862718, 0.6403785488958991, 0.03241473573886688, 0.0), ('Ice', 'Ghost'): (0.4371559310862718, 0.6435331230283912, 0.03241473573886688, 0.03154574132492113), ('Ice', 'Fire'): (0.4371559310862718, 0.6782334384858044, 0.03241473573886688, 0.12618296529968462), ('Ice', 'Water'): (0.4371559310862718, 0.8075709779179812, 0.03241473573886688, 0.1261829652996845), ('Ice', 'Bug'): (0.4371559310862718, 0.9369085173501578, 0.03241473573886688, 0.06309148264984225), ('Poison', 'Poison'): (0.4741789617560143, 0.0, 0.03889768288664027, 0.0), ('Poison', 'Flying'): (0.4741789617560143, 0.003154574132492114, 0.03889768288664027, 0.07886435331230283), ('Poison', 'Dragon'): (0.4741789617560143, 0.08517350157728706, 0.03889768288664027, 0.10515247108307046), ('Poison', 'Normal'): (0.4741789617560143, 0.19348054679284965, 0.03889768288664027, 0.052576235541535225), ('Poison', 'Psychic'): (0.4741789617560143, 0.24921135646687695, 0.03889768288664027, 0.10515247108307045), ('Poison', 'Steel'): (0.4741789617560143, 0.35751840168243953, 0.03889768288664027, 0.0), ('Poison', 'Ground'): (0.4741789617560143, 0.3606729758149317, 0.03889768288664027, 0.13144058885383808), ('Poison', 'Fairy'): (0.4741789617560143, 0.4952681388012618, 0.03889768288664027, 0.05257623554153525), ('Poison', 'Grass'): (0.4741789617560143, 0.5509989484752892, 0.03889768288664027, 0.0), ('Poison', 'Rock'): (0.4741789617560143, 0.5541535226077814, 0.03889768288664027, 0.0), ('Poison', 'Fighting'): (0.4741789617560143, 0.5573080967402734, 0.03889768288664027, 0.07886435331230277), ('Poison', 'Electric'): (0.4741789617560143, 0.6393270241850683, 0.03889768288664027, 0.0), ('Poison', 'Ice'): (0.4741789617560143, 0.6424815983175605, 0.03889768288664027, 0.0), ('Poison', 'Dark'): (0.4741789617560143, 0.6456361724500526, 0.03889768288664027, 0.18401682439537337), ('Poison', 'Ghost'): (0.4741789617560143, 0.832807570977918, 0.03889768288664027, 0.0), ('Poison', 'Fire'): (0.4741789617560143, 0.8359621451104102, 0.03889768288664027, 0.05257623554153515), ('Poison', 'Water'): (0.4741789617560143, 0.8916929547844374, 0.03889768288664027, 0.07886435331230288), ('Poison', 'Bug'): (0.4741789617560143, 0.9737118822292324, 0.03889768288664027, 0.026288117770767627), ('Ground', 'Poison'): (0.5176849395735302, 0.0, 0.03889768288664027, 0.0), ('Ground', 'Flying'): (0.5176849395735302, 0.003154574132492114, 0.03889768288664027, 0.15772870662460567), ('Ground', 'Dragon'): (0.5176849395735302, 0.16403785488958988, 0.03889768288664027, 0.052576235541535225), ('Ground', 'Normal'): (0.5176849395735302, 0.21976866456361724, 0.03889768288664027, 0.026288117770767627), ('Ground', 'Psychic'): (0.5176849395735302, 0.24921135646687695, 0.03889768288664027, 0.05257623554153525), ('Ground', 'Steel'): (0.5176849395735302, 0.30494216614090436, 0.03889768288664027, 0.2103049421661409), ('Ground', 'Ground'): (0.5176849395735302, 0.5184016824395373, 0.03889768288664027, 0.0), ('Ground', 'Fairy'): (0.5176849395735302, 0.5215562565720294, 0.03889768288664027, 0.0), ('Ground', 'Grass'): (0.5176849395735302, 0.5247108307045215, 0.03889768288664027, 0.05257623554153525), ('Ground', 'Rock'): (0.5176849395735302, 0.580441640378549, 0.03889768288664027, 0.07886435331230277), ('Ground', 'Fighting'): (0.5176849395735302, 0.6624605678233438, 0.03889768288664027, 0.026288117770767627), ('Ground', 'Electric'): (0.5176849395735302, 0.6919032597266035, 0.03889768288664027, 0.05257623554153525), ('Ground', 'Ice'): (0.5176849395735302, 0.7476340694006309, 0.03889768288664027, 0.0), ('Ground', 'Dark'): (0.5176849395735302, 0.750788643533123, 0.03889768288664027, 0.07886435331230288), ('Ground', 'Ghost'): (0.5176849395735302, 0.832807570977918, 0.03889768288664027, 0.13144058885383803), ('Ground', 'Fire'): (0.5176849395735302, 0.9674027339642481, 0.03889768288664027, 0.026288117770767627), ('Ground', 'Water'): (0.5176849395735302, 0.9968454258675078, 0.03889768288664027, 0.0), ('Ground', 'Bug'): (0.5176849395735302, 1.0, 0.03889768288664027, 0.0), ('Water', 'Poison'): (0.561190917391046, 0.0, 0.08968076887753176, 0.045608300710729355), ('Water', 'Flying'): (0.561190917391046, 0.04876287484322147, 0.08968076887753176, 0.07981452624377637), ('Water', 'Dragon'): (0.561190917391046, 0.13173197521948996, 0.08968076887753176, 0.06841245106609402), ('Water', 'Normal'): (0.561190917391046, 0.2032990004180761, 0.08968076887753176, 0.0), ('Water', 'Psychic'): (0.561190917391046, 0.2064535745505682, 0.08968076887753176, 0.1254228269545057), ('Water', 'Steel'): (0.561190917391046, 0.335030975637566, 0.08968076887753176, 0.011402075177682375), ('Water', 'Ground'): (0.561190917391046, 0.34958762494774054, 0.08968076887753176, 0.13682490213218804), ('Water', 'Fairy'): (0.561190917391046, 0.4895671012124207, 0.08968076887753176, 0.04560830071072934), ('Water', 'Grass'): (0.561190917391046, 0.538329976055642, 0.08968076887753176, 0.03420622553304702), ('Water', 'Rock'): (0.561190917391046, 0.5756907757211812, 0.08968076887753176, 0.06841245106609405), ('Water', 'Fighting'): (0.561190917391046, 0.6472578009197674, 0.08968076887753176, 0.06841245106609405), ('Water', 'Electric'): (0.561190917391046, 0.7188248261183535, 0.08968076887753176, 0.022804150355364646), ('Water', 'Ice'): (0.561190917391046, 0.7447835506062104, 0.08968076887753176, 0.045608300710729396), ('Water', 'Dark'): (0.561190917391046, 0.7935464254494318, 0.08968076887753176, 0.10261867659914106), ('Water', 'Ghost'): (0.561190917391046, 0.899319676181065, 0.08968076887753176, 0.06841245106609405), ('Water', 'Fire'): (0.561190917391046, 0.970886701379651, 0.08968076887753176, 0.0), ('Water', 'Water'): (0.561190917391046, 0.9740412755121433, 0.08968076887753176, 0.0), ('Water', 'Bug'): (0.561190917391046, 0.9771958496446355, 0.08968076887753176, 0.022804150355364646), ('Rock', 'Poison'): (0.6554799811994534, 0.0, 0.059427015521255885, 0.051620303986234586), ('Rock', 'Flying'): (0.6554799811994534, 0.0547748781187267, 0.059427015521255885, 0.13765414396329226), ('Rock', 'Dragon'): (0.6554799811994534, 0.19558359621451105, 0.059427015521255885, 0.034413535990823044), ('Rock', 'Normal'): (0.6554799811994534, 0.23315170633782623, 0.059427015521255885, 0.0), ('Rock', 'Psychic'): (0.6554799811994534, 0.23630628047031832, 0.059427015521255885, 0.034413535990823044), ('Rock', 'Steel'): (0.6554799811994534, 0.2738743905936335, 0.059427015521255885, 0.06882707198164614), ('Rock', 'Ground'): (0.6554799811994534, 0.34585603670777176, 0.059427015521255885, 0.15486091195870372), ('Rock', 'Fairy'): (0.6554799811994534, 0.5038715227989675, 0.059427015521255885, 0.05162030398623461), ('Rock', 'Grass'): (0.6554799811994534, 0.5586464009176942, 0.059427015521255885, 0.03441353599082307), ('Rock', 'Rock'): (0.6554799811994534, 0.5962145110410095, 0.059427015521255885, 0.0), ('Rock', 'Fighting'): (0.6554799811994534, 0.5993690851735015, 0.059427015521255885, 0.017206767995411536), ('Rock', 'Electric'): (0.6554799811994534, 0.6197304273014052, 0.059427015521255885, 0.12044737596788074), ('Rock', 'Ice'): (0.6554799811994534, 0.7433323774017782, 0.059427015521255885, 0.03441353599082307), ('Rock', 'Dark'): (0.6554799811994534, 0.7809004875250932, 0.059427015521255885, 0.03441353599082307), ('Rock', 'Ghost'): (0.6554799811994534, 0.8184685976484084, 0.059427015521255885, 0.0), ('Rock', 'Fire'): (0.6554799811994534, 0.8216231717809006, 0.059427015521255885, 0.03441353599082297), ('Rock', 'Water'): (0.6554799811994534, 0.8591912819042157, 0.059427015521255885, 0.10324060797246921), ('Rock', 'Bug'): (0.6554799811994534, 0.9655864640091769, 0.059427015521255885, 0.03441353599082307), ('Psychic', 'Poison'): (0.7195152916515849, 0.0, 0.06266848909514271, 0.0), ('Psychic', 'Flying'): (0.7195152916515849, 0.003154574132492114, 0.06266848909514271, 0.22843467855977376), ('Psychic', 'Dragon'): (0.7195152916515849, 0.23474382682475797, 0.06266848909514271, 0.048950288262808624), ('Psychic', 'Normal'): (0.7195152916515849, 0.28684868922005874, 0.06266848909514271, 0.06526705101707823), ('Psychic', 'Psychic'): (0.7195152916515849, 0.355270314369629, 0.06266848909514271, 0.0), ('Psychic', 'Steel'): (0.7195152916515849, 0.3584248885021212, 0.06266848909514271, 0.06526705101707819), ('Psychic', 'Ground'): (0.7195152916515849, 0.4268465136516915, 0.06266848909514271, 0.0), ('Psychic', 'Fairy'): (0.7195152916515849, 0.4300010877841836, 0.06266848909514271, 0.17948439029696514), ('Psychic', 'Grass'): (0.7195152916515849, 0.6126400522136408, 0.06266848909514271, 0.06526705101707823), ('Psychic', 'Rock'): (0.7195152916515849, 0.6810616773632112, 0.06266848909514271, 0.0), ('Psychic', 'Fighting'): (0.7195152916515849, 0.6842162514957033, 0.06266848909514271, 0.04895028826280865), ('Psychic', 'Electric'): (0.7195152916515849, 0.7363211138910041, 0.06266848909514271, 0.0), ('Psychic', 'Ice'): (0.7195152916515849, 0.7394756880234962, 0.06266848909514271, 0.04895028826280865), ('Psychic', 'Dark'): (0.7195152916515849, 0.7915805504187969, 0.06266848909514271, 0.03263352550853907), ('Psychic', 'Ghost'): (0.7195152916515849, 0.8273686500598281, 0.06266848909514271, 0.14685086478842596), ('Psychic', 'Fire'): (0.7195152916515849, 0.9773740889807462, 0.06266848909514271, 0.016316762754269586), ('Psychic', 'Water'): (0.7195152916515849, 0.9968454258675078, 0.06266848909514271, 0.0), ('Psychic', 'Bug'): (0.7195152916515849, 1.0, 0.06266848909514271, 0.0), ('Ghost', 'Poison'): (0.7867920756776031, 0.0, 0.036736700504049126, 0.11133791055854518), ('Ghost', 'Flying'): (0.7867920756776031, 0.11449248469103729, 0.036736700504049126, 0.1670068658378178), ('Ghost', 'Dragon'): (0.7867920756776031, 0.2846539246613472, 0.036736700504049126, 0.11133791055854515), ('Ghost', 'Normal'): (0.7867920756776031, 0.3991464093523845, 0.036736700504049126, 0.0), ('Ghost', 'Psychic'): (0.7867920756776031, 0.4023009834848766, 0.036736700504049126, 0.0), ('Ghost', 'Steel'): (0.7867920756776031, 0.4054555576173687, 0.036736700504049126, 0.0), ('Ghost', 'Ground'): (0.7867920756776031, 0.4086101317498608, 0.036736700504049126, 0.055668955279272604), ('Ghost', 'Fairy'): (0.7867920756776031, 0.46743366116162555, 0.036736700504049126, 0.08350343291890891), ('Ghost', 'Grass'): (0.7867920756776031, 0.5540916682130265, 0.036736700504049126, 0.3061792540359992), ('Ghost', 'Rock'): (0.7867920756776031, 0.8634254963815179, 0.036736700504049126, 0.0), ('Ghost', 'Fighting'): (0.7867920756776031, 0.86658007051401, 0.036736700504049126, 0.0), ('Ghost', 'Electric'): (0.7867920756776031, 0.8697346446465021, 0.036736700504049126, 0.0), ('Ghost', 'Ice'): (0.7867920756776031, 0.8728892187789943, 0.036736700504049126, 0.0), ('Ghost', 'Dark'): (0.7867920756776031, 0.8760437929114864, 0.036736700504049126, 0.027834477639636302), ('Ghost', 'Ghost'): (0.7867920756776031, 0.9070328446836148, 0.036736700504049126, 0.0), ('Ghost', 'Fire'): (0.7867920756776031, 0.9101874188161069, 0.036736700504049126, 0.08350343291890891), ('Ghost', 'Water'): (0.7867920756776031, 0.9968454258675078, 0.036736700504049126, 0.0), ('Ghost', 'Bug'): (0.7867920756776031, 1.0, 0.036736700504049126, 0.0), ('Fighting', 'Poison'): (0.8281370711125278, 0.0, 0.032414735738866926, 0.06309148264984227), ('Fighting', 'Flying'): (0.8281370711125278, 0.06624605678233438, 0.032414735738866926, 0.0946372239747634), ('Fighting', 'Dragon'): (0.8281370711125278, 0.16403785488958988, 0.032414735738866926, 0.031545741324921155), ('Fighting', 'Normal'): (0.8281370711125278, 0.19873817034700317, 0.032414735738866926, 0.0), ('Fighting', 'Psychic'): (0.8281370711125278, 0.2018927444794953, 0.032414735738866926, 0.09463722397476339), ('Fighting', 'Steel'): (0.8281370711125278, 0.29968454258675076, 0.032414735738866926, 0.12618296529968456), ('Fighting', 'Ground'): (0.8281370711125278, 0.4290220820189275, 0.032414735738866926, 0.0), ('Fighting', 'Fairy'): (0.8281370711125278, 0.4321766561514196, 0.032414735738866926, 0.0), ('Fighting', 'Grass'): (0.8281370711125278, 0.4353312302839117, 0.032414735738866926, 0.0), ('Fighting', 'Rock'): (0.8281370711125278, 0.43848580441640383, 0.032414735738866926, 0.0), ('Fighting', 'Fighting'): (0.8281370711125278, 0.44164037854889593, 0.032414735738866926, 0.0), ('Fighting', 'Electric'): (0.8281370711125278, 0.444794952681388, 0.032414735738866926, 0.03154574132492113), ('Fighting', 'Ice'): (0.8281370711125278, 0.47949526813880133, 0.032414735738866926, 0.03154574132492113), ('Fighting', 'Dark'): (0.8281370711125278, 0.5141955835962145, 0.032414735738866926, 0.09463722397476339), ('Fighting', 'Ghost'): (0.8281370711125278, 0.61198738170347, 0.032414735738866926, 0.06309148264984225), ('Fighting', 'Fire'): (0.8281370711125278, 0.6782334384858044, 0.032414735738866926, 0.12618296529968462), ('Fighting', 'Water'): (0.8281370711125278, 0.8075709779179812, 0.032414735738866926, 0.18927444794952678), ('Fighting', 'Bug'): (0.8281370711125278, 1.0, 0.032414735738866926, 0.0), ('Dragon', 'Poison'): (0.8651601017822702, 0.0, 0.05834652432996041, 0.0), ('Dragon', 'Flying'): (0.8651601017822702, 0.003154574132492114, 0.05834652432996041, 0.10515247108307045), ('Dragon', 'Dragon'): (0.8651601017822702, 0.11146161934805468, 0.05834652432996041, 0.0), ('Dragon', 'Normal'): (0.8651601017822702, 0.11461619348054679, 0.05834652432996041, 0.01752541184717841), ('Dragon', 'Psychic'): (0.8651601017822702, 0.13529617946021733, 0.05834652432996041, 0.07010164738871363), ('Dragon', 'Steel'): (0.8651601017822702, 0.20855240098142305, 0.05834652432996041, 0.0), ('Dragon', 'Ground'): (0.8651601017822702, 0.21170697511391517, 0.05834652432996041, 0.2278303540133193), ('Dragon', 'Fairy'): (0.8651601017822702, 0.44269190325972657, 0.05834652432996041, 0.017525411847178433), ('Dragon', 'Grass'): (0.8651601017822702, 0.46337188923939715, 0.05834652432996041, 0.0), ('Dragon', 'Rock'): (0.8651601017822702, 0.4665264633718893, 0.05834652432996041, 0.0), ('Dragon', 'Fighting'): (0.8651601017822702, 0.46968103750438134, 0.05834652432996041, 0.03505082369435682), ('Dragon', 'Electric'): (0.8651601017822702, 0.5078864353312302, 0.05834652432996041, 0.01752541184717838), ('Dragon', 'Ice'): (0.8651601017822702, 0.5285664213109008, 0.05834652432996041, 0.2103049421661409), ('Dragon', 'Dark'): (0.8651601017822702, 0.7420259376095338, 0.05834652432996041, 0.017525411847178488), ('Dragon', 'Ghost'): (0.8651601017822702, 0.7627059235892044, 0.05834652432996041, 0.05257623554153515), ('Dragon', 'Fire'): (0.8651601017822702, 0.8184367332632317, 0.05834652432996041, 0.017525411847178488), ('Dragon', 'Water'): (0.8651601017822702, 0.8391167192429023, 0.05834652432996041, 0.15772870662460564), ('Dragon', 'Bug'): (0.8651601017822702, 1.0, 0.05834652432996041, 0.0), ('Fairy', 'Poison'): (0.9281149210431063, 0.0, 0.014046385486842264, 0.0), ('Fairy', 'Flying'): (0.9281149210431063, 0.003154574132492114, 0.014046385486842264, 0.4367871875758311), ('Fairy', 'Dragon'): (0.9281149210431063, 0.44309633584081537, 0.014046385486842264, 0.0), ('Fairy', 'Normal'): (0.9281149210431063, 0.4462509099733075, 0.014046385486842264, 0.0), ('Fairy', 'Psychic'): (0.9281149210431063, 0.44940548410579956, 0.014046385486842264, 0.0727978645959718), ('Fairy', 'Steel'): (0.9281149210431063, 0.5253579228342635, 0.014046385486842264, 0.36398932297985936), ('Fairy', 'Ground'): (0.9281149210431063, 0.892501819946615, 0.014046385486842264, 0.0), ('Fairy', 'Fairy'): (0.9281149210431063, 0.895656394079107, 0.014046385486842264, 0.0), ('Fairy', 'Grass'): (0.9281149210431063, 0.8988109682115991, 0.014046385486842264, 0.0), ('Fairy', 'Rock'): (0.9281149210431063, 0.9019655423440913, 0.014046385486842264, 0.0), ('Fairy', 'Fighting'): (0.9281149210431063, 0.9051201164765834, 0.014046385486842264, 0.0727978645959718), ('Fairy', 'Electric'): (0.9281149210431063, 0.9810725552050473, 0.014046385486842264, 0.0), ('Fairy', 'Ice'): (0.9281149210431063, 0.9842271293375395, 0.014046385486842264, 0.0), ('Fairy', 'Dark'): (0.9281149210431063, 0.9873817034700316, 0.014046385486842264, 0.0), ('Fairy', 'Ghost'): (0.9281149210431063, 0.9905362776025236, 0.014046385486842264, 0.0), ('Fairy', 'Fire'): (0.9281149210431063, 0.9936908517350158, 0.014046385486842264, 0.0), ('Fairy', 'Water'): (0.9281149210431063, 0.9968454258675078, 0.014046385486842264, 0.0), ('Fairy', 'Bug'): (0.9281149210431063, 1.0, 0.014046385486842264, 0.0), ('Steel', 'Poison'): (0.9467696014608241, 0.0, 0.03997817407793585, 0.05115525620257482), ('Steel', 'Flying'): (0.9467696014608241, 0.054309830335066936, 0.03997817407793585, 0.05115525620257482), ('Steel', 'Dragon'): (0.9467696014608241, 0.10861966067013387, 0.03997817407793585, 0.23019865291158667), ('Steel', 'Normal'): (0.9467696014608241, 0.3419728877142127, 0.03997817407793585, 0.0), ('Steel', 'Psychic'): (0.9467696014608241, 0.34512746184670473, 0.03997817407793585, 0.17904339670901187), ('Steel', 'Steel'): (0.9467696014608241, 0.5273254326882088, 0.03997817407793585, 0.0), ('Steel', 'Ground'): (0.9467696014608241, 0.5304800068207008, 0.03997817407793585, 0.05115525620257482), ('Steel', 'Fairy'): (0.9467696014608241, 0.5847898371557678, 0.03997817407793585, 0.10231051240514964), ('Steel', 'Grass'): (0.9467696014608241, 0.6902549236934095, 0.03997817407793585, 0.0), ('Steel', 'Rock'): (0.9467696014608241, 0.6934094978259017, 0.03997817407793585, 0.07673288430386217), ('Steel', 'Fighting'): (0.9467696014608241, 0.7732969562622559, 0.03997817407793585, 0.025577628101287463), ('Steel', 'Electric'): (0.9467696014608241, 0.8020291584960355, 0.03997817407793585, 0.0), ('Steel', 'Ice'): (0.9467696014608241, 0.8051837326285277, 0.03997817407793585, 0.0), ('Steel', 'Dark'): (0.9467696014608241, 0.8083383067610198, 0.03997817407793585, 0.0), ('Steel', 'Ghost'): (0.9467696014608241, 0.8114928808935118, 0.03997817407793585, 0.17904339670901182), ('Steel', 'Fire'): (0.9467696014608241, 0.9936908517350158, 0.03997817407793585, 0.0), ('Steel', 'Water'): (0.9467696014608241, 0.9968454258675078, 0.03997817407793585, 0.0), ('Steel', 'Bug'): (0.9467696014608241, 1.0, 0.03997817407793585, 0.0), ('Flying', 'Poison'): (0.9913560704696356, 0.0, 0.008643929530364493, 0.0), ('Flying', 'Flying'): (0.9913560704696356, 0.003154574132492114, 0.008643929530364493, 0.0), ('Flying', 'Dragon'): (0.9913560704696356, 0.006309148264984228, 0.008643929530364493, 0.23659305993690852), ('Flying', 'Normal'): (0.9913560704696356, 0.24605678233438488, 0.008643929530364493, 0.0), ('Flying', 'Psychic'): (0.9913560704696356, 0.24921135646687695, 0.008643929530364493, 0.0), ('Flying', 'Steel'): (0.9913560704696356, 0.25236593059936907, 0.008643929530364493, 0.11829652996845426), ('Flying', 'Ground'): (0.9913560704696356, 0.37381703470031546, 0.008643929530364493, 0.0), ('Flying', 'Fairy'): (0.9913560704696356, 0.37697160883280756, 0.008643929530364493, 0.0), ('Flying', 'Grass'): (0.9913560704696356, 0.3801261829652997, 0.008643929530364493, 0.0), ('Flying', 'Rock'): (0.9913560704696356, 0.38328075709779186, 0.008643929530364493, 0.0), ('Flying', 'Fighting'): (0.9913560704696356, 0.3864353312302839, 0.008643929530364493, 0.11829652996845426), ('Flying', 'Electric'): (0.9913560704696356, 0.5078864353312302, 0.008643929530364493, 0.0), ('Flying', 'Ice'): (0.9913560704696356, 0.5110410094637224, 0.008643929530364493, 0.0), ('Flying', 'Dark'): (0.9913560704696356, 0.5141955835962145, 0.008643929530364493, 0.11829652996845426), ('Flying', 'Ghost'): (0.9913560704696356, 0.6356466876971608, 0.008643929530364493, 0.0), ('Flying', 'Fire'): (0.9913560704696356, 0.638801261829653, 0.008643929530364493, 0.0), ('Flying', 'Water'): (0.9913560704696356, 0.6419558359621451, 0.008643929530364493, 0.3548895899053628), ('Flying', 'Bug'): (0.9913560704696356, 1.0, 0.008643929530364493, 0.0)})</span></span>
 <span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02a-eda_files/figure-html/mosaic-plot-poke-statsmodels-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure"><p><img src="02a-eda_files/figure-html/mosaic-plot-poke-statsmodels-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>This obviously needs a bit of cleaning up to remove extra labels, but it’s easy to get to and relatively functional. Notice that it does not, by default, show NA values.</p>
 </div>
-<div id="tabset-6-4" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-6-4-tab">
+<div id="tabset-6-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-4-tab">
 <p>We can generate a mosaic plot (the equivalent of a 2-dimensional cross-tabular view) using <code>geom_bar</code> with <code>position = 'fill'</code>, which scales each bar so that it ends at 1. I’ve flipped the axes using <code>coord_flip</code> so that you can read the labels more easily.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert everything to categorical/factor variable ahead of time</span></span>
@@ -1567,7 +1561,10 @@ Note: R pipe
 <span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a><span class="co">## </span></span>
 <span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a><span class="co">## /home/susan/.virtualenvs/book/lib/python3.10/site-packages/plotnine/themes/themeable.py:1902: FutureWarning: You no longer need to use subplots_adjust to make space for the legend or text around the panels. This paramater will be removed in a future version. You can still use 'plot_margin' 'panel_spacing' for your other spacing needs.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02a-eda_files/figure-html/poke-dist-plots-plotnine-mosaic-3.png" class="img-fluid" width="614"></p>
+<div>
+<figure class="figure"><p><img src="02a-eda_files/figure-html/poke-dist-plots-plotnine-mosaic-3.png" class="img-fluid figure-img" width="614"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>Another way to look at this data is to bin it in x and y and shade the resulting bins by the number of data points in each bin. We can even add in labels so that this is at least as clear as the tabular view!</p>
@@ -1577,7 +1574,10 @@ Note: R pipe
 <span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  stat_bin2d(aes(fill <span class="op">=</span> after_stat(<span class="st">'count'</span>)), geom <span class="op">=</span> <span class="st">'tile'</span>))</span>
 <span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="co">## &lt;Figure Size: (640 x 480)&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02a-eda_files/figure-html/poke-dist-plots-plotnine-tile-5.png" class="img-fluid" width="614"></p>
+<div>
+<figure class="figure"><p><img src="02a-eda_files/figure-html/poke-dist-plots-plotnine-tile-5.png" class="img-fluid figure-img" width="614"></p>
+</figure>
+</div>
 </div>
 </div>
 </div>
@@ -1585,7 +1585,7 @@ Note: R pipe
 </div>
 </section><section id="categorical---continuous-relationships" class="level4" data-number="19.4.3.2"><h4 data-number="19.4.3.2" class="anchored" data-anchor-id="categorical---continuous-relationships">
 <span class="header-section-number">19.4.3.2</span> Categorical - Continuous Relationships</h4>
-<div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-7-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-1" role="tab" aria-controls="tabset-7-1" aria-selected="true">Base R</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-2" role="tab" aria-controls="tabset-7-2" aria-selected="false">R: ggplot2</a></li>
@@ -1593,7 +1593,7 @@ Note: R pipe
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-4" role="tab" aria-controls="tabset-7-4" aria-selected="false">Python: plotnine</a></li>
 </ul>
 <div class="tab-content">
-<div id="tabset-7-1" class="unnumbered tab-pane active" role="tabpanel" aria-labelledby="tabset-7-1-tab">
+<div id="tabset-7-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-7-1-tab">
 <p>In R, most models are specified as <code>y ~ x1 + x2 + x3</code>, where the information on the left side of the tilde is the dependent variable, and the information on the right side are any explanatory variables. Interactions are specified using <code>x1*x2</code> to get all combinations of x1 and x2 (x1, x2, x1*x2); single interaction terms are specified as e.g. <code>x1:x2</code> and do not include any component terms.</p>
 <p>To examine the relationship between a categorical variable and a continuous variable, we might look at box plots:</p>
 <div class="cell" data-layout-align="center">
@@ -1602,14 +1602,14 @@ Note: R pipe
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/boxplot.html">boxplot</a></span><span class="op">(</span><span class="va">total</span> <span class="op">~</span> <span class="va">generation</span>, data <span class="op">=</span> <span class="va">poke</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
-<figure class="figure"><p><img src="02a-eda_files/figure-html/boxplot-graphs-7.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figure class="figure"><p><img src="02a-eda_files/figure-html/boxplot-graphs-7.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
 </div>
 <p>In the second box plot, there are far too many categories to be able to resolve the relationship clearly, but the plot is still effective in that we can identify that there are one or two species which have a much higher point range than other species. EDA isn’t usually about creating pretty plots (or we’d be using <code>ggplot</code> right now) but rather about identifying things which may come up in the analysis later.</p>
 </div>
-<div id="tabset-7-2" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-7-2-tab">
+<div id="tabset-7-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-2-tab">
 <div class="cell" data-layout-align="center">
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">poke</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">type_1</span>, y <span class="op">=</span> <span class="va">height_m</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html">geom_boxplot</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
@@ -1619,19 +1619,19 @@ Note: R pipe
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html">geom_boxplot</a></span><span class="op">(</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
-<figure class="figure"><p><img src="02a-eda_files/figure-html/boxplot-ggplot2-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figure class="figure"><p><img src="02a-eda_files/figure-html/boxplot-ggplot2-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
-<figure class="figure"><p><img src="02a-eda_files/figure-html/boxplot-ggplot2-2.png" class="img-fluid figure-img" style="width:100.0%"></p>
+<figure class="figure"><p><img src="02a-eda_files/figure-html/boxplot-ggplot2-2.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
 </figure>
 </div>
 </div>
 </div>
 </div>
-<div id="tabset-7-3" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-7-3-tab">
+<div id="tabset-7-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-3-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -1648,7 +1648,10 @@ Note: R pipe
 <span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a><span class="co">## {'whiskers': [&lt;matplotlib.lines.Line2D object at 0x7f8b6a5b1120&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a5b19f0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a60c490&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a60cb20&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a94a260&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a94a680&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a94abc0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a94b520&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a6a17e0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a6a0940&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a7f43a0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a7f45e0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a7f55a0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a7f5840&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a5ea830&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a5eb190&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a9328f0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a931600&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a7c6d40&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a7c7010&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a7c4d00&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a7c47c0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a7f62c0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a7f6b60&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a792410&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a7927a0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a793760&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a793a00&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a82c970&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a82ee90&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a82dfc0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a82d5d0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a82eda0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6ab68040&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6ab69180&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6ab69420&gt;], 'caps': [&lt;matplotlib.lines.Line2D object at 0x7f8b6a5b1060&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a60f460&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a60c6a0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a949bd0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a948ca0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a94b6a0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a94a4d0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a948160&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a6a0d00&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a6a3c10&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a7f4880&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a7f4b20&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a60c760&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a756170&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a5eb940&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a5e82b0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a930940&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a7c6da0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a7c61a0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a7c5d50&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a7c42e0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a7f5630&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a7f6530&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a790340&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a792a40&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a792ce0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a793ca0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a792800&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a82d6f0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a82c910&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a82f160&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a82ca30&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6ab68490&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6ab68550&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6ab695a0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6ab69960&gt;], 'boxes': [&lt;matplotlib.lines.Line2D object at 0x7f8b6a5b32e0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a60f190&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a94a230&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a948970&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a6a0f70&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a6a38e0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a7f5300&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a5e9b40&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a9331f0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a7c4520&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a7c7430&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a7f6020&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a7921a0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a7934c0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a82e770&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a82e680&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a82ef20&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6ab68dc0&gt;], 'medians': [&lt;matplotlib.lines.Line2D object at 0x7f8b6a60c4c0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a949c60&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a94afe0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a6a06a0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a6a39a0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a7f4dc0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a757760&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a9326b0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a7c6080&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a7c7bb0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a7f5ae0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a7912d0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a792f80&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a82f010&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a82cac0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a82eb00&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6ab689a0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6ab69c00&gt;], 'fliers': [&lt;matplotlib.lines.Line2D object at 0x7f8b6a60f6a0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a948310&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a94bb20&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a6a1120&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a6a2c80&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a7f5060&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a755ff0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a933d90&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a7c5330&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a7c7880&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a7f5d80&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a790550&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a793220&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a82e740&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a82ecb0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a82e470&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6ab68c40&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6ab69d80&gt;], 'means': []}</span></span>
 <span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02a-eda_files/figure-html/boxplot-matplotlib-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure"><p><img src="02a-eda_files/figure-html/boxplot-matplotlib-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <div class="cell">
@@ -1664,23 +1667,32 @@ Note: R pipe
 <span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a><span class="co">## {'whiskers': [&lt;matplotlib.lines.Line2D object at 0x7f8b6a755660&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6a754100&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6ab6ba60&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6ab6beb0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6af19ea0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6af181c0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6ae09c30&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6ae08b20&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6ade7bb0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6ade6f20&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6ade77c0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6ade42e0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6adc4490&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6adc5570&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6adc6800&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6adc6620&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6adc4be0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6af43520&gt;], 'caps': [&lt;matplotlib.lines.Line2D object at 0x7f8b6a756f80&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6ab6af50&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6ab6b0d0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6ab69f90&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6af18280&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6af19930&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6ae09450&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6ade5420&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6ade7d90&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6ade4f40&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6ade60e0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6ade6080&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6adc7f70&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6adc7ca0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6adc6380&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6adc4fa0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6adc6d40&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6adc7760&gt;], 'boxes': [&lt;matplotlib.lines.Line2D object at 0x7f8b6a7573d0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6ab6aec0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6af19450&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6ae08040&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6ade4040&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6ade5720&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6adc5840&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6adc70d0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6adc7130&gt;], 'medians': [&lt;matplotlib.lines.Line2D object at 0x7f8b6ab6a920&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6af18c40&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6af1b730&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6ade4730&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6ade5060&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6ade6320&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6adc74c0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6adc4040&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6adc7d00&gt;], 'fliers': [&lt;matplotlib.lines.Line2D object at 0x7f8b6ab6b850&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6af1ab60&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6ae09ba0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6ade4310&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6ade74f0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6ade7d60&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6adc73a0&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6adc5900&gt;, &lt;matplotlib.lines.Line2D object at 0x7f8b6adc4d90&gt;], 'means': []}</span></span>
 <span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02a-eda_files/figure-html/boxplot-matplotlib2-3.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure"><p><img src="02a-eda_files/figure-html/boxplot-matplotlib2-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
 </div>
 </div>
 </div>
-<div id="tabset-7-4" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-7-4-tab">
+</div>
+<div id="tabset-7-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-4-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>ggplot(mapping <span class="op">=</span> aes(x <span class="op">=</span> <span class="st">"type_1"</span>, y <span class="op">=</span> <span class="st">"height_m"</span>), data <span class="op">=</span> poke) <span class="op">+\</span></span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>geom_boxplot()</span>
 <span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="co">## &lt;Figure Size: (640 x 480)&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02a-eda_files/figure-html/boxplot-plotnine-py-5.png" class="img-fluid" width="614"></p>
+<div>
+<figure class="figure"><p><img src="02a-eda_files/figure-html/boxplot-plotnine-py-5.png" class="img-fluid figure-img" width="614"></p>
+</figure>
+</div>
 </div>
 <div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>ggplot(mapping <span class="op">=</span> aes(x <span class="op">=</span> <span class="st">"generation"</span>, y <span class="op">=</span> <span class="st">"total"</span>), data <span class="op">=</span> poke) <span class="op">+\</span></span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>geom_boxplot()</span>
 <span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a><span class="co">## &lt;Figure Size: (640 x 480)&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02a-eda_files/figure-html/boxplot-plotnine-py-6.png" class="img-fluid" width="614"></p>
+<div>
+<figure class="figure"><p><img src="02a-eda_files/figure-html/boxplot-plotnine-py-6.png" class="img-fluid figure-img" width="614"></p>
+</figure>
+</div>
 </div>
 </div>
 </div>
@@ -1689,7 +1701,7 @@ Note: R pipe
 <p>You can find more on boxplots and ways to customize boxplots in the <a href="../part-wrangling/02b-graphics.html">Graphics</a> chapter.</p>
 </section><section id="continuous---continuous-relationships" class="level4" data-number="19.4.3.3"><h4 data-number="19.4.3.3" class="anchored" data-anchor-id="continuous---continuous-relationships">
 <span class="header-section-number">19.4.3.3</span> Continuous - Continuous Relationships</h4>
-<div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-8-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-1" role="tab" aria-controls="tabset-8-1" aria-selected="true">Base R</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-8-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-2" role="tab" aria-controls="tabset-8-2" aria-selected="false">R: ggplot2</a></li>
@@ -1697,13 +1709,13 @@ Note: R pipe
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-8-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-4" role="tab" aria-controls="tabset-8-4" aria-selected="false">Python: plotnine</a></li>
 </ul>
 <div class="tab-content">
-<div id="tabset-8-1" class="unnumbered tab-pane active" role="tabpanel" aria-labelledby="tabset-8-1-tab">
+<div id="tabset-8-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-8-1-tab">
 <p>To look at the relationship between numeric variables, we could compute a numeric correlation, but a plot may be more useful, because it allows us to see outliers as well.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">defense</span> <span class="op">~</span> <span class="va">attack</span>, data <span class="op">=</span> <span class="va">poke</span>, type <span class="op">=</span> <span class="st">"p"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
-<figure class="figure"><p><img src="02a-eda_files/figure-html/base-scatter-cor-9.png" class="img-fluid figure-img" style="width:48.0%"></p>
+<figure class="figure"><p><img src="02a-eda_files/figure-html/base-scatter-cor-9.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:48.0%"></p>
 </figure>
 </div>
 </div>
@@ -1715,7 +1727,10 @@ Note: R pipe
 <div class="cell">
 <div class="sourceCode" id="cb34"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">poke</span><span class="op">$</span><span class="va">sp_attack</span>, y <span class="op">=</span> <span class="va">poke</span><span class="op">$</span><span class="va">attack</span>, type <span class="op">=</span> <span class="st">"p"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02a-eda_files/figure-html/base-scatter-quantized-1.png" class="img-fluid" width="2100"></p>
+<div>
+<figure class="figure"><p><img src="02a-eda_files/figure-html/base-scatter-quantized-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>A scatterplot matrix can also be a useful way to visualize relationships between several variables.</p>
@@ -1724,17 +1739,16 @@ Note: R pipe
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure"><p><img src="02a-eda_files/figure-html/base-scatter-matrix-1.png" class="img-fluid figure-img" style="width:100.0%"></p>
-<p></p><figcaption class="figure-caption">A scatterplot matrix of hit points, attack, defense, special attack, and special defense characteristics for all generation 1-8 Pokemon.</figcaption><p></p>
-</figure>
+<figcaption>A scatterplot matrix of hit points, attack, defense, special attack, and special defense characteristics for all generation 1-8 Pokemon.</figcaption></figure>
 </div>
 </div>
 </div>
-<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-caption-container flex-fill">
+<div class="callout-title-container flex-fill">
 Note
 </div>
 </div>
@@ -1743,13 +1757,16 @@ Note
 </div>
 </div>
 </div>
-<div id="tabset-8-2" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-8-2-tab">
+<div id="tabset-8-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-8-2-tab">
 <p>To look at the relationship between numeric variables, we could compute a numeric correlation, but a plot may be more useful, because it allows us to see outliers as well.</p>
 <div class="cell">
 <div class="sourceCode" id="cb36"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">poke</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">attack</span>, y <span class="op">=</span> <span class="va">defense</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02a-eda_files/figure-html/ggplot-scatter-cor-1.png" class="img-fluid" width="2100"></p>
+<div>
+<figure class="figure"><p><img src="02a-eda_files/figure-html/ggplot-scatter-cor-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>Sometimes, we discover that a numeric variable which may seem to be continuous is actually relatively quantized. When this happens, it can be a good idea to use <code>geom_jitter</code> to provide some “wiggle” in the data so that you can still see the point density. Changing the point transparency (alpha = .5) can also help with overplotting.</p>
@@ -1757,14 +1774,20 @@ Note
 <div class="cell">
 <div class="sourceCode" id="cb37"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">poke</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">attack</span>, y <span class="op">=</span> <span class="va">sp_attack</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02a-eda_files/figure-html/ggplot-scatter-quantized-1.png" class="img-fluid" style="width:50.0%"></p>
+<div>
+<figure class="figure"><p><img src="02a-eda_files/figure-html/ggplot-scatter-quantized-1.png" class="img-fluid figure-img" style="width:50.0%"></p>
+</figure>
+</div>
 </div>
 <div class="sourceCode" id="cb38"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">poke</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">attack</span>, y <span class="op">=</span> <span class="va">sp_attack</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html">geom_abline</a></span><span class="op">(</span>slope <span class="op">=</span> <span class="fl">1</span>, color <span class="op">=</span> <span class="st">"red"</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_jitter.html">geom_jitter</a></span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02a-eda_files/figure-html/ggplot-scatter-quantized-2.png" class="img-fluid" style="width:50.0%"></p>
+<div>
+<figure class="figure"><p><img src="02a-eda_files/figure-html/ggplot-scatter-quantized-2.png" class="img-fluid figure-img" style="width:50.0%"></p>
+</figure>
+</div>
 </div>
 </div>
 <div class="cell">
@@ -1776,14 +1799,13 @@ Note
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure"><p><img src="02a-eda_files/figure-html/ggplot-scatter-matrix-1.png" class="img-fluid figure-img" width="2400"></p>
-<p></p><figcaption class="figure-caption">A scatterplot matrix of hit points, attack, defense, special attack, and special defense characteristics for all generation 1-8 Pokemon.</figcaption><p></p>
-</figure>
+<figcaption>A scatterplot matrix of hit points, attack, defense, special attack, and special defense characteristics for all generation 1-8 Pokemon.</figcaption></figure>
 </div>
 </div>
 </div>
 <p><code>ggpairs</code> can also handle continuous variables, if you want to explore the options available.</p>
 </div>
-<div id="tabset-8-3" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-8-3-tab">
+<div id="tabset-8-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-8-3-tab">
 <p>Believe it or not, you don’t have to go to matplotlib to get plots in python - you can get some plots from pandas directly, even if you are still using matplotlib under the hood (this is why you have to run <code>plt.show()</code> to get the plot to appear if you’re working in markdown).</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
@@ -1791,7 +1813,10 @@ Note
 <span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>poke.plot.scatter(x <span class="op">=</span> <span class="st">'attack'</span>, y <span class="op">=</span> <span class="st">'defense'</span>)</span>
 <span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02a-eda_files/figure-html/pandas-scatterplot-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure"><p><img src="02a-eda_files/figure-html/pandas-scatterplot-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>Pandas also includes a nice scatterplot matrix method.</p>
@@ -1803,11 +1828,14 @@ Note
 <span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a><span class="co">## array([[&lt;Axes: xlabel='weight_kg', ylabel='weight_kg'&gt;]], dtype=object)</span></span>
 <span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02a-eda_files/figure-html/pandas-scatterplot-matrix-3.png" class="img-fluid" width="576"></p>
+<div>
+<figure class="figure"><p><img src="02a-eda_files/figure-html/pandas-scatterplot-matrix-3.png" class="img-fluid figure-img" width="576"></p>
+</figure>
 </div>
 </div>
 </div>
-<div id="tabset-8-4" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-8-4-tab">
+</div>
+<div id="tabset-8-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-8-4-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb42"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnine <span class="im">import</span> <span class="op">*</span></span>
 <span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -1816,12 +1844,18 @@ Note
 <span id="cb42-5"><a href="#cb42-5" aria-hidden="true" tabindex="-1"></a><span class="co"># marginally</span></span>
 <span id="cb42-6"><a href="#cb42-6" aria-hidden="true" tabindex="-1"></a><span class="co">## &lt;Figure Size: (640 x 480)&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02a-eda_files/figure-html/plotnine-scatter-quantized-5.png" class="img-fluid" style="width:50.0%"></p>
+<div>
+<figure class="figure"><p><img src="02a-eda_files/figure-html/plotnine-scatter-quantized-5.png" class="img-fluid figure-img" style="width:50.0%"></p>
+</figure>
+</div>
 </div>
 <div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>ggplot(poke, aes(x <span class="op">=</span> <span class="st">"attack"</span>, y <span class="op">=</span> <span class="st">"sp_attack"</span>)) <span class="op">+</span> geom_jitter(alpha <span class="op">=</span> <span class="fl">0.5</span>, height <span class="op">=</span> <span class="dv">5</span>)</span>
 <span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="co">## &lt;Figure Size: (640 x 480)&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02a-eda_files/figure-html/plotnine-scatter-quantized-6.png" class="img-fluid" style="width:50.0%"></p>
+<div>
+<figure class="figure"><p><img src="02a-eda_files/figure-html/plotnine-scatter-quantized-6.png" class="img-fluid figure-img" style="width:50.0%"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>While plotnine doesn’t have scatterplot matrices by default, you can create them using some <a href="https://github.com/has2k1/plotnine/issues/16#issuecomment-851938860">clever code</a>. This is obviously not as fancy as <code>ggpairs</code> but it works well enough.</p>
@@ -1845,31 +1879,34 @@ Note
 <span id="cb44-17"><a href="#cb44-17" aria-hidden="true" tabindex="-1"></a>plot_matrix(poke, poke.columns[<span class="dv">15</span>:<span class="dv">19</span>])</span>
 <span id="cb44-18"><a href="#cb44-18" aria-hidden="true" tabindex="-1"></a><span class="co">## &lt;Figure Size: (640 x 480)&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02a-eda_files/figure-html/plotnine-scatter-matrix-9.png" class="img-fluid" width="614"></p>
+<div>
+<figure class="figure"><p><img src="02a-eda_files/figure-html/plotnine-scatter-matrix-9.png" class="img-fluid figure-img" width="614"></p>
+</figure>
+</div>
 </div>
 </div>
 </div>
 </div>
 </div>
 <p>If you want summary statistics by group, you can get that using the <code>dplyr</code> package functions <code>select</code> and <code>group_by</code>, which we will learn more about in the next section. (I’m cheating a bit by mentioning it now, but it’s just so useful!)</p>
-<div class="callout-tip callout callout-style-default callout-captioned">
+<div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-caption-container flex-fill">
+<div class="callout-title-container flex-fill">
 Try it out: EDA
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-9-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-1" role="tab" aria-controls="tabset-9-1" aria-selected="true">Problem</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-9-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-2" role="tab" aria-controls="tabset-9-2" aria-selected="false">R solution</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-9-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-3" role="tab" aria-controls="tabset-9-3" aria-selected="false">Python solution</a></li>
 </ul>
 <div class="tab-content">
-<div id="tabset-9-1" class="unnumbered tab-pane active" role="tabpanel" aria-labelledby="tabset-9-1-tab">
+<div id="tabset-9-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-9-1-tab">
 <p>Explore the variables present in <a href="https://github.com/srvanderplas/datasets/blob/main/raw/Lancaster%20County,%20NE%20-%20Assessor.xlsx?raw=true">the Lancaster County Assessor Housing Sales Data</a> <a href="https://github.com/srvanderplas/datasets/blob/main/code/lincoln-housing-sales.md">Documentation</a>.</p>
 <p>Note that some variables may be too messy to handle with the things that you have seen thus far - that is ok. As you find irregularities, document them - these are things you may need to clean up in the dataset before you conduct a formal analysis.</p>
 <div class="cell">
@@ -1884,14 +1921,14 @@ Try it out: EDA
 <span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a><span class="co">## Error: ImportError: Missing optional dependency 'openpyxl'.  Use pip or conda to install openpyxl.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
-<div id="tabset-9-2" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-9-2-tab">
+<div id="tabset-9-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-9-2-tab">
 <div class="cell">
 <div class="sourceCode" id="cb47"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">housing_lincoln</span><span class="op">$</span><span class="va">TLA</span> <span class="op">&lt;-</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/parse_number.html">parse_number</a></span><span class="op">(</span><span class="va">housing_lincoln</span><span class="op">$</span><span class="va">`TLA (Sqft)`</span><span class="op">)</span></span>
 <span><span class="va">housing_lincoln</span><span class="op">$</span><span class="va">Assd_Value</span> <span class="op">&lt;-</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/parse_number.html">parse_number</a></span><span class="op">(</span><span class="va">housing_lincoln</span><span class="op">$</span><span class="va">Assd_Value</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://docs.ropensci.org/skimr/reference/skim.html">skim</a></span><span class="op">(</span><span class="va">housing_lincoln</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<table class="table table-sm table-striped">
+<table class="table table-sm table-striped small">
 <caption>Data summary</caption>
 <tbody>
 <tr class="odd">
@@ -1933,7 +1970,7 @@ Try it out: EDA
 </tbody>
 </table>
 <p><strong>Variable type: character</strong></p>
-<table class="table table-sm table-striped">
+<table class="table table-sm table-striped small">
 <colgroup>
 <col style="width: 19%">
 <col style="width: 13%">
@@ -2018,7 +2055,7 @@ Try it out: EDA
 </tbody>
 </table>
 <p><strong>Variable type: numeric</strong></p>
-<table class="table table-sm table-striped">
+<table class="table table-sm table-striped small">
 <colgroup>
 <col style="width: 14%">
 <col style="width: 10%">
@@ -2093,12 +2130,18 @@ Try it out: EDA
 <div class="cell">
 <div class="sourceCode" id="cb48"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html">hist</a></span><span class="op">(</span><span class="va">housing_lincoln</span><span class="op">$</span><span class="va">Assd_Value</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02a-eda_files/figure-html/housing-data-numeric-date-1.png" class="img-fluid" width="2100"></p>
+<div>
+<figure class="figure"><p><img src="02a-eda_files/figure-html/housing-data-numeric-date-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
 </div>
 <div class="sourceCode" id="cb49"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/hist.html">hist</a></span><span class="op">(</span><span class="va">housing_lincoln</span><span class="op">$</span><span class="va">Yr_Blt</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02a-eda_files/figure-html/housing-data-numeric-date-2.png" class="img-fluid" width="2100"></p>
+<div>
+<figure class="figure"><p><img src="02a-eda_files/figure-html/housing-data-numeric-date-2.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>Let’s look at the years the houses were built and the Imp_Types. We can find more data on what the Improvement Types mean <a href="https://www.lincoln.ne.gov/files/sharedassets/intranet/county/clerk/protest-public/appraisal_card_code_sheet.pdf">here</a>, where the various abbreviations are defined.</p>
@@ -2163,7 +2206,10 @@ Try it out: EDA
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/table.html">table</a></span><span class="op">(</span><span class="va">housing_lincoln</span><span class="op">$</span><span class="va">decade</span>, <span class="va">housing_lincoln</span><span class="op">$</span><span class="va">Imp_Type</span><span class="op">)</span>,</span>
 <span>     main <span class="op">=</span> <span class="st">"Year Built and Improvement Type"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02a-eda_files/figure-html/housing-data-year-1.png" class="img-fluid" width="2100"></p>
+<div>
+<figure class="figure"><p><img src="02a-eda_files/figure-html/housing-data-year-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>We can also look at the square footage for each improvement type:</p>
@@ -2172,12 +2218,15 @@ Try it out: EDA
 <span>  <span class="fu"><a href="https://rdrr.io/r/base/subset.html">subset</a></span><span class="op">(</span><span class="va">Imp_Type</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"BN"</span>, <span class="st">"R1"</span>, <span class="st">"R2"</span>, <span class="st">"RA"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/graphics/boxplot.html">boxplot</a></span><span class="op">(</span><span class="va">TLA</span> <span class="op">~</span> <span class="va">Imp_Type</span>, data <span class="op">=</span> <span class="va">.</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02a-eda_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid" width="2100"></p>
+<div>
+<figure class="figure"><p><img src="02a-eda_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>This makes sense - there are relatively few bungalows (BN), but R1 means 1 story house, R2 means 2 story house, and RA is a so-called 1.5 story house.</p>
 </div>
-<div id="tabset-9-3" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-9-3-tab">
+<div id="tabset-9-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-9-3-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb52"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>housing_lincoln[<span class="st">"TLA"</span>] <span class="op">=</span> housing_lincoln[<span class="st">"TLA (Sqft)"</span>].<span class="bu">str</span>.replace(<span class="st">"[,\$]"</span>, <span class="st">""</span>, regex <span class="op">=</span> <span class="va">True</span>)</span>
 <span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a><span class="co"># For some reason, things without a comma just get NaN'd, so fix that</span></span>
@@ -2206,13 +2255,19 @@ Try it out: EDA
 <span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a><span class="co">## Error: NameError: name 'housing_lincoln' is not defined</span></span>
 <span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02a-eda_files/figure-html/housing-numeric-py-1.png" class="img-fluid" width="614"></p>
+<div>
+<figure class="figure"><p><img src="02a-eda_files/figure-html/housing-numeric-py-1.png" class="img-fluid figure-img" width="614"></p>
+</figure>
+</div>
 </div>
 <div class="sourceCode cell-code" id="cb54"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>housing_lincoln[<span class="st">"Yr_Blt"</span>].plot.hist()</span>
 <span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a><span class="co">## Error: NameError: name 'housing_lincoln' is not defined</span></span>
 <span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02a-eda_files/figure-html/housing-numeric-py-2.png" class="img-fluid" width="614"></p>
+<div>
+<figure class="figure"><p><img src="02a-eda_files/figure-html/housing-numeric-py-2.png" class="img-fluid figure-img" width="614"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>Let’s look at the years the houses were built and the Imp_Types. We can find more data on what the Improvement Types mean <a href="https://www.lincoln.ne.gov/files/sharedassets/intranet/county/clerk/protest-public/appraisal_card_code_sheet.pdf">here</a>, where the various abbreviations are defined.</p>
@@ -2233,7 +2288,10 @@ Try it out: EDA
 <span id="cb55-14"><a href="#cb55-14" aria-hidden="true" tabindex="-1"></a><span class="co">## Error: NameError: name 'housing_lincoln' is not defined</span></span>
 <span id="cb55-15"><a href="#cb55-15" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02a-eda_files/figure-html/housing-categorical-py-5.png" class="img-fluid" width="614"></p>
+<div>
+<figure class="figure"><p><img src="02a-eda_files/figure-html/housing-categorical-py-5.png" class="img-fluid figure-img" width="614"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>We can also look at the square footage for each improvement type:</p>
@@ -2248,7 +2306,10 @@ Try it out: EDA
 <span id="cb56-8"><a href="#cb56-8" aria-hidden="true" tabindex="-1"></a><span class="co">## Error: NameError: name 'housing_sub' is not defined</span></span>
 <span id="cb56-9"><a href="#cb56-9" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02a-eda_files/figure-html/housing-cat-cts-py-7.png" class="img-fluid" width="614"></p>
+<div>
+<figure class="figure"><p><img src="02a-eda_files/figure-html/housing-cat-cts-py-7.png" class="img-fluid figure-img" width="614"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>This makes sense - there are relatively few bungalows (BN), but R1 means 1 story house, R2 means 2 story house, and RA is a so-called 1.5 story house; we would expect an increase in square footage with each additional floor of the house (broadly speaking).</p>
@@ -2257,21 +2318,20 @@ Try it out: EDA
 </div>
 </div>
 </div>
-<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-caption-container flex-fill">
+<div class="callout-title-container flex-fill">
 Learn More: Janitor R package
 </div>
 </div>
 <div class="callout-body-container callout-body">
 <p>The janitor package <span class="citation" data-cites="janitorpkg"><a href="#ref-janitorpkg" role="doc-biblioref">[4]</a></span> has some very convenient functions for cleaning up messy data. One of its best features is the <code>clean_names()</code> function, which creates names based on a capitalization/separation scheme of your choosing.</p>
 <div class="quarto-figure quarto-figure-center">
-<figure class="figure"><p><img src="../images/wrangling/janitor_clean_names.png" class="img-fluid figure-img" alt="A cartoon beaver putting shapes with long, messy column names (pulled from a bin labeled “MESS” and “not so awesome column names”) into a contraption that converts them to lower snake case. The output has stylized text reading “Way more deal-withable column names.” Title text reads “janitor::clean_names(): convert all column names to *_case!”"></p>
-<p></p><figcaption class="figure-caption">janitor and clean_names() by Allison Horst</figcaption><p></p>
-</figure>
+<figure class="figure"><p><img src="../images/wrangling/janitor_clean_names.png" class="img-fluid figure-img"></p>
+<figcaption>janitor and clean_names() by Allison Horst</figcaption></figure>
 </div>
 </div>
 </div>
@@ -2279,31 +2339,31 @@ Learn More: Janitor R package
 <span class="header-section-number">19.5</span> References</h2>
 
 
-<div id="refs" class="references csl-bib-body" role="doc-bibliography">
-<div id="ref-r4ds" class="csl-entry" role="doc-biblioentry">
+<div id="refs" class="references csl-bib-body" data-entry-spacing="0" role="list">
+<div id="ref-r4ds" class="csl-entry" role="listitem">
 <div class="csl-left-margin">[1] </div>
 <div class="csl-right-inline">G. Grolemund and H. Wickham, <em>R for <span>Data</span> <span>Science</span></em>, 1st ed. O’Reilly Media, 2017 [Online]. Available: <a href="https://r4ds.had.co.nz/">https://r4ds.had.co.nz/</a>. [Accessed: May 09, 2022]</div>
 </div>
-<div id="ref-tierneyNaniarDataStructures2021" class="csl-entry" role="doc-biblioentry">
+<div id="ref-tierneyNaniarDataStructures2021" class="csl-entry" role="listitem">
 <div class="csl-left-margin">[2] </div>
 <div class="csl-right-inline">N. Tierney, D. Cook, M. McBain, and C. Fay, <em>Naniar: <span>Data</span> structures, summaries, and visualisations for missing data</em>. 2021 [Online]. Available: <a href="https://CRAN.R-project.org/package=naniar">https://CRAN.R-project.org/package=naniar</a>
 </div>
 </div>
-<div id="ref-danielbourkeGentleIntroductionExploratory2019" class="csl-entry" role="doc-biblioentry">
+<div id="ref-danielbourkeGentleIntroductionExploratory2019" class="csl-entry" role="listitem">
 <div class="csl-left-margin">[3] </div>
 <div class="csl-right-inline">Daniel Bourke, <span>“A <span>Gentle</span> <span>Introduction</span> to <span>Exploratory</span> <span>Data</span> <span>Analysis</span>,”</span> <em>Daniel Bourke</em>. Jan. 2019 [Online]. Available: <a href="https://www.mrdbourke.com/a-gentle-introduction-to-exploratory-data-analysis/">https://www.mrdbourke.com/a-gentle-introduction-to-exploratory-data-analysis/</a>. [Accessed: Jun. 13, 2022]</div>
 </div>
-<div id="ref-janitorpkg" class="csl-entry" role="doc-biblioentry">
+<div id="ref-janitorpkg" class="csl-entry" role="listitem">
 <div class="csl-left-margin">[4] </div>
 <div class="csl-right-inline">S. Firke, <em>Janitor: Simple tools for examining and cleaning dirty data</em>. 2021 [Online]. Available: <a href="https://CRAN.R-project.org/package=janitor">https://CRAN.R-project.org/package=janitor</a>
 </div>
 </div>
 </div>
-</section><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><hr>
+</section><aside id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><hr>
 <ol>
 <li id="fn1"><p>One package for this process in R is <code>naniar</code> <span class="citation" data-cites="tierneyNaniarDataStructures2021"><a href="#ref-tierneyNaniarDataStructures2021" role="doc-biblioref">[2]</a></span>.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn2"><p>A histogram is a chart which breaks up a continuous variable into ranges, where the height of the bar is proportional to the number of items in the range. A bar chart is similar, but shows the number of occurrences of a discrete variable.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-</ol></section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
+</ol></aside></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
     const mode = bsSheetEl.getAttribute("data-mode");
@@ -2344,6 +2404,33 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       } else {
         el.classList.add('notransition');
       }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
     }
   }
   const toggleColorMode = (alternate) => {
@@ -2412,13 +2499,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       return localAlternateSentinel;
     }
   }
-  let localAlternateSentinel = 'default';
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
   // Dark / light mode switch
   window.quartoToggleColorScheme = () => {
     // Read the current dark / light value 
     let toAlternate = !hasAlternateSentinel();
     toggleColorMode(toAlternate);
     setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
   };
   // Ensure there is a toggle, if there isn't float one in the top right
   if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
@@ -2445,9 +2534,23 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     icon: icon
   };
   anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
   const clipboard = new window.ClipboardJS('.code-copy-button', {
-    target: function(trigger) {
-      return trigger.previousElementSibling;
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
     }
   });
   clipboard.on('success', function(e) {
@@ -2483,10 +2586,9 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // clear code selection
     e.clearSelection();
   });
-  function tippyHover(el, contentFn) {
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -2496,8 +2598,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -2512,6 +2623,248 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       return note.innerHTML;
     });
   }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    const typesetMath = (el) => {
+      if (window.MathJax) {
+        // MathJax Typeset
+        window.MathJax.typeset([el]);
+      } else if (window.katex) {
+        // KaTeX Render
+        var mathElements = el.getElementsByClassName("math");
+        var macros = [];
+        for (var i = 0; i < mathElements.length; i++) {
+          var texText = mathElements[i].firstChild;
+          if (mathElements[i].tagName == "SPAN") {
+            window.katex.render(texText.data, mathElements[i], {
+              displayMode: mathElements[i].classList.contains('display'),
+              throwOnError: false,
+              macros: macros,
+              fleqn: false
+            });
+          }
+        }
+      }
+    }
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        typesetMath(container);
+        return container.innerHTML
+      } else {
+        typesetMath(note);
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      typesetMath(note);
+      return note.innerHTML;
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
   const findCites = (el) => {
     const parentEl = el.parentElement;
     if (parentEl) {
@@ -2551,20 +2904,25 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script><script src="https://giscus.app/client.js" data-repo="srvanderplas/stat-computing-r-python" data-repo-id="R_kgDOIvwd2g" data-category="General" data-category-id="DIC_kwDOIvwd2s4CTksR" data-mapping="pathname" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="light" data-lang="en" crossorigin="anonymous" async="">
-</script><nav class="page-navigation"><div class="nav-page nav-page-previous">
-      <a href="../part-wrangling/02-basic-data-vis.html" class="pagination-link">
+</script><input type="hidden" id="giscus-base-theme" value="light"><input type="hidden" id="giscus-alt-theme" value="dark"><nav class="page-navigation"><div class="nav-page nav-page-previous">
+      <a href="../part-wrangling/02-basic-data-vis.html" class="pagination-link  aria-label=" visualization="" basics="">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Data Visualization Basics</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../part-wrangling/02b-graphics.html" class="pagination-link">
+      <a href="../part-wrangling/02b-graphics.html" class="pagination-link" aria-label="<span class='chapter-number'>20</span>&nbsp; <span class='chapter-title'>Data Visualization</span>">
         <span class="nav-page-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Data Visualization</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
 </div> <!-- /content -->
 <footer class="footer"><div class="nav-footer">
-    <div class="nav-footer-left">Copyright 2023, Susan Vanderplas</div>   
+    <div class="nav-footer-left">
+<p>Copyright 2023, Susan Vanderplas</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
     <div class="nav-footer-right">
       <ul class="footer-items list-unstyled">
 <li class="nav-item compact">

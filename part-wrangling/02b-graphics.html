@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.2.313">
+<meta name="generator" content="quarto-1.4.515">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <meta name="dcterms.date" content="2024-02-22">
 <title>Statistical Computing using R and Python - 20&nbsp; Data Visualization</title>
@@ -15,11 +15,12 @@ div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
   width: 0.8em;
-  margin: 0 0.8em 0.2em -1.6em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -44,48 +45,20 @@ pre.numberSource code > span > a:first-child::before
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
     padding: 0 4px; width: 4em;
-    color: #aaaaaa;
   }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
 div.sourceCode
   {   }
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { color: #7d9029; } /* Attribute */
-code span.bn { color: #40a070; } /* BaseN */
-code span.bu { color: #008000; } /* BuiltIn */
-code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #4070a0; } /* Char */
-code span.cn { color: #880000; } /* Constant */
-code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code span.dt { color: #902000; } /* DataType */
-code span.dv { color: #40a070; } /* DecVal */
-code span.er { color: #ff0000; font-weight: bold; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #40a070; } /* Float */
-code span.fu { color: #06287e; } /* Function */
-code span.im { color: #008000; font-weight: bold; } /* Import */
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code span.op { color: #666666; } /* Operator */
-code span.ot { color: #007020; } /* Other */
-code span.pp { color: #bc7a00; } /* Preprocessor */
-code span.sc { color: #4070a0; } /* SpecialChar */
-code span.ss { color: #bb6688; } /* SpecialString */
-code span.st { color: #4070a0; } /* String */
-code span.va { color: #19177c; } /* Variable */
-code span.vs { color: #4070a0; } /* VerbatimString */
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+/* CSS for citations */
 div.csl-bib-body { }
 div.csl-entry {
   clear: both;
+  margin-bottom: 0em;
 }
-.hanging div.csl-entry {
+.hanging-indent div.csl-entry {
   margin-left:2em;
   text-indent:-2em;
 }
@@ -99,8 +72,7 @@ div.csl-right-inline {
 }
 div.csl-indent {
   margin-left: 2em;
-}
-</style>
+}</style>
 
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../site_libs/quarto-nav/headroom.min.js"></script>
@@ -130,7 +102,13 @@ div.csl-indent {
   "collapse-after": 3,
   "panel-placement": "start",
   "type": "textbox",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -140,7 +118,8 @@ div.csl-indent {
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
     "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit"
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
   }
 }</script><script async="" src="https://www.googletagmanager.com/gtag/js?id=G-4ZFBDKXJXP"></script><script type="text/javascript">
 
@@ -149,271 +128,328 @@ function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
 </script><script src="https://kit.fontawesome.com/baac5f0610.js" crossorigin="anonymous"></script><link href="../site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet">
-<script src="../site_libs/pagedtable-1.1/js/pagedtable.js"></script><script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script><link rel="stylesheet" href="../build_deps/style.css">
+<script src="../site_libs/pagedtable-1.1/js/pagedtable.js"></script><script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script><script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script><link rel="stylesheet" href="../build_deps/style.css">
 </head>
 <body class="nav-sidebar floating slimcontent">
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top"><nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }"><div class="container-fluid d-flex justify-content-between">
-      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Data Visualization</span></h1>
-      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
-        <i class="bi bi-chevron-right"></i>
+  <header id="quarto-header" class="headroom fixed-top"><nav class="quarto-secondary-nav"><div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../part-wrangling/00-wrangling.html">Part III: Data Wrangling</a></li><li class="breadcrumb-item"><a href="../part-wrangling/02b-graphics.html"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Data Visualization</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
       </button>
     </div>
   </nav></header><!-- content --><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto"><div class="pt-lg-2 mt-2 text-left sidebar-header">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto"><div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="../">Statistical Computing using R and Python</a> 
         <div class="sidebar-tools-main">
-    <a href="https://github.com/srvanderplas/stat-computing-r-python/" title="Source Code" class="sidebar-tool px-1"><i class="bi bi-github"></i></a>
-  <a href="" class="quarto-color-scheme-toggle sidebar-tool" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+    <a href="https://github.com/srvanderplas/stat-computing-r-python/" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
 </div>
     </div>
       </div>
-      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="mt-2 flex-shrink-0 align-items-center">
         <div class="sidebar-search">
         <div id="quarto-search" class="" title="Search"></div>
         </div>
-      </div>
+        </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
 <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../index.html" class="sidebar-item-text sidebar-link">Preface</a>
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
   </div>
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../part-tools/00-tools-intro.html" class="sidebar-item-text sidebar-link">Part I: Tools</a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <a href="../part-tools/00-tools-intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Part I: Tools</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">
 <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-tools/01-computer-basics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Computer Basics</span></a>
+  <a href="../part-tools/01-computer-basics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Computer Basics</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-tools/02-setting-up-computer.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Setting Up Your Computer</span></a>
+  <a href="../part-tools/02-setting-up-computer.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Setting Up Your Computer</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-tools/03-Rstudio-interface.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">RStudio’s Interface</span></a>
+  <a href="../part-tools/03-Rstudio-interface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">RStudio’s Interface</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-tools/04-scripts-notebooks.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Scripts and Notebooks</span></a>
+  <a href="../part-tools/04-scripts-notebooks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Scripts and Notebooks</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-tools/05-git-and-github.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Version Control with Git</span></a>
+  <a href="../part-tools/05-git-and-github.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Version Control with Git</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-tools/06-documents.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Reproducibility and Professional Communication</span></a>
+  <a href="../part-tools/06-documents.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Reproducibility and Professional Communication</span></span></a>
   </div>
 </li>
       </ul>
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../part-gen-prog/00-gen-prog.html" class="sidebar-item-text sidebar-link">Part II: General Programming</a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+            <a href="../part-gen-prog/00-gen-prog.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Part II: General Programming</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">
 <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/00-intro.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Introduction to Programming</span></a>
+  <a href="../part-gen-prog/00-intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Introduction to Programming</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/01-basic-var-types.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Variables and Basic Data Types</span></a>
+  <a href="../part-gen-prog/01-basic-var-types.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Variables and Basic Data Types</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/02-prog-functions.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Using Functions and Libraries</span></a>
+  <a href="../part-gen-prog/02-prog-functions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Using Functions and Libraries</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/03-data-struct.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Data Structures</span></a>
+  <a href="../part-gen-prog/03-data-struct.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Data Structures</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/035-matrix-calcs.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Matrix Calculations</span></a>
+  <a href="../part-gen-prog/035-matrix-calcs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Matrix Calculations</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/04-control-struct.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Control Structures</span></a>
+  <a href="../part-gen-prog/04-control-struct.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Control Structures</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/05-functions.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Writing Functions</span></a>
+  <a href="../part-gen-prog/05-functions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Writing Functions</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/06-debugging.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Debugging</span></a>
+  <a href="../part-gen-prog/06-debugging.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Debugging</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/07-prog-data.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Programming With Data</span></a>
+  <a href="../part-gen-prog/07-prog-data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Programming With Data</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/99-extra.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Other Helpful Programming Resources</span></a>
+  <a href="../part-gen-prog/99-extra.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Other Helpful Programming Resources</span></span></a>
   </div>
 </li>
       </ul>
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../part-wrangling/00-wrangling.html" class="sidebar-item-text sidebar-link">Part III: Data Wrangling</a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+            <a href="../part-wrangling/00-wrangling.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Part III: Data Wrangling</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">
 <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/01-data-input.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Data Input</span></a>
+  <a href="../part-wrangling/01-data-input.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Data Input</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/02-basic-data-vis.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Data Visualization Basics</span></a>
+  <a href="../part-wrangling/02-basic-data-vis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Data Visualization Basics</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/02a-eda.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Exploratory Data Analysis</span></a>
+  <a href="../part-wrangling/02a-eda.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Exploratory Data Analysis</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/02b-graphics.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Data Visualization</span></a>
+  <a href="../part-wrangling/02b-graphics.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Data Visualization</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/02c-good-graphics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Creating Good Charts</span></a>
+  <a href="../part-wrangling/02c-good-graphics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Creating Good Charts</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/03-data-cleaning.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Data Cleaning</span></a>
+  <a href="../part-wrangling/03-data-cleaning.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Data Cleaning</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/04-strings.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Working with Strings</span></a>
+  <a href="../part-wrangling/04-strings.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Working with Strings</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/05-data-reshape.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Reshaping Data</span></a>
+  <a href="../part-wrangling/05-data-reshape.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Reshaping Data</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/06-data-join.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Joining Data</span></a>
+  <a href="../part-wrangling/06-data-join.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Joining Data</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/07-datetime.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Dates and Times</span></a>
+  <a href="../part-wrangling/07-datetime.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Dates and Times</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/08-functional-prog.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Functional Programming</span></a>
+  <a href="../part-wrangling/08-functional-prog.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Functional Programming</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/09-spatial-formats.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Spatial data</span></a>
+  <a href="../part-wrangling/09-spatial-formats.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Spatial data</span></span></a>
   </div>
 </li>
       </ul>
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../part-advanced-topics/00-advanced.html" class="sidebar-item-text sidebar-link">Part IV: Advanced Topics</a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">
+            <a href="../part-advanced-topics/00-advanced.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Part IV: Advanced Topics</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">
 <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-advanced-topics/01-simulation.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Simulation and Reproducibility</span></a>
+  <a href="../part-advanced-topics/01-simulation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Simulation and Reproducibility</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-advanced-topics/06-interactive-graphics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">30</span>&nbsp; <span class="chapter-title">Interactive Graphics</span></a>
+  <a href="../part-advanced-topics/06-interactive-graphics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">30</span>&nbsp; <span class="chapter-title">Interactive Graphics</span></span></a>
   </div>
 </li>
       </ul>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../graveyard.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">31</span>&nbsp; <span class="chapter-title">Other Topics</span></a>
+  <a href="../graveyard.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">31</span>&nbsp; <span class="chapter-title">Other Topics</span></span></a>
   </div>
 </li>
     </ul>
 </div>
-</nav><!-- margin-sidebar --><div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+</nav><div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active"><h2 id="toc-title">Table of contents</h2>
    
   <ul>
-<li><a href="#fa-bullseye-objectives" id="toc-fa-bullseye-objectives" class="nav-link active" data-scroll-target="#fa-bullseye-objectives"><span class="toc-section-number">20.1</span>  <i class="fa-solid fa-bullseye" aria-label="bullseye"></i> Objectives</a></li>
+<li><a href="#objectives" id="toc-objectives" class="nav-link active" data-scroll-target="#objectives"><span class="header-section-number">20.1</span> <i class="fa-solid fa-bullseye" aria-label="bullseye"></i> Objectives</a></li>
   <li>
-<a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction"><span class="toc-section-number">20.2</span>  Introduction</a>
+<a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction"><span class="header-section-number">20.2</span> Introduction</a>
   <ul class="collapse">
-<li><a href="#installing-graphics-libraries" id="toc-installing-graphics-libraries" class="nav-link" data-scroll-target="#installing-graphics-libraries"><span class="toc-section-number">20.2.1</span>  Installing Graphics Libraries</a></li>
+<li><a href="#installing-graphics-libraries" id="toc-installing-graphics-libraries" class="nav-link" data-scroll-target="#installing-graphics-libraries"><span class="header-section-number">20.2.1</span> Installing Graphics Libraries</a></li>
   </ul>
 </li>
-  <li><a href="#why-do-we-create-graphics" id="toc-why-do-we-create-graphics" class="nav-link" data-scroll-target="#why-do-we-create-graphics"><span class="toc-section-number">20.3</span>  Why do we create graphics?</a></li>
-  <li><a href="#thinking-critically-about-graphics" id="toc-thinking-critically-about-graphics" class="nav-link" data-scroll-target="#thinking-critically-about-graphics"><span class="toc-section-number">20.4</span>  Thinking Critically About Graphics</a></li>
-  <li><a href="#advanced-charts-graphics-and-the-grammar-of-graphics" id="toc-advanced-charts-graphics-and-the-grammar-of-graphics" class="nav-link" data-scroll-target="#advanced-charts-graphics-and-the-grammar-of-graphics"><span class="toc-section-number">20.5</span>  Advanced: Charts, Graphics, and the Grammar of Graphics</a></li>
+  <li><a href="#why-do-we-create-graphics" id="toc-why-do-we-create-graphics" class="nav-link" data-scroll-target="#why-do-we-create-graphics"><span class="header-section-number">20.3</span> Why do we create graphics?</a></li>
   <li>
-<a href="#exploratory-data-analysis-and-plot-customization" id="toc-exploratory-data-analysis-and-plot-customization" class="nav-link" data-scroll-target="#exploratory-data-analysis-and-plot-customization"><span class="toc-section-number">20.6</span>  Exploratory Data Analysis and Plot Customization</a>
+<a href="#thinking-critically-about-graphics" id="toc-thinking-critically-about-graphics" class="nav-link" data-scroll-target="#thinking-critically-about-graphics"><span class="header-section-number">20.4</span> Thinking Critically About Graphics</a>
   <ul class="collapse">
-<li><a href="#texas-housing-data" id="toc-texas-housing-data" class="nav-link" data-scroll-target="#texas-housing-data"><span class="toc-section-number">20.6.1</span>  Texas Housing Data</a></li>
-  <li><a href="#starting-chart" id="toc-starting-chart" class="nav-link" data-scroll-target="#starting-chart"><span class="toc-section-number">20.6.2</span>  Starting Chart</a></li>
-  <li><a href="#exploring-trends" id="toc-exploring-trends" class="nav-link" data-scroll-target="#exploring-trends"><span class="toc-section-number">20.6.3</span>  Exploring Trends</a></li>
-  <li><a href="#adding-complexity-with-moderating-variables" id="toc-adding-complexity-with-moderating-variables" class="nav-link" data-scroll-target="#adding-complexity-with-moderating-variables"><span class="toc-section-number">20.6.4</span>  Adding Complexity with Moderating Variables</a></li>
-  <li><a href="#data-reduction-strategies" id="toc-data-reduction-strategies" class="nav-link" data-scroll-target="#data-reduction-strategies"><span class="toc-section-number">20.6.5</span>  Data Reduction Strategies</a></li>
-  <li><a href="#adding-additional-complexity" id="toc-adding-additional-complexity" class="nav-link" data-scroll-target="#adding-additional-complexity"><span class="toc-section-number">20.6.6</span>  Adding Additional Complexity</a></li>
-  <li><a href="#exploring-other-variables-and-relationships" id="toc-exploring-other-variables-and-relationships" class="nav-link" data-scroll-target="#exploring-other-variables-and-relationships"><span class="toc-section-number">20.6.7</span>  Exploring Other Variables and Relationships</a></li>
-  <li><a href="#adding-additional-moderating-variables" id="toc-adding-additional-moderating-variables" class="nav-link" data-scroll-target="#adding-additional-moderating-variables"><span class="toc-section-number">20.6.8</span>  Adding Additional Moderating Variables</a></li>
+<li><a href="#load-and-examine-the-data" id="toc-load-and-examine-the-data" class="nav-link" data-scroll-target="#load-and-examine-the-data"><span class="header-section-number">20.4.1</span> Load (and examine) the data</a></li>
+  <li><a href="#initial-plots" id="toc-initial-plots" class="nav-link" data-scroll-target="#initial-plots"><span class="header-section-number">20.4.2</span> Initial plots</a></li>
+  <li><a href="#a-graphing-template" id="toc-a-graphing-template" class="nav-link" data-scroll-target="#a-graphing-template"><span class="header-section-number">20.4.3</span> A graphing template</a></li>
   </ul>
 </li>
-  <li><a href="#what-type-of-chart-to-use" id="toc-what-type-of-chart-to-use" class="nav-link" data-scroll-target="#what-type-of-chart-to-use"><span class="toc-section-number">20.7</span>  What type of chart to use?</a></li>
-  <li><a href="#sec-graphics-b-refs" id="toc-sec-graphics-b-refs" class="nav-link" data-scroll-target="#sec-graphics-b-refs"><span class="toc-section-number">20.8</span>  References</a></li>
-  </ul><div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/srvanderplas/stat-computing-r-python/edit/main/part-wrangling/02b-graphics.qmd" class="toc-action">Edit this page</a></p></div></div></nav>
+  <li><a href="#advanced-charts-graphics-and-the-grammar-of-graphics" id="toc-advanced-charts-graphics-and-the-grammar-of-graphics" class="nav-link" data-scroll-target="#advanced-charts-graphics-and-the-grammar-of-graphics"><span class="header-section-number">20.5</span> Advanced: Charts, Graphics, and the Grammar of Graphics</a></li>
+  <li>
+<a href="#exploratory-data-analysis-and-plot-customization" id="toc-exploratory-data-analysis-and-plot-customization" class="nav-link" data-scroll-target="#exploratory-data-analysis-and-plot-customization"><span class="header-section-number">20.6</span> Exploratory Data Analysis and Plot Customization</a>
+  <ul class="collapse">
+<li><a href="#texas-housing-data" id="toc-texas-housing-data" class="nav-link" data-scroll-target="#texas-housing-data"><span class="header-section-number">20.6.1</span> Texas Housing Data</a></li>
+  <li><a href="#starting-chart" id="toc-starting-chart" class="nav-link" data-scroll-target="#starting-chart"><span class="header-section-number">20.6.2</span> Starting Chart</a></li>
+  <li><a href="#exploring-trends" id="toc-exploring-trends" class="nav-link" data-scroll-target="#exploring-trends"><span class="header-section-number">20.6.3</span> Exploring Trends</a></li>
+  <li><a href="#adding-complexity-with-moderating-variables" id="toc-adding-complexity-with-moderating-variables" class="nav-link" data-scroll-target="#adding-complexity-with-moderating-variables"><span class="header-section-number">20.6.4</span> Adding Complexity with Moderating Variables</a></li>
+  <li><a href="#data-reduction-strategies" id="toc-data-reduction-strategies" class="nav-link" data-scroll-target="#data-reduction-strategies"><span class="header-section-number">20.6.5</span> Data Reduction Strategies</a></li>
+  <li><a href="#adding-additional-complexity" id="toc-adding-additional-complexity" class="nav-link" data-scroll-target="#adding-additional-complexity"><span class="header-section-number">20.6.6</span> Adding Additional Complexity</a></li>
+  <li><a href="#exploring-other-variables-and-relationships" id="toc-exploring-other-variables-and-relationships" class="nav-link" data-scroll-target="#exploring-other-variables-and-relationships"><span class="header-section-number">20.6.7</span> Exploring Other Variables and Relationships</a></li>
+  <li><a href="#adding-additional-moderating-variables" id="toc-adding-additional-moderating-variables" class="nav-link" data-scroll-target="#adding-additional-moderating-variables"><span class="header-section-number">20.6.8</span> Adding Additional Moderating Variables</a></li>
+  </ul>
+</li>
+  <li><a href="#what-type-of-chart-to-use" id="toc-what-type-of-chart-to-use" class="nav-link" data-scroll-target="#what-type-of-chart-to-use"><span class="header-section-number">20.7</span> What type of chart to use?</a></li>
+  <li>
+<a href="#additional-reading" id="toc-additional-reading" class="nav-link" data-scroll-target="#additional-reading"><span class="header-section-number">20.8</span> Additional Reading</a>
+  <ul class="collapse">
+<li><a href="#r-graphics" id="toc-r-graphics" class="nav-link" data-scroll-target="#r-graphics">R graphics</a></li>
+  <li><a href="#python-graphics" id="toc-python-graphics" class="nav-link" data-scroll-target="#python-graphics">Python graphics</a></li>
+  </ul>
+</li>
+  <li><a href="#sec-graphics-b-refs" id="toc-sec-graphics-b-refs" class="nav-link" data-scroll-target="#sec-graphics-b-refs"><span class="header-section-number">20.9</span> References</a></li>
+  </ul><div class="toc-actions"><ul><li><a href="https://github.com/srvanderplas/stat-computing-r-python/edit/main/part-wrangling/02b-graphics.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content page-columns page-full" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><div class="quarto-title">
-<h1 class="title"><span id="sec-data-vis" class="quarto-section-identifier d-none d-lg-block"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Data Visualization</span></span></h1>
+<main class="content page-columns page-full" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../part-wrangling/00-wrangling.html">Part III: Data Wrangling</a></li><li class="breadcrumb-item"><a href="../part-wrangling/02b-graphics.html"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Data Visualization</span></a></li></ol></nav><div class="quarto-title">
+<h1 class="title"><span id="sec-data-vis" class="quarto-section-identifier"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Data Visualization</span></span></h1>
 </div>
 
 
@@ -432,7 +468,8 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
   </div>
   
 
-</header><section id="fa-bullseye-objectives" class="level2" data-number="20.1"><h2 data-number="20.1" class="anchored" data-anchor-id="fa-bullseye-objectives">
+
+</header><section id="objectives" class="level2" data-number="20.1"><h2 data-number="20.1" class="anchored" data-anchor-id="objectives">
 <span class="header-section-number">20.1</span> <i class="fa-solid fa-bullseye" aria-label="bullseye"></i> Objectives</h2>
 <ul>
 <li>Create charts designed to communicate specific aspects of the data</li>
@@ -445,12 +482,12 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
 <div class="no-row-height column-margin column-container"><div class="">
 <p>Visualization and statistical graphics are also my research area, so I’m more passionate about this material, which means there’s going to be more to read. Sorry about that in advance. I’ll do my best to indicate which content is actually mission-critical and which content you can skip if you’re not that interested.</p>
 </div></div><p>This is going to be a fairly extensive chapter (in terms of content) because I want you to have a resource to access later, if you need it. That’s why I’m showing you code for many different plotting libraries - I want you to be able to make charts in any program you may need to use for your research.</p>
-<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-caption-container flex-fill">
+<div class="callout-title-container flex-fill">
 Guides and Resources
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
@@ -509,12 +546,12 @@ Guides and Resources
 </blockquote>
 <p>Fundamentally, charts are easier to understand than raw data.</p>
 <p>When you think about it, data is a pretty artificial thing. We exist in a world of tangible objects, but data are an abstraction - even when the data record information about the tangible world, the measurements are a way of removing the physical and transforming the “real world” into a virtual thing. As a result, it can be hard to wrap our heads around what our data contain. The solution to this is to transform our data back into something that is “tangible” in some way – if not physical and literally touch-able, at least something we can view and “wrap our heads around”.</p>
-<div class="callout-tip callout callout-style-default callout-captioned">
+<div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-caption-container flex-fill">
+<div class="callout-title-container flex-fill">
 Thought Experiment
 </div>
 </div>
@@ -526,7 +563,7 @@ Thought Experiment
 <li>Draw a scatter plot of the two variables</li>
 </ol>
 <p>Which one would you rather use? Why?</p>
-<div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" aria-current="page">Dataset</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Summary statistics</a></li>
@@ -536,7 +573,6 @@ Thought Experiment
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <div class="cell">
 <div class="cell-output-display">
-
 <div data-pagedtable="false">
   <script data-pagedtable-source="" type="application/json">
 {"columns":[{"label":["x"],"name":[1],"type":["dbl"],"align":["right"]},{"label":["y"],"name":[2],"type":["dbl"],"align":["right"]}],"data":[{"1":"55.3846","2":"97.1795"},{"1":"51.5385","2":"96.0256"},{"1":"46.1538","2":"94.4872"},{"1":"42.8205","2":"91.4103"},{"1":"40.7692","2":"88.3333"},{"1":"38.7179","2":"84.8718"},{"1":"35.6410","2":"79.8718"},{"1":"33.0769","2":"77.5641"},{"1":"28.9744","2":"74.4872"},{"1":"26.1538","2":"71.4103"},{"1":"23.0769","2":"66.4103"},{"1":"22.3077","2":"61.7949"},{"1":"22.3077","2":"57.1795"},{"1":"23.3333","2":"52.9487"},{"1":"25.8974","2":"51.0256"},{"1":"29.4872","2":"51.0256"},{"1":"32.8205","2":"51.0256"},{"1":"35.3846","2":"51.4103"},{"1":"40.2564","2":"51.4103"},{"1":"44.1026","2":"52.9487"},{"1":"46.6667","2":"54.1026"},{"1":"50.0000","2":"55.2564"},{"1":"53.0769","2":"55.6410"},{"1":"56.6667","2":"56.0256"},{"1":"59.2308","2":"57.9487"},{"1":"61.2821","2":"62.1795"},{"1":"61.5385","2":"66.4103"},{"1":"61.7949","2":"69.1026"},{"1":"57.4359","2":"55.2564"},{"1":"54.8718","2":"49.8718"},{"1":"52.5641","2":"46.0256"},{"1":"48.2051","2":"38.3333"},{"1":"49.4872","2":"42.1795"},{"1":"51.0256","2":"44.1026"},{"1":"45.3846","2":"36.4103"},{"1":"42.8205","2":"32.5641"},{"1":"38.7179","2":"31.4103"},{"1":"35.1282","2":"30.2564"},{"1":"32.5641","2":"32.1795"},{"1":"30.0000","2":"36.7949"},{"1":"33.5897","2":"41.4103"},{"1":"36.6667","2":"45.6410"},{"1":"38.2051","2":"49.1026"},{"1":"29.7436","2":"36.0256"},{"1":"29.7436","2":"32.1795"},{"1":"30.0000","2":"29.1026"},{"1":"32.0513","2":"26.7949"},{"1":"35.8974","2":"25.2564"},{"1":"41.0256","2":"25.2564"},{"1":"44.1026","2":"25.6410"},{"1":"47.1795","2":"28.7180"},{"1":"49.4872","2":"31.4103"},{"1":"51.5385","2":"34.8718"},{"1":"53.5897","2":"37.5641"},{"1":"55.1282","2":"40.6410"},{"1":"56.6667","2":"42.1795"},{"1":"59.2308","2":"44.4872"},{"1":"62.3077","2":"46.0256"},{"1":"64.8718","2":"46.7949"},{"1":"67.9487","2":"47.9487"},{"1":"70.5128","2":"53.7180"},{"1":"71.5385","2":"60.6410"},{"1":"71.5385","2":"64.4872"},{"1":"69.4872","2":"69.4872"},{"1":"46.9231","2":"79.8718"},{"1":"48.2051","2":"84.1026"},{"1":"50.0000","2":"85.2564"},{"1":"53.0769","2":"85.2564"},{"1":"55.3846","2":"86.0256"},{"1":"56.6667","2":"86.0256"},{"1":"56.1538","2":"82.9487"},{"1":"53.8462","2":"80.6410"},{"1":"51.2821","2":"78.7180"},{"1":"50.0000","2":"78.7180"},{"1":"47.9487","2":"77.5641"},{"1":"29.7436","2":"59.8718"},{"1":"29.7436","2":"62.1795"},{"1":"31.2821","2":"62.5641"},{"1":"57.9487","2":"99.4872"},{"1":"61.7949","2":"99.1026"},{"1":"64.8718","2":"97.5641"},{"1":"68.4615","2":"94.1026"},{"1":"70.7692","2":"91.0256"},{"1":"72.0513","2":"86.4103"},{"1":"73.8462","2":"83.3333"},{"1":"75.1282","2":"79.1026"},{"1":"76.6667","2":"75.2564"},{"1":"77.6923","2":"71.4103"},{"1":"79.7436","2":"66.7949"},{"1":"81.7949","2":"60.2564"},{"1":"83.3333","2":"55.2564"},{"1":"85.1282","2":"51.4103"},{"1":"86.4103","2":"47.5641"},{"1":"87.9487","2":"46.0256"},{"1":"89.4872","2":"42.5641"},{"1":"93.3333","2":"39.8718"},{"1":"95.3846","2":"36.7949"},{"1":"98.2051","2":"33.7180"},{"1":"56.6667","2":"40.6410"},{"1":"59.2308","2":"38.3333"},{"1":"60.7692","2":"33.7180"},{"1":"63.0769","2":"29.1026"},{"1":"64.1026","2":"25.2564"},{"1":"64.3590","2":"24.1026"},{"1":"74.3590","2":"22.9487"},{"1":"71.2821","2":"22.9487"},{"1":"67.9487","2":"22.1795"},{"1":"65.8974","2":"20.2564"},{"1":"63.0769","2":"19.1026"},{"1":"61.2821","2":"19.1026"},{"1":"58.7179","2":"18.3333"},{"1":"55.1282","2":"18.3333"},{"1":"52.3077","2":"18.3333"},{"1":"49.7436","2":"17.5641"},{"1":"47.4359","2":"16.0256"},{"1":"44.8718","2":"13.7180"},{"1":"48.7179","2":"14.8718"},{"1":"51.2821","2":"14.8718"},{"1":"54.1026","2":"14.8718"},{"1":"56.1538","2":"14.1026"},{"1":"52.0513","2":"12.5641"},{"1":"48.7179","2":"11.0256"},{"1":"47.1795","2":"9.8718"},{"1":"46.1538","2":"6.0256"},{"1":"50.5128","2":"9.4872"},{"1":"53.8462","2":"10.2564"},{"1":"57.4359","2":"10.2564"},{"1":"60.0000","2":"10.6410"},{"1":"64.1026","2":"10.6410"},{"1":"66.9231","2":"10.6410"},{"1":"71.2821","2":"10.6410"},{"1":"74.3590","2":"10.6410"},{"1":"78.2051","2":"10.6410"},{"1":"67.9487","2":"8.7180"},{"1":"68.4615","2":"5.2564"},{"1":"68.2051","2":"2.9487"},{"1":"37.6923","2":"25.7692"},{"1":"39.4872","2":"25.3846"},{"1":"91.2821","2":"41.5385"},{"1":"50.0000","2":"95.7692"},{"1":"47.9487","2":"95.0000"},{"1":"44.1026","2":"92.6923"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
@@ -548,7 +584,6 @@ Thought Experiment
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
 <div class="cell">
 <div class="cell-output-display">
-
 <div data-pagedtable="false">
   <script data-pagedtable-source="" type="application/json">
 {"columns":[{"label":["Statistic"],"name":[1],"type":["chr"],"align":["left"]},{"label":["Value"],"name":[2],"type":["dbl"],"align":["right"]}],"data":[{"1":"mean(X)","2":"54.26327324"},{"1":"mean(Y)","2":"47.83225282"},{"1":"sd(X)","2":"16.76514204"},{"1":"sd(Y)","2":"26.93540349"},{"1":"corr(X,Y)","2":"-0.06447185"}],"options":{"columns":{"min":{},"max":[10]},"rows":{"min":[10],"max":[10]},"pages":{}}}
@@ -560,7 +595,10 @@ Thought Experiment
 <div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="02b-graphics_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid" style="width:50.0%"></p>
+<div>
+<figure class="figure"><p><img src="02b-graphics_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" style="width:50.0%"></p>
+</figure>
+</div>
 </div>
 </div>
 </div>
@@ -574,17 +612,9 @@ Thought Experiment
 <span class="header-section-number">20.4</span> Thinking Critically About Graphics</h2>
 <p>When we create graphics, we want to enable people to think about <strong>relationships</strong> between the variables in our dataset.</p>
 <p>For this example, let’s consider the relationship between different physical measurements of penguins. We’ll use the <code>palmerpenguins</code> package in R, which is also available in python.</p>
-<div class="callout-demo callout callout-style-default no-icon callout-captioned">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-caption-container flex-fill">
-Load (and examine) the data
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<div class="panel-tabset">
+<section id="load-and-examine-the-data" class="level3 callout-demo" data-number="20.4.1"><h3 data-number="20.4.1" class="anchored" data-anchor-id="load-and-examine-the-data">
+<span class="header-section-number">20.4.1</span> Load (and examine) the data</h3>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">R</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">Python</a></li>
@@ -624,20 +654,10 @@ Load (and examine) the data
 </div>
 </div>
 </div>
-</div>
-</div>
-<p>How do physical measurements (bill width, bill depth, flipper length, and body mass) relate to each other?</p>
-<div class="callout-demo callout callout-style-default no-icon callout-captioned">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-caption-container flex-fill">
-Initial plots
-</div>
-</div>
-<div class="callout-body-container callout-body">
-<div class="panel-tabset">
+</section><p>How do physical measurements (bill width, bill depth, flipper length, and body mass) relate to each other?</p>
+<section id="initial-plots" class="level3 callout-demo" data-number="20.4.2"><h3 data-number="20.4.2" class="anchored" data-anchor-id="initial-plots">
+<span class="header-section-number">20.4.2</span> Initial plots</h3>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">R - ggplot2</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">Py - plotnine</a></li>
@@ -652,7 +672,10 @@ Initial plots
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">penguins</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">body_mass_g</span>, y <span class="op">=</span> <span class="va">bill_length_mm</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02b-graphics_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid" width="2100"></p>
+<div>
+<figure class="figure"><p><img src="02b-graphics_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>Here, we start with a basic plot of bill length (mm) against body mass (g). We can see that there is an overall positive relationship between the two - penguins with higher body mass tend to have longer bills as well. However, it is also clear that there is considerable variation that is not explained by this relationship: there is a group of penguins who seem to have lower body mass and longer bills in the top left quadrant of the plot.</p>
@@ -660,7 +683,10 @@ Initial plots
 <div class="cell">
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">penguins</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">body_mass_g</span>, y <span class="op">=</span> <span class="va">bill_length_mm</span>, color <span class="op">=</span> <span class="va">species</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02b-graphics_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid" width="2100"></p>
+<div>
+<figure class="figure"><p><img src="02b-graphics_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>Adding in this additional information allows us to see that chinstrap penguins are the cluster we noticed in the previous plot. Adelie and gentoo penguins have a similar relationship between body mass and bill length, but chinstrap penguins tend to have longer bills and lower body mass.</p>
@@ -702,7 +728,10 @@ Initial plots
 <span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>matplotlib.pyplot.show() <span class="co"># include this line to show the plot in quarto</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02b-graphics_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid" width="614"></p>
+<div>
+<figure class="figure"><p><img src="02b-graphics_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="614"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>Here, we start with a basic plot of bill length (mm) against body mass (g). In <code>seaborn</code>, this is called a relational plot - that is, it shows the relationship between the variables on the x and y axis. We can see that there is an overall positive relationship between the two - penguins with higher body mass tend to have longer bills as well. However, it is also clear that there is considerable variation that is not explained by this relationship: there is a group of penguins who seem to have lower body mass and longer bills in the top left quadrant of the plot.</p>
@@ -717,7 +746,10 @@ Initial plots
 <span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>matplotlib.pyplot.show() <span class="co"># include this line to show the plot in quarto</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02b-graphics_files/figure-html/unnamed-chunk-14-3.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure"><p><img src="02b-graphics_files/figure-html/unnamed-chunk-14-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>Adding in this additional information allows us to see that chinstrap penguins are the cluster we noticed in the previous plot. Adelie and gentoo penguins have a similar relationship between body mass and bill length, but chinstrap penguins tend to have longer bills and lower body mass.</p>
@@ -756,7 +788,10 @@ Initial plots
 <div class="cell">
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">penguins</span><span class="op">$</span><span class="va">body_mass_g</span>, <span class="va">penguins</span><span class="op">$</span><span class="va">bill_length_mm</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02b-graphics_files/figure-html/unnamed-chunk-17-5.png" class="img-fluid" width="2100"></p>
+<div>
+<figure class="figure"><p><img src="02b-graphics_files/figure-html/unnamed-chunk-17-5.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>Here, we start with a basic plot of bill length (mm) against body mass (g). We can see that there is an overall positive relationship between the two - penguins with higher body mass tend to have longer bills as well. However, it is also clear that there is considerable variation that is not explained by this relationship: there is a group of penguins who seem to have lower body mass and longer bills in the top left quadrant of the plot.</p>
@@ -766,7 +801,10 @@ Initial plots
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">penguins</span><span class="op">$</span><span class="va">body_mass_g</span>, <span class="va">penguins</span><span class="op">$</span><span class="va">bill_length_mm</span>, col <span class="op">=</span> <span class="va">penguins</span><span class="op">$</span><span class="va">species</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/legend.html">legend</a></span><span class="op">(</span><span class="fl">5500</span>, <span class="fl">40</span>,<span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="va">penguins</span><span class="op">$</span><span class="va">species</span><span class="op">)</span>,col<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span>,pch<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02b-graphics_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid" width="2100"></p>
+<div>
+<figure class="figure"><p><img src="02b-graphics_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>To create a legend, we need to then identify where the legend should go (x = 5500, y = 40), and then the factor labels (<code>unique(penguins$species)</code>), and then the color levels assigned to those labels (<code>1:3</code>), and finally the point shape (<code>pch = 1</code>).</p>
@@ -783,7 +821,10 @@ Initial plots
 <span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="co">## name 'penguins' is not defined</span></span>
 <span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02b-graphics_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure"><p><img src="02b-graphics_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>plt.close() <span class="co"># close the figure</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -806,7 +847,10 @@ Initial plots
 <span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02b-graphics_files/figure-html/unnamed-chunk-20-3.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure"><p><img src="02b-graphics_files/figure-html/unnamed-chunk-20-3.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>plt.close() <span class="co"># close the figure</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -815,20 +859,10 @@ Initial plots
 </div>
 </div>
 </div>
-</div>
-</div>
-<div class="callout-demo callout callout-style-default no-icon callout-captioned">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-caption-container flex-fill">
-A graphing template
-</div>
-</div>
-<div class="callout-body-container callout-body">
+</section><section id="a-graphing-template" class="level3 callout-demo" data-number="20.4.3"><h3 data-number="20.4.3" class="anchored" data-anchor-id="a-graphing-template">
+<span class="header-section-number">20.4.3</span> A graphing template</h3>
 <p>It would be convenient if we could create a template for each of these libraries that would help us create many different types of plots. Unfortunately, that’s going to be a bit difficult, because there are a number of libraries covered here that are not built on the idea of a grammar of graphics - that is, a set of vocabulary that can define a bunch of different types of charts. In this section, I’ll show you basic templates for charts where such templates exist, and otherwise, I will try to give you a set of functions that may get you started.</p>
-<div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true">ggplot2/plotnine</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false">Seaborn</a></li>
@@ -853,8 +887,7 @@ A graphing template
 <p>In seaborn, we can describe plots using three different basic templates:</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure"><p><img src="../images/wrangling/seaborn-api-plottypes.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Seaborn API module organization. <a href="https://seaborn.pydata.org/tutorial/function_overview.html">Source</a></figcaption><p></p>
-</figure>
+<figcaption>Seaborn API module organization. <a href="https://seaborn.pydata.org/tutorial/function_overview.html">Source</a></figcaption></figure>
 </div>
 <pre><code>sns.relplot(data = &lt;DATA&gt;, x = &lt;X var&gt;, y = &lt;Y var&gt;, 
             kind = &lt;PLOT TYPE&gt;, &lt;ADDITIONAL ARGS&gt;)
@@ -893,9 +926,7 @@ sns.&lt;PLOTTYPE&gt;(data = &lt;DATA&gt;, &lt;MAPPINGS&gt;,
 </div>
 </div>
 </div>
-</div>
-</div>
-</section><section id="advanced-charts-graphics-and-the-grammar-of-graphics" class="level2 page-columns page-full" data-number="20.5"><h2 data-number="20.5" class="anchored" data-anchor-id="advanced-charts-graphics-and-the-grammar-of-graphics">
+</section></section><section id="advanced-charts-graphics-and-the-grammar-of-graphics" class="level2 page-columns page-full" data-number="20.5"><h2 data-number="20.5" class="anchored" data-anchor-id="advanced-charts-graphics-and-the-grammar-of-graphics">
 <span class="header-section-number">20.5</span> Advanced: Charts, Graphics, and the Grammar of Graphics</h2>
 <p>There are two general approaches to generating statistical graphics computationally:</p>
 <ol type="1">
@@ -912,27 +943,27 @@ ggplot2, plotnine, seaborn (sort of), seaborn objects</p></li>
 <div class="no-row-height column-margin column-container"><div class="">
 <p>There are other graphics systems (namely, <code>lattice</code> in R, <code>seaborn</code> in Python, and some web-based rendering engines like <code>Observable</code> or <code>d3</code>) that you could explore, but it’s far more important that you know how to functionally create plots in R and/or Python. I don’t recommend you try to become proficient in all of them. <strong>Pick one (two at most) and get familiar with those libraries, then google for the rest.</strong></p>
 </div></div><p>Before we delve into the grammar of graphics, let’s motivate the philosophy using a simple task. Suppose we want to create a pie chart using some data. Pie charts are terrible, and we’ve known it for 100 years<span class="citation" data-cites="croxtonBarChartsCircle1927a"><a href="#ref-croxtonBarChartsCircle1927a" role="doc-biblioref">[12]</a></span>, so in the interests of showing that we know that pie charts are awful, we’ll also create a stacked bar chart, which is the most commonly promoted alternative to a pie chart. We’ll talk about what makes pie charts terrible at the end of this module in <a href="@sec-creating-good-charts">Creating Good charts</a>.</p>
-<div class="callout-caution callout callout-style-default callout-captioned">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout callout-style-default callout-caution callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-caption-container flex-fill">
+<div class="callout-title-container flex-fill">
 Example: Generations of Pokemon
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
-<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 
 <p>Suppose we want to explore Pokemon. There’s not just the original 150 (gotta catch ’em all!) - now there are over 1000! Let’s start out by looking at the proportion of Pokemon added in each of the 9 generations.</p>
-<div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-5-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-1" role="tab" aria-controls="tabset-5-1" aria-selected="true">R setup</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-2" role="tab" aria-controls="tabset-5-2" aria-selected="false">Python setup</a></li>
 </ul>
 <div class="tab-content">
-<div id="tabset-5-1" class="unnumbered tab-pane active" role="tabpanel" aria-labelledby="tabset-5-1-tab">
+<div id="tabset-5-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-5-1-tab">
 <div class="cell">
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://readr.tidyverse.org">readr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span></span>
@@ -944,7 +975,7 @@ Example: Generations of Pokemon
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>generation <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">gen</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
-<div id="tabset-5-2" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-5-2-tab">
+<div id="tabset-5-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-2-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>poke <span class="op">=</span> pd.read_csv(<span class="st">"https://raw.githubusercontent.com/srvanderplas/datasets/main/clean/pokemon_gen_1-9.csv"</span>)</span>
@@ -954,7 +985,7 @@ Example: Generations of Pokemon
 </div>
 </div>
 <p>Once the data is read in, we can start plotting:</p>
-<div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-6-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-1" role="tab" aria-controls="tabset-6-1" aria-selected="true">ggplot2</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-2" role="tab" aria-controls="tabset-6-2" aria-selected="false">Base R</a></li>
@@ -963,7 +994,7 @@ Example: Generations of Pokemon
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-5" role="tab" aria-controls="tabset-6-5" aria-selected="false">Seaborn</a></li>
 </ul>
 <div class="tab-content">
-<div id="tabset-6-1" class="unnumbered tab-pane active" role="tabpanel" aria-labelledby="tabset-6-1-tab">
+<div id="tabset-6-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-6-1-tab">
 <p>In ggplot2, we start by specifying which variables we want to be mapped to which features of the data.</p>
 <p>In a pie or stacked bar chart, we don’t care about the x coordinate - the whole chart is centered at (0,0) or is contained in a single “stack”. So it’s easiest to specify our x variable as a constant, ““. We care about the fill of the slices, though - we want each generation to have a different fill color, so we specify generation as our fill variable.</p>
 <p>Then, we want to summarize our data by the number of objects in each category - this is basically a stacked bar chart. Any variables specified in the plot statement are used to implicitly calculate the statistical summary we want – that is, to count the rows (so if we had multiple x variables, the summary would be computed for both the x and fill variables). <code>ggplot</code> is smart enough to know that when we use <code>geom_bar</code>, we generally want the y variable to be the count, so we can get away with leaving that part out. We just have to specify that we want the bars to be stacked on top of one another (instead of next to each other, “dodge”).</p>
@@ -973,7 +1004,10 @@ Example: Generations of Pokemon
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="st">""</span>, fill <span class="op">=</span> <span class="va">generation</span><span class="op">)</span>, data <span class="op">=</span> <span class="va">poke</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_bar</a></span><span class="op">(</span>position <span class="op">=</span> <span class="st">"stack"</span><span class="op">)</span> </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02b-graphics_files/figure-html/gg-bar-1.png" class="img-fluid" width="2100"></p>
+<div>
+<figure class="figure"><p><img src="02b-graphics_files/figure-html/gg-bar-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>If we want a pie chart, we can get one very easily - we transform the coordinate plane from Cartesian coordinates to polar coordinates. We specify that we want angle to correspond to the “y” coordinate, and that we want to start at <span class="math inline">\(\theta = 0\)</span>.</p>
@@ -982,12 +1016,15 @@ Example: Generations of Pokemon
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_bar.html">geom_bar</a></span><span class="op">(</span>position <span class="op">=</span> <span class="st">"stack"</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_polar.html">coord_polar</a></span><span class="op">(</span><span class="st">"y"</span>, start <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02b-graphics_files/figure-html/gg-pie-1.png" class="img-fluid" width="2100"></p>
+<div>
+<figure class="figure"><p><img src="02b-graphics_files/figure-html/gg-pie-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>Notice how the syntax and arguments to the functions didn’t change much between the bar chart and the pie chart? That’s because the <code>ggplot</code> package uses what’s called the <strong>grammar of graphics</strong>, which is a way to describe plots based on the underlying mathematical relationships between data and plotted objects. In base R and in matplotlib in Python, different types of plots will have different syntax, arguments, etc., but in ggplot2, the arguments are consistently named, and for plots which require similar transformations and summary observations, it’s very easy to switch between plot types by changing one word or adding one transformation.</p>
 </div>
-<div id="tabset-6-2" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-6-2-tab">
+<div id="tabset-6-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-2-tab">
 <p>Let’s start with what we want: for each generation, we want the total number of pokemon.</p>
 <p>To get a pie chart, we want that information mapped to a circle, with each generation represented by an angle whose size is proportional to the number of pokemon in that generation.</p>
 <div class="cell">
@@ -998,7 +1035,10 @@ Example: Generations of Pokemon
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/pie.html">pie</a></span><span class="op">(</span><span class="va">tmp</span><span class="op">$</span><span class="va">n</span>, labels <span class="op">=</span> <span class="va">tmp</span><span class="op">$</span><span class="va">generation</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02b-graphics_files/figure-html/base-pie-1.png" class="img-fluid" width="2100"></p>
+<div>
+<figure class="figure"><p><img src="02b-graphics_files/figure-html/base-pie-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>We could alternately make a bar chart and stack the bars on top of each other. This also shows proportion (section vs.&nbsp;total) but does so in a linear fashion.</p>
@@ -1012,12 +1052,15 @@ Example: Generations of Pokemon
 <span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="va">tmp</span><span class="op">$</span><span class="va">n</span>, nrow <span class="op">=</span> <span class="fl">9</span>, ncol <span class="op">=</span> <span class="fl">1</span>, dimnames <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="va">tmp</span><span class="op">$</span><span class="va">generation</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/barplot.html">barplot</a></span><span class="op">(</span>beside <span class="op">=</span> <span class="cn">F</span>, legend.text <span class="op">=</span> <span class="cn">T</span>, main <span class="op">=</span> <span class="st">"Generations of Pokemon"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02b-graphics_files/figure-html/base-barplot-1.png" class="img-fluid" width="2100"></p>
+<div>
+<figure class="figure"><p><img src="02b-graphics_files/figure-html/base-barplot-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>There’s not a huge amount of similarity between the code for a pie chart and a bar plot, even though the underlying statistics required to create the two charts are very similar. The appearance of the two charts is also very different.</p>
 </div>
-<div id="tabset-6-3" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-6-3-tab">
+<div id="tabset-6-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-3-tab">
 <p>Let’s start with what we want: for each generation, we want the total number of pokemon.</p>
 <p>To get a pie chart, we want that information mapped to a circle, with each generation represented by an angle whose size is proportional to the number of Pokemon in that generation.</p>
 <div class="cell">
@@ -1036,10 +1079,16 @@ Example: Generations of Pokemon
 <span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a><span class="co">## (-1.0999996160491716, 1.099999961997774, -1.099999694088651, 1.0999999854327929)</span></span>
 <span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02b-graphics_files/figure-html/plt-pie-1.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure"><p><img src="02b-graphics_files/figure-html/plt-pie-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 <div class="cell-output-display">
-<p><img src="02b-graphics_files/figure-html/plt-pie-2.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure"><p><img src="02b-graphics_files/figure-html/plt-pie-2.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>We could alternately make a bar chart and stack the bars on top of each other. This also shows proportion (section vs.&nbsp;total) but does so in a linear fashion.</p>
@@ -1068,14 +1117,20 @@ Example: Generations of Pokemon
 <span id="cb31-22"><a href="#cb31-22" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb31-23"><a href="#cb31-23" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02b-graphics_files/figure-html/plt-bar-5.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure"><p><img src="02b-graphics_files/figure-html/plt-bar-5.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 <div class="cell-output-display">
-<p><img src="02b-graphics_files/figure-html/plt-bar-6.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure"><p><img src="02b-graphics_files/figure-html/plt-bar-6.png" class="img-fluid figure-img" width="672"></p>
+</figure>
 </div>
 </div>
 </div>
-<div id="tabset-6-4" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-6-4-tab">
+</div>
+<div id="tabset-6-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-4-tab">
 <p>As of January 2023, pie charts are <a href="https://github.com/has2k1/plotnine/issues/10">still not supported in plotnine</a>. So this demo will fall a bit flat.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnine <span class="im">import</span> <span class="op">*</span></span>
@@ -1084,14 +1139,20 @@ Example: Generations of Pokemon
 <span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>ggplot(poke, aes(x <span class="op">=</span> <span class="st">"1"</span>, fill <span class="op">=</span> <span class="st">"generation"</span>)) <span class="op">+</span> geom_bar(position <span class="op">=</span> <span class="st">"stack"</span>)</span>
 <span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a><span class="co">## &lt;Figure Size: (640 x 480)&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02b-graphics_files/figure-html/gg-bar-py-9.png" class="img-fluid" width="614"></p>
+<div>
+<figure class="figure"><p><img src="02b-graphics_files/figure-html/gg-bar-py-9.png" class="img-fluid figure-img" width="614"></p>
+</figure>
+</div>
 </div>
 <div class="cell-output-display">
-<p><img src="02b-graphics_files/figure-html/gg-bar-py-10.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure"><p><img src="02b-graphics_files/figure-html/gg-bar-py-10.png" class="img-fluid figure-img" width="672"></p>
+</figure>
 </div>
 </div>
 </div>
-<div id="tabset-6-5" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-6-5-tab">
+</div>
+<div id="tabset-6-5" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-5-tab">
 <p>As with Plotnine, seaborn does not support pie charts due to the same underlying issue. The best option is to create a pie chart in matplotlib and use seaborn colors <span class="citation" data-cites="zachHowCreatePie2021"><a href="#ref-zachHowCreatePie2021" role="doc-biblioref">[13]</a></span>.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Load the seaborn package</span></span>
@@ -1121,10 +1182,16 @@ Example: Generations of Pokemon
 <span id="cb33-25"><a href="#cb33-25" aria-hidden="true" tabindex="-1"></a><span class="co">## (-1.0999996160491716, 1.099999961997774, -1.099999694088651, 1.0999999854327929)</span></span>
 <span id="cb33-26"><a href="#cb33-26" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02b-graphics_files/figure-html/seaborn-poke-pie-13.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure"><p><img src="02b-graphics_files/figure-html/seaborn-poke-pie-13.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 <div class="cell-output-display">
-<p><img src="02b-graphics_files/figure-html/seaborn-poke-pie-14.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure"><p><img src="02b-graphics_files/figure-html/seaborn-poke-pie-14.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>Seaborn doesn’t have the <code>autopct</code> option that matplotlib uses, so we have to aggregate the data ourselves before creating a barchart.</p>
@@ -1134,14 +1201,22 @@ Example: Generations of Pokemon
 <span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>plt.cla() <span class="co"># clear out matplotlib buffer</span></span>
 <span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>sns.catplot(data <span class="op">=</span> poke, x <span class="op">=</span> <span class="st">'generation'</span>, kind <span class="op">=</span> <span class="st">"count"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02b-graphics_files/figure-html/seaborn-poke-bar-17.png" class="img-fluid" width="81"></p>
+<div>
+<figure class="figure"><p><img src="02b-graphics_files/figure-html/seaborn-poke-bar-17.png" class="img-fluid figure-img" width="81"></p>
+</figure>
+</div>
 </div>
 <div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02b-graphics_files/figure-html/seaborn-poke-bar-18.png" class="img-fluid" width="492"></p>
+<div>
+<figure class="figure"><p><img src="02b-graphics_files/figure-html/seaborn-poke-bar-18.png" class="img-fluid figure-img" width="492"></p>
+</figure>
+</div>
 </div>
 <div class="cell-output-display">
-<p><img src="02b-graphics_files/figure-html/seaborn-poke-bar-19.png" class="img-fluid" width="672"></p>
+<div>
+<figure class="figure"><p><img src="02b-graphics_files/figure-html/seaborn-poke-bar-19.png" class="img-fluid figure-img" width="672"></p>
+</figure>
 </div>
 </div>
 </div>
@@ -1150,17 +1225,16 @@ Example: Generations of Pokemon
 </div>
 </div>
 </div>
-<div class="no-row-height column-margin column-container"><div class="callout-6-contents callout-collapse collapse callout-margin-content">
+</div>
+<div class="no-row-height column-margin column-container"><div class="callout-3-contents callout-collapse collapse callout-margin-content">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure"><p><a href="https://commons.wikimedia.org/wiki/File:International_Pok%C3%A9mon_logo.svg%22"><img src="../images/wrangling/International_Pokemon_logo.png" class="img-fluid figure-img" alt="Pokemon logo"></a></p>
-<p></p><figcaption class="figure-caption">Nintendo, Creatures, Game Freak, The Pokémon Company, Public domain, via Wikimedia Commons</figcaption><p></p>
-</figure>
+<figcaption>Nintendo, Creatures, Game Freak, The Pokémon Company, Public domain, via Wikimedia Commons</figcaption></figure>
 </div>
 </div></div><p>The grammar of graphics is an approach first introduced in Leland Wilkinson’s book <span class="citation" data-cites="wilkinsonGrammarGraphics1999"><a href="#ref-wilkinsonGrammarGraphics1999" role="doc-biblioref">[11]</a></span>. Unlike other graphics classification schemes, the grammar of graphics makes an attempt to describe how the dataset itself relates to the components of the chart.</p>
 <div class="quarto-figure quarto-figure-center">
-<figure class="figure"><p><img src="../images/wrangling/ggplot2_masterpiece.png" class="img-fluid figure-img" alt="A fuzzy monster in a beret and scarf, critiquing their own column graph on a canvas in front of them while other assistant monsters (also in berets) carry over boxes full of elements that can be used to customize a graph (like themes and geometric shapes). In the background is a wall with framed data visualizations. Stylized text reads “ggplot2: build a data masterpiece.”"></p>
-<p></p><figcaption class="figure-caption">Building a masterpiece, by Allison Horst</figcaption><p></p>
-</figure>
+<figure class="figure"><p><img src="../images/wrangling/ggplot2_masterpiece.png" class="img-fluid figure-img"></p>
+<figcaption>Building a masterpiece, by Allison Horst</figcaption></figure>
 </div>
 <p>This has a few advantages:</p>
 <ol type="1">
@@ -1170,15 +1244,14 @@ Example: Generations of Pokemon
 </ol>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure"><p><img src="../images/wrangling/grammar-pyramid.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">A pyramid view of the major components of the grammar of graphics, with data as the base, aesthetics building on data, scales building on aesthetics, geometric objects, statistics, facets, and the coordinate system at the top of the pyramid. Source: <span class="citation" data-cites="sarkarComprehensiveGuideGrammar2018"><a href="#ref-sarkarComprehensiveGuideGrammar2018" role="doc-biblioref">[14]</a></span></figcaption><p></p>
-</figure>
+<figcaption>A pyramid view of the major components of the grammar of graphics, with data as the base, aesthetics building on data, scales building on aesthetics, geometric objects, statistics, facets, and the coordinate system at the top of the pyramid. Source: <span class="citation" data-cites="sarkarComprehensiveGuideGrammar2018"><a href="#ref-sarkarComprehensiveGuideGrammar2018" role="doc-biblioref">[14]</a></span></figcaption></figure>
 </div>
-<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-caption-container flex-fill">
+<div class="callout-title-container flex-fill">
 Note
 </div>
 </div>
@@ -1200,7 +1273,7 @@ Note
 <li><p>Facets: Do you want to show subplots based on specific categorical variable values?</p></li>
 </ol>
 <p>(this list modified from <span class="citation" data-cites="sarkarComprehensiveGuideGrammar2018"><a href="#ref-sarkarComprehensiveGuideGrammar2018" role="doc-biblioref">[14]</a></span>).</p>
-<div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-7-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-1" role="tab" aria-controls="tabset-7-1" aria-selected="true">Sketch</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-2" role="tab" aria-controls="tabset-7-2" aria-selected="false">ggplot2</a></li>
@@ -1211,11 +1284,10 @@ Note
 <div id="tabset-7-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-7-1-tab">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure"><p><img src="../images/wrangling/grammar-graphics-dataset-mapping.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">A Sketch of the mapping between a data frame and a scatterplot, showing the geoms, aesthetics, transformations, scales, coordinate systems, and statistics that are created by default.</figcaption><p></p>
-</figure>
+<figcaption>A Sketch of the mapping between a data frame and a scatterplot, showing the geoms, aesthetics, transformations, scales, coordinate systems, and statistics that are created by default.</figcaption></figure>
 </div>
 </div>
-<div id="tabset-7-2" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-7-2-tab">
+<div id="tabset-7-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-2-tab">
 <div class="cell">
 <div class="sourceCode" id="cb36"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">txhousing</span><span class="op">)</span></span>
@@ -1223,11 +1295,14 @@ Note
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">txhousing</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">date</span>, y <span class="op">=</span> <span class="va">median</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">.2</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02b-graphics_files/figure-html/txhousing-ggplot-intro-23.png" class="img-fluid" width="2100"></p>
+<div>
+<figure class="figure"><p><img src="02b-graphics_files/figure-html/txhousing-ggplot-intro-23.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
 </div>
 </div>
 </div>
-<div id="tabset-7-3" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-7-3-tab">
+</div>
+<div id="tabset-7-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-3-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnine <span class="im">import</span> <span class="op">*</span></span>
 <span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnine.data <span class="im">import</span> txhousing</span>
@@ -1235,11 +1310,14 @@ Note
 <span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a>ggplot(txhousing, aes(x <span class="op">=</span> <span class="st">"date"</span>, y <span class="op">=</span> <span class="st">"median"</span>)) <span class="op">+</span> geom_point(alpha <span class="op">=</span> <span class="fl">.1</span>)</span>
 <span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a><span class="co">## &lt;Figure Size: (640 x 480)&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02b-graphics_files/figure-html/txhousing-p9-intro-1.png" class="img-fluid" width="614"></p>
+<div>
+<figure class="figure"><p><img src="02b-graphics_files/figure-html/txhousing-p9-intro-1.png" class="img-fluid figure-img" width="614"></p>
+</figure>
 </div>
 </div>
 </div>
-<div id="tabset-7-4" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-7-4-tab">
+</div>
+<div id="tabset-7-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-4-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnine.data <span class="im">import</span> txhousing</span>
 <span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn.objects <span class="im">as</span> so</span>
@@ -1250,7 +1328,10 @@ Note
 <span id="cb38-7"><a href="#cb38-7" aria-hidden="true" tabindex="-1"></a>  .show()</span>
 <span id="cb38-8"><a href="#cb38-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02b-graphics_files/figure-html/txhousing-so-intro-3.png" class="img-fluid" width="614"></p>
+<div>
+<figure class="figure"><p><img src="02b-graphics_files/figure-html/txhousing-so-intro-3.png" class="img-fluid figure-img" width="614"></p>
+</figure>
+</div>
 </div>
 </div>
 </div>
@@ -1269,7 +1350,7 @@ Note
 </section><section id="starting-chart" class="level3" data-number="20.6.2"><h3 data-number="20.6.2" class="anchored" data-anchor-id="starting-chart">
 <span class="header-section-number">20.6.2</span> Starting Chart</h3>
 <p>Before we start exploring, let’s start with a basic scatterplot, and add a title and label our axes, so that we’re creating good, informative charts.</p>
-<div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-8-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-1" role="tab" aria-controls="tabset-8-1" aria-selected="true">Sketch</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-8-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-2" role="tab" aria-controls="tabset-8-2" aria-selected="false">ggplot2</a></li>
@@ -1280,22 +1361,24 @@ Note
 <div id="tabset-8-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-8-1-tab">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure"><p><img src="../images/wrangling/grammar-graphics-dataset-mapping.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">A Sketch of the mapping between a data frame and a scatterplot, showing the geoms, aesthetics, transformations, scales, coordinate systems, and statistics that are created by default.</figcaption><p></p>
-</figure>
+<figcaption>A Sketch of the mapping between a data frame and a scatterplot, showing the geoms, aesthetics, transformations, scales, coordinate systems, and statistics that are created by default.</figcaption></figure>
 </div>
 </div>
-<div id="tabset-8-2" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-8-2-tab">
+<div id="tabset-8-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-8-2-tab">
 <div class="cell">
 <div class="sourceCode" id="cb39"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">txhousing</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">date</span>, y <span class="op">=</span> <span class="va">median</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">xlab</a></span><span class="op">(</span><span class="st">"Date"</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ylab</a></span><span class="op">(</span><span class="st">"Median Home Price"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"Texas Housing Prices"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02b-graphics_files/figure-html/unnamed-chunk-21-5.png" class="img-fluid" width="2100"></p>
+<div>
+<figure class="figure"><p><img src="02b-graphics_files/figure-html/unnamed-chunk-21-5.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
 </div>
 </div>
 </div>
-<div id="tabset-8-3" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-8-3-tab">
+</div>
+<div id="tabset-8-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-8-3-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>ggplot(txhousing, aes(x <span class="op">=</span> <span class="st">"date"</span>, y <span class="op">=</span> <span class="st">"median"</span>)) <span class="op">+\</span></span>
 <span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>geom_point() <span class="op">+\</span></span>
@@ -1303,7 +1386,10 @@ Note
 <span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a>ggtitle(<span class="st">"Texas Housing Prices"</span>)</span>
 <span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a><span class="co">## &lt;Figure Size: (640 x 480)&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02b-graphics_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid" width="614"></p>
+<div>
+<figure class="figure"><p><img src="02b-graphics_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid figure-img" width="614"></p>
+</figure>
+</div>
 </div>
 </div>
 </div>
@@ -1316,7 +1402,10 @@ Note
 <span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>  .show()</span>
 <span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02b-graphics_files/figure-html/unnamed-chunk-23-3.png" class="img-fluid" width="614"></p>
+<div>
+<figure class="figure"><p><img src="02b-graphics_files/figure-html/unnamed-chunk-23-3.png" class="img-fluid figure-img" width="614"></p>
+</figure>
+</div>
 </div>
 </div>
 </div>
@@ -1325,7 +1414,7 @@ Note
 </section><section id="exploring-trends" class="level3" data-number="20.6.3"><h3 data-number="20.6.3" class="anchored" data-anchor-id="exploring-trends">
 <span class="header-section-number">20.6.3</span> Exploring Trends</h3>
 <p>First, we may want to show some sort of overall trend line. We can start with a linear regression, but it may be better to use a loess smooth (<a href="https://en.wikipedia.org/wiki/Local_regression">loess regression</a> is a fancy weighted average and can create curves without too much additional effort on your part).</p>
-<div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-9-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-1" role="tab" aria-controls="tabset-9-1" aria-selected="true">Sketch</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-9-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-2" role="tab" aria-controls="tabset-9-2" aria-selected="false">ggplot2</a></li>
@@ -1336,11 +1425,10 @@ Note
 <div id="tabset-9-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-9-1-tab">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure"><p><img src="../images/wrangling/grammar-graphics-dataset-mapping-smooth.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">A Sketch of the mapping between a data frame and a scatterplot, showing the geoms, aesthetics, transformations, scales, coordinate systems, and statistics that are created by default. In this modification of the original image, we’ve added a summary smooth line which provides a linear trend on top of the original points.</figcaption><p></p>
-</figure>
+<figcaption>A Sketch of the mapping between a data frame and a scatterplot, showing the geoms, aesthetics, transformations, scales, coordinate systems, and statistics that are created by default. In this modification of the original image, we’ve added a summary smooth line which provides a linear trend on top of the original points.</figcaption></figure>
 </div>
 </div>
-<div id="tabset-9-2" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-9-2-tab">
+<div id="tabset-9-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-9-2-tab">
 <div class="cell">
 <div class="sourceCode" id="cb42"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">txhousing</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">date</span>, y <span class="op">=</span> <span class="va">median</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
@@ -1348,7 +1436,10 @@ Note
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">xlab</a></span><span class="op">(</span><span class="st">"Date"</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ylab</a></span><span class="op">(</span><span class="st">"Median Home Price"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"Texas Housing Prices"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02b-graphics_files/figure-html/unnamed-chunk-24-5.png" class="img-fluid" width="2100"></p>
+<div>
+<figure class="figure"><p><img src="02b-graphics_files/figure-html/unnamed-chunk-24-5.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>We can also use a loess (locally weighted) smooth:</p>
@@ -1359,11 +1450,14 @@ Note
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">xlab</a></span><span class="op">(</span><span class="st">"Date"</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ylab</a></span><span class="op">(</span><span class="st">"Median Home Price"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"Texas Housing Prices"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02b-graphics_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid" width="2100"></p>
+<div>
+<figure class="figure"><p><img src="02b-graphics_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
 </div>
 </div>
 </div>
-<div id="tabset-9-3" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-9-3-tab">
+</div>
+<div id="tabset-9-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-9-3-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb44"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>ggplot(txhousing, aes(x <span class="op">=</span> <span class="st">"date"</span>, y <span class="op">=</span> <span class="st">"median"</span>)) <span class="op">+</span> geom_point() <span class="op">+\</span></span>
 <span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>geom_smooth(method <span class="op">=</span> <span class="st">"lm"</span>, color <span class="op">=</span> <span class="st">"blue"</span>) <span class="op">+\</span></span>
@@ -1371,7 +1465,10 @@ Note
 <span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a>ggtitle(<span class="st">"Texas Housing Prices"</span>)</span>
 <span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a><span class="co">## &lt;Figure Size: (640 x 480)&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02b-graphics_files/figure-html/unnamed-chunk-26-1.png" class="img-fluid" width="614"></p>
+<div>
+<figure class="figure"><p><img src="02b-graphics_files/figure-html/unnamed-chunk-26-1.png" class="img-fluid figure-img" width="614"></p>
+</figure>
+</div>
 </div>
 <div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># By default, geom_smooth in plotnine has a black line you can't see well</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -1394,7 +1491,10 @@ Note
 <span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>  .show()</span>
 <span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02b-graphics_files/figure-html/unnamed-chunk-28-3.png" class="img-fluid" width="614"></p>
+<div>
+<figure class="figure"><p><img src="02b-graphics_files/figure-html/unnamed-chunk-28-3.png" class="img-fluid figure-img" width="614"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>I haven’t yet figured out a way to do locally weighted regression in Seaborn using the objects interface, but I’m sure that will come as the interface develops.</p>
@@ -1405,7 +1505,7 @@ Note
 <span class="header-section-number">20.6.4</span> Adding Complexity with Moderating Variables</h3>
 <p>Looking at the plots here, it’s clear that there are small sub-groupings (see, for instance, the almost continuous line of points at the very top of the group between 2000 and 2005). Let’s see if we can figure out what those additional variables are…</p>
 <p>As it happens, the best viable option is City.</p>
-<div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-10-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-10-1" role="tab" aria-controls="tabset-10-1" aria-selected="true">Sketch</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-10-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-10-2" role="tab" aria-controls="tabset-10-2" aria-selected="false">ggplot2</a></li>
@@ -1416,11 +1516,10 @@ Note
 <div id="tabset-10-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-10-1-tab">
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure"><p><img src="../images/wrangling/grammar-graphics-dataset-mapping-color.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">A Sketch of the mapping between a data frame and a scatterplot, showing the geoms, aesthetics, transformations, scales, coordinate systems, and statistics that are created by default. In this modification of the original image, we’ve added a summary smooth line which provides a linear trend on top of the original points.</figcaption><p></p>
-</figure>
+<figcaption>A Sketch of the mapping between a data frame and a scatterplot, showing the geoms, aesthetics, transformations, scales, coordinate systems, and statistics that are created by default. In this modification of the original image, we’ve added a summary smooth line which provides a linear trend on top of the original points.</figcaption></figure>
 </div>
 </div>
-<div id="tabset-10-2" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-10-2-tab">
+<div id="tabset-10-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-10-2-tab">
 <div class="cell">
 <div class="sourceCode" id="cb48"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">txhousing</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">date</span>, y <span class="op">=</span> <span class="va">median</span>, color <span class="op">=</span> <span class="va">city</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
@@ -1428,7 +1527,10 @@ Note
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">xlab</a></span><span class="op">(</span><span class="st">"Date"</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ylab</a></span><span class="op">(</span><span class="st">"Median Home Price"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"Texas Housing Prices"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02b-graphics_files/figure-html/unnamed-chunk-29-5.png" class="img-fluid" width="2100"></p>
+<div>
+<figure class="figure"><p><img src="02b-graphics_files/figure-html/unnamed-chunk-29-5.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>That’s a really crowded graph! It’s slightly easier if we just take the points away and only show the statistics, but there are still way too many cities to be able to tell what shade matches which city.</p>
@@ -1439,11 +1541,14 @@ Note
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">xlab</a></span><span class="op">(</span><span class="st">"Date"</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ylab</a></span><span class="op">(</span><span class="st">"Median Home Price"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"Texas Housing Prices"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02b-graphics_files/figure-html/unnamed-chunk-30-1.png" class="img-fluid" width="2100"></p>
+<div>
+<figure class="figure"><p><img src="02b-graphics_files/figure-html/unnamed-chunk-30-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
 </div>
 </div>
 </div>
-<div id="tabset-10-3" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-10-3-tab">
+</div>
+<div id="tabset-10-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-10-3-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb50"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>ggplot(txhousing, aes(x <span class="op">=</span> <span class="st">"date"</span>, y <span class="op">=</span> <span class="st">"median"</span>, color <span class="op">=</span> <span class="st">"city"</span>)) <span class="op">+\</span></span>
 <span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>geom_point() <span class="op">+\</span></span>
@@ -1472,7 +1577,10 @@ Note
 <span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>  .show()</span>
 <span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02b-graphics_files/figure-html/unnamed-chunk-33-1.png" class="img-fluid" width="614"></p>
+<div>
+<figure class="figure"><p><img src="02b-graphics_files/figure-html/unnamed-chunk-33-1.png" class="img-fluid figure-img" width="614"></p>
+</figure>
+</div>
 </div>
 </div>
 </div>
@@ -1483,14 +1591,14 @@ Note
 <p>In reality, though, you should not ever map color to something with more than about 7 categories if your goal is to allow people to trace the category back to the label. It just doesn’t work well perceptually.</p>
 <p>So let’s work with a smaller set of data: Houston, Dallas, Fort worth, Austin, and San Antonio (the major cities).</p>
 <p>Another way to show this data is to plot each city as its own subplot. In ggplot2 lingo, these subplots are called “facets”. In visualization terms, we call this type of plot “small multiples” - we have many small charts, each showing the trend for a subset of the data.</p>
-<div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-11-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-11-1" role="tab" aria-controls="tabset-11-1" aria-selected="true">ggplot2</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-11-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-11-2" role="tab" aria-controls="tabset-11-2" aria-selected="false">plotnine</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-11-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-11-3" role="tab" aria-controls="tabset-11-3" aria-selected="false">Seaborn</a></li>
 </ul>
 <div class="tab-content">
-<div id="tabset-11-1" class="unnumbered tab-pane active" role="tabpanel" aria-labelledby="tabset-11-1-tab">
+<div id="tabset-11-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-11-1-tab">
 <div class="cell">
 <div class="sourceCode" id="cb53"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">citylist</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Houston"</span>, <span class="st">"Austin"</span>, <span class="st">"Dallas"</span>, <span class="st">"Fort Worth"</span>, <span class="st">"San Antonio"</span><span class="op">)</span></span>
 <span><span class="va">housingsub</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">txhousing</span>, <span class="va">city</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="va">citylist</span><span class="op">)</span></span>
@@ -1501,7 +1609,10 @@ Note
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">xlab</a></span><span class="op">(</span><span class="st">"Date"</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ylab</a></span><span class="op">(</span><span class="st">"Median Home Price"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"Texas Housing Prices"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02b-graphics_files/figure-html/unnamed-chunk-34-3.png" class="img-fluid" width="2100"></p>
+<div>
+<figure class="figure"><p><img src="02b-graphics_files/figure-html/unnamed-chunk-34-3.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>Here’s the facetted version of the chart:</p>
@@ -1513,12 +1624,15 @@ Note
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">xlab</a></span><span class="op">(</span><span class="st">"Date"</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ylab</a></span><span class="op">(</span><span class="st">"Median Home Price"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"Texas Housing Prices"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02b-graphics_files/figure-html/unnamed-chunk-35-1.png" class="img-fluid" width="2100"></p>
+<div>
+<figure class="figure"><p><img src="02b-graphics_files/figure-html/unnamed-chunk-35-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>Notice I’ve removed the aesthetic mapping to color as it’s redundant now that each city is split out in its own plot.</p>
 </div>
-<div id="tabset-11-2" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-11-2-tab">
+<div id="tabset-11-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-11-2-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb55"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>citylist <span class="op">=</span> [<span class="st">"Houston"</span>, <span class="st">"Austin"</span>, <span class="st">"Dallas"</span>, <span class="st">"Fort Worth"</span>, <span class="st">"San Antonio"</span>]</span>
 <span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>housingsub <span class="op">=</span> txhousing[txhousing[<span class="st">'city'</span>].isin(citylist)]</span>
@@ -1554,7 +1668,10 @@ Note
 <span id="cb57-8"><a href="#cb57-8" aria-hidden="true" tabindex="-1"></a>  .show()</span>
 <span id="cb57-9"><a href="#cb57-9" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02b-graphics_files/figure-html/unnamed-chunk-38-1.png" class="img-fluid" width="614"></p>
+<div>
+<figure class="figure"><p><img src="02b-graphics_files/figure-html/unnamed-chunk-38-1.png" class="img-fluid figure-img" width="614"></p>
+</figure>
+</div>
 </div>
 </div>
 <div class="cell">
@@ -1569,7 +1686,10 @@ Note
 <span id="cb58-9"><a href="#cb58-9" aria-hidden="true" tabindex="-1"></a>  .show()</span>
 <span id="cb58-10"><a href="#cb58-10" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02b-graphics_files/figure-html/unnamed-chunk-39-3.png" class="img-fluid" width="614"></p>
+<div>
+<figure class="figure"><p><img src="02b-graphics_files/figure-html/unnamed-chunk-39-3.png" class="img-fluid figure-img" width="614"></p>
+</figure>
+</div>
 </div>
 </div>
 </div>
@@ -1578,14 +1698,14 @@ Note
 </section><section id="adding-additional-complexity" class="level3" data-number="20.6.6"><h3 data-number="20.6.6" class="anchored" data-anchor-id="adding-additional-complexity">
 <span class="header-section-number">20.6.6</span> Adding Additional Complexity</h3>
 <p>Now that we’ve simplified our charts a bit, we can explore a couple of the other quantitative variables by mapping them to additional aesthetics:</p>
-<div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-12-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-12-1" role="tab" aria-controls="tabset-12-1" aria-selected="true">ggplot2</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-12-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-12-2" role="tab" aria-controls="tabset-12-2" aria-selected="false">plotnine</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-12-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-12-3" role="tab" aria-controls="tabset-12-3" aria-selected="false">Seaborn</a></li>
 </ul>
 <div class="tab-content">
-<div id="tabset-12-1" class="unnumbered tab-pane active" role="tabpanel" aria-labelledby="tabset-12-1-tab">
+<div id="tabset-12-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-12-1-tab">
 <div class="cell">
 <div class="sourceCode" id="cb59"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">housingsub</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">date</span>, y <span class="op">=</span> <span class="va">median</span>, size <span class="op">=</span> <span class="va">sales</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">.15</span><span class="op">)</span> <span class="op">+</span> <span class="co"># Make points transparent</span></span>
@@ -1602,12 +1722,15 @@ Note
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">xlab</a></span><span class="op">(</span><span class="st">"Date"</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ylab</a></span><span class="op">(</span><span class="st">"Median Home Price"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"Texas Housing Prices"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02b-graphics_files/figure-html/unnamed-chunk-40-5.png" class="img-fluid" width="2100"></p>
+<div>
+<figure class="figure"><p><img src="02b-graphics_files/figure-html/unnamed-chunk-40-5.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>Notice I’ve removed the aesthetic mapping to color as it’s redundant now that each city is split out in its own plot.</p>
 </div>
-<div id="tabset-12-2" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-12-2-tab">
+<div id="tabset-12-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-12-2-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb60"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>citylist <span class="op">=</span> [<span class="st">"Houston"</span>, <span class="st">"Austin"</span>, <span class="st">"Dallas"</span>, <span class="st">"Fort Worth"</span>, <span class="st">"San Antonio"</span>]</span>
 <span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>housingsub <span class="op">=</span> txhousing[txhousing[<span class="st">'city'</span>].isin(citylist)]</span>
@@ -1625,7 +1748,7 @@ Note
 </div>
 <p>Not all of the features we used in R are available in plotnine in Python (in part because of limitations of the underlying graphics interface that plotnine uses). This does somewhat limit the customization we can do with python, but for the most part we can still get the same basic information back out.</p>
 </div>
-<div id="tabset-12-3" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-12-3-tab">
+<div id="tabset-12-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-12-3-tab">
 <p>Coming soon!</p>
 </div>
 </div>
@@ -1633,13 +1756,13 @@ Note
 </section><section id="exploring-other-variables-and-relationships" class="level3" data-number="20.6.7"><h3 data-number="20.6.7" class="anchored" data-anchor-id="exploring-other-variables-and-relationships">
 <span class="header-section-number">20.6.7</span> Exploring Other Variables and Relationships</h3>
 <p>Up to this point, we’ve used the same position information - date for the y axis, median sale price for the y axis. Let’s switch that up a bit so that we can play with some transformations on the x and y axis and add variable mappings to a continuous variable.</p>
-<div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-13-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-13-1" role="tab" aria-controls="tabset-13-1" aria-selected="true">ggplot2</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-13-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-13-2" role="tab" aria-controls="tabset-13-2" aria-selected="false">plotnine</a></li>
 </ul>
 <div class="tab-content">
-<div id="tabset-13-1" class="unnumbered tab-pane active" role="tabpanel" aria-labelledby="tabset-13-1-tab">
+<div id="tabset-13-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-13-1-tab">
 <div class="cell">
 <div class="sourceCode" id="cb61"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">housingsub</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">listings</span>, y <span class="op">=</span> <span class="va">sales</span>, color <span class="op">=</span> <span class="va">city</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html">geom_point</a></span><span class="op">(</span>alpha <span class="op">=</span> <span class="fl">.15</span><span class="op">)</span> <span class="op">+</span> <span class="co"># Make points transparent</span></span>
@@ -1647,7 +1770,10 @@ Note
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">xlab</a></span><span class="op">(</span><span class="st">"Number of Listings"</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ylab</a></span><span class="op">(</span><span class="st">"Number of Sales"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"Texas Housing Prices"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02b-graphics_files/figure-html/unnamed-chunk-42-1.png" class="img-fluid" width="2100"></p>
+<div>
+<figure class="figure"><p><img src="02b-graphics_files/figure-html/unnamed-chunk-42-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>The points for Fort Worth are compressed pretty tightly relative to the points for Houston and Dallas. When we get this type of difference, it is sometimes common to use a log transformation<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>. Here, I have transformed both the x and y axis, since the number of sales seems to be proportional to the number of listings.</p>
@@ -1660,11 +1786,14 @@ Note
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">xlab</a></span><span class="op">(</span><span class="st">"Number of Listings"</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ylab</a></span><span class="op">(</span><span class="st">"Number of Sales"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"Texas Housing Prices"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02b-graphics_files/figure-html/unnamed-chunk-43-1.png" class="img-fluid" width="2100"></p>
+<div>
+<figure class="figure"><p><img src="02b-graphics_files/figure-html/unnamed-chunk-43-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
 </div>
 </div>
 </div>
-<div id="tabset-13-2" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-13-2-tab">
+</div>
+<div id="tabset-13-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-13-2-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb63"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a>( <span class="co"># This is used to group lines together in python</span></span>
 <span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>ggplot(housingsub, aes(x <span class="op">=</span> <span class="st">"listings"</span>, y <span class="op">=</span> <span class="st">"sales"</span>, color <span class="op">=</span> <span class="st">"city"</span>))</span>
@@ -1684,13 +1813,13 @@ Note
 </section><section id="adding-additional-moderating-variables" class="level3" data-number="20.6.8"><h3 data-number="20.6.8" class="anchored" data-anchor-id="adding-additional-moderating-variables">
 <span class="header-section-number">20.6.8</span> Adding Additional Moderating Variables</h3>
 <p>For the next demonstration, let’s look at just Houston’s data. We can examine the inventory’s relationship to the number of sales by looking at the inventory-date relationship in x and y, and mapping the size or color of the point to number of sales.</p>
-<div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-14-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-14-1" role="tab" aria-controls="tabset-14-1" aria-selected="true">ggplot2</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-14-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-14-2" role="tab" aria-controls="tabset-14-2" aria-selected="false">plotnine</a></li>
 </ul>
 <div class="tab-content">
-<div id="tabset-14-1" class="unnumbered tab-pane active" role="tabpanel" aria-labelledby="tabset-14-1-tab">
+<div id="tabset-14-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-14-1-tab">
 <div class="cell">
 <div class="sourceCode" id="cb64"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">houston</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">txhousing</span>, <span class="va">city</span> <span class="op">==</span> <span class="st">"Houston"</span><span class="op">)</span></span>
 <span></span>
@@ -1700,7 +1829,10 @@ Note
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guides.html">guides</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guide_legend.html">guide_legend</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Number of Sales"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"Houston Housing Data"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02b-graphics_files/figure-html/unnamed-chunk-45-1.png" class="img-fluid" width="2100"></p>
+<div>
+<figure class="figure"><p><img src="02b-graphics_files/figure-html/unnamed-chunk-45-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
 </div>
 </div>
 <div class="cell">
@@ -1710,7 +1842,10 @@ Note
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guides.html">guides</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guide_colourbar.html">guide_colorbar</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Number of Sales"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"Houston Housing Data"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02b-graphics_files/figure-html/unnamed-chunk-46-1.png" class="img-fluid" width="2100"></p>
+<div>
+<figure class="figure"><p><img src="02b-graphics_files/figure-html/unnamed-chunk-46-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>Which is easier to read?</p>
@@ -1722,12 +1857,15 @@ Note
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guides.html">guides</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guide_colourbar.html">guide_colorbar</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Date"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"Houston Housing Data"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02b-graphics_files/figure-html/unnamed-chunk-47-1.png" class="img-fluid" width="2100"></p>
+<div>
+<figure class="figure"><p><img src="02b-graphics_files/figure-html/unnamed-chunk-47-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>Is that easier or harder to read?</p>
 </div>
-<div id="tabset-14-2" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-14-2-tab">
+<div id="tabset-14-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-14-2-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb67"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a>houston <span class="op">=</span> txhousing[txhousing.city<span class="op">==</span><span class="st">"Houston"</span>]</span>
 <span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -1740,7 +1878,10 @@ Note
 <span id="cb67-9"><a href="#cb67-9" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb67-10"><a href="#cb67-10" aria-hidden="true" tabindex="-1"></a><span class="co">## &lt;Figure Size: (640 x 480)&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02b-graphics_files/figure-html/unnamed-chunk-48-1.png" class="img-fluid" width="614"></p>
+<div>
+<figure class="figure"><p><img src="02b-graphics_files/figure-html/unnamed-chunk-48-1.png" class="img-fluid figure-img" width="614"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>In plotnine, we have to use <a href="https://matplotlib.org/stable/api/markers_api.html">matplotlib marker syntax</a>.</p>
@@ -1755,7 +1896,10 @@ Note
 <span id="cb68-8"><a href="#cb68-8" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb68-9"><a href="#cb68-9" aria-hidden="true" tabindex="-1"></a><span class="co">## &lt;Figure Size: (640 x 480)&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02b-graphics_files/figure-html/unnamed-chunk-49-3.png" class="img-fluid" width="614"></p>
+<div>
+<figure class="figure"><p><img src="02b-graphics_files/figure-html/unnamed-chunk-49-3.png" class="img-fluid figure-img" width="614"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>Plotnine also defaults to different color schemes than ggplot2 – just something to know if you want the plot to be exactly the same. Personally, I prefer the viridis color scheme (what plotnine uses) to the ggplot2 defaults.</p>
@@ -1771,7 +1915,10 @@ Note
 <span id="cb69-8"><a href="#cb69-8" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb69-9"><a href="#cb69-9" aria-hidden="true" tabindex="-1"></a><span class="co">## &lt;Figure Size: (640 x 480)&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="02b-graphics_files/figure-html/unnamed-chunk-50-5.png" class="img-fluid" width="614"></p>
+<div>
+<figure class="figure"><p><img src="02b-graphics_files/figure-html/unnamed-chunk-50-5.png" class="img-fluid figure-img" width="614"></p>
+</figure>
+</div>
 </div>
 </div>
 <p>Is that easier or harder to read?</p>
@@ -1790,17 +1937,9 @@ Note
 <li><p>Do I have data that might be best shown in small multiples? E.g. a categorical moderating variable and a lot of data, where the categorical variable might be important for showing different features of the data?</p></li>
 </ul>
 <p>Once you’ve thought through this, take a look through catalogs like the <a href="https://r-graph-gallery.com/">R Graph Gallery</a> or the <a href="https://python-graph-gallery.com/">Python Graph Gallery</a> to see what visualizations match your data and use-case.</p>
-<p><a href="02c-good-graphics.html"><span>Chapter&nbsp;21</span></a> talks in more depth about considerations for creating <em>good</em> charts; these considerations may also inform your decisions.</p>
-<div class="callout-learnmore callout callout-style-default no-icon callout-captioned">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-caption-container flex-fill">
-Additional Reading
-</div>
-</div>
-<div class="callout-body-container callout-body">
+<p><a href="02c-good-graphics.html" class="quarto-xref"><span>Chapter&nbsp;21</span></a> talks in more depth about considerations for creating <em>good</em> charts; these considerations may also inform your decisions.</p>
+</section><section id="additional-reading" class="level2 callout-learnmore" data-number="20.8"><h2 data-number="20.8" class="anchored" data-anchor-id="additional-reading">
+<span class="header-section-number">20.8</span> Additional Reading</h2>
 <section id="r-graphics" class="level3 unnumbered"><h3 class="unnumbered anchored" data-anchor-id="r-graphics">R graphics</h3>
 <ul>
 <li><a href="https://github.com/rstudio/cheatsheets/raw/master/data-visualization-2.1.pdf">ggplot2 cheat sheet</a></li>
@@ -1821,80 +1960,77 @@ Additional Reading
 </ul>
 </li>
 <li><a href="https://github.com/rougier/scientific-visualization-book/blob/master/pdf/book.pdf">Scientific Visualization with Python</a></li>
-</ul></section>
-</div>
-</div>
-</section><section id="sec-graphics-b-refs" class="level2" data-number="20.8"><h2 data-number="20.8" class="anchored" data-anchor-id="sec-graphics-b-refs">
-<span class="header-section-number">20.8</span> References</h2>
+</ul></section></section><section id="sec-graphics-b-refs" class="level2" data-number="20.9"><h2 data-number="20.9" class="anchored" data-anchor-id="sec-graphics-b-refs">
+<span class="header-section-number">20.9</span> References</h2>
 
 
-<div id="refs" class="references csl-bib-body" role="doc-bibliography">
-<div id="ref-ggplot2" class="csl-entry" role="doc-biblioentry">
+<div id="refs" class="references csl-bib-body" data-entry-spacing="0" role="list">
+<div id="ref-ggplot2" class="csl-entry" role="listitem">
 <div class="csl-left-margin">[1] </div>
 <div class="csl-right-inline">H. Wickham, <em>ggplot2: Elegant graphics for data analysis</em>. Springer-Verlag New York, 2016 [Online]. Available: <a href="https://ggplot2.tidyverse.org">https://ggplot2.tidyverse.org</a>
 </div>
 </div>
-<div id="ref-kibirigeGrammarGraphicsPython2022" class="csl-entry" role="doc-biblioentry">
+<div id="ref-kibirigeGrammarGraphicsPython2022" class="csl-entry" role="listitem">
 <div class="csl-left-margin">[2] </div>
 <div class="csl-right-inline">H. Kibirige, <span>“A grammar of graphics for python. Plotnine 0.10.1 documentation,”</span> 2022. [Online]. Available: <a href="https://plotnine.readthedocs.io/en/stable/">https://plotnine.readthedocs.io/en/stable/</a>. [Accessed: Feb. 06, 2023]</div>
 </div>
-<div id="ref-waskomIntroductionSeaborn2022" class="csl-entry" role="doc-biblioentry">
+<div id="ref-waskomIntroductionSeaborn2022" class="csl-entry" role="listitem">
 <div class="csl-left-margin">[3] </div>
 <div class="csl-right-inline">M. Waskom, <span>“An introduction to seaborn. Seaborn 0.12.2 documentation,”</span> 2022. [Online]. Available: <a href="https://seaborn.pydata.org/tutorial/introduction.html">https://seaborn.pydata.org/tutorial/introduction.html</a>. [Accessed: Feb. 06, 2023]</div>
 </div>
-<div id="ref-waskomNextgenerationSeabornInterface2022" class="csl-entry" role="doc-biblioentry">
+<div id="ref-waskomNextgenerationSeabornInterface2022" class="csl-entry" role="listitem">
 <div class="csl-left-margin">[4] </div>
 <div class="csl-right-inline">M. Waskom, <span>“Next-generation seaborn interface. Seaborn nextgen documentation,”</span> 2022. [Online]. Available: <a href="https://seaborn.pydata.org/nextgen/">https://seaborn.pydata.org/nextgen/</a>. [Accessed: Aug. 29, 2022]</div>
 </div>
-<div id="ref-thematplotlibdevelopmentteamMatplotlibVisualizationPython2023" class="csl-entry" role="doc-biblioentry">
+<div id="ref-thematplotlibdevelopmentteamMatplotlibVisualizationPython2023" class="csl-entry" role="listitem">
 <div class="csl-left-margin">[5] </div>
 <div class="csl-right-inline">The matplotlib development team, <span>“Matplotlib — visualization with python. Matplotlib,”</span> 2023. [Online]. Available: <a href="https://matplotlib.org/">https://matplotlib.org/</a>. [Accessed: Feb. 06, 2023]</div>
 </div>
-<div id="ref-pengBasePlottingSystem2020" class="csl-entry" role="doc-biblioentry">
+<div id="ref-pengBasePlottingSystem2020" class="csl-entry" role="listitem">
 <div class="csl-left-margin">[6] </div>
 <div class="csl-right-inline">R. D. Peng, <span>“The base plotting system,”</span> in <em>Exploratory data analysis with r</em>, 1st ed., leanpub, 2020 [Online]. Available: <a href="https://bookdown.org/rdpeng/exdata/">https://bookdown.org/rdpeng/exdata/</a>. [Accessed: Feb. 06, 2023]</div>
 </div>
-<div id="ref-tukeyDataBasedGraphicsVisual1990" class="csl-entry" role="doc-biblioentry">
+<div id="ref-tukeyDataBasedGraphicsVisual1990" class="csl-entry" role="listitem">
 <div class="csl-left-margin">[7] </div>
 <div class="csl-right-inline">J. W. Tukey, <span>“Data-<span>Based</span> <span>Graphics</span>: <span>Visual</span> <span>Display</span> in the <span>Decades</span> to <span>Come</span>,”</span> <em>Statistical Science</em>, vol. 5, no. 3, pp. 327–339, Aug. 1990, doi: <a href="https://doi.org/10.1214/ss/1177012101">10.1214/ss/1177012101</a>. [Online]. Available: <a href="https://projecteuclid.org/journals/statistical-science/volume-5/issue-3/Data-Based-Graphics--Visual-Display-in-the-Decades-to/10.1214/ss/1177012101.full">https://projecteuclid.org/journals/statistical-science/volume-5/issue-3/Data-Based-Graphics--Visual-Display-in-the-Decades-to/10.1214/ss/1177012101.full</a>. [Accessed: Aug. 22, 2022]</div>
 </div>
-<div id="ref-yauComparingGgplot2Base2016" class="csl-entry" role="doc-biblioentry">
+<div id="ref-yauComparingGgplot2Base2016" class="csl-entry" role="listitem">
 <div class="csl-left-margin">[8] </div>
 <div class="csl-right-inline">N. Yau, <span>“Comparing ggplot2 and r base graphics. <span>FlowingData</span>,”</span> Mar. 22, 2016. [Online]. Available: <a href="https://flowingdata.com/2016/03/22/comparing-ggplot2-and-r-base-graphics/">https://flowingdata.com/2016/03/22/comparing-ggplot2-and-r-base-graphics/</a>. [Accessed: Feb. 06, 2023]</div>
 </div>
-<div id="ref-koehrsenNextLevelData2019" class="csl-entry" role="doc-biblioentry">
+<div id="ref-koehrsenNextLevelData2019" class="csl-entry" role="listitem">
 <div class="csl-left-margin">[9] </div>
 <div class="csl-right-inline">W. Koehrsen, <span>“The next level of data visualization in python. Medium,”</span> Jan. 24, 2019. [Online]. Available: <a href="https://towardsdatascience.com/the-next-level-of-data-visualization-in-python-dd6e99039d5e">https://towardsdatascience.com/the-next-level-of-data-visualization-in-python-dd6e99039d5e</a>. [Accessed: Feb. 06, 2023]</div>
 </div>
-<div id="ref-mckinneyPythonDataAnalysis2022" class="csl-entry" role="doc-biblioentry">
+<div id="ref-mckinneyPythonDataAnalysis2022" class="csl-entry" role="listitem">
 <div class="csl-left-margin">[10] </div>
 <div class="csl-right-inline">W. McKinney, <em>Python for data analysis</em>, 3rd ed. O’Reilly, 2022 [Online]. Available: <a href="https://wesmckinney.com/book/">https://wesmckinney.com/book/</a>. [Accessed: Feb. 06, 2023]</div>
 </div>
-<div id="ref-wilkinsonGrammarGraphics1999" class="csl-entry" role="doc-biblioentry">
+<div id="ref-wilkinsonGrammarGraphics1999" class="csl-entry" role="listitem">
 <div class="csl-left-margin">[11] </div>
 <div class="csl-right-inline">L. Wilkinson, <em>The grammar of graphics</em>. New York: Springer, 1999 [Online]. Available: <a href="http://public.ebookcentral.proquest.com/choice/publicfullrecord.aspx?p=3085765">http://public.ebookcentral.proquest.com/choice/publicfullrecord.aspx?p=3085765</a>. [Accessed: Jan. 29, 2020]</div>
 </div>
-<div id="ref-croxtonBarChartsCircle1927a" class="csl-entry" role="doc-biblioentry">
+<div id="ref-croxtonBarChartsCircle1927a" class="csl-entry" role="listitem">
 <div class="csl-left-margin">[12] </div>
 <div class="csl-right-inline">F. E. Croxton and R. E. Stryker, <span>“Bar <span>Charts</span> <span>Versus</span> <span>Circle</span> <span>Diagrams</span>,”</span> <em>Journal of the American Statistical Association</em>, vol. 22, no. 160, pp. 473–482, 1927, doi: <a href="https://doi.org/10.2307/2276829">10.2307/2276829</a>. [Online]. Available: <a href="https://www.jstor.org/stable/2276829">https://www.jstor.org/stable/2276829</a>. [Accessed: Aug. 22, 2022]</div>
 </div>
-<div id="ref-zachHowCreatePie2021" class="csl-entry" role="doc-biblioentry">
+<div id="ref-zachHowCreatePie2021" class="csl-entry" role="listitem">
 <div class="csl-left-margin">[13] </div>
 <div class="csl-right-inline">Zach, <span>“How to <span>Create</span> a <span>Pie</span> <span>Chart</span> in <span>Seaborn</span>,”</span> <em>Statology</em>. Jul. 2021 [Online]. Available: <a href="https://www.statology.org/seaborn-pie-chart/">https://www.statology.org/seaborn-pie-chart/</a>. [Accessed: Sep. 19, 2022]</div>
 </div>
-<div id="ref-sarkarComprehensiveGuideGrammar2018" class="csl-entry" role="doc-biblioentry">
+<div id="ref-sarkarComprehensiveGuideGrammar2018" class="csl-entry" role="listitem">
 <div class="csl-left-margin">[14] </div>
 <div class="csl-right-inline">D. (DJ). Sarkar, <span>“A <span>Comprehensive</span> <span>Guide</span> to the <span>Grammar</span> of <span>Graphics</span> for <span>Effective</span> <span>Visualization</span> of <span>Multi</span>-dimensional…,”</span> <em>Medium</em>. Sep. 2018 [Online]. Available: <a href="https://towardsdatascience.com/a-comprehensive-guide-to-the-grammar-of-graphics-for-effective-visualization-of-multi-dimensional-1f92b4ed4149">https://towardsdatascience.com/a-comprehensive-guide-to-the-grammar-of-graphics-for-effective-visualization-of-multi-dimensional-1f92b4ed4149</a>. [Accessed: Apr. 11, 2022]</div>
 </div>
-<div id="ref-eda" class="csl-entry" role="doc-biblioentry">
+<div id="ref-eda" class="csl-entry" role="listitem">
 <div class="csl-left-margin">[15] </div>
 <div class="csl-right-inline">J. Tukey, <em>Exploratory data analysis</em>. Addison-Wesley Publishing Company, 1977. </div>
 </div>
 </div>
-</section><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><hr>
+</section><aside id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><hr>
 <ol>
 <li id="fn1"><p>This isn’t necessarily a good thing, but you should know how to do it. The jury is still very much out on whether log transformations make data easier to read and understand<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-</ol></section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
+</ol></aside></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
     const mode = bsSheetEl.getAttribute("data-mode");
@@ -1935,6 +2071,33 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       } else {
         el.classList.add('notransition');
       }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
     }
   }
   const toggleColorMode = (alternate) => {
@@ -2003,13 +2166,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       return localAlternateSentinel;
     }
   }
-  let localAlternateSentinel = 'default';
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
   // Dark / light mode switch
   window.quartoToggleColorScheme = () => {
     // Read the current dark / light value 
     let toAlternate = !hasAlternateSentinel();
     toggleColorMode(toAlternate);
     setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
   };
   // Ensure there is a toggle, if there isn't float one in the top right
   if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
@@ -2036,9 +2201,23 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     icon: icon
   };
   anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
   const clipboard = new window.ClipboardJS('.code-copy-button', {
-    target: function(trigger) {
-      return trigger.previousElementSibling;
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
     }
   });
   clipboard.on('success', function(e) {
@@ -2074,10 +2253,9 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // clear code selection
     e.clearSelection();
   });
-  function tippyHover(el, contentFn) {
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -2087,8 +2265,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -2103,6 +2290,248 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       return note.innerHTML;
     });
   }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    const typesetMath = (el) => {
+      if (window.MathJax) {
+        // MathJax Typeset
+        window.MathJax.typeset([el]);
+      } else if (window.katex) {
+        // KaTeX Render
+        var mathElements = el.getElementsByClassName("math");
+        var macros = [];
+        for (var i = 0; i < mathElements.length; i++) {
+          var texText = mathElements[i].firstChild;
+          if (mathElements[i].tagName == "SPAN") {
+            window.katex.render(texText.data, mathElements[i], {
+              displayMode: mathElements[i].classList.contains('display'),
+              throwOnError: false,
+              macros: macros,
+              fleqn: false
+            });
+          }
+        }
+      }
+    }
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        typesetMath(container);
+        return container.innerHTML
+      } else {
+        typesetMath(note);
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      typesetMath(note);
+      return note.innerHTML;
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
   const findCites = (el) => {
     const parentEl = el.parentElement;
     if (parentEl) {
@@ -2142,20 +2571,25 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script><script src="https://giscus.app/client.js" data-repo="srvanderplas/stat-computing-r-python" data-repo-id="R_kgDOIvwd2g" data-category="General" data-category-id="DIC_kwDOIvwd2s4CTksR" data-mapping="pathname" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="light" data-lang="en" crossorigin="anonymous" async="">
-</script><nav class="page-navigation"><div class="nav-page nav-page-previous">
-      <a href="../part-wrangling/02a-eda.html" class="pagination-link">
+</script><input type="hidden" id="giscus-base-theme" value="light"><input type="hidden" id="giscus-alt-theme" value="dark"><nav class="page-navigation"><div class="nav-page nav-page-previous">
+      <a href="../part-wrangling/02a-eda.html" class="pagination-link  aria-label=" data="" analysis="">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Exploratory Data Analysis</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../part-wrangling/02c-good-graphics.html" class="pagination-link">
+      <a href="../part-wrangling/02c-good-graphics.html" class="pagination-link" aria-label="<span class='chapter-number'>21</span>&nbsp; <span class='chapter-title'>Creating Good Charts</span>">
         <span class="nav-page-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Creating Good Charts</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
 </div> <!-- /content -->
 <footer class="footer"><div class="nav-footer">
-    <div class="nav-footer-left">Copyright 2023, Susan Vanderplas</div>   
+    <div class="nav-footer-left">
+<p>Copyright 2023, Susan Vanderplas</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
     <div class="nav-footer-right">
       <ul class="footer-items list-unstyled">
 <li class="nav-item compact">

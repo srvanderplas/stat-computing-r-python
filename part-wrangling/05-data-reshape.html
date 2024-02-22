@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.2.313">
+<meta name="generator" content="quarto-1.4.515">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 <meta name="dcterms.date" content="2024-02-22">
 <title>Statistical Computing using R and Python - 24&nbsp; Reshaping Data</title>
@@ -15,11 +15,12 @@ div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
   width: 0.8em;
-  margin: 0 0.8em 0.2em -1.6em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -44,48 +45,20 @@ pre.numberSource code > span > a:first-child::before
     -khtml-user-select: none; -moz-user-select: none;
     -ms-user-select: none; user-select: none;
     padding: 0 4px; width: 4em;
-    color: #aaaaaa;
   }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
 div.sourceCode
   {   }
 @media screen {
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
-code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { color: #7d9029; } /* Attribute */
-code span.bn { color: #40a070; } /* BaseN */
-code span.bu { color: #008000; } /* BuiltIn */
-code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #4070a0; } /* Char */
-code span.cn { color: #880000; } /* Constant */
-code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code span.dt { color: #902000; } /* DataType */
-code span.dv { color: #40a070; } /* DecVal */
-code span.er { color: #ff0000; font-weight: bold; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #40a070; } /* Float */
-code span.fu { color: #06287e; } /* Function */
-code span.im { color: #008000; font-weight: bold; } /* Import */
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code span.op { color: #666666; } /* Operator */
-code span.ot { color: #007020; } /* Other */
-code span.pp { color: #bc7a00; } /* Preprocessor */
-code span.sc { color: #4070a0; } /* SpecialChar */
-code span.ss { color: #bb6688; } /* SpecialString */
-code span.st { color: #4070a0; } /* String */
-code span.va { color: #19177c; } /* Variable */
-code span.vs { color: #4070a0; } /* VerbatimString */
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+/* CSS for citations */
 div.csl-bib-body { }
 div.csl-entry {
   clear: both;
+  margin-bottom: 0em;
 }
-.hanging div.csl-entry {
+.hanging-indent div.csl-entry {
   margin-left:2em;
   text-indent:-2em;
 }
@@ -99,8 +72,7 @@ div.csl-right-inline {
 }
 div.csl-indent {
   margin-left: 2em;
-}
-</style>
+}</style>
 
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../site_libs/quarto-nav/headroom.min.js"></script>
@@ -130,7 +102,13 @@ div.csl-indent {
   "collapse-after": 3,
   "panel-placement": "start",
   "type": "textbox",
-  "limit": 20,
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
   "language": {
     "search-no-results-text": "No results",
     "search-matching-documents-text": "matching documents",
@@ -140,7 +118,8 @@ div.csl-indent {
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
     "search-detached-cancel-button-title": "Cancel",
-    "search-submit-button-title": "Submit"
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
   }
 }</script><script async="" src="https://www.googletagmanager.com/gtag/js?id=G-4ZFBDKXJXP"></script><script type="text/javascript">
 
@@ -153,258 +132,309 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
 <body class="nav-sidebar floating">
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top"><nav class="quarto-secondary-nav" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }"><div class="container-fluid d-flex justify-content-between">
-      <h1 class="quarto-secondary-nav-title"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Reshaping Data</span></h1>
-      <button type="button" class="quarto-btn-toggle btn" aria-label="Show secondary navigation">
-        <i class="bi bi-chevron-right"></i>
+  <header id="quarto-header" class="headroom fixed-top"><nav class="quarto-secondary-nav"><div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../part-wrangling/00-wrangling.html">Part III: Data Wrangling</a></li><li class="breadcrumb-item"><a href="../part-wrangling/05-data-reshape.html"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Reshaping Data</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
       </button>
     </div>
   </nav></header><!-- content --><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse sidebar-navigation floating overflow-auto"><div class="pt-lg-2 mt-2 text-left sidebar-header">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto"><div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="../">Statistical Computing using R and Python</a> 
         <div class="sidebar-tools-main">
-    <a href="https://github.com/srvanderplas/stat-computing-r-python/" title="Source Code" class="sidebar-tool px-1"><i class="bi bi-github"></i></a>
-  <a href="" class="quarto-color-scheme-toggle sidebar-tool" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+    <a href="https://github.com/srvanderplas/stat-computing-r-python/" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
 </div>
     </div>
       </div>
-      <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="mt-2 flex-shrink-0 align-items-center">
         <div class="sidebar-search">
         <div id="quarto-search" class="" title="Search"></div>
         </div>
-      </div>
+        </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
 <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../index.html" class="sidebar-item-text sidebar-link">Preface</a>
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
   </div>
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../part-tools/00-tools-intro.html" class="sidebar-item-text sidebar-link">Part I: Tools</a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true">
+            <a href="../part-tools/00-tools-intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Part I: Tools</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">
 <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-tools/01-computer-basics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Computer Basics</span></a>
+  <a href="../part-tools/01-computer-basics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Computer Basics</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-tools/02-setting-up-computer.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Setting Up Your Computer</span></a>
+  <a href="../part-tools/02-setting-up-computer.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Setting Up Your Computer</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-tools/03-Rstudio-interface.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">RStudio’s Interface</span></a>
+  <a href="../part-tools/03-Rstudio-interface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">RStudio’s Interface</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-tools/04-scripts-notebooks.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Scripts and Notebooks</span></a>
+  <a href="../part-tools/04-scripts-notebooks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Scripts and Notebooks</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-tools/05-git-and-github.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Version Control with Git</span></a>
+  <a href="../part-tools/05-git-and-github.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Version Control with Git</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-tools/06-documents.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Reproducibility and Professional Communication</span></a>
+  <a href="../part-tools/06-documents.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Reproducibility and Professional Communication</span></span></a>
   </div>
 </li>
       </ul>
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../part-gen-prog/00-gen-prog.html" class="sidebar-item-text sidebar-link">Part II: General Programming</a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true">
+            <a href="../part-gen-prog/00-gen-prog.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Part II: General Programming</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">
 <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/00-intro.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Introduction to Programming</span></a>
+  <a href="../part-gen-prog/00-intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Introduction to Programming</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/01-basic-var-types.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Variables and Basic Data Types</span></a>
+  <a href="../part-gen-prog/01-basic-var-types.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Variables and Basic Data Types</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/02-prog-functions.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Using Functions and Libraries</span></a>
+  <a href="../part-gen-prog/02-prog-functions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Using Functions and Libraries</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/03-data-struct.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Data Structures</span></a>
+  <a href="../part-gen-prog/03-data-struct.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Data Structures</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/035-matrix-calcs.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Matrix Calculations</span></a>
+  <a href="../part-gen-prog/035-matrix-calcs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Matrix Calculations</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/04-control-struct.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Control Structures</span></a>
+  <a href="../part-gen-prog/04-control-struct.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Control Structures</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/05-functions.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Writing Functions</span></a>
+  <a href="../part-gen-prog/05-functions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Writing Functions</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/06-debugging.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Debugging</span></a>
+  <a href="../part-gen-prog/06-debugging.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Debugging</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/07-prog-data.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Programming With Data</span></a>
+  <a href="../part-gen-prog/07-prog-data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Programming With Data</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/99-extra.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Other Helpful Programming Resources</span></a>
+  <a href="../part-gen-prog/99-extra.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Other Helpful Programming Resources</span></span></a>
   </div>
 </li>
       </ul>
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../part-wrangling/00-wrangling.html" class="sidebar-item-text sidebar-link">Part III: Data Wrangling</a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true">
+            <a href="../part-wrangling/00-wrangling.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Part III: Data Wrangling</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">
 <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/01-data-input.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Data Input</span></a>
+  <a href="../part-wrangling/01-data-input.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Data Input</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/02-basic-data-vis.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Data Visualization Basics</span></a>
+  <a href="../part-wrangling/02-basic-data-vis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Data Visualization Basics</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/02a-eda.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Exploratory Data Analysis</span></a>
+  <a href="../part-wrangling/02a-eda.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Exploratory Data Analysis</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/02b-graphics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Data Visualization</span></a>
+  <a href="../part-wrangling/02b-graphics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Data Visualization</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/02c-good-graphics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Creating Good Charts</span></a>
+  <a href="../part-wrangling/02c-good-graphics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Creating Good Charts</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/03-data-cleaning.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Data Cleaning</span></a>
+  <a href="../part-wrangling/03-data-cleaning.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Data Cleaning</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/04-strings.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Working with Strings</span></a>
+  <a href="../part-wrangling/04-strings.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Working with Strings</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/05-data-reshape.html" class="sidebar-item-text sidebar-link active"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Reshaping Data</span></a>
+  <a href="../part-wrangling/05-data-reshape.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Reshaping Data</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/06-data-join.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Joining Data</span></a>
+  <a href="../part-wrangling/06-data-join.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Joining Data</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/07-datetime.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Dates and Times</span></a>
+  <a href="../part-wrangling/07-datetime.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Dates and Times</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/08-functional-prog.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Functional Programming</span></a>
+  <a href="../part-wrangling/08-functional-prog.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Functional Programming</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/09-spatial-formats.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Spatial data</span></a>
+  <a href="../part-wrangling/09-spatial-formats.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Spatial data</span></span></a>
   </div>
 </li>
       </ul>
 </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
-            <a href="../part-advanced-topics/00-advanced.html" class="sidebar-item-text sidebar-link">Part IV: Advanced Topics</a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true">
+            <a href="../part-advanced-topics/00-advanced.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Part IV: Advanced Topics</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
       <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">
 <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-advanced-topics/01-simulation.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Simulation and Reproducibility</span></a>
+  <a href="../part-advanced-topics/01-simulation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Simulation and Reproducibility</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../part-advanced-topics/06-interactive-graphics.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">30</span>&nbsp; <span class="chapter-title">Interactive Graphics</span></a>
+  <a href="../part-advanced-topics/06-interactive-graphics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">30</span>&nbsp; <span class="chapter-title">Interactive Graphics</span></span></a>
   </div>
 </li>
       </ul>
 </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
-  <a href="../graveyard.html" class="sidebar-item-text sidebar-link"><span class="chapter-number">31</span>&nbsp; <span class="chapter-title">Other Topics</span></a>
+  <a href="../graveyard.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">31</span>&nbsp; <span class="chapter-title">Other Topics</span></span></a>
   </div>
 </li>
     </ul>
 </div>
-</nav><!-- margin-sidebar --><div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+</nav><div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active"><h2 id="toc-title">Table of contents</h2>
    
   <ul>
-<li><a href="#fa-bullseye-objectives" id="toc-fa-bullseye-objectives" class="nav-link active" data-scroll-target="#fa-bullseye-objectives"><span class="toc-section-number">24.1</span>  <i class="fa-solid fa-bullseye" aria-label="bullseye"></i> Objectives</a></li>
+<li><a href="#objectives" id="toc-objectives" class="nav-link active" data-scroll-target="#objectives"><span class="header-section-number">24.1</span> <i class="fa-solid fa-bullseye" aria-label="bullseye"></i> Objectives</a></li>
   <li>
-<a href="#tidy-and-messy-data" id="toc-tidy-and-messy-data" class="nav-link" data-scroll-target="#tidy-and-messy-data"><span class="toc-section-number">24.2</span>  Tidy and Messy Data</a>
+<a href="#tidy-and-messy-data" id="toc-tidy-and-messy-data" class="nav-link" data-scroll-target="#tidy-and-messy-data"><span class="header-section-number">24.2</span> Tidy and Messy Data</a>
   <ul class="collapse">
-<li><a href="#motivating-example" id="toc-motivating-example" class="nav-link" data-scroll-target="#motivating-example"><span class="toc-section-number">24.2.1</span>  Motivating Example</a></li>
-  <li><a href="#defining-tidy-data" id="toc-defining-tidy-data" class="nav-link" data-scroll-target="#defining-tidy-data"><span class="toc-section-number">24.2.2</span>  Defining Tidy data</a></li>
+<li><a href="#motivating-example" id="toc-motivating-example" class="nav-link" data-scroll-target="#motivating-example"><span class="header-section-number">24.2.1</span> Motivating Example</a></li>
+  <li><a href="#defining-tidy-data" id="toc-defining-tidy-data" class="nav-link" data-scroll-target="#defining-tidy-data"><span class="header-section-number">24.2.2</span> Defining Tidy data</a></li>
+  <li><a href="#examples-messy-data" id="toc-examples-messy-data" class="nav-link" data-scroll-target="#examples-messy-data">Examples: Messy Data</a></li>
+  </ul>
+</li>
+  <li><a href="#additional-reading" id="toc-additional-reading" class="nav-link" data-scroll-target="#additional-reading"><span class="header-section-number">24.3</span> Additional reading</a></li>
+  <li>
+<a href="#pivot-operations" id="toc-pivot-operations" class="nav-link" data-scroll-target="#pivot-operations"><span class="header-section-number">24.4</span> Pivot operations</a>
+  <ul class="collapse">
+<li><a href="#longer" id="toc-longer" class="nav-link" data-scroll-target="#longer"><span class="header-section-number">24.4.1</span> Longer</a></li>
+  <li><a href="#wider" id="toc-wider" class="nav-link" data-scroll-target="#wider"><span class="header-section-number">24.4.2</span> Wider</a></li>
   </ul>
 </li>
   <li>
-<a href="#pivot-operations" id="toc-pivot-operations" class="nav-link" data-scroll-target="#pivot-operations"><span class="toc-section-number">24.3</span>  Pivot operations</a>
+<a href="#sec-gas-price-ex" id="toc-sec-gas-price-ex" class="nav-link" data-scroll-target="#sec-gas-price-ex"><span class="header-section-number">24.5</span> Example: Gas Prices Data</a>
   <ul class="collapse">
-<li><a href="#longer" id="toc-longer" class="nav-link" data-scroll-target="#longer"><span class="toc-section-number">24.3.1</span>  Longer</a></li>
-  <li><a href="#wider" id="toc-wider" class="nav-link" data-scroll-target="#wider"><span class="toc-section-number">24.3.2</span>  Wider</a></li>
+<li><a href="#setup-gas-price-data-cleaning" id="toc-setup-gas-price-data-cleaning" class="nav-link" data-scroll-target="#setup-gas-price-data-cleaning"><span class="header-section-number">24.5.1</span> Setup: Gas Price Data Cleaning</a></li>
   </ul>
 </li>
-  <li><a href="#sec-gas-price-ex" id="toc-sec-gas-price-ex" class="nav-link" data-scroll-target="#sec-gas-price-ex"><span class="toc-section-number">24.4</span>  Example: Gas Prices Data</a></li>
-  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references"><span class="toc-section-number">24.5</span>  References</a></li>
-  </ul><div class="toc-actions"><div><i class="bi bi-github"></i></div><div class="action-links"><p><a href="https://github.com/srvanderplas/stat-computing-r-python/edit/main/part-wrangling/05-data-reshape.qmd" class="toc-action">Edit this page</a></p></div></div></nav>
+  <li><a href="#other-resources" id="toc-other-resources" class="nav-link" data-scroll-target="#other-resources"><span class="header-section-number">24.6</span> Other resources</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references"><span class="header-section-number">24.7</span> References</a></li>
+  </ul><div class="toc-actions"><ul><li><a href="https://github.com/srvanderplas/stat-computing-r-python/edit/main/part-wrangling/05-data-reshape.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><div class="quarto-title">
-<h1 class="title"><span id="sec-data-reshape" class="quarto-section-identifier d-none d-lg-block"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Reshaping Data</span></span></h1>
+<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../part-wrangling/00-wrangling.html">Part III: Data Wrangling</a></li><li class="breadcrumb-item"><a href="../part-wrangling/05-data-reshape.html"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Reshaping Data</span></a></li></ol></nav><div class="quarto-title">
+<h1 class="title"><span id="sec-data-reshape" class="quarto-section-identifier"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Reshaping Data</span></span></h1>
 </div>
 
 
@@ -423,7 +453,8 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
   </div>
   
 
-</header><section id="fa-bullseye-objectives" class="level2" data-number="24.1"><h2 data-number="24.1" class="anchored" data-anchor-id="fa-bullseye-objectives">
+
+</header><section id="objectives" class="level2" data-number="24.1"><h2 data-number="24.1" class="anchored" data-anchor-id="objectives">
 <span class="header-section-number">24.1</span> <i class="fa-solid fa-bullseye" aria-label="bullseye"></i> Objectives</h2>
 <p>Broadly, your objective while reading this chapter is to be able to identify datasets which have “messy” formats and determine a sequence of operations to transition the data into “tidy” format. To do this, you should be master the following concepts:</p>
 <ul>
@@ -433,19 +464,25 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
 <span class="header-section-number">24.2</span> Tidy and Messy Data</h2>
 <section id="motivating-example" class="level3" data-number="24.2.1"><h3 data-number="24.2.1" class="anchored" data-anchor-id="motivating-example">
 <span class="header-section-number">24.2.1</span> Motivating Example</h3>
-<p>Consider the spreadsheet screenshot in <a href="#fig-human-readable">Figure&nbsp;<span>24.1</span></a>.</p>
+<p>Consider the spreadsheet screenshot in <a href="#fig-human-readable" class="quarto-xref">Figure&nbsp;<span>24.1</span></a>.</p>
 <div id="fig-human-readable" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure"><p><img src="../images/wrangling/Data-human-consumption.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Figure&nbsp;24.1: Spreadsheet intended for human consumption, from <span class="citation" data-cites="mccallumBadDataHandbook2013"><a href="#ref-mccallumBadDataHandbook2013" role="doc-biblioref">[1]</a></span> (Chapter 3)</figcaption><p></p>
-</figure>
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-human-readable-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="../images/wrangling/Data-human-consumption.png" class="img-fluid figure-img">
 </div>
-<p>This spreadsheet shows New Zealand High School certificate achievement levels for a boys-only school. Typically, students would get level 1 in year 11, level 2 in year 12, and level 3 in year 13, but it is possible for students to gain multiple levels in a single year. This data is organized to show the number of students gaining each type of certification (broken out by gender) across each of the 3 years. There are many blank cells that provide ample space to see the data, and all of the necessary variables are represented: there are essentially three 2x3 tables showing the number of students attaining each NCEA level in each year of school. If all of the information is present in this table, is there really a problem? Perhaps not if the goal is just to display the data, but analyzing this data effectively, or plotting it in a way that is useful, requires some restructuring. <a href="#fig-machine-readable">Figure&nbsp;<span>24.2</span></a> shows a restructured version of this data in a more compact rectangular format.</p>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-human-readable-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;24.1: Spreadsheet intended for human consumption, from <span class="citation" data-cites="mccallumBadDataHandbook2013"><a href="#ref-mccallumBadDataHandbook2013" role="doc-biblioref">[1]</a></span> (Chapter 3)
+</figcaption></figure>
+</div>
+<p>This spreadsheet shows New Zealand High School certificate achievement levels for a boys-only school. Typically, students would get level 1 in year 11, level 2 in year 12, and level 3 in year 13, but it is possible for students to gain multiple levels in a single year. This data is organized to show the number of students gaining each type of certification (broken out by gender) across each of the 3 years. There are many blank cells that provide ample space to see the data, and all of the necessary variables are represented: there are essentially three 2x3 tables showing the number of students attaining each NCEA level in each year of school. If all of the information is present in this table, is there really a problem? Perhaps not if the goal is just to display the data, but analyzing this data effectively, or plotting it in a way that is useful, requires some restructuring. <a href="#fig-machine-readable" class="quarto-xref">Figure&nbsp;<span>24.2</span></a> shows a restructured version of this data in a more compact rectangular format.</p>
 <div id="fig-machine-readable" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure"><p><img src="../images/wrangling/Data-machine-consumption.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Figure&nbsp;24.2: Spreadsheet reorganized for data analysis</figcaption><p></p>
-</figure>
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-machine-readable-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="../images/wrangling/Data-machine-consumption.png" class="img-fluid figure-img">
 </div>
-<p>In <a href="#fig-machine-readable">Figure&nbsp;<span>24.2</span></a>, each column contains one variable: Year, gender, level, and total number of students. Each row contains one observation. We still have 18 data points, but this format is optimized for statistical analysis, rather than to display for (human) visual consumption. We will refer to this restructured data as “tidy” data: it has a single column for each variable and a single row for each observation.</p>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-machine-readable-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;24.2: Spreadsheet reorganized for data analysis
+</figcaption></figure>
+</div>
+<p>In <a href="#fig-machine-readable" class="quarto-xref">Figure&nbsp;<span>24.2</span></a>, each column contains one variable: Year, gender, level, and total number of students. Each row contains one observation. We still have 18 data points, but this format is optimized for statistical analysis, rather than to display for (human) visual consumption. We will refer to this restructured data as “tidy” data: it has a single column for each variable and a single row for each observation.</p>
 </section><section id="defining-tidy-data" class="level3" data-number="24.2.2"><h3 data-number="24.2.2" class="anchored" data-anchor-id="defining-tidy-data">
 <span class="header-section-number">24.2.2</span> Defining Tidy data</h3>
 <p>The illustrations below are lifted from an <a href="https://www.openscapes.org/blog/2020/10/12/tidy-data/">excellent blog post</a> <span class="citation" data-cites="lowndesTidyDataEfficiency2020"><a href="#ref-lowndesTidyDataEfficiency2020" role="doc-biblioref">[2]</a></span> about tidy data; they’re reproduced here because</p>
@@ -460,55 +497,44 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
 </ul>
 <p>When we analyze data, however, we care much more about the fundamental structure of observations: discrete units of data collection. Each observation may have several corresponding variables that may be measured simultaneously, but fundamentally each discrete data point is what we are interested in analyzing.</p>
 <p>The structure of <strong>tidy data</strong> reflects this preference for keeping the data in a fundamental form: each observation is in its own row, any observed variables are in single columns. This format is inherently rectangular, which is also important for statistical analysis - our methods are typically designed to work with matrices of data.</p>
-<div id="fig-tidy-data-definition" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure"><p><img src="../images/wrangling/tidydata_1.jpg" class="img-fluid figure-img" alt="Stylized text providing an overview of Tidy Data. The top reads “Tidy data is a standard way of mapping the meaning of a dataset to its structure. - Hadley Wickham.” On the left reads “In tidy data: each variable forms a column; each observation forms a row; each cell is a single measurement.” There is an example table on the lower right with columns ‘id’, ‘name’ and ‘color’ with observations for different cats, illustrating tidy data structure."></p>
-<p></p><figcaption class="figure-caption">Figure&nbsp;24.3: Tidy data format, illustrated.</figcaption><p></p>
-</figure>
+<div id="fig-tidy-data-definition" class="quarto-figure quarto-figure-center anchored" alt="Stylized text providing an overview of Tidy Data. The top reads “Tidy data is a standard way of mapping the meaning of a dataset to its structure. - Hadley Wickham.” On the left reads “In tidy data: each variable forms a column; each observation forms a row; each cell is a single measurement.” There is an example table on the lower right with columns ‘id’, ‘name’ and ‘color’ with observations for different cats, illustrating tidy data structure.">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-tidy-data-definition-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="../images/wrangling/tidydata_1.jpg" class="img-fluid figure-img" alt="Stylized text providing an overview of Tidy Data. The top reads “Tidy data is a standard way of mapping the meaning of a dataset to its structure. - Hadley Wickham.” On the left reads “In tidy data: each variable forms a column; each observation forms a row; each cell is a single measurement.” There is an example table on the lower right with columns ‘id’, ‘name’ and ‘color’ with observations for different cats, illustrating tidy data structure.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-tidy-data-definition-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;24.3: Tidy data format, illustrated.
+</figcaption></figure>
 </div>
 <div class="quarto-figure quarto-figure-center">
-<figure class="figure"><p><img src="../images/wrangling/tidydata_2.jpg" class="img-fluid figure-img" alt="There are two sets of anthropomorphized data tables. The top group of three tables are all rectangular and smiling, with a shared speech bubble reading “our columns are variables and our rows are observations!”. Text to the left of that group reads “The standard structure of tidy data means that “tidy datasets are all alike…” The lower group of four tables are all different shapes, look ragged and concerned, and have different speech bubbles reading (from left to right) “my column are values and my rows are variables”, “I have variables in columns AND in rows”, “I have multiple variables in a single column”, and “I don’t even KNOW what my deal is.” Next to the frazzled data tables is text “...but every messy dataset is messy in its own way. -Hadley Wickham.”"></p>
-<p></p><figcaption class="figure-caption">An illustration of the principle that every messy dataset is messy in its own way.</figcaption><p></p>
-</figure>
+<figure class="figure"><p><img src="../images/wrangling/tidydata_2.jpg" class="img-fluid figure-img"></p>
+<figcaption>An illustration of the principle that every messy dataset is messy in its own way.</figcaption></figure>
 </div>
 <p>The preference for tidy data has several practical implications: it is easier to reuse code on tidy data, allowing for analysis using a standardized set of tools (rather than having to build a custom tool for each data analysis job).</p>
 <div class="quarto-figure quarto-figure-center">
-<figure class="figure"><p><img src="../images/wrangling/tidydata_3.jpg" class="img-fluid figure-img" alt="On the left is a happy cute fuzzy monster holding a rectangular data frame with a tool that fits the data frame shape. On the workbench behind the monster are other data frames of similar rectangular shape, and neatly arranged tools that also look like they would fit those data frames. The workbench looks uncluttered and tidy. The text above the tidy workbench reads “When working with tidy data, we can use the same tools in similar ways for different datasets…” On the right is a cute monster looking very frustrated, using duct tape and other tools to haphazardly tie data tables together, each in a different way. The monster is in front of a messy, cluttered workbench. The text above the frustrated monster reads “...but working with untidy data often means reinventing the wheel with one-time approaches that are hard to iterate or reuse.”"></p>
-<p></p><figcaption class="figure-caption">Tidy data is easier to manage because the same tools and approaches apply to multiple datasets.</figcaption><p></p>
-</figure>
+<figure class="figure"><p><img src="../images/wrangling/tidydata_3.jpg" class="img-fluid figure-img"></p>
+<figcaption>Tidy data is easier to manage because the same tools and approaches apply to multiple datasets.</figcaption></figure>
 </div>
 <p>In addition, standardized tools for data analysis means that it is easier to collaborate with others: if everyone starts with the same set of assumptions about the data set, you can borrow methods and tools from a collaborator’s analysis and easily apply them to your own data set.</p>
 <div id="fig-tidy-data-advantages" class="quarto-layout-panel">
-<figure class="figure"><div class="quarto-layout-row quarto-layout-valign-top">
-<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure"><p><img src="../images/wrangling/tidydata_4.jpg" class="img-fluid figure-img" alt="Two happy looking round fuzzy monsters, each holding a similarly shaped wrench with the word “wrangle” on it. Between their tools is held up a rectangular data table labeled “TIDY.”"></p>
-<p></p><figcaption class="figure-caption">Collaboration with tidy data.</figcaption><p></p>
-</figure>
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-tidy-data-advantages-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-layout-row quarto-layout-valign-top">
+<div class="quarto-figure quarto-figure-center quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<figure class="figure"><p><img src="../images/wrangling/tidydata_4.jpg" class="img-fluid figure-img"></p>
+<figcaption>Collaboration with tidy data.</figcaption></figure>
 </div>
-</div>
-<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure"><p><img src="../images/wrangling/tidydata_5.jpg" class="img-fluid figure-img" alt="Cute fuzzy monsters putting rectangular data tables onto a conveyor belt. Along the conveyor belt line are different automated “stations” that update the data, reading “WRANGLE”, “VISUALIZE”, and “MODEL”. A monster at the end of the conveyor belt is carrying away a table that reads “Complete analysis.”"></p>
-<p></p><figcaption class="figure-caption">Tidy data enables standardized workflows.</figcaption><p></p>
-</figure>
+<div class="quarto-figure quarto-figure-center quarto-layout-cell" style="flex-basis: 50.0%;justify-content: center;">
+<figure class="figure"><p><img src="../images/wrangling/tidydata_5.jpg" class="img-fluid figure-img"></p>
+<figcaption>Tidy data enables standardized workflows.</figcaption></figure>
 </div>
 </div>
 </div>
-<p></p><figcaption class="figure-caption">Figure&nbsp;24.4: Tidy data makes it easier to collaborate with others and analyze new data using standardized workflows.</figcaption><p></p>
-</figure>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-tidy-data-advantages-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;24.4: Tidy data makes it easier to collaborate with others and analyze new data using standardized workflows.
+</figcaption></figure>
 </div>
-<div class="callout-demo callout callout-style-default no-icon callout-captioned">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-caption-container flex-fill">
-Examples: Messy Data
-</div>
-</div>
-<div class="callout-body-container callout-body">
+</section><section id="examples-messy-data" class="level3 unnumbered callout-demo"><h3 class="unnumbered anchored" data-anchor-id="examples-messy-data">Examples: Messy Data</h3>
 <p>These datasets all display the same data: TB cases documented by the WHO in Afghanistan, Brazil, and China, between 1999 and 2000. There are 4 variables: country, year, cases, and population, but each table has a different layout.</p>
-<div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" aria-current="page">Table 1</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">2</a></li>
@@ -517,10 +543,10 @@ Examples: Messy Data
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-5" role="tab" aria-controls="tabset-1-5" aria-selected="false">5</a></li>
 </ul>
 <div class="tab-content">
-<div id="tabset-1-1" class="unnumbered tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <div class="cell">
 <div class="cell-output-display">
-<table class="table table-sm table-striped">
+<table class="table table-sm table-striped small">
 <caption>Table 1</caption>
 <thead><tr class="header">
 <th style="text-align: left;">country</th>
@@ -571,10 +597,10 @@ Examples: Messy Data
 </div>
 <p>Here, each observation is a single row, each variable is a column, and everything is nicely arranged for e.g.&nbsp;regression or statistical analysis. We can easily compute another measure, such as cases per 100,000 population, by taking cases/population * 100000 (this would define a new column).</p>
 </div>
-<div id="tabset-1-2" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
 <div class="cell">
 <div class="cell-output-display">
-<table class="table table-sm table-striped">
+<table class="table table-sm table-striped small">
 <caption>Table 2</caption>
 <thead><tr class="header">
 <th style="text-align: left;">country</th>
@@ -661,10 +687,10 @@ Examples: Messy Data
 </div>
 <p>Here, we have 4 columns again, but we now have 12 rows: one of the columns is an indicator of which of two numerical observations is recorded in that row; a second column stores the value. This form of the data is more easily plotted in e.g.&nbsp;ggplot2, if we want to show lines for both cases and population, but computing per capita cases would be much more difficult in this form than in the arrangement in table 1.</p>
 </div>
-<div id="tabset-1-3" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
+<div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
 <div class="cell">
 <div class="cell-output-display">
-<table class="table table-sm table-striped">
+<table class="table table-sm table-striped small">
 <caption>Table 3</caption>
 <thead><tr class="header">
 <th style="text-align: left;">country</th>
@@ -708,10 +734,10 @@ Examples: Messy Data
 </div>
 <p>This form has only 3 columns, because the rate variable (which is a character) stores both the case count and the population. We can’t do <em>anything</em> with this format as it stands, because we can’t do math on data stored as characters. However, this form might be easier to read and record for a human being.</p>
 </div>
-<div id="tabset-1-4" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-1-4-tab">
+<div id="tabset-1-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-4-tab">
 <div class="cell">
 <div class="cell-output-display">
-<table class="table table-sm table-striped">
+<table class="table table-sm table-striped small">
 <caption>Table 4a</caption>
 <thead><tr class="header">
 <th style="text-align: left;">country</th>
@@ -738,7 +764,7 @@ Examples: Messy Data
 </table>
 </div>
 <div class="cell-output-display">
-<table class="table table-sm table-striped">
+<table class="table table-sm table-striped small">
 <caption>Table 4b</caption>
 <thead><tr class="header">
 <th style="text-align: left;">country</th>
@@ -767,10 +793,10 @@ Examples: Messy Data
 </div>
 <p>In this form, we have two tables - one for population, and one for cases. Each year’s observations are in a separate column. This format is often found in separate sheets of an excel workbook. To work with this data, we’ll need to transform each table so that there is a column indicating which year an observation is from, and then merge the two tables together by country and year.</p>
 </div>
-<div id="tabset-1-5" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-1-5-tab">
+<div id="tabset-1-5" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-5-tab">
 <div class="cell">
 <div class="cell-output-display">
-<table class="table table-sm table-striped">
+<table class="table table-sm table-striped small">
 <caption>Table 5</caption>
 <thead><tr class="header">
 <th style="text-align: left;">country</th>
@@ -823,19 +849,17 @@ Examples: Messy Data
 </div>
 </div>
 </div>
-</div>
-</div>
-<div class="callout-tip callout callout-style-default callout-captioned">
+</section><div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-caption-container flex-fill">
+<div class="callout-title-container flex-fill">
 Try it out: Classifying Messy Data
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">Problem</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">Table 1</a></li>
@@ -849,10 +873,10 @@ Try it out: Classifying Messy Data
 <p>For each of the datasets in the previous example, determine whether each table is tidy. If it is not, identify which rule or rules it violates.</p>
 <p>What would you have to do in order to compute a standardized TB infection rate per 100,000 people?</p>
 </div>
-<div id="tabset-2-2" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
+<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
 <div class="cell">
 <div class="cell-output-display">
-<table class="table table-sm table-striped">
+<table class="table table-sm table-striped small">
 <caption>Table 1</caption>
 <thead><tr class="header">
 <th style="text-align: left;">country</th>
@@ -903,10 +927,10 @@ Try it out: Classifying Messy Data
 </div>
 <p>This is tidy data. Computing a standardized infection rate is as simple as creating the variable rate = cases/population*100,000.</p>
 </div>
-<div id="tabset-2-3" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-2-3-tab">
+<div id="tabset-2-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-3-tab">
 <div class="cell">
 <div class="cell-output-display">
-<table class="table table-sm table-striped">
+<table class="table table-sm table-striped small">
 <caption>Table 2</caption>
 <thead><tr class="header">
 <th style="text-align: left;">country</th>
@@ -993,10 +1017,10 @@ Try it out: Classifying Messy Data
 </div>
 <p>Each variable does not have its own column (so a single year’s observation of one country actually has 2 rows). Computing a standardized infection rate requires moving cases and population so that each variable has its own column, and then you can proceed using the process in 1.</p>
 </div>
-<div id="tabset-2-4" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-2-4-tab">
+<div id="tabset-2-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-4-tab">
 <div class="cell">
 <div class="cell-output-display">
-<table class="table table-sm table-striped">
+<table class="table table-sm table-striped small">
 <caption>Table 3</caption>
 <thead><tr class="header">
 <th style="text-align: left;">country</th>
@@ -1040,10 +1064,10 @@ Try it out: Classifying Messy Data
 </div>
 <p>Each value does not have its own cell (and each variable does not have its own column). In Table 3, you’d have to separate the numerator and denominator of each cell, convert each to a numeric variable, and then you could proceed as in 1.</p>
 </div>
-<div id="tabset-2-5" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-2-5-tab">
+<div id="tabset-2-5" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-5-tab">
 <div class="cell">
 <div class="cell-output-display">
-<table class="table table-sm table-striped">
+<table class="table table-sm table-striped small">
 <caption>Table 4a</caption>
 <thead><tr class="header">
 <th style="text-align: left;">country</th>
@@ -1070,7 +1094,7 @@ Try it out: Classifying Messy Data
 </table>
 </div>
 <div class="cell-output-display">
-<table class="table table-sm table-striped">
+<table class="table table-sm table-striped small">
 <caption>Table 4b</caption>
 <thead><tr class="header">
 <th style="text-align: left;">country</th>
@@ -1099,10 +1123,10 @@ Try it out: Classifying Messy Data
 </div>
 <p>There are multiple observations in each row because there is not a column for year. To compute the rate, you’d need to “stack” the two columns in each table into a single column, add a year column that is 1999, 1999, 1999, 2000, 2000, 2000, and then merge the two tables. Then you could proceed as in 1.</p>
 </div>
-<div id="tabset-2-6" class="unnumbered tab-pane" role="tabpanel" aria-labelledby="tabset-2-6-tab">
+<div id="tabset-2-6" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-6-tab">
 <div class="cell">
 <div class="cell-output-display">
-<table class="table table-sm table-striped">
+<table class="table table-sm table-striped small">
 <caption>Table 5</caption>
 <thead><tr class="header">
 <th style="text-align: left;">country</th>
@@ -1161,41 +1185,28 @@ Try it out: Classifying Messy Data
 <ol type="1">
 <li>Each data set goes into its own table (or tibble, if you are using R)</li>
 <li>Each variable gets its own column</li>
-</ol>
-<div class="callout-learnmore callout callout-style-default no-icon callout-captioned">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-caption-container flex-fill">
-Additional reading
-</div>
-</div>
-<div class="callout-body-container callout-body">
+</ol></section><section id="additional-reading" class="level2 callout-learnmore" data-number="24.3"><h2 data-number="24.3" class="anchored" data-anchor-id="additional-reading">
+<span class="header-section-number">24.3</span> Additional reading</h2>
 <p><span class="citation" data-cites="internationalbusinessmachinesRisksUsingSpreadsheets2018"><a href="#ref-internationalbusinessmachinesRisksUsingSpreadsheets2018" role="doc-biblioref">[3]</a></span> - IBM SPSS ad that talks about the perils of spreadsheets</p>
 <p><span class="citation" data-cites="obeirneHorrorStories2020"><a href="#ref-obeirneHorrorStories2020" role="doc-biblioref">[4]</a></span> - assembled news stories involving spreadsheet mishaps</p>
-</div>
-</div>
-<p>You have learned some of the skills to tidy data in <a href="04-strings.html"><span>Chapter&nbsp;23</span></a>, and you’ll learn more in <a href="06-data-join.html"><span>Chapter&nbsp;25</span></a>, but by the end of this chapter you will have many of the skills needed to wrangle the most common “messy” data sets into “tidy” form.</p>
-</section></section><section id="pivot-operations" class="level2" data-number="24.3"><h2 data-number="24.3" class="anchored" data-anchor-id="pivot-operations">
-<span class="header-section-number">24.3</span> Pivot operations</h2>
+</section><p>You have learned some of the skills to tidy data in <a href="04-strings.html" class="quarto-xref"><span>Chapter&nbsp;23</span></a>, and you’ll learn more in <a href="06-data-join.html" class="quarto-xref"><span>Chapter&nbsp;25</span></a>, but by the end of this chapter you will have many of the skills needed to wrangle the most common “messy” data sets into “tidy” form.</p>
+<section id="pivot-operations" class="level2" data-number="24.4"><h2 data-number="24.4" class="anchored" data-anchor-id="pivot-operations">
+<span class="header-section-number">24.4</span> Pivot operations</h2>
 <p>It’s fairly common for data to come in forms which are convenient for either human viewing or data entry. Unfortunately, these forms aren’t necessarily the most friendly for analysis.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure"><p><img src="../images/wrangling/original-dfs-tidy.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Wide and Long format data. <a href="https://github.com/gadenbuie/tidyexplain/raw/main/images/static/png/original-dfs-tidy.png">Source</a></figcaption><p></p>
-</figure>
+<figcaption>Wide and Long format data. <a href="https://github.com/gadenbuie/tidyexplain/raw/main/images/static/png/original-dfs-tidy.png">Source</a></figcaption></figure>
 </div>
 <p>The two operations we’ll learn here are wide -&gt; long and long -&gt; wide.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure"><p><img src="../images/wrangling/tidyr-pivoting.gif" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Pivoting from wide to long (and back) <a href="https://raw.githubusercontent.com/gadenbuie/tidyexplain/main/images/tidyr-pivoting.gif">Source</a></figcaption><p></p>
-</figure>
+<figcaption>Pivoting from wide to long (and back) <a href="https://raw.githubusercontent.com/gadenbuie/tidyexplain/main/images/tidyr-pivoting.gif">Source</a></figcaption></figure>
 </div>
 <p>This animation uses the R functions <code><a href="https://tidyr.tidyverse.org/reference/pivot_wider.html">pivot_wider()</a></code> and <code><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html">pivot_longer()</a></code> <a href="https://github.com/kelseygonzalez/tidyexplain/tree/wider_longer">Animation source</a>, but the concept is the same in both R and python.</p>
-<section id="longer" class="level3" data-number="24.3.1"><h3 data-number="24.3.1" class="anchored" data-anchor-id="longer">
-<span class="header-section-number">24.3.1</span> Longer</h3>
+<section id="longer" class="level3" data-number="24.4.1"><h3 data-number="24.4.1" class="anchored" data-anchor-id="longer">
+<span class="header-section-number">24.4.1</span> Longer</h3>
 <p>In many cases, the data come in what we might call “wide” form - some of the column names are not names of variables, but instead, are themselves values of another variable.</p>
-<div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">Picture the Operation</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">R</a></li>
@@ -1222,9 +1233,8 @@ Additional reading
 </div>
 <p>The solution to this is to rearrange the data into “long form”: to take the columns which contain values and “stack” them, adding a variable to indicate which column each value came from. To do this, we have to duplicate the values in any column which isn’t being stacked (e.g.&nbsp;country, in both the example above and the image below).</p>
 <div class="quarto-figure quarto-figure-center">
-<figure class="figure"><p><img src="../images/wrangling/tidyr_pivot_longer.png" class="img-fluid figure-img" alt="A wide-to-long transformation operation, where the values of the id variables are repeated for each column which is used as a key; the values in each column are moved into a value column. There is a row of data in the transformed data frame for each combination of id variables and key variables."></p>
-<p></p><figcaption class="figure-caption">A visual representation of what the pivot_longer operation looks like in practice.</figcaption><p></p>
-</figure>
+<figure class="figure"><p><img src="../images/wrangling/tidyr_pivot_longer.png" class="img-fluid figure-img"></p>
+<figcaption>A visual representation of what the pivot_longer operation looks like in practice.</figcaption></figure>
 </div>
 <p>Once our data are in long form, we can (if necessary) separate values that once served as column labels into actual variables, and we’ll have tidy(er) data.</p>
 </div>
@@ -1352,10 +1362,10 @@ Additional reading
 </div>
 </div>
 </div>
-</section><section id="wider" class="level3" data-number="24.3.2"><h3 data-number="24.3.2" class="anchored" data-anchor-id="wider">
-<span class="header-section-number">24.3.2</span> Wider</h3>
+</section><section id="wider" class="level3" data-number="24.4.2"><h3 data-number="24.4.2" class="anchored" data-anchor-id="wider">
+<span class="header-section-number">24.4.2</span> Wider</h3>
 <p>While it’s very common to need to transform data into a longer format, it’s not that uncommon to need to do the reverse operation. When an observation is scattered across multiple rows, your data is too long and needs to be made wider again.</p>
-<div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true">Picture the Operation</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false">R</a></li>
@@ -1365,9 +1375,8 @@ Additional reading
 <div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
 <p>Table 2 is an example of a table that is in long format but needs to be converted to a wider layout to be “tidy” - there are separate rows for cases and population, which means that a single observation (one year, one country) has two rows.</p>
 <div class="quarto-figure quarto-figure-center">
-<figure class="figure"><p><img src="../images/wrangling/tidyr_pivot_wider.png" class="img-fluid figure-img" alt="An illustration of the transition from long data to wide data. In the long data frame, there are alternating rows of cases and populations, with corresponding counts. In the wide data frame, for each combination of id variables country and year, there are two columns: cases, and pop, each with corresponding values. That is, the key variables (cases, pop) in the long data frame become columns in the wide data frame."></p>
-<p></p><figcaption class="figure-caption">A visual representation of what the pivot_wider operation looks like in practice.</figcaption><p></p>
-</figure>
+<figure class="figure"><p><img src="../images/wrangling/tidyr_pivot_wider.png" class="img-fluid figure-img"></p>
+<figcaption>A visual representation of what the pivot_wider operation looks like in practice.</figcaption></figure>
 </div>
 </div>
 <div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
@@ -1401,19 +1410,19 @@ Additional reading
 </div>
 </div>
 </div>
-<div class="callout-tip callout callout-style-default callout-captioned">
+<div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-caption-container flex-fill">
+<div class="callout-title-container flex-fill">
 Try it Out!
 </div>
 </div>
 <div class="callout-body-container callout-body">
 <p>In the next section, we’ll be using the WHO surveillance of disease incidence data (<a href="https://immunizationdata.who.int/">link</a>). I originally wrote this using data from 2020, but the WHO has since migrated to a new system and now provides their data in a much tidier long form (<a href="http://www.who.int/entity/immunization/monitoring_surveillance/data/incidence_series.xls">Excel link</a>). For demonstration purposes, I’ll continue using the messier 2020 data, but the link is no longer available on the WHO’s site.</p>
 <p>It will require some preprocessing before it’s suitable for a demonstration. I’ll do some of it, but in this section, you’re going to do the rest.</p>
-<div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-5-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-1" role="tab" aria-controls="tabset-5-1" aria-selected="true">Preprocessing</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-2" role="tab" aria-controls="tabset-5-2" aria-selected="false">Problem</a></li>
@@ -1492,7 +1501,10 @@ Try it Out!
 <span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">who_disease_long</span>, <span class="va">Country</span> <span class="op">==</span> <span class="st">"Bangladesh"</span>, <span class="va">Disease</span> <span class="op">==</span> <span class="st">"measles"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">year</span>, y <span class="op">=</span> <span class="va">cases</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<p><img src="05-data-reshape_files/figure-html/tryitout-surveillance-cleaning-1.png" class="img-fluid" width="2100"></p>
+<div>
+<figure class="figure"><p><img src="05-data-reshape_files/figure-html/tryitout-surveillance-cleaning-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
 </div>
 </div>
 </div>
@@ -1516,28 +1528,19 @@ Try it Out!
 </div>
 </div>
 </div>
-</section></section><section id="sec-gas-price-ex" class="level2" data-number="24.4"><h2 data-number="24.4" class="anchored" data-anchor-id="sec-gas-price-ex">
-<span class="header-section-number">24.4</span> Example: Gas Prices Data</h2>
+</section></section><section id="sec-gas-price-ex" class="level2" data-number="24.5"><h2 data-number="24.5" class="anchored" data-anchor-id="sec-gas-price-ex">
+<span class="header-section-number">24.5</span> Example: Gas Prices Data</h2>
 <p>The US Energy Information Administration tracks gasoline prices, with data available on a weekly level since late 1994. You can go to <a href="https://www.eia.gov/dnav/pet/hist/LeafHandler.ashx?n=pet&amp;s=emm_epm0u_pte_nus_dpg&amp;f=w">this site</a> to see a nice graph of gas prices, along with a corresponding table. <!-- (or you can look at the screenshot below, as I don't really trust that the site design will stay the same...) --></p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure"><p><img src="../images/wrangling/06_gas_prices_screenshot.png" class="img-fluid figure-img"></p>
-<p></p><figcaption class="figure-caption">Gas prices at US EIA site</figcaption><p></p>
-</figure>
+<figcaption>Gas prices at US EIA site</figcaption></figure>
 </div>
 <p>The data in the table is structured in a fairly easy to read form: each row is a month; each week in the month is a set of two columns: one for the date, one for the average gas price. While this data is definitely not tidy, it is readable.</p>
 <p>But looking at the chart at the top of the page, it’s not clear how we might get that chart from the data in the format it’s presented here: to get a chart like that, we would need a table where each row was a single date, and there were columns for date and price. That would be tidy form data, and so we have to get from the wide, human-readable form into the long, tidier form that we can graph.</p>
-<div class="callout-demo callout callout-style-default no-icon callout-captioned">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-caption-container flex-fill">
-Setup: Gas Price Data Cleaning
-</div>
-</div>
-<div class="callout-body-container callout-body">
+<section id="setup-gas-price-data-cleaning" class="level3 callout-demo" data-number="24.5.1"><h3 data-number="24.5.1" class="anchored" data-anchor-id="setup-gas-price-data-cleaning">
+<span class="header-section-number">24.5.1</span> Setup: Gas Price Data Cleaning</h3>
 <p>For the next example, we’ll read the data in from the HTML table online and work to make it something we could e.g.&nbsp;plot. Before we can start cleaning, we have to read in the data:</p>
-<div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-6-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-1" role="tab" aria-controls="tabset-6-1" aria-selected="true">R</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-2" role="tab" aria-controls="tabset-6-2" aria-selected="false">Python</a></li>
@@ -1554,7 +1557,7 @@ Setup: Gas Price Data Cleaning
 </div>
 <div class="cell">
 <div class="cell-output-display">
-<table class="table table-sm table-striped">
+<table class="table table-sm table-striped small">
 <caption>First 6 rows of gas prices data as read into R</caption>
 <colgroup>
 <col style="width: 12%">
@@ -1676,19 +1679,17 @@ Setup: Gas Price Data Cleaning
 </div>
 </div>
 </div>
-</div>
-</div>
-<div class="callout-tip callout callout-style-default callout-captioned">
+</section><div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-caption-container flex-fill">
+<div class="callout-title-container flex-fill">
 Try it out: Manual Formatting in Excel
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-7-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-1" role="tab" aria-controls="tabset-7-1" aria-selected="true">Problem</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-2" role="tab" aria-controls="tabset-7-2" aria-selected="false">Solution</a></li>
@@ -1710,27 +1711,30 @@ Try it out: Manual Formatting in Excel
 </div>
 <div id="tabset-7-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-3-tab">
 <div id="fig-excel-demo-video" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure"><iframe class="youtube-video-container" width="736" height="414" src="https://www.youtube.com/embed/n70eAKJmzRo" title="06 Tidying Gas Price Data (in Excel)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-excel-demo-video-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<iframe class="youtube-video-container" width="736" height="414" src="https://www.youtube.com/embed/n70eAKJmzRo" title="06 Tidying Gas Price Data (in Excel)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="">
 </iframe>
-<p></p><figcaption class="figure-caption">Figure&nbsp;24.5: Here is a video of me doing most of the cleaning steps - I skipped out on cleaning up the dates because Excel is miserable for working with dates.</figcaption><p></p>
-</figure>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-excel-demo-video-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;24.5: Here is a video of me doing most of the cleaning steps - I skipped out on cleaning up the dates because Excel is miserable for working with dates.
+</figcaption></figure>
 </div>
 </div>
 </div>
 </div>
 </div>
 </div>
-<div class="callout-tip callout callout-style-default callout-captioned">
+<div class="callout callout-style-default callout-tip callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
-<div class="callout-caption-container flex-fill">
+<div class="callout-title-container flex-fill">
 Try it out: Formatting with Pivot Operations
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<div class="panel-tabset">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-8-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-1" role="tab" aria-controls="tabset-8-1" aria-selected="true">Problem</a></li>
 <li class="nav-item" role="presentation"><a class="nav-link" id="tabset-8-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-2" role="tab" aria-controls="tabset-8-2" aria-selected="false">Sketch</a></li>
@@ -1745,9 +1749,8 @@ Try it out: Formatting with Pivot Operations
 </div>
 <div id="tabset-8-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-8-2-tab">
 <div class="quarto-figure quarto-figure-center">
-<figure class="figure"><p><img src="../images/wrangling/gas-prices-steps.png" class="img-fluid figure-img" alt="Step 1: set row names to be more descriptive and remove header row. Step 2: Remove empty columns and pivot to long form, with dates and values in the same column and a description column that indicates what type of data is in the value column. Step 3: separate the week and variable information into different columns, discarding the week label. Step 4: pivot wider, so that date and value information are each in a single column. Step 5: remove rows with no values and create a yyyy-mm-dd format date. Step 6: Convert date and value into appropriate types (date, numeric)."></p>
-<p></p><figcaption class="figure-caption">Steps to work through the gas prices data cleaning process</figcaption><p></p>
-</figure>
+<figure class="figure"><p><img src="../images/wrangling/gas-prices-steps.png" class="img-fluid figure-img"></p>
+<figcaption>Steps to work through the gas prices data cleaning process</figcaption></figure>
 </div>
 </div>
 <div id="tabset-8-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-8-3-tab">
@@ -1959,42 +1962,32 @@ Try it out: Formatting with Pivot Operations
 </div>
 </div>
 </div>
-<p>We’ll return to this example in <a href="06-data-join.html#sec-gas-price-ex2"><span>Section&nbsp;25.5</span></a> to demonstrate how you can use pivot operations and database merges together to complete this operation in a slightly different way.</p>
-<div class="callout-learnmore callout callout-style-default no-icon callout-captioned">
-<div class="callout-header d-flex align-content-center">
-<div class="callout-icon-container">
-<i class="callout-icon no-icon"></i>
-</div>
-<div class="callout-caption-container flex-fill">
-Other resources
-</div>
-</div>
-<div class="callout-body-container callout-body">
+<p>We’ll return to this example in <a href="06-data-join.html#sec-gas-price-ex2" class="quarto-xref"><span>Section&nbsp;25.5</span></a> to demonstrate how you can use pivot operations and database merges together to complete this operation in a slightly different way.</p>
+</section><section id="other-resources" class="level2 callout-learnmore" data-number="24.6"><h2 data-number="24.6" class="anchored" data-anchor-id="other-resources">
+<span class="header-section-number">24.6</span> Other resources</h2>
 <p><span class="citation" data-cites="doughertyCleanMessyData2021"><a href="#ref-doughertyCleanMessyData2021" role="doc-biblioref">[5]</a></span> - very nice task-oriented chapter that’s below the level addressed in this course but still useful</p>
-</div>
-</div>
-</section><section id="references" class="level2" data-number="24.5"><h2 data-number="24.5" class="anchored" data-anchor-id="references">
-<span class="header-section-number">24.5</span> References</h2>
+</section><section id="references" class="level2" data-number="24.7"><h2 data-number="24.7" class="anchored" data-anchor-id="references">
+<span class="header-section-number">24.7</span> References</h2>
 
 
-<div id="refs" class="references csl-bib-body" role="doc-bibliography">
-<div id="ref-mccallumBadDataHandbook2013" class="csl-entry" role="doc-biblioentry">
+<div id="refs" class="references csl-bib-body" data-entry-spacing="0" role="list">
+<div id="ref-mccallumBadDataHandbook2013" class="csl-entry" role="listitem">
 <div class="csl-left-margin">[1] </div>
 <div class="csl-right-inline">Q. E. McCallum, <em>Bad data handbook: Mapping the world of data problems</em>, 1. ed. Beijing, Köln: O’Reilly, 2013. </div>
 </div>
-<div id="ref-lowndesTidyDataEfficiency2020" class="csl-entry" role="doc-biblioentry">
+<div id="ref-lowndesTidyDataEfficiency2020" class="csl-entry" role="listitem">
 <div class="csl-left-margin">[2] </div>
 <div class="csl-right-inline">J. Lowndes and A. Horst, <span>“Tidy data for efficiency, reproducibility, and collaboration,”</span> <em>Openscapes</em>. Oct. 2020 [Online]. Available: <a href="https://www.openscapes.org/blog/2020/10/12/tidy-data//">https://www.openscapes.org/blog/2020/10/12/tidy-data//</a>. [Accessed: Jul. 21, 2022]</div>
 </div>
-<div id="ref-internationalbusinessmachinesRisksUsingSpreadsheets2018" class="csl-entry" role="doc-biblioentry">
+<div id="ref-internationalbusinessmachinesRisksUsingSpreadsheets2018" class="csl-entry" role="listitem">
 <div class="csl-left-margin">[3] </div>
 <div class="csl-right-inline">International Business Machines, <span>“The risks of using spreadsheets for statistical analysis,”</span> <em>The risks of using spreadsheets for statistical analysis</em>. Nov. 2018 [Online]. Available: <a href="https://www.ibm.com/downloads/cas/7YEX9BKK">https://www.ibm.com/downloads/cas/7YEX9BKK</a>. [Accessed: Jul. 21, 2022]</div>
 </div>
-<div id="ref-obeirneHorrorStories2020" class="csl-entry" role="doc-biblioentry">
+<div id="ref-obeirneHorrorStories2020" class="csl-entry" role="listitem">
 <div class="csl-left-margin">[4] </div>
 <div class="csl-right-inline">P. O’Beirne, F. Hermans, T. Cheng, and M. P. Campbell, <span>“Horror <span>Stories</span>,”</span> <em>European Spreadsheet Risks Interest Group Horror Stories</em>. Oct. 2020 [Online]. Available: <a href="http://www.eusprig.org/horror-stories.htm">http://www.eusprig.org/horror-stories.htm</a>. [Accessed: Jul. 21, 2022]</div>
 </div>
-<div id="ref-doughertyCleanMessyData2021" class="csl-entry" role="doc-biblioentry">
+<div id="ref-doughertyCleanMessyData2021" class="csl-entry" role="listitem">
 <div class="csl-left-margin">[5] </div>
 <div class="csl-right-inline">J. Dougherty and I. Ilyankou, <span>“Clean <span>Up</span> <span>Messy</span> <span>Data</span>,”</span> in <em>Hands-<span>On</span> <span>Data</span> <span>Visualization</span></em>, 1st ed., O’Reilly Media, 2021, p. 480 [Online]. Available: <a href="http://handsondataviz.github.io/">http://handsondataviz.github.io/</a>. [Accessed: Jul. 21, 2022]</div>
 </div>
@@ -2040,6 +2033,33 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       } else {
         el.classList.add('notransition');
       }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
     }
   }
   const toggleColorMode = (alternate) => {
@@ -2108,13 +2128,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       return localAlternateSentinel;
     }
   }
-  let localAlternateSentinel = 'default';
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
   // Dark / light mode switch
   window.quartoToggleColorScheme = () => {
     // Read the current dark / light value 
     let toAlternate = !hasAlternateSentinel();
     toggleColorMode(toAlternate);
     setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
   };
   // Ensure there is a toggle, if there isn't float one in the top right
   if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
@@ -2141,9 +2163,23 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     icon: icon
   };
   anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
   const clipboard = new window.ClipboardJS('.code-copy-button', {
-    target: function(trigger) {
-      return trigger.previousElementSibling;
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
     }
   });
   clipboard.on('success', function(e) {
@@ -2179,10 +2215,9 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     // clear code selection
     e.clearSelection();
   });
-  function tippyHover(el, contentFn) {
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -2192,8 +2227,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -2208,6 +2252,248 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       return note.innerHTML;
     });
   }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    const typesetMath = (el) => {
+      if (window.MathJax) {
+        // MathJax Typeset
+        window.MathJax.typeset([el]);
+      } else if (window.katex) {
+        // KaTeX Render
+        var mathElements = el.getElementsByClassName("math");
+        var macros = [];
+        for (var i = 0; i < mathElements.length; i++) {
+          var texText = mathElements[i].firstChild;
+          if (mathElements[i].tagName == "SPAN") {
+            window.katex.render(texText.data, mathElements[i], {
+              displayMode: mathElements[i].classList.contains('display'),
+              throwOnError: false,
+              macros: macros,
+              fleqn: false
+            });
+          }
+        }
+      }
+    }
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        typesetMath(container);
+        return container.innerHTML
+      } else {
+        typesetMath(note);
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      typesetMath(note);
+      return note.innerHTML;
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
   const findCites = (el) => {
     const parentEl = el.parentElement;
     if (parentEl) {
@@ -2247,20 +2533,25 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script><script src="https://giscus.app/client.js" data-repo="srvanderplas/stat-computing-r-python" data-repo-id="R_kgDOIvwd2g" data-category="General" data-category-id="DIC_kwDOIvwd2s4CTksR" data-mapping="pathname" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="light" data-lang="en" crossorigin="anonymous" async="">
-</script><nav class="page-navigation"><div class="nav-page nav-page-previous">
-      <a href="../part-wrangling/04-strings.html" class="pagination-link">
+</script><input type="hidden" id="giscus-base-theme" value="light"><input type="hidden" id="giscus-alt-theme" value="dark"><nav class="page-navigation"><div class="nav-page nav-page-previous">
+      <a href="../part-wrangling/04-strings.html" class="pagination-link  aria-label=" with="" strings="">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Working with Strings</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../part-wrangling/06-data-join.html" class="pagination-link">
+      <a href="../part-wrangling/06-data-join.html" class="pagination-link" aria-label="<span class='chapter-number'>25</span>&nbsp; <span class='chapter-title'>Joining Data</span>">
         <span class="nav-page-text"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Joining Data</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
 </div> <!-- /content -->
 <footer class="footer"><div class="nav-footer">
-    <div class="nav-footer-left">Copyright 2023, Susan Vanderplas</div>   
+    <div class="nav-footer-left">
+<p>Copyright 2023, Susan Vanderplas</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    </div>
     <div class="nav-footer-right">
       <ul class="footer-items list-unstyled">
 <li class="nav-item compact">
