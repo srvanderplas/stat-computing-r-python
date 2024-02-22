@@ -21,6 +21,12 @@ jobs:
         sudo apt upgrade
         sudo apt install -y python3-virtualenv python3-dev python3-venv
         sudo apt install -y libudunits2-dev libgdal-dev
+        type -p curl >/dev/null || (sudo apt update && sudo apt install curl -y)
+        curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
+        && sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg \
+        && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
+        && sudo apt update \
+        && sudo apt install gh -y
       shell: /bin/bash {0}
 
     - name: Set RENV_PATHS_ROOT
@@ -45,7 +51,7 @@ jobs:
       if: runner.os == 'Linux'
       shell: Rscript {0}
       run: |
-        # pkgs <- c("jsonlite", "rmarkdown", "downlit", "xml2")
+        # pkgs <- c(markdown", "downlit", "xml2")
         # pkgs <- setdiff(pkgs, installed.packages())
         # if (length(pkgs) > 0) install.packages(pkgs)
         # options(renv.download.override = utils::download.file)
@@ -66,10 +72,9 @@ jobs:
           pip_options = c("--no-binary=numpy",  "--force-reinstall"))
       shell: Rscript {0}
 
-    - name: "Download Quarto"
+    - uses: quarto-dev/quarto-actions/setup@v2
       with:
         tinytex: true
-      uses: quarto-dev/quarto-actions/setup@v2
 
     - name: "Quarto Version"
       run: |
