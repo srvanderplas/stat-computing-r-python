@@ -47,15 +47,6 @@ jobs:
         cat("##[set-output name=r-version;]", R.Version()$version.string, sep = "")
       shell: Rscript {0}
 
-    - name: Install R dependencies
-      if: runner.os == 'Linux'
-      shell: Rscript {0}
-      run: |
-        # pkgs <- c(markdown", "downlit", "xml2")
-        # pkgs <- setdiff(pkgs, installed.packages())
-        # if (length(pkgs) > 0) install.packages(pkgs)
-        # options(renv.download.override = utils::download.file)
-        # renv::restore()
 
     - name: Restore Renv package cache
       uses: actions/cache@v3
@@ -63,6 +54,16 @@ jobs:
         path: ${{ env.RENV_PATHS_ROOT }}
         key: ${{ steps.get-version.outputs.os-version }}-${{ steps.get-version.outputs.r-version }}-${{ inputs.cache-version }}-${{ hashFiles('renv.lock') }}
         restore-keys: ${{ steps.get-version.outputs.os-version }}-${{ steps.get-version.outputs.r-version }}-${{inputs.cache-version }}-
+
+    - name: Install R dependencies
+      if: runner.os == 'Linux'
+      shell: Rscript {0}
+      run: |
+        pkgs <- c(markdown", "downlit", "xml2")
+        pkgs <- setdiff(pkgs, installed.packages())
+        if (length(pkgs) > 0) install.packages(pkgs)
+        options(renv.download.override = utils::download.file)
+        renv::restore()
 
     - name: Setup python virtualenv
       run: |
