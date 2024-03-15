@@ -311,7 +311,7 @@ These packages will give you access to features that aren't present in the base 
 There are tons of considerations to think about when using a new library, like how well it's maintained, how many dependencies it has, and whether the developers of the package prioritize backwards-compatibility.
 For the moment, we're going to ignore most of those considerations in favor of learning how to install packages and how to use functions from packages in our code.
 
-### Package management
+### Environment management
 
 Before we talk about how to install packages, though, we need to step back and think a little bit about the pros and cons of different ways of managing packages, if only because the most common R and python setups use very different approaches.
 
@@ -330,34 +330,41 @@ That's not storage efficient, but it does keep your code from breaking as freque
 Typically, Python programmers prefer the first approach (project-specific **virtual environments**), and R programmers default to the second approach (installing packages at the **user** or **system** level).
 
 This is one of the things that can make starting to learn python so difficult - it can be hard to make sure you're using the right environment.
-It doesn't help that there are several different environment management systems in python - virtualenv, pipenv, and conda are the main options.
+It doesn't help that there are several different environment management systems in python - `virtualenv`, `pipenv`, and `conda` are the main options.
 
-::: callout-demo
-#### Package Management in Python with RStudio
+#### Python environments
 
-Many of the instructions here modified from @makarovUsePythonRstudio2022.
+`conda` and `virtualenv` (`venv`) are both virtual environment management systems. `conda` is sometimes preferred for scientific computing because it handles the complex dependencies that arise from large packages like `numpy` and `scipi` and `pandas` a bit better than `pip` does alone.
 
-conda and virtualenv are both virtual environment management systems.
-
-Conda is sometimes preferred for scientific computing because it handles the complex dependencies that arise from large packages like `numpy` and `scipi` and `pandas` a bit better than `pip` does alone.
-
-This guide assumes you have conda set up already.
+This guide assumes you have `conda` set up already.
 By default, @sec-setting-up just installs python at the system level.
 If you want to use [anaconda](https://www.anaconda.com/products/distribution) or [miniconda](https://docs.conda.io/en/latest/miniconda.html) you should go read the documentation for those installers and follow those steps first.
-Alternately, you can install and load the `reticulate` R package and then run `install_miniconda()` - this will install miniconda somewhere that RStudio can find it, but it may make using miniconda outside of RStudio difficult.
+Alternately, you can install and load the `reticulate` R package and then run `install_miniconda()` - this will install `miniconda` somewhere that RStudio can find it, but it may make using `miniconda` outside of RStudio difficult.
 
-::: panel-tabset
-##### System package installation
-
-You can absolutely install all python packages at the user/system level using `pip`.
-This has the previously mentioned disadvantages, but has the major advantage of being very simple.
+::: {.callout-caution collapse=true}
+###### Consistency is critical
 
 I *highly* recommend that you pick one of these options and use that consistently, rather than trying the advantages and disadvantages of each option in different projects.
 Here is a webcomic to serve as a cautionary tale if you do not heed this warning.
 
 [![Python Environment, by Randall Munroe of \[xkcd\](https://xkcd.com/1987/). CC-By-NC-2.5The Python environmental protection agency wants to seal it in a cement chamber, with pictorial messages to future civilizations warning them about the danger of using sudo to install random Python packages.](../images/gen-prog/python_environment.png){fig-alt="The Python environmental protection agency wants to seal it in a cement chamber, with pictorial messages to future civilizations warning them about the danger of using sudo to install random Python packages."}](https://xkcd.com/1987/)
+:::
 
-##### venv Terminal setup
+
+::: panel-tabset
+###### System
+
+You can absolutely install all python packages at the user/system level using `pip`.
+This has the previously mentioned disadvantages, but has the major advantage of being very simple.
+
+To install a python package `<package name>` using pip, run this command
+```{bash, eval = F}
+pip3 install <package name>
+```
+
+Some computers may prefer that you use `pip` instead of `pip3` - figure out which one your computer requires and use that.
+
+###### venv (System console)
 
 In your system terminal, navigate to your project directory.
 Items within `< >` are intended to be replaced with values specific to your situation.
@@ -390,7 +397,7 @@ You can make this step permanent by modifying the `.Rprofile` file in your proje
 
 Restart your R session before you start trying to work in python.
 
-##### venv RStudio setup
+###### venv (RStudio)
 
 Open your RStudio project.
 In your R terminal, run the following lines:
@@ -417,7 +424,7 @@ grep(pattern = "<pkg1>|<pkg2>|<pkg3>",
 
 Restart your R session before you start trying to work in python.
 
-##### conda Terminal setup
+###### conda (System console)
 
 These steps constructed from @blackwoodHowUsePython2021.
 
@@ -444,7 +451,7 @@ You can make this step permanent by modifying the `.Rprofile` file in your proje
 
 Restart your R session before you start trying to work in python.
 
-##### conda RStudio setup
+###### conda (RStudio)
 
 Open your RStudio project.
 In your R terminal, run the following lines:
@@ -470,24 +477,14 @@ grep(pattern = "<pkg1>|<pkg2>|<pkg3>",
 ```
 
 Restart your R session before you start trying to work in python.
+
 :::
-:::
 
-::: callout-demo
-#### Package Management in R
+#### R environments
 
-Package management in R is a bit simpler than package management in python.
+Some R programmers have adopted the python philosophy of project-specific package management, using an R package called `renv` [@usheyIntroductionRenv2023].
 
-::: panel-tabset
-##### System package installation
-
-This is by far the most common option for R users and it requires just about no setup on your part.
-Just install packages with `install.packages()` if you're installing packages that are on CRAN, or `remotes::install_github()` if you're installing packages from github, and you're good to go, unless something goes wrong.
-
-##### renv
-
-renv is an attempt to bring virtual environments to R.
-It's pretty useful for complex or long-term projects, but it can be pain for very simple and uncomplicated projects.
+`renv` documentation can be found [here](https://rstudio.github.io/renv/articles/renv.html) if you wish to try it out. I find that it is most useful for projects where package updates may break things - e.g. projects which run on shared systems or which are intended to work for a long period of time without maintenance. 
 
 If you want to use `renv`, you can do that by following these steps:
 
@@ -503,40 +500,39 @@ renv::activate()
 renv::install(c("pkg1", "pkg2", "githubuser/pkg3")) 
 ```
 
-I use renv to manage dependencies in this book, but I don't generally use it for most of my other projects because the overhead is a bit of a pain.
-:::
-:::
+I use `renv` for this textbook, because if a package update breaks things, I need to systematically check *all* the code chunks in the textbook to make sure they all work. I don't want to do that every time someone fixes a minor bug, so I don't update the packages the textbook uses more than once a semester (normally). 
 
 ### Package repositories
 
-Both R and Python have package systems, though generally, R is a bit more straightforward to deal with than python, because python has more package systems and I don't fully understand them all, where all R packages seem to go through the same basic installation process and are just hosted in different places.
+Both R and Python have package systems, though generally, R is a bit more straightforward to deal with than python (in my opinion). 
+Python has more package and environment management systems and I don't fully understand them all, where all R packages seem to go through the same basic installation process and are just hosted in different places.
+
 
 |        | Formally Published                                                                 | Informally Published/Beta                                                                                                     |
 |--------|------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------|
 | R      | [CRAN](https://cran.r-project.org/), [Bioconductor](https://www.bioconductor.org/) | github and other version control. See the [remotes package documentation](https://remotes.r-lib.org/) for all of the options. |
 | Python | [PyPi](https://pypi.org/)                                                          | github and other version control systems                                                                                      |
 
-### Installing packages
+### Package Installation
 
-Once you've configured your package management in R and python, installation is (usually) relatively simple.
+#### Installing packages in Python #sec-py-pkg-install
 
-::: callout-demo
-#### Package installation
+Many of the instructions here are modified from @makarovUsePythonRstudio2022.
+
+
+You can manage your python packages at the system level (e.g. when you update one package, everything gets updated for every project -- this can break things!), with `venv`, or with `conda`. 
+
+Whichever method (system, venv, conda) you use to manage your Python environment, when you go to install a new package, you have a few different options for how to do so. 
 
 ::: panel-tabset
-##### R
-
-```{r, eval = F}
-# CRAN packages
-install.packages("<pkg1>")
-
-# Github packages
-remotes::install_github("username/reponame")
-```
-
-##### Python
+##### System console
 
 In python, you will typically want to install packages using a system terminal.
+
+1. Make sure your virtual environment/conda environment is activated (if applicable)
+2. Installation commands:
+    - If you are using system or venv, `pip3 install <package name>` should install your package. 
+    - If you are using conda, `conda install <package name>` is preferable, and if that doesn't work, then try using `pip3 install <package name>`.
 
 ```{bash, eval = F}
 # If you're using virtualenv
@@ -547,7 +543,26 @@ conda install <pkg1>
 # If that fails, try pip
 ```
 
-If you're working in a quarto markdown chunk you can use a special trick to install a package:
+
+##### RStudio
+Note: This does NOT work for system package installation.
+
+1. Make sure R is using the correct python installation
+2. In the R terminal, run `reticulate::py_install("package name")`
+
+##### Python Chunk Magic
+This is less elegant, but nearly foolproof as long as RStudio knows where to find python.
+
+1. At the top of the chunk, write `%pip install <package name>`
+2. Run this code (Cmd/Ctrl + Enter)
+3. **Comment the code out**, so that you aren't reinstalling the package every time you run the chunk. 
+
+```{python, eval = F}
+%pip install <pkg1>
+```
+
+A slightly less elegant but more robust way to do this is to use  the sys package. 
+Loading the `sys` package ensures that you're using the version of python that your file will be compiled with to install the package.
 
 ```{python, eval = F}
 import sys
@@ -558,10 +573,23 @@ import sys
 !{sys.executable} -m conda install <pkg1>
 ```
 
-Loading the `sys` package ensures that you're using the version of python that your file will be compiled with to install the package.
-Once you've installed the package on your machine, you can comment these lines out so that they don't run every time - this makes it a bit easier if you try to run old code on a new machine, as you can just uncomment those lines.
+Once you've installed the package on your machine, you can comment these lines out so that they don't run every time - this makes it a bit easier when you try to run old code on a new machine, as you can just uncomment those lines.
+
 :::
-:::
+
+#### Installing packages in R
+
+Package management in R is a bit simpler than package management in python.
+
+In almost every case, you can install packages from CRAN with `install.packages("package name")`. If your package is not on CRAN, and is instead on e.g. GitHub, you may have to use the `remotes` package to install it with `remotes::install_github("user/repo")`
+
+```{r, eval = F}
+# CRAN packages
+install.packages("<pkg1>")
+
+# Github packages
+remotes::install_github("username/reponame")
+```
 
 ### Loading Packages
 

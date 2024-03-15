@@ -1,4 +1,3 @@
-# .github/workflows/quarto-render.yml
 name: Render and deploy Quarto files
 on:
   push:
@@ -22,36 +21,33 @@ jobs:
         sudo apt upgrade
         sudo apt install -y python3-virtualenv python3-dev python3-venv
         sudo apt install -y libudunits2-dev libgdal-dev
-        # gh command line
-        #type -p curl >/dev/null || sudo apt install curl -y
-        #curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
-        #&& sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg \
-        #&& echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
-        #&& sudo apt update \
-        #&& sudo apt install gh -y
+        type -p curl >/dev/null || (sudo apt update && sudo apt install curl -y)
+        curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
+        && sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg \
+        && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
+        && sudo apt update \
+        && sudo apt install gh -y
       shell: /bin/bash {0}
+
 
     - name: Set RENV_PATHS_ROOT
       shell: bash
       run: |
         echo "RENV_PATHS_ROOT=${{ runner.temp }}/renv" >> $GITHUB_ENV
 
-    - name: Install R dependencies
-      if: runner.os == 'Linux'
-      shell: Rscript {0}
+    - name: Install and activate renv
       run: |
-        pkgs <- c("rmarkdown", "jsonlite", "reticulate", "renv", "fontawesome", "downlit", "xml2")
-        pkgs <- setdiff(pkgs, installed.packages())
-        if (length(pkgs) > 0) install.packages(pkgs)
-        options(renv.download.override = utils::download.file)
-        renv::restore()
+        install.packages("renv")
+        renv::activate()
+      shell: Rscript {0}
 
-    - name: Setup python virtualenv
+    - name: Get R and OS version
+      id: get-version
       run: |
-        reticulate::virtualenv_create("testbook", packages = c("matplotlib", "numpy"))
-        reticulate::virtualenv_install("testbook", "numpy",
-          pip_options = c("--no-binary=numpy",  "--force-reinstall"))
+        cat("##[set-output name=os-version;]", sessionInfo()$running, "\n", sep = "")
+        cat("##[set-output name=r-version;]", R.Version()$version.string, sep = "")
       shell: Rscript {0}
+
 
     - name: Restore Renv package cache
       uses: actions/cache@v3
@@ -60,15 +56,33 @@ jobs:
         key: ${{ steps.get-version.outputs.os-version }}-${{ steps.get-version.outputs.r-version }}-${{ inputs.cache-version }}-${{ hashFiles('renv.lock') }}
         restore-keys: ${{ steps.get-version.outputs.os-version }}-${{ steps.get-version.outputs.r-version }}-${{inputs.cache-version }}-
 
-    - name: "Download Quarto"
-      shell: /bin/bash {0}
+    - name: Install R dependencies
+      if: runner.os == 'Linux'
+      shell: Rscript {0}
       run: |
-        # Hardcoding versions for now to make sure new versions don't break things
-        quarto_version="1.2.313"
-        quarto_file_name="quarto-${quarto_version}-linux-amd64.deb"
-        quarto_url="https://github.com/quarto-dev/quarto-cli/releases/download/v${quarto_version}/${quarto_file_name}"
-        wget -q "${quarto_url}"
-        sudo dpkg -i "${quarto_file_name}"
+        pkgs <- c("markdown", "downlit", "xml2")
+        pkgs <- setdiff(pkgs, installed.packages())
+        if (length(pkgs) > 0) install.packages(pkgs)
+        options(renv.download.override = utils::download.file)
+        renv::restore()
+
+    - name: Setup python virtualenv
+      run: |
+        if(!"reticulate" %in% installed.packages()) install.packages("reticulate")
+        reticulate::virtualenv_create("book", packages = c("matplotlib", "numpy"))
+        reticulate::virtualenv_install("book", "numpy",
+          pip_options = c("--no-binary=numpy",  "--force-reinstall"))
+      shell: Rscript {0}
+
+    - uses: quarto-dev/quarto-actions/setup@v2
+      with:
+        version: 1.4.515
+        tinytex: true
+
+    - name: "Quarto Version"
+      run: |
+        quarto --version
+
 
     - name: Render Quarto Project
       shell: /bin/bash {0}

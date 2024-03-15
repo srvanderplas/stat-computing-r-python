@@ -5,6 +5,43 @@
 - Understand the main goals of exploratory data analysis
 - Generate and answer questions about a new dataset using charts, tables, and numerical summaries
 
+## Package Installation 
+
+You will need the `plotnine`, `seaborn`, `matplotlib` (python) and `ggplot2` (R) packages for this section. 
+
+```{r, eval = F}
+install.packages("ggplot2")
+```
+
+To install plotnine, pick one of the following methods (you can read more about them and decide which is appropriate for you in @sec-py-pkg-install)
+
+::: panel-tabset
+### System Terminal
+
+```{bash, eval = F}
+pip3 install plotnine matplotlib seaborn
+```
+
+### R Terminal
+
+This package installation method requires that you have a virtual environment set up (that is, if you are on Windows, don't try to install packages this way).
+
+```{r, eval = F}
+reticulate::py_install(c("plotnine", "matplotlib", "seaborn"))
+```
+
+### Python Terminal
+
+In a python chunk (or the python terminal), you can run the following command. This depends on something called "IPython magic" commands, so if it doesn't work for you, try the System Terminal method instead.
+
+```{python, eval = F}
+%pip install plotnine matplotlib seaborn
+```
+
+Once you have run this command, please comment it out so that you don't reinstall the same packages every time.
+
+:::
+
 
 ::: {.callout-learnmore}
 ## Extra Reading {.unnumbered}
@@ -725,12 +762,11 @@ plot(defense ~ attack, data = poke, type = "p")
 cor(poke$defense, poke$attack)
 ```
 
-Sometimes, we discover that a numeric variable which may seem to be
-continuous is actually relatively quantized - there are only a few
-values of base_friendship in the whole dataset.
+Sometimes, we discover that a numeric variable which may seem to be continuous is actually relatively quantized. 
+In other cases, like in the plot below, we may discover an interesting correlation that sticks out - the identity line $y=x$ seems to stand out from the cloud here.
 
 ```{r base-scatter-quantized}
-plot(x = poke$base_experience, y = poke$base_friendship, type = "p")
+plot(x = poke$sp_attack, y = poke$attack, type = "p")
 ```
 
 A scatterplot matrix can also be a useful way to visualize relationships
@@ -741,7 +777,7 @@ between several variables.
 #| fig-width: 8
 #| fig-height: 8
 #| out.width: "100%"
-pairs(poke[,16:20]) # hp - sp_defense columns
+pairs(poke[,c("hp", "attack", "defense", "sp_attack", "sp_defense")]) # hp - sp_defense columns
 ```
 
 ::: callout-note
@@ -761,16 +797,21 @@ library(ggplot2)
 ggplot(poke, aes(x = attack, y = defense)) + geom_point()
 ```
 
-Sometimes, we discover that a numeric variable which may seem to be continuous is actually relatively quantized - there are only a few values of base_friendship in the whole dataset. 
+Sometimes, we discover that a numeric variable which may seem to be continuous is actually relatively quantized. 
 When this happens, it can be a good idea to use `geom_jitter` to provide some "wiggle" in the data so that you can still see the point density. 
 Changing the point transparency (alpha = .5) can also help with overplotting.
+
+In other cases, we might find that there is a prominent feature of a scatterplot (in this case, the line $y=x$ seems to stand out a bit from the overall point cloud). We can highlight this feature by adding a line at $y=x$ in red behind the points.
 
 ```{r ggplot-scatter-quantized}
 #| out-width: "50%"
 #| fig-width: 4
 #| fig-height: 4
-ggplot(poke, aes(x = base_experience, y = base_friendship)) + geom_point()
-ggplot(poke, aes(x = base_experience, y = base_friendship)) + geom_jitter(alpha = 0.5)
+ggplot(poke, aes(x = attack, y = sp_attack)) + geom_point()
+
+ggplot(poke, aes(x = attack, y = sp_attack)) + 
+  geom_abline(slope = 1, color = "red") + 
+  geom_jitter(alpha = 0.5)
 ```
 
 ```{r ggplot-scatter-matrix}
@@ -778,7 +819,8 @@ ggplot(poke, aes(x = base_experience, y = base_friendship)) + geom_jitter(alpha 
 #| fig-height: 8
 #| fig-cap: "A scatterplot matrix of hit points, attack, defense, special attack, and special defense characteristics for all generation 1-8 Pokemon."
 library(GGally) # an extension to ggplot2
-ggpairs(poke[,16:20], # hp - sp_defense columns
+ggpairs(poke[,c("hp", "attack", "defense", "sp_attack", "sp_defense")], 
+        # hp - sp_defense columns
         lower = list(continuous = wrap("points", alpha = .15)),
         progress = F) 
 ```
@@ -815,10 +857,10 @@ plt.show()
 #| fig-height: 4
 from plotnine import *
 
-ggplot(poke, aes(x = "base_experience", y = "base_friendship")) + geom_point()
+ggplot(poke, aes(x = "attack", y = "sp_attack")) + geom_point()
 # jitter in plotnine seems to use width and height jointly instead of 
 # marginally
-ggplot(poke, aes(x = "base_experience", y = "base_friendship")) + geom_jitter(alpha = 0.5, height = 5)
+ggplot(poke, aes(x = "attack", y = "sp_attack")) + geom_jitter(alpha = 0.5, height = 5)
 ```
 
 
@@ -841,7 +883,7 @@ def plot_matrix(df, columns):
   return g
 
 
-plot_matrix(poke, poke.columns[15:19])
+plot_matrix(poke, poke.columns[7:11])
 
 ```
 
