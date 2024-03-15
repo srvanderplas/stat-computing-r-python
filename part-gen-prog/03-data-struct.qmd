@@ -9,7 +9,35 @@ This chapter introduces some of the most important structures for storing and wo
 
 - Understand the differences between lists, vectors, data frames, matrices, and arrays in R and python
 - Be able to use location-based indexing in R or python to pull out subsets of a complex data object
-- 
+
+## Python Package Installation 
+
+You will need the `numpy` and `pandas` packages for this section. Pick one of the following ways to install python packages:
+
+::: panel-tabset
+### System Terminal
+
+```{bash, eval = F}
+pip3 install numpy pandas
+```
+
+### R Terminal
+
+This package installation method requires that you have a virtual environment set up (that is, if you are on Windows, don't try to install packages this way).
+
+```{r, eval = F}
+reticulate::py_install(c("numpy", "pandas"))
+```
+
+### Python Terminal
+
+In a python chunk (or the python terminal), you can run the following command. This depends on something called "IPython magic" commands, so if it doesn't work for you, try the System Terminal method instead.
+
+```{python, eval = F}
+%pip install numpy pandas
+```
+
+:::
 
 
 ## Data Structures Overview
@@ -40,7 +68,7 @@ A **list** is a one-dimensional column of heterogeneous data - the things stored
 
 ::: panel-tabset
 ### R {.unnumbered}
-
+ 
 ```{r list-r}
 x <- list("a", 3, FALSE)
 x
@@ -154,7 +182,7 @@ To add a python module, we use the syntax `import <name> as <nickname>`.
 Many modules have conventional (and very short) nicknames - for `numpy`, we will use `np` as the nickname. 
 Any functions we reference in the `numpy` module will then be called using `np.fun_name()` so that python knows where to find them.[^05-vectors-2]
 
-```{python vector-creation-python, error = T}
+```{python vector-creation-python-1}
 import numpy as np
 digits_list = [3,1,4,1,5,9,2,6,5,3,5]
 digits_pi = np.array(digits_list)
@@ -164,6 +192,9 @@ digits_pi[0]
 digits_pi[1]
 digits_pi[2]
 
+```
+
+```{python vector-creation-python-2, error = T}
 # Python is 0 indexed - a list of 11 things goes from 0 to 10
 digits_pi[0]
 digits_pi[11] 
@@ -180,7 +211,7 @@ print(digits_pi)
 Python has multiple things that look like vectors, including the `pandas` library's Series structure. 
 A **Series** is a one-dimensional array-like object containing a sequence of values and an associated array of labels (called its index).
 
-```{python series-pandas, error = T}
+```{python series-pandas-1, error = F}
 import pandas as pd
 digits_pi = pd.Series([3,1,4,1,5,9,2,6,5,3,5])
 
@@ -188,7 +219,9 @@ digits_pi = pd.Series([3,1,4,1,5,9,2,6,5,3,5])
 digits_pi[0]
 digits_pi[1]
 digits_pi[2]
+```
 
+```{python series-pandas-2, error = T}
 # Python is 0 indexed - a list of 11 things goes from 0 to 10
 digits_pi[0]
 digits_pi[11] 
@@ -205,11 +238,13 @@ print(digits_pi)
 
 The Series object has a list of labels in the first printed column, and a list of values in the second. 
 If we want, we can specify the labels manually to use as e.g. plot labels later:
-
-```{python series-pandas2, error = T}
+```{python series-pandas-3}
 import pandas as pd
 weekdays = pd.Series(['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], index = ['S', 'M', 'T', 'W', 'R', 'F', 'Sat'])
 
+```
+
+```{python series-pandas-4, error = T}
 # access individual objs
 weekdays[0]
 weekdays[1]
