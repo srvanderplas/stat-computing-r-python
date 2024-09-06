@@ -69,9 +69,10 @@ jobs:
     - name: Setup python virtualenv
       run: |
         if(!"reticulate" %in% installed.packages()) install.packages("reticulate")
-        reticulate::virtualenv_create("book", packages = c("matplotlib", "numpy", "pandas", "lxml"))
+        reticulate::virtualenv_create("book", packages = c("matplotlib", "numpy"))
         reticulate::virtualenv_install("book", "numpy",
           pip_options = c("--no-binary=numpy",  "--force-reinstall"))
+        reticulate::install_python(c("pandas", "lxml"))
       shell: Rscript {0}
 
     - uses: quarto-dev/quarto-actions/setup@v2
