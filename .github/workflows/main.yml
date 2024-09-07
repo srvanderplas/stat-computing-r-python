@@ -73,15 +73,16 @@ jobs:
     - name: Get R and OS version
       id: get-version
       run: |
-        cat("##[set-output name=os-version;]", sessionInfo()$running, "\n", sep = "")
-        cat("##[set-output name=r-version;]", R.Version()$version.string, sep = "")
+        echo "R_VERS=$(Rscript -e 'getRversion()' | perl -pe 's/^.*([0-9]\.[0-9]\.[0-9]).*$/\1/'
+)" >> $GITHUB_ENV
+        echo "OS_VERS=$(uname)" >> $GITHUB_ENV
       shell: Rscript {0}
     - name: Restore Renv package cache
       uses: actions/cache@v4
       with:
         path: ${{ env.RENV_PATHS_ROOT }}
-        key: ${{ steps.get-version.outputs.os-version }}-${{ steps.get-version.outputs.r-version }}-${{ inputs.cache-version }}-${{ hashFiles('renv.lock') }}
-        restore-keys: ${{ steps.get-version.outputs.os-version }}-${{ steps.get-version.outputs.r-version }}-${{inputs.cache-version }}-
+        key: ${{ env.OS_VERS }}-${{ env.R_VERS }}-${{ inputs.cache-version }}-${{ hashFiles('renv.lock') }}
+        restore-keys: ${{ env.OS_VERS }}-${{ env.R_VERS }}-${{inputs.cache-version }}-
 
     - uses: quarto-dev/quarto-actions/setup@v2
       with:
