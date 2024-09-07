@@ -11,20 +11,25 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GH_PAT: ${{ secrets.GH_PAT }}
       GITHUB_PAT: ${{ secrets.GH_PAT }}
+
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
+      with:
+        cache: 'pip' # caching pip dependencies
+        python-version-file: '.python-version'
+        cache-dependency-path: requirements.txt
 
-    - name: Set PATH for RENV
+    - name: Install python packages
       shell: bash
-      run: |
-        echo "RENV_PATHS_ROOT=${{ runner.temp }}/renv" >> $GITHUB_ENV
+      run: pip install -r requirements.txt
 
-    - name: Install Python and system dependencies 1
+    - name: Install system dependencies
       if: runner.os == 'Linux'
       run: |
         sudo apt update
         sudo apt upgrade
-        sudo apt install -y python3-virtualenv python3-dev python3-venv
+        # sudo apt install -y python3-virtualenv python3-dev python3-venv
         sudo apt install -y libudunits2-dev libgdal-dev
         type -p curl >/dev/null || (sudo apt update && sudo apt install curl -y)
         curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
@@ -34,30 +39,17 @@ jobs:
         && sudo apt install gh -y
       shell: /bin/bash {0}
 
-    - uses: getsentry/action-setup-venv@v2.1.0
-      id: "book"
-      with:
-        venv-dir: "${{ runner.temp }}/.virtualenvs/"
-        python-version: 3.11.2
-        cache-dependency-path: |
-          requirements.txt
-        install-cmd: pip install -r requirements.txt
-
 
     - name: Install and activate renv
       run: |
-        source "${{ runner.temp }}/.virtualenvs/book/bin/activate"
         install.packages("renv")
         renv::activate()
       shell: Rscript {0}
 
-    - name: Get R and OS version
-      id: get-version
+    - name: Set PATH for RENV
+      shell: bash
       run: |
-        cat("##[set-output name=os-version;]", sessionInfo()$running, "\n", sep = "")
-        cat("##[set-output name=r-version;]", R.Version()$version.string, sep = "")
-      shell: Rscript {0}
-
+        echo "RENV_PATHS_ROOT=${{ runner.temp }}/renv" >> $GITHUB_ENV
 
     - name: Restore Renv package cache
       uses: actions/cache@v3
