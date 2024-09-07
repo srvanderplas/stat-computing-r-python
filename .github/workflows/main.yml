@@ -48,7 +48,8 @@ jobs:
         path: venv
         key: pip-${{ steps.setup_python.outputs.python-version }}-${{ hashFiles('requirements.txt') }}
 
-    - if: steps.python_cache.outputs.cache-hit != 'true'
+    - name: Restore Python package cache
+      if: steps.python_cache.outputs.cache-hit != 'true'
       run: |
         # Check if venv exists (restored from secondary keys if any, and delete)
         # You might not need this line if you only have one primary key for the venv caching
@@ -62,6 +63,7 @@ jobs:
         venv/bin/python3 -m pip install -r requirements.txt
 
     - name: Cache R packages
+      id: r_cache
       uses: actions/cache@v3
       with:
         path: ${{ env.RENV_PATHS_ROOT }}
@@ -69,9 +71,8 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-renv-
 
-
-    - name: Install R dependencies
-      if: runner.os == 'Linux'
+    - name: Restore R package cache
+      if: steps.r_cache.outputs.cache-hit != 'true'
       shell: Rscript {0}
       run: |
         pkgs <- c("renv", "markdown", "downlit", "xml2")
