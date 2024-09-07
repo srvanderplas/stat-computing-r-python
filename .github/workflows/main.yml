@@ -11,12 +11,28 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GH_PAT: ${{ secrets.GH_PAT }}
       GITHUB_PAT: ${{ secrets.GH_PAT }}
+      RENV_PATHS_ROOT: ~/.cache/R/renv
 
     steps:
     - uses: actions/checkout@v4
 
     - name: Change ownership of /github/home
       run: sudo chown -R $(whoami) /github/home
+
+    - name: Install system dependencies
+      if: runner.os == 'Linux'
+      run: |
+        sudo apt update
+        sudo apt upgrade
+        sudo apt install -y libudunits2-dev libgdal-dev
+        type -p curl >/dev/null || (sudo apt update && sudo apt install curl -y)
+        curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
+        && sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg \
+        && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
+        && sudo apt update \
+        && sudo apt install gh -y
+      shell: /bin/bash {0}
+
     - uses: actions/setup-python@v5
       with:
         python-version-file: '.python-version'
@@ -25,7 +41,8 @@ jobs:
       env:
         PIP_ROOT_USER_ACTION: ignore
 
-    - id: python_cache
+    - name: Cache python packages
+      id: python_cache
       uses: actions/cache@v3
       with:
         path: venv
@@ -44,69 +61,30 @@ jobs:
         # Install dependencies
         venv/bin/python3 -m pip install -r requirements.txt
 
-
-    - name: Install system dependencies
-      if: runner.os == 'Linux'
-      run: |
-        sudo apt update
-        sudo apt upgrade
-        # sudo apt install -y python3-virtualenv python3-dev python3-venv
-        sudo apt install -y libudunits2-dev libgdal-dev
-        type -p curl >/dev/null || (sudo apt update && sudo apt install curl -y)
-        curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
-        && sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg \
-        && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
-        && sudo apt update \
-        && sudo apt install gh -y
-      shell: /bin/bash {0}
-
-
-    - name: Install and activate renv
-      run: |
-        install.packages("renv")
-        renv::activate()
-      shell: Rscript {0}
-
-    - name: Set PATH for RENV
-      shell: bash
-      run: |
-        echo "RENV_PATHS_ROOT=${{ runner.temp }}/renv" >> $GITHUB_ENV
-
-    - name: Restore Renv package cache
+    - name: Cache R packages
       uses: actions/cache@v3
       with:
         path: ${{ env.RENV_PATHS_ROOT }}
-        key: ${{ steps.get-version.outputs.os-version }}-${{ steps.get-version.outputs.r-version }}-${{ inputs.cache-version }}-${{ hashFiles('renv.lock') }}
-        restore-keys: ${{ steps.get-version.outputs.os-version }}-${{ steps.get-version.outputs.r-version }}-${{inputs.cache-version }}-
+        key: ${{ runner.os }}-renv-${{ hashFiles('**/renv.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-renv-
+
 
     - name: Install R dependencies
       if: runner.os == 'Linux'
       shell: Rscript {0}
       run: |
-        pkgs <- c("markdown", "downlit", "xml2")
+        pkgs <- c("renv", "markdown", "downlit", "xml2")
         pkgs <- setdiff(pkgs, installed.packages())
         if (length(pkgs) > 0) install.packages(pkgs)
         options(renv.download.override = utils::download.file)
+
         renv::restore()
-
-    # - name: Setup python virtualenv
-    #   run: |
-    #     if(!"reticulate" %in% installed.packages()) install.packages("reticulate")
-    #     reticulate::virtualenv_create("book", packages = c("matplotlib", "numpy"))
-    #     reticulate::virtualenv_install("book", c("numpy", "pandas", "lxml"),
-    #       pip_options = c("--no-binary=numpy",  "--force-reinstall"))
-
-      # shell: Rscript {0}
 
     - uses: quarto-dev/quarto-actions/setup@v2
       with:
-        version: 1.4.515
+        version: 1.5.57
         tinytex: true
-
-    - name: "Quarto Version"
-      run: |
-        quarto --version
-
 
     - name: Render Quarto Project
       shell: /bin/bash {0}
