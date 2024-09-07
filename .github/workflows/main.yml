@@ -11,7 +11,6 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GH_PAT: ${{ secrets.GH_PAT }}
       GITHUB_PAT: ${{ secrets.GH_PAT }}
-      RENV_PATHS_ROOT: renv
 
     steps:
     - uses: actions/checkout@v4
@@ -62,25 +61,27 @@ jobs:
         # Install dependencies
         venv/bin/python3 -m pip install -r requirements.txt
 
-    - name: Cache R packages
-      id: r_cache
-      uses: actions/cache@v3
+    - name: Set RENV_PATHS_ROOT
+      shell: bash
+      run: |
+        echo "RENV_PATHS_ROOT=${{ runner.temp }}/renv" >> $GITHUB_ENV
+    - name: Install and activate renv
+      run: |
+        install.packages("renv")
+        renv::activate()
+      shell: Rscript {0}
+    - name: Get R and OS version
+      id: get-version
+      run: |
+        cat("##[set-output name=os-version;]", sessionInfo()$running, "\n", sep = "")
+        cat("##[set-output name=r-version;]", R.Version()$version.string, sep = "")
+      shell: Rscript {0}
+    - name: Restore Renv package cache
+      uses: actions/cache@v4
       with:
         path: ${{ env.RENV_PATHS_ROOT }}
-        key: ${{ runner.os }}-renv-${{ hashFiles('**/renv.lock') }}
-        restore-keys: |
-          ${{ runner.os }}-renv-
-
-    - name: Restore R package cache
-      if: steps.r_cache.outputs.cache-hit != 'true'
-      shell: Rscript {0}
-      run: |
-        pkgs <- c("renv", "markdown", "downlit", "xml2")
-        pkgs <- setdiff(pkgs, installed.packages())
-        if (length(pkgs) > 0) install.packages(pkgs)
-        options(renv.download.override = utils::download.file)
-
-        renv::restore()
+        key: ${{ steps.get-version.outputs.os-version }}-${{ steps.get-version.outputs.r-version }}-${{ inputs.cache-version }}-${{ hashFiles('renv.lock') }}
+        restore-keys: ${{ steps.get-version.outputs.os-version }}-${{ steps.get-version.outputs.r-version }}-${{inputs.cache-version }}-
 
     - uses: quarto-dev/quarto-actions/setup@v2
       with:
