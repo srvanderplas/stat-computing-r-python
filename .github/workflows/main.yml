@@ -14,6 +14,11 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
+    - name: Set PATH for RENV
+      shell: bash
+      run: |
+        echo "RENV_PATHS_ROOT=${{ runner.temp }}/renv" >> $GITHUB_ENV
+
     - name: Install Python and system dependencies 1
       if: runner.os == 'Linux'
       run: |
@@ -32,20 +37,16 @@ jobs:
     - uses: getsentry/action-setup-venv@v2.1.0
       id: "book"
       with:
-        venv-dir: "~/.virtualenvs/"
+        venv-dir: "${{ runner.temp }}/.virtualenvs/"
         python-version: 3.11.2
         cache-dependency-path: |
           requirements.txt
-          requirements-frozen.txt
-        install-cmd: pip install -r requirements.txt -c requirements-frozen.txt
+        install-cmd: pip install -r requirements.txt
 
-    - name: Set RENV_PATHS_ROOT
-      shell: bash
-      run: |
-        echo "RENV_PATHS_ROOT=${{ runner.temp }}/renv" >> $GITHUB_ENV
 
     - name: Install and activate renv
       run: |
+        source activate # activate python virtualenv
         install.packages("renv")
         renv::activate()
       shell: Rscript {0}
