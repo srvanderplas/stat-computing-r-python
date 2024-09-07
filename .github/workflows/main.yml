@@ -11,7 +11,8 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GH_PAT: ${{ secrets.GH_PAT }}
       GITHUB_PAT: ${{ secrets.GH_PAT }}
-      venv_dir: '.virtualenvs'
+      VENV_DIR: '.virtualenvs'
+      VENV_NAME: 'book'
     steps:
     - uses: actions/checkout@v3
 
@@ -31,9 +32,9 @@ jobs:
       shell: /bin/bash {0}
 
     - uses: getsentry/action-setup-venv@v2.1.0
-      id: book
+      id: ${{ env.VENV_NAME }}
       with:
-        venv-dir: '${{ inputs.venv_dir }}'
+        venv-dir: ${{ env.VENV_DIR }}
         python-version: 3.11.2
         cache-dependency-path: |
           requirements.txt
