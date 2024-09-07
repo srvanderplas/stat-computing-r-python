@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.515">
+<meta name="generator" content="quarto-1.5.57">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
 <meta name="dcterms.date" content="2024-09-07">
-<title>Statistical Computing using R and Python - 11&nbsp; Matrix Calculations</title>
+
+<title>11&nbsp; Matrix Calculations – Statistical Computing using R and Python</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -31,7 +34,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -74,6 +77,7 @@ div.csl-indent {
   margin-left: 2em;
 }</style>
 
+
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../site_libs/quarto-nav/headroom.min.js"></script>
 <script src="../site_libs/clipboard/clipboard.min.js"></script>
@@ -96,7 +100,8 @@ div.csl-indent {
 <link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
 <link href="../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <link href="../site_libs/quarto-contrib/fontawesome6-0.1.0/all.css" rel="stylesheet">
-<link href="../site_libs/quarto-contrib/fontawesome6-0.1.0/latex-fontsize.css" rel="stylesheet"><script id="quarto-search-options" type="application/json">{
+<link href="../site_libs/quarto-contrib/fontawesome6-0.1.0/latex-fontsize.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
   "collapse-after": 3,
@@ -117,35 +122,50 @@ div.csl-indent {
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
     "search-submit-button-title": "Submit",
     "search-label": "Search"
   }
-}</script><script async="" src="https://www.googletagmanager.com/gtag/js?id=G-4ZFBDKXJXP"></script><script type="text/javascript">
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-4ZFBDKXJXP"></script>
+
+<script type="text/javascript">
 
 window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
-</script><script src="https://kit.fontawesome.com/baac5f0610.js" crossorigin="anonymous"></script><link rel="stylesheet" href="../build_deps/style.css">
+</script>
+<script src="https://kit.fontawesome.com/baac5f0610.js" crossorigin="anonymous"></script>
+
+
+<link rel="stylesheet" href="../build_deps/style.css">
 </head>
+
 <body class="nav-sidebar floating">
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top"><nav class="quarto-secondary-nav"><div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
         <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../part-gen-prog/00-gen-prog.html">Part II: General Programming</a></li><li class="breadcrumb-item"><a href="../part-gen-prog/035-matrix-calcs.html"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Matrix Calculations</span></a></li></ol></nav>
-        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
-      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
         <i class="bi bi-search"></i>
       </button>
     </div>
-  </nav></header><!-- content --><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto"><div class="pt-lg-2 mt-2 text-left sidebar-header">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="../">Statistical Computing using R and Python</a> 
         <div class="sidebar-tools-main">
@@ -161,7 +181,7 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
         </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
-<li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Preface</span></a>
@@ -171,12 +191,12 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
       <div class="sidebar-item-container"> 
             <a href="../part-tools/00-tools-intro.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Part I: Tools</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">
-<li class="sidebar-item">
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../part-tools/01-computer-basics.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Computer Basics</span></span></a>
@@ -213,17 +233,17 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
   </div>
 </li>
       </ul>
-</li>
+  </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="../part-gen-prog/00-gen-prog.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Part II: General Programming</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">
-<li class="sidebar-item">
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../part-gen-prog/00-intro.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Introduction to Programming</span></span></a>
@@ -284,17 +304,17 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
   </div>
 </li>
       </ul>
-</li>
+  </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="../part-wrangling/00-wrangling.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Part III: Data Wrangling</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">
-<li class="sidebar-item">
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../part-wrangling/01-data-input.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Data Input</span></span></a>
@@ -367,17 +387,17 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
   </div>
 </li>
       </ul>
-</li>
+  </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="../part-advanced-topics/00-advanced.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Part IV: Advanced Topics</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">
-<li class="sidebar-item">
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../part-advanced-topics/01-simulation.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Simulation and Reproducibility</span></span></a>
@@ -390,7 +410,7 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
   </div>
 </li>
       </ul>
-</li>
+  </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../graveyard.html" class="sidebar-item-text sidebar-link">
@@ -398,27 +418,31 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
   </div>
 </li>
     </ul>
-</div>
-</nav><div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active"><h2 id="toc-title">Table of contents</h2>
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-<li><a href="#objectives" id="toc-objectives" class="nav-link active" data-scroll-target="#objectives"><span class="header-section-number">11.1</span> <i class="fa-solid fa-bullseye" aria-label="bullseye"></i> Objectives</a></li>
-  <li>
-<a href="#matrix-operations" id="toc-matrix-operations" class="nav-link" data-scroll-target="#matrix-operations"><span class="header-section-number">11.2</span> Matrix Operations</a>
+  <li><a href="#objectives" id="toc-objectives" class="nav-link active" data-scroll-target="#objectives"><span class="header-section-number">11.1</span> <i class="fa-solid fa-bullseye" aria-label="bullseye"></i> Objectives</a></li>
+  <li><a href="#matrix-operations" id="toc-matrix-operations" class="nav-link" data-scroll-target="#matrix-operations"><span class="header-section-number">11.2</span> Matrix Operations</a>
   <ul class="collapse">
-<li><a href="#basic-mathematical-operators" id="toc-basic-mathematical-operators" class="nav-link" data-scroll-target="#basic-mathematical-operators"><span class="header-section-number">11.2.1</span> Basic Mathematical Operators</a></li>
+  <li><a href="#basic-mathematical-operators" id="toc-basic-mathematical-operators" class="nav-link" data-scroll-target="#basic-mathematical-operators"><span class="header-section-number">11.2.1</span> Basic Mathematical Operators</a></li>
   <li><a href="#matrix-operations-1" id="toc-matrix-operations-1" class="nav-link" data-scroll-target="#matrix-operations-1"><span class="header-section-number">11.2.2</span> Matrix Operations</a></li>
   <li><a href="#matrix-inverse" id="toc-matrix-inverse" class="nav-link" data-scroll-target="#matrix-inverse"><span class="header-section-number">11.2.3</span> Matrix Inverse</a></li>
-  </ul>
-</li>
+  </ul></li>
   <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references"><span class="header-section-number">11.3</span> References</a></li>
-  </ul><div class="toc-actions"><ul><li><a href="https://github.com/srvanderplas/stat-computing-r-python/edit/main/part-gen-prog/035-matrix-calcs.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li></ul></div></nav>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/srvanderplas/stat-computing-r-python/edit/main/part-gen-prog/035-matrix-calcs.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../part-gen-prog/00-gen-prog.html">Part II: General Programming</a></li><li class="breadcrumb-item"><a href="../part-gen-prog/035-matrix-calcs.html"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Matrix Calculations</span></a></li></ol></nav><div class="quarto-title">
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../part-gen-prog/00-gen-prog.html">Part II: General Programming</a></li><li class="breadcrumb-item"><a href="../part-gen-prog/035-matrix-calcs.html"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Matrix Calculations</span></a></li></ol></nav>
+<div class="quarto-title">
 <h1 class="title"><span id="sec-matrix-calcs" class="quarto-section-identifier"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Matrix Calculations</span></span></h1>
 </div>
 
@@ -439,35 +463,43 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
   
 
 
-</header><div class="callout-advanced">
+</header>
+
+
+<div class="callout-advanced">
 <p>This entire section is only appropriate if you’ve already had linear algebra.</p>
 </div>
-<section id="objectives" class="level2" data-number="11.1"><h2 data-number="11.1" class="anchored" data-anchor-id="objectives">
-<span class="header-section-number">11.1</span> <i class="fa-solid fa-bullseye" aria-label="bullseye"></i> Objectives</h2>
+<section id="objectives" class="level2" data-number="11.1">
+<h2 data-number="11.1" class="anchored" data-anchor-id="objectives"><span class="header-section-number">11.1</span> <i class="fa-solid fa-bullseye" aria-label="bullseye"></i> Objectives</h2>
 <ul>
 <li>Understand how to do matrix algebra in relevant programming languages</li>
 </ul>
 <p>While R, SAS, and Python are all extremely powerful statistical programming languages, the core of most programming languages is the ability to do basic calculations and matrix arithmetic. As almost every dataset is stored as a matrix-like structure (data sets and data frames both allow for multiple types, which isn’t quite compatible with more canonical matrices), it is useful to know how to do matrix-level calculations in whatever language you are planning to use to work with data.</p>
 <p>In this section, we will essentially be using our programming language as overgrown calculators.</p>
-</section><section id="matrix-operations" class="level2" data-number="11.2"><h2 data-number="11.2" class="anchored" data-anchor-id="matrix-operations">
-<span class="header-section-number">11.2</span> Matrix Operations</h2>
-<div id="tbl-math-ops" class="anchored">
-<figure class="quarto-float quarto-float-tbl figure"><figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-math-ops-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+</section>
+<section id="matrix-operations" class="level2" data-number="11.2">
+<h2 data-number="11.2" class="anchored" data-anchor-id="matrix-operations"><span class="header-section-number">11.2</span> Matrix Operations</h2>
+<div id="tbl-math-ops" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-tbl figure">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-math-ops-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Table&nbsp;11.1: Table of common mathematical and matrix operations in R, SAS, and Python <span class="citation" data-cites="PythonProgramming"><a href="#ref-PythonProgramming" role="doc-biblioref">[1]</a></span>.
-</figcaption><div aria-describedby="tbl-math-ops-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<table class="table">
+</figcaption>
+<div aria-describedby="tbl-math-ops-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top table">
 <colgroup>
 <col style="width: 29%">
 <col style="width: 23%">
 <col style="width: 23%">
 <col style="width: 23%">
 </colgroup>
-<thead><tr class="header">
+<thead>
+<tr class="header">
 <th style="text-align: left;">Operation</th>
 <th style="text-align: left;">R</th>
 <th style="text-align: left;">SAS</th>
 <th style="text-align: left;">Python</th>
-</tr></thead>
+</tr>
+</thead>
 <tbody>
 <tr class="odd">
 <td style="text-align: left;">Addition</td>
@@ -526,8 +558,7 @@ Table&nbsp;11.1: Table of common mathematical and matrix operations in R, SAS, a
 <tr class="even">
 <td style="text-align: left;">Matrix Transpose</td>
 <td style="text-align: left;"><code>t(A)</code></td>
-<td style="text-align: left;">
-<code>A</code>`</td>
+<td style="text-align: left;"><code>A</code>`</td>
 <td style="text-align: left;"><code>np.transpose(A)</code></td>
 </tr>
 <tr class="odd">
@@ -553,34 +584,30 @@ Table&nbsp;11.1: Table of common mathematical and matrix operations in R, SAS, a
 </div>
 </figure>
 </div>
-<section id="basic-mathematical-operators" class="level3 callout-demo" data-number="11.2.1"><h3 data-number="11.2.1" class="anchored" data-anchor-id="basic-mathematical-operators">
-<span class="header-section-number">11.2.1</span> Basic Mathematical Operators</h3>
+<section id="basic-mathematical-operators" class="level3 callout-demo" data-number="11.2.1">
+<h3 data-number="11.2.1" class="anchored" data-anchor-id="basic-mathematical-operators"><span class="header-section-number">11.2.1</span> Basic Mathematical Operators</h3>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist">
-<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" aria-current="page">R</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Python</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false">SAS</a></li>
-</ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" aria-current="page">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Python</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false">SAS</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <div class="cell">
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">:</span><span class="fl">10</span></span>
-<span><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">30</span>, by <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">x</span> <span class="op">+</span> <span class="va">y</span></span>
-<span><span class="co">##  [1]  4  8 12 16 20 24 28 32 36 40</span></span>
-<span><span class="va">x</span> <span class="op">-</span> <span class="va">y</span></span>
-<span><span class="co">##  [1]  -2  -4  -6  -8 -10 -12 -14 -16 -18 -20</span></span>
-<span><span class="va">x</span> <span class="op">*</span> <span class="va">y</span></span>
-<span><span class="co">##  [1]   3  12  27  48  75 108 147 192 243 300</span></span>
-<span><span class="va">x</span> <span class="op">/</span> <span class="va">y</span></span>
-<span><span class="co">##  [1] 0.3333333 0.3333333 0.3333333 0.3333333 0.3333333 0.3333333 0.3333333</span></span>
-<span><span class="co">##  [8] 0.3333333 0.3333333 0.3333333</span></span>
-<span><span class="va">x</span><span class="op">^</span><span class="fl">2</span></span>
-<span><span class="co">##  [1]   1   4   9  16  25  36  49  64  81 100</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html">%*%</a></span> <span class="va">y</span></span>
-<span><span class="co">##      [,1]</span></span>
-<span><span class="co">## [1,] 1155</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">10</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">3</span>, <span class="dv">30</span>, <span class="at">by =</span> <span class="dv">3</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>x <span class="sc">+</span> y</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="do">##  [1]  4  8 12 16 20 24 28 32 36 40</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>x <span class="sc">-</span> y</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="do">##  [1]  -2  -4  -6  -8 -10 -12 -14 -16 -18 -20</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>x <span class="sc">*</span> y</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="do">##  [1]   3  12  27  48  75 108 147 192 243 300</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>x <span class="sc">/</span> y</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="do">##  [1] 0.3333333 0.3333333 0.3333333 0.3333333 0.3333333 0.3333333 0.3333333</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="do">##  [8] 0.3333333 0.3333333 0.3333333</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>x<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="do">##  [1]   1   4   9  16  25  36  49  64  81 100</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="fu">t</span>(x) <span class="sc">%*%</span> y</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="do">##      [,1]</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="do">## [1,] 1155</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
@@ -622,43 +649,40 @@ quit;</code></pre>
 </div>
 </div>
 </div>
-</section><section id="matrix-operations-1" class="level3 callout-demo" data-number="11.2.2"><h3 data-number="11.2.2" class="anchored" data-anchor-id="matrix-operations-1">
-<span class="header-section-number">11.2.2</span> Matrix Operations</h3>
+</section>
+<section id="matrix-operations-1" class="level3 callout-demo" data-number="11.2.2">
+<h3 data-number="11.2.2" class="anchored" data-anchor-id="matrix-operations-1"><span class="header-section-number">11.2.2</span> Matrix Operations</h3>
 <p>Other matrix operations, such as determinants and extraction of the matrix diagonal, are similarly easy:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist">
-<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">R</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">Python</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-3" role="tab" aria-controls="tabset-2-3" aria-selected="false">SAS</a></li>
-</ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">Python</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-3" role="tab" aria-controls="tabset-2-3" aria-selected="false">SAS</a></li></ul>
 <div class="tab-content">
 <div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
 <div class="cell">
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">6</span>, <span class="fl">4</span>, <span class="fl">5</span>, <span class="fl">7</span>, <span class="fl">8</span>, <span class="fl">9</span><span class="op">)</span>, nrow <span class="op">=</span> <span class="fl">3</span>, byrow <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
-<span><span class="va">mat</span></span>
-<span><span class="co">##      [,1] [,2] [,3]</span></span>
-<span><span class="co">## [1,]    1    2    3</span></span>
-<span><span class="co">## [2,]    6    4    5</span></span>
-<span><span class="co">## [3,]    7    8    9</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/t.html">t</a></span><span class="op">(</span><span class="va">mat</span><span class="op">)</span> <span class="co"># transpose</span></span>
-<span><span class="co">##      [,1] [,2] [,3]</span></span>
-<span><span class="co">## [1,]    1    6    7</span></span>
-<span><span class="co">## [2,]    2    4    8</span></span>
-<span><span class="co">## [3,]    3    5    9</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/det.html">det</a></span><span class="op">(</span><span class="va">mat</span><span class="op">)</span> <span class="co"># get the determinant</span></span>
-<span><span class="co">## [1] 18</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/diag.html">diag</a></span><span class="op">(</span><span class="va">mat</span><span class="op">)</span> <span class="co"># get the diagonal</span></span>
-<span><span class="co">## [1] 1 4 9</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/diag.html">diag</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/diag.html">diag</a></span><span class="op">(</span><span class="va">mat</span><span class="op">)</span><span class="op">)</span> <span class="co"># get a square matrix with off-diag 0s</span></span>
-<span><span class="co">##      [,1] [,2] [,3]</span></span>
-<span><span class="co">## [1,]    1    0    0</span></span>
-<span><span class="co">## [2,]    0    4    0</span></span>
-<span><span class="co">## [3,]    0    0    9</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/diag.html">diag</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span> <span class="co"># diag() also will create a diagonal matrix if given a vector</span></span>
-<span><span class="co">##      [,1] [,2] [,3]</span></span>
-<span><span class="co">## [1,]    1    0    0</span></span>
-<span><span class="co">## [2,]    0    2    0</span></span>
-<span><span class="co">## [3,]    0    0    3</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>mat <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">6</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">7</span>, <span class="dv">8</span>, <span class="dv">9</span>), <span class="at">nrow =</span> <span class="dv">3</span>, <span class="at">byrow =</span> T)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>mat</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="do">##      [,1] [,2] [,3]</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="do">## [1,]    1    2    3</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="do">## [2,]    6    4    5</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="do">## [3,]    7    8    9</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="fu">t</span>(mat) <span class="co"># transpose</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="do">##      [,1] [,2] [,3]</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="do">## [1,]    1    6    7</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="do">## [2,]    2    4    8</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="do">## [3,]    3    5    9</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="fu">det</span>(mat) <span class="co"># get the determinant</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 18</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="fu">diag</span>(mat) <span class="co"># get the diagonal</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 1 4 9</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="fu">diag</span>(<span class="fu">diag</span>(mat)) <span class="co"># get a square matrix with off-diag 0s</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="do">##      [,1] [,2] [,3]</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="do">## [1,]    1    0    0</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="do">## [2,]    0    4    0</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="do">## [3,]    0    0    9</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="fu">diag</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">3</span>) <span class="co"># diag() also will create a diagonal matrix if given a vector</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="do">##      [,1] [,2] [,3]</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="do">## [1,]    1    0    0</span></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="do">## [2,]    0    2    0</span></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a><span class="do">## [3,]    0    0    3</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
@@ -704,32 +728,29 @@ quit;</code></pre>
 </div>
 </div>
 </div>
-</section><section id="matrix-inverse" class="level3 callout-demo" data-number="11.2.3"><h3 data-number="11.2.3" class="anchored" data-anchor-id="matrix-inverse">
-<span class="header-section-number">11.2.3</span> Matrix Inverse</h3>
-<p>The other important matrix-related function is the inverse. In R, <code>A^-1</code> will get you the elementwise reciprocal of the matrix. Not exactly what we’d like to see… Instead, in R and SAS, we use the <code><a href="https://rdrr.io/r/base/solve.html">solve()</a></code> function. The inverse is defined as the matrix B such that <code>AB = I</code> where <code>I</code> is the identity matrix (1’s on diagonal, 0’s off-diagonal). So if we <code>solve(A)</code> (in R) or <code>solve(A, diag(n))</code> in SAS (where n is a vector of 1s the size of A), we will get the inverse matrix. In Python, we use the <code>np.linalg.inv()</code> function to invert a matrix, which may be a bit more linguistically familiar.</p>
+</section>
+<section id="matrix-inverse" class="level3 callout-demo" data-number="11.2.3">
+<h3 data-number="11.2.3" class="anchored" data-anchor-id="matrix-inverse"><span class="header-section-number">11.2.3</span> Matrix Inverse</h3>
+<p>The other important matrix-related function is the inverse. In R, <code>A^-1</code> will get you the elementwise reciprocal of the matrix. Not exactly what we’d like to see… Instead, in R and SAS, we use the <code>solve()</code> function. The inverse is defined as the matrix B such that <code>AB = I</code> where <code>I</code> is the identity matrix (1’s on diagonal, 0’s off-diagonal). So if we <code>solve(A)</code> (in R) or <code>solve(A, diag(n))</code> in SAS (where n is a vector of 1s the size of A), we will get the inverse matrix. In Python, we use the <code>np.linalg.inv()</code> function to invert a matrix, which may be a bit more linguistically familiar.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist">
-<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">R</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">Python</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-3" role="tab" aria-controls="tabset-3-3" aria-selected="false">SAS</a></li>
-</ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">Python</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-3" role="tab" aria-controls="tabset-3-3" aria-selected="false">SAS</a></li></ul>
 <div class="tab-content">
 <div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
 <div class="cell">
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">6</span>, <span class="fl">4</span>, <span class="fl">5</span>, <span class="fl">7</span>, <span class="fl">8</span>, <span class="fl">9</span><span class="op">)</span>, nrow <span class="op">=</span> <span class="fl">3</span>, byrow <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">minv</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/solve.html">solve</a></span><span class="op">(</span><span class="va">mat</span><span class="op">)</span> <span class="co"># get the inverse</span></span>
-<span></span>
-<span><span class="va">minv</span></span>
-<span><span class="co">##            [,1]       [,2]       [,3]</span></span>
-<span><span class="co">## [1,] -0.2222222  0.3333333 -0.1111111</span></span>
-<span><span class="co">## [2,] -1.0555556 -0.6666667  0.7222222</span></span>
-<span><span class="co">## [3,]  1.1111111  0.3333333 -0.4444444</span></span>
-<span><span class="va">mat</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html">%*%</a></span> <span class="va">minv</span> </span>
-<span><span class="co">##      [,1] [,2] [,3]</span></span>
-<span><span class="co">## [1,]    1    0    0</span></span>
-<span><span class="co">## [2,]    0    1    0</span></span>
-<span><span class="co">## [3,]    0    0    1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>mat <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">6</span>, <span class="dv">4</span>, <span class="dv">5</span>, <span class="dv">7</span>, <span class="dv">8</span>, <span class="dv">9</span>), <span class="at">nrow =</span> <span class="dv">3</span>, <span class="at">byrow =</span> T)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>minv <span class="ot">&lt;-</span> <span class="fu">solve</span>(mat) <span class="co"># get the inverse</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>minv</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="do">##            [,1]       [,2]       [,3]</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="do">## [1,] -0.2222222  0.3333333 -0.1111111</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="do">## [2,] -1.0555556 -0.6666667  0.7222222</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="do">## [3,]  1.1111111  0.3333333 -0.4444444</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>mat <span class="sc">%*%</span> minv </span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="do">##      [,1] [,2] [,3]</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a><span class="do">## [1,]    1    0    0</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="do">## [2,]    0    1    0</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="do">## [3,]    0    0    1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
@@ -768,17 +789,21 @@ quit;</code></pre>
 </div>
 </div>
 </div>
-</section></section><section id="references" class="level2" data-number="11.3"><h2 data-number="11.3" class="anchored" data-anchor-id="references">
-<span class="header-section-number">11.3</span> References</h2>
+</section>
+</section>
+<section id="references" class="level2" data-number="11.3">
+<h2 data-number="11.3" class="anchored" data-anchor-id="references"><span class="header-section-number">11.3</span> References</h2>
 
 
 <div id="refs" class="references csl-bib-body" data-entry-spacing="0" role="list">
 <div id="ref-PythonProgramming" class="csl-entry" role="listitem">
-<div class="csl-left-margin">[1] </div>
-<div class="csl-right-inline">Quartz25, Jesdisciple, H. Röst, D. Ross, L. D’Oliveiro, and BLibrestez55, <em>Python <span>Programming</span></em>. Wikibooks, 2016 [Online]. Available: <a href="https://en.wikibooks.org/wiki/Python_Programming">https://en.wikibooks.org/wiki/Python_Programming</a>. [Accessed: May 28, 2022]</div>
+<div class="csl-left-margin">[1] </div><div class="csl-right-inline">Quartz25, Jesdisciple, H. Röst, D. Ross, L. D’Oliveiro, and BLibrestez55, <em>Python <span>Programming</span></em>. Wikibooks, 2016 [Online]. Available: <a href="https://en.wikibooks.org/wiki/Python_Programming">https://en.wikibooks.org/wiki/Python_Programming</a>. [Accessed: May 28, 2022]</div>
 </div>
 </div>
-</section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
     const mode = bsSheetEl.getAttribute("data-mode");
@@ -957,18 +982,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -1000,7 +1014,47 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/srvanderplas\.github\.io\/stat-computing-r-python\/");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
   function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
@@ -1035,7 +1089,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
     });
   }
   const xrefs = window.document.querySelectorAll('a.quarto-xref');
@@ -1050,27 +1108,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       }
     }
     stripColumnClz(note)
-    const typesetMath = (el) => {
-      if (window.MathJax) {
-        // MathJax Typeset
-        window.MathJax.typeset([el]);
-      } else if (window.katex) {
-        // KaTeX Render
-        var mathElements = el.getElementsByClassName("math");
-        var macros = [];
-        for (var i = 0; i < mathElements.length; i++) {
-          var texText = mathElements[i].firstChild;
-          if (mathElements[i].tagName == "SPAN") {
-            window.katex.render(texText.data, mathElements[i], {
-              displayMode: mathElements[i].classList.contains('display'),
-              throwOnError: false,
-              macros: macros,
-              fleqn: false
-            });
-          }
-        }
-      }
-    }
     if (id === null || id.startsWith('sec-')) {
       // Special case sections, only their first couple elements
       const container = document.createElement("div");
@@ -1085,10 +1122,14 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             break;
           }
         }
-        typesetMath(container);
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
         return container.innerHTML
       } else {
-        typesetMath(note);
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
         return note.innerHTML;
       }
     } else {
@@ -1097,8 +1138,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       if (anchorLink) {
         anchorLink.remove();
       }
-      typesetMath(note);
-      return note.innerHTML;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
     }
   }
   for (var i=0; i<xrefs.length; i++) {
@@ -1318,29 +1366,35 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
   }
 });
-</script><script src="https://giscus.app/client.js" data-repo="srvanderplas/stat-computing-r-python" data-repo-id="R_kgDOIvwd2g" data-category="General" data-category-id="DIC_kwDOIvwd2s4CTksR" data-mapping="pathname" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="light" data-lang="en" crossorigin="anonymous" async="">
-</script><input type="hidden" id="giscus-base-theme" value="light"><input type="hidden" id="giscus-alt-theme" value="dark"><nav class="page-navigation"><div class="nav-page nav-page-previous">
-      <a href="../part-gen-prog/03-data-struct.html" class="pagination-link  aria-label=" structures="">
+</script>
+<script src="https://giscus.app/client.js" data-repo="srvanderplas/stat-computing-r-python" data-repo-id="R_kgDOIvwd2g" data-category="General" data-category-id="DIC_kwDOIvwd2s4CTksR" data-mapping="pathname" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="light" data-lang="en" crossorigin="anonymous" async="">
+</script>
+<input type="hidden" id="giscus-base-theme" value="light">
+<input type="hidden" id="giscus-alt-theme" value="dark">
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../part-gen-prog/03-data-struct.html" class="pagination-link" aria-label="Data Structures">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Data Structures</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../part-gen-prog/04-control-struct.html" class="pagination-link" aria-label="<span class='chapter-number'>12</span>&nbsp; <span class='chapter-title'>Control Structures</span>">
+      <a href="../part-gen-prog/04-control-struct.html" class="pagination-link" aria-label="Control Structures">
         <span class="nav-page-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Control Structures</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
 </div> <!-- /content -->
-<footer class="footer"><div class="nav-footer">
+<footer class="footer">
+  <div class="nav-footer">
     <div class="nav-footer-left">
 <p>Copyright 2024, Susan Vanderplas</p>
 </div>   
     <div class="nav-footer-center">
       &nbsp;
-    </div>
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/srvanderplas/stat-computing-r-python/edit/main/part-gen-prog/035-matrix-calcs.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li></ul></div></div>
     <div class="nav-footer-right">
       <ul class="footer-items list-unstyled">
-<li class="nav-item compact">
+    <li class="nav-item compact">
     <a class="nav-link" href="https://github.com/srvanderplas">
       <i class="bi bi-github" role="img">
 </i> 
@@ -1359,9 +1413,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     </a>
   </li>  
 </ul>
-</div>
+    </div>
   </div>
 </footer>
+
+
 
 
 </body></html>

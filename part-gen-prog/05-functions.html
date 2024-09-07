@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.515">
+<meta name="generator" content="quarto-1.5.57">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
 <meta name="dcterms.date" content="2024-09-07">
-<title>Statistical Computing using R and Python - 13&nbsp; Writing Functions</title>
+
+<title>13&nbsp; Writing Functions – Statistical Computing using R and Python</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -31,7 +34,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -74,6 +77,7 @@ div.csl-indent {
   margin-left: 2em;
 }</style>
 
+
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../site_libs/quarto-nav/headroom.min.js"></script>
 <script src="../site_libs/clipboard/clipboard.min.js"></script>
@@ -96,7 +100,8 @@ div.csl-indent {
 <link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
 <link href="../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <link href="../site_libs/quarto-contrib/fontawesome6-0.1.0/all.css" rel="stylesheet">
-<link href="../site_libs/quarto-contrib/fontawesome6-0.1.0/latex-fontsize.css" rel="stylesheet"><script id="quarto-search-options" type="application/json">{
+<link href="../site_libs/quarto-contrib/fontawesome6-0.1.0/latex-fontsize.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
   "collapse-after": 3,
@@ -117,35 +122,50 @@ div.csl-indent {
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
     "search-submit-button-title": "Submit",
     "search-label": "Search"
   }
-}</script><script async="" src="https://www.googletagmanager.com/gtag/js?id=G-4ZFBDKXJXP"></script><script type="text/javascript">
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-4ZFBDKXJXP"></script>
+
+<script type="text/javascript">
 
 window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
-</script><script src="https://kit.fontawesome.com/baac5f0610.js" crossorigin="anonymous"></script><link rel="stylesheet" href="../build_deps/style.css">
+</script>
+<script src="https://kit.fontawesome.com/baac5f0610.js" crossorigin="anonymous"></script>
+
+
+<link rel="stylesheet" href="../build_deps/style.css">
 </head>
+
 <body class="nav-sidebar floating">
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top"><nav class="quarto-secondary-nav"><div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
         <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../part-gen-prog/00-gen-prog.html">Part II: General Programming</a></li><li class="breadcrumb-item"><a href="../part-gen-prog/05-functions.html"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Writing Functions</span></a></li></ol></nav>
-        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
-      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
         <i class="bi bi-search"></i>
       </button>
     </div>
-  </nav></header><!-- content --><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto"><div class="pt-lg-2 mt-2 text-left sidebar-header">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="../">Statistical Computing using R and Python</a> 
         <div class="sidebar-tools-main">
@@ -161,7 +181,7 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
         </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
-<li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Preface</span></a>
@@ -171,12 +191,12 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
       <div class="sidebar-item-container"> 
             <a href="../part-tools/00-tools-intro.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Part I: Tools</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">
-<li class="sidebar-item">
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../part-tools/01-computer-basics.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Computer Basics</span></span></a>
@@ -213,17 +233,17 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
   </div>
 </li>
       </ul>
-</li>
+  </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="../part-gen-prog/00-gen-prog.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Part II: General Programming</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">
-<li class="sidebar-item">
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../part-gen-prog/00-intro.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Introduction to Programming</span></span></a>
@@ -284,17 +304,17 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
   </div>
 </li>
       </ul>
-</li>
+  </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="../part-wrangling/00-wrangling.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Part III: Data Wrangling</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">
-<li class="sidebar-item">
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../part-wrangling/01-data-input.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Data Input</span></span></a>
@@ -367,17 +387,17 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
   </div>
 </li>
       </ul>
-</li>
+  </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="../part-advanced-topics/00-advanced.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Part IV: Advanced Topics</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">
-<li class="sidebar-item">
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../part-advanced-topics/01-simulation.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Simulation and Reproducibility</span></span></a>
@@ -390,7 +410,7 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
   </div>
 </li>
       </ul>
-</li>
+  </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../graveyard.html" class="sidebar-item-text sidebar-link">
@@ -398,36 +418,38 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
   </div>
 </li>
     </ul>
-</div>
-</nav><div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active"><h2 id="toc-title">Table of contents</h2>
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-<li><a href="#objectives" id="toc-objectives" class="nav-link active" data-scroll-target="#objectives"><span class="header-section-number">13.1</span> <i class="fa-solid fa-bullseye" aria-label="bullseye"></i> Objectives</a></li>
+  <li><a href="#objectives" id="toc-objectives" class="nav-link active" data-scroll-target="#objectives"><span class="header-section-number">13.1</span> <i class="fa-solid fa-bullseye" aria-label="bullseye"></i> Objectives</a></li>
   <li><a href="#when-to-write-a-function" id="toc-when-to-write-a-function" class="nav-link" data-scroll-target="#when-to-write-a-function"><span class="header-section-number">13.2</span> When to write a function?</a></li>
   <li><a href="#syntax" id="toc-syntax" class="nav-link" data-scroll-target="#syntax"><span class="header-section-number">13.3</span> Syntax</a></li>
-  <li>
-<a href="#arguments-and-parameters" id="toc-arguments-and-parameters" class="nav-link" data-scroll-target="#arguments-and-parameters"><span class="header-section-number">13.4</span> Arguments and Parameters</a>
+  <li><a href="#arguments-and-parameters" id="toc-arguments-and-parameters" class="nav-link" data-scroll-target="#arguments-and-parameters"><span class="header-section-number">13.4</span> Arguments and Parameters</a>
   <ul class="collapse">
-<li><a href="#named-arguments-and-parameter-order" id="toc-named-arguments-and-parameter-order" class="nav-link" data-scroll-target="#named-arguments-and-parameter-order"><span class="header-section-number">13.4.1</span> Named Arguments and Parameter Order</a></li>
+  <li><a href="#named-arguments-and-parameter-order" id="toc-named-arguments-and-parameter-order" class="nav-link" data-scroll-target="#named-arguments-and-parameter-order"><span class="header-section-number">13.4.1</span> Named Arguments and Parameter Order</a></li>
   <li><a href="#input-validation" id="toc-input-validation" class="nav-link" data-scroll-target="#input-validation"><span class="header-section-number">13.4.2</span> Input Validation</a></li>
-  </ul>
-</li>
-  <li>
-<a href="#scope" id="toc-scope" class="nav-link" data-scroll-target="#scope"><span class="header-section-number">13.5</span> Scope</a>
+  </ul></li>
+  <li><a href="#scope" id="toc-scope" class="nav-link" data-scroll-target="#scope"><span class="header-section-number">13.5</span> Scope</a>
   <ul class="collapse">
-<li><a href="#name-masking" id="toc-name-masking" class="nav-link" data-scroll-target="#name-masking"><span class="header-section-number">13.5.1</span> Name Masking</a></li>
+  <li><a href="#name-masking" id="toc-name-masking" class="nav-link" data-scroll-target="#name-masking"><span class="header-section-number">13.5.1</span> Name Masking</a></li>
   <li><a href="#environments-and-scope" id="toc-environments-and-scope" class="nav-link" data-scroll-target="#environments-and-scope"><span class="header-section-number">13.5.2</span> Environments and Scope</a></li>
   <li><a href="#dynamic-lookup" id="toc-dynamic-lookup" class="nav-link" data-scroll-target="#dynamic-lookup"><span class="header-section-number">13.5.3</span> Dynamic Lookup</a></li>
-  </ul>
-</li>
+  </ul></li>
   <li><a href="#sec-functions-refs" id="toc-sec-functions-refs" class="nav-link" data-scroll-target="#sec-functions-refs"><span class="header-section-number">13.6</span> References</a></li>
-  </ul><div class="toc-actions"><ul><li><a href="https://github.com/srvanderplas/stat-computing-r-python/edit/main/part-gen-prog/05-functions.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li></ul></div></nav>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/srvanderplas/stat-computing-r-python/edit/main/part-gen-prog/05-functions.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../part-gen-prog/00-gen-prog.html">Part II: General Programming</a></li><li class="breadcrumb-item"><a href="../part-gen-prog/05-functions.html"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Writing Functions</span></a></li></ol></nav><div class="quarto-title">
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../part-gen-prog/00-gen-prog.html">Part II: General Programming</a></li><li class="breadcrumb-item"><a href="../part-gen-prog/05-functions.html"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Writing Functions</span></a></li></ol></nav>
+<div class="quarto-title">
 <h1 class="title"><span id="sec-functions" class="quarto-section-identifier"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Writing Functions</span></span></h1>
 </div>
 
@@ -448,16 +470,21 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
   
 
 
-</header><p>A <strong>function</strong> is a set of actions that we group together and name. Throughout this course, you’ve used a bunch of different functions in R and python that are built into the language or added through packages: <code>mean</code>, <code>ggplot</code>, <code>length</code>, <code>print</code>. In this chapter, we’ll be writing our own functions.</p>
-<section id="objectives" class="level2" data-number="13.1"><h2 data-number="13.1" class="anchored" data-anchor-id="objectives">
-<span class="header-section-number">13.1</span> <i class="fa-solid fa-bullseye" aria-label="bullseye"></i> Objectives</h2>
+</header>
+
+
+<p>A <strong>function</strong> is a set of actions that we group together and name. Throughout this course, you’ve used a bunch of different functions in R and python that are built into the language or added through packages: <code>mean</code>, <code>ggplot</code>, <code>length</code>, <code>print</code>. In this chapter, we’ll be writing our own functions.</p>
+<section id="objectives" class="level2" data-number="13.1">
+<h2 data-number="13.1" class="anchored" data-anchor-id="objectives"><span class="header-section-number">13.1</span> <i class="fa-solid fa-bullseye" aria-label="bullseye"></i> Objectives</h2>
 <ul>
 <li>Identify the parts of a function from provided source code</li>
 <li>Predict what the function will return when provided with input values and source code</li>
 <li>Given a task, lay out the steps necessary to complete the task in pseudocode</li>
 <li>Write a function which uses necessary input values to complete a task</li>
-</ul></section><section id="when-to-write-a-function" class="level2" data-number="13.2"><h2 data-number="13.2" class="anchored" data-anchor-id="when-to-write-a-function">
-<span class="header-section-number">13.2</span> When to write a function?</h2>
+</ul>
+</section>
+<section id="when-to-write-a-function" class="level2" data-number="13.2">
+<h2 data-number="13.2" class="anchored" data-anchor-id="when-to-write-a-function"><span class="header-section-number">13.2</span> When to write a function?</h2>
 <p>If you’ve written the same code (with a few minor changes, like variable names) more than twice, you should probably write a function instead. There are a few benefits to this rule:</p>
 <ol type="1">
 <li><p>Your code stays neater (and shorter), so it is easier to read, understand, and maintain.</p></li>
@@ -491,28 +518,25 @@ Example: Turning Code into Functions
 <p>This example is modified from R for Data Science <span class="citation" data-cites="advr"><a href="#ref-advr" role="doc-biblioref">[2, Ch. 19]</a></span>.</p>
 <p>What does this code do? Does it work as intended?</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist">
-<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" aria-current="page">R</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Python</a></li>
-</ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" aria-current="page">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Python</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <div class="cell">
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu">tibble</span><span class="fu">::</span><span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span><span class="op">(</span></span>
-<span>  a <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span>,</span>
-<span>  b <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span>,</span>
-<span>  c <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span>,</span>
-<span>  d <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span></span>
-<span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">df</span><span class="op">$</span><span class="va">a</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">a</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">a</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">/</span> </span>
-<span>  <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">a</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">a</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">df</span><span class="op">$</span><span class="va">b</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">b</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">b</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">/</span> </span>
-<span>  <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">b</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">a</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">df</span><span class="op">$</span><span class="va">c</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">c</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">c</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">/</span> </span>
-<span>  <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">c</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">c</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">df</span><span class="op">$</span><span class="va">d</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">d</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">d</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">/</span> </span>
-<span>  <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">d</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">d</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>df <span class="ot">&lt;-</span> tibble<span class="sc">::</span><span class="fu">tibble</span>(</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">a =</span> <span class="fu">rnorm</span>(<span class="dv">10</span>),</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">b =</span> <span class="fu">rnorm</span>(<span class="dv">10</span>),</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">c =</span> <span class="fu">rnorm</span>(<span class="dv">10</span>),</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">d =</span> <span class="fu">rnorm</span>(<span class="dv">10</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>df<span class="sc">$</span>a <span class="ot">&lt;-</span> (df<span class="sc">$</span>a <span class="sc">-</span> <span class="fu">min</span>(df<span class="sc">$</span>a, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">/</span> </span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  (<span class="fu">max</span>(df<span class="sc">$</span>a, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">-</span> <span class="fu">min</span>(df<span class="sc">$</span>a, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>df<span class="sc">$</span>b <span class="ot">&lt;-</span> (df<span class="sc">$</span>b <span class="sc">-</span> <span class="fu">min</span>(df<span class="sc">$</span>b, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">/</span> </span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  (<span class="fu">max</span>(df<span class="sc">$</span>b, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">-</span> <span class="fu">min</span>(df<span class="sc">$</span>a, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>df<span class="sc">$</span>c <span class="ot">&lt;-</span> (df<span class="sc">$</span>c <span class="sc">-</span> <span class="fu">min</span>(df<span class="sc">$</span>c, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">/</span> </span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  (<span class="fu">max</span>(df<span class="sc">$</span>c, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">-</span> <span class="fu">min</span>(df<span class="sc">$</span>c, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>df<span class="sc">$</span>d <span class="ot">&lt;-</span> (df<span class="sc">$</span>d <span class="sc">-</span> <span class="fu">min</span>(df<span class="sc">$</span>d, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">/</span> </span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  (<span class="fu">max</span>(df<span class="sc">$</span>d, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">-</span> <span class="fu">min</span>(df<span class="sc">$</span>d, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
@@ -538,15 +562,12 @@ Example: Turning Code into Functions
 <p>Writing a function to rescale a variable would prevent this type of copy-paste error.</p>
 <p>To write a function, we first analyze the code to determine how many inputs it has:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist">
-<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">R</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">Python</a></li>
-</ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">Python</a></li></ul>
 <div class="tab-content">
 <div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
 <div class="cell">
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">df</span><span class="op">$</span><span class="va">a</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">a</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">a</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">/</span> </span>
-<span>  <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">a</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">a</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>df<span class="sc">$</span>a <span class="ot">&lt;-</span> (df<span class="sc">$</span>a <span class="sc">-</span> <span class="fu">min</span>(df<span class="sc">$</span>a, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">/</span> </span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  (<span class="fu">max</span>(df<span class="sc">$</span>a, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">-</span> <span class="fu">min</span>(df<span class="sc">$</span>a, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>This code has only one input: <code>df$a</code>.</p>
 </div>
@@ -561,20 +582,17 @@ Example: Turning Code into Functions
 </div>
 <p>To convert the code into a function, we start by rewriting it using general names:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist">
-<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">R</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">Python</a></li>
-</ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">Python</a></li></ul>
 <div class="tab-content">
 <div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
 <p>In this case, it might help to replace <code>df$a</code> with <code>x</code>.</p>
 <div class="cell">
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="va">df</span><span class="op">$</span><span class="va">a</span> </span>
-<span></span>
-<span><span class="op">(</span><span class="va">x</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">x</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op">/</span> </span>
-<span>  <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span><span class="op">(</span><span class="va">x</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">min</a></span><span class="op">(</span><span class="va">x</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">##  [1] 0.9584487 0.6858824 0.5358416 0.2138378 1.0000000 0.0000000 0.8633534</span></span>
-<span><span class="co">##  [8] 0.3750205 0.9543049 0.8796891</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> df<span class="sc">$</span>a </span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>(x <span class="sc">-</span> <span class="fu">min</span>(x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>)) <span class="sc">/</span> </span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  (<span class="fu">max</span>(x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>) <span class="sc">-</span> <span class="fu">min</span>(x, <span class="at">na.rm =</span> <span class="cn">TRUE</span>))</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="do">##  [1] 0.9584487 0.6858824 0.5358416 0.2138378 1.0000000 0.0000000 0.8633534</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="do">##  [8] 0.3750205 0.9543049 0.8796891</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
@@ -600,23 +618,20 @@ Example: Turning Code into Functions
 </div>
 <p>Then, we make it a bit easier to read, removing duplicate computations if possible (for instance, computing <code>min</code> two times).</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist">
-<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true">R</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false">Python</a></li>
-</ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false">Python</a></li></ul>
 <div class="tab-content">
 <div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
 <p>In R, we can use the <code>range</code> function, which computes the maximum and minimum at the same time and returns the result as <code>c(min, max)</code></p>
 <div class="cell">
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">rng</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/range.html">range</a></span><span class="op">(</span><span class="va">x</span>, na.rm <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
-<span></span>
-<span><span class="op">(</span><span class="va">x</span> <span class="op">-</span> <span class="va">rng</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span><span class="op">/</span><span class="op">(</span><span class="va">rng</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span> <span class="op">-</span> <span class="va">rng</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="co">##  [1] 0.9584487 0.6858824 0.5358416 0.2138378 1.0000000 0.0000000 0.8633534</span></span>
-<span><span class="co">##  [8] 0.3750205 0.9543049 0.8796891</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>rng <span class="ot">&lt;-</span> <span class="fu">range</span>(x, <span class="at">na.rm =</span> T)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>(x <span class="sc">-</span> rng[<span class="dv">1</span>])<span class="sc">/</span>(rng[<span class="dv">2</span>] <span class="sc">-</span> rng[<span class="dv">1</span>])</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="do">##  [1] 0.9584487 0.6858824 0.5358416 0.2138378 1.0000000 0.0000000 0.8633534</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="do">##  [8] 0.3750205 0.9543049 0.8796891</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
-<p>In python, <code>range</code> is the equivalent of <code><a href="https://rdrr.io/r/base/seq.html">seq()</a></code> in R, so we are better off just using <code>min</code> and <code>max</code>.</p>
+<p>In python, <code>range</code> is the equivalent of <code>seq()</code> in R, so we are better off just using <code>min</code> and <code>max</code>.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> df.a</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -640,27 +655,24 @@ Example: Turning Code into Functions
 </div>
 <p>Finally, we turn this code into a function:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist">
-<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-5-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-1" role="tab" aria-controls="tabset-5-1" aria-selected="true">R</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-2" role="tab" aria-controls="tabset-5-2" aria-selected="false">Python</a></li>
-</ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-5-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-1" role="tab" aria-controls="tabset-5-1" aria-selected="true">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-2" role="tab" aria-controls="tabset-5-2" aria-selected="false">Python</a></li></ul>
 <div class="tab-content">
 <div id="tabset-5-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-5-1-tab">
 <div class="cell">
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">rescale01</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">rng</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/range.html">range</a></span><span class="op">(</span><span class="va">x</span>, na.rm <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span>
-<span>  <span class="op">(</span><span class="va">x</span> <span class="op">-</span> <span class="va">rng</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span><span class="op">/</span><span class="op">(</span><span class="va">rng</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span> <span class="op">-</span> <span class="va">rng</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
-<span></span>
-<span><span class="fu">rescale01</span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">a</span><span class="op">)</span></span>
-<span><span class="co">##  [1] 0.9584487 0.6858824 0.5358416 0.2138378 1.0000000 0.0000000 0.8633534</span></span>
-<span><span class="co">##  [8] 0.3750205 0.9543049 0.8796891</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>rescale01 <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  rng <span class="ot">&lt;-</span> <span class="fu">range</span>(x, <span class="at">na.rm =</span> T)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  (x <span class="sc">-</span> rng[<span class="dv">1</span>])<span class="sc">/</span>(rng[<span class="dv">2</span>] <span class="sc">-</span> rng[<span class="dv">1</span>])</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="fu">rescale01</span>(df<span class="sc">$</span>a)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="do">##  [1] 0.9584487 0.6858824 0.5358416 0.2138378 1.0000000 0.0000000 0.8633534</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="do">##  [8] 0.3750205 0.9543049 0.8796891</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <ul>
 <li>The name of the function, <code>rescale01</code>, describes what the function does - it rescales the data to between 0 and 1.</li>
 <li>The function takes one <strong>argument</strong>, named <code>x</code>; any references to this value within the function will use <code>x</code> as the name. This allows us to use the function on <code>df$a</code>, <code>df$b</code>, <code>df$c</code>, and so on, with <code>x</code> as a placeholder name for the data we’re working on at the moment.</li>
 <li>The code that actually does what your function is supposed to do goes in the <strong>body</strong> of the function, between <code>{</code> and <code>}</code> (this is true in R, in python, there are different conventions, but the same principle applies)</li>
-<li>The function <strong>returns</strong> the last value computed: in this case, <code>(x - rng[1])/(rng[2]-rng[1])</code>. You can make this explicit by adding a <code><a href="https://rdrr.io/r/base/function.html">return()</a></code> statement around that calculation.</li>
+<li>The function <strong>returns</strong> the last value computed: in this case, <code>(x - rng[1])/(rng[2]-rng[1])</code>. You can make this explicit by adding a <code>return()</code> statement around that calculation.</li>
 </ul>
 </div>
 <div id="tabset-5-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-2-tab">
@@ -694,17 +706,21 @@ Example: Turning Code into Functions
 <p>The process for creating a function is important: first, you figure out how to do the thing you want to do. Then, you simplify the code as much as possible. Only at the end of that process do you create an actual function.</p>
 </div>
 </div>
-</section><section id="syntax" class="level2" data-number="13.3"><h2 data-number="13.3" class="anchored" data-anchor-id="syntax">
-<span class="header-section-number">13.3</span> Syntax</h2>
+</section>
+<section id="syntax" class="level2" data-number="13.3">
+<h2 data-number="13.3" class="anchored" data-anchor-id="syntax"><span class="header-section-number">13.3</span> Syntax</h2>
 <div class="quarto-figure quarto-figure-center">
-<figure class="figure"><p><img src="../images/gen-prog/Annotating_function_syntax.png" class="img-fluid figure-img"></p>
-<figcaption>R and python syntax for defining functions. Portions of the command that indicate the function name, function scope, and return statement are highlighted in each block.</figcaption></figure>
+<figure class="figure">
+<p><img src="../images/gen-prog/Annotating_function_syntax.png" class="img-fluid figure-img"></p>
+<figcaption>R and python syntax for defining functions. Portions of the command that indicate the function name, function scope, and return statement are highlighted in each block.</figcaption>
+</figure>
 </div>
-<p>In R, functions are defined as other variables, using <code>&lt;-</code>, but we specify the arguments a function takes by using the <code>function()</code> statement. The contents of the function are contained within <code>{</code> and <code>}</code>. If the function returns a value, a <code><a href="https://rdrr.io/r/base/function.html">return()</a></code> statement can be used; alternately, if there is no return statement, the last computation in the function will be returned.</p>
+<p>In R, functions are defined as other variables, using <code>&lt;-</code>, but we specify the arguments a function takes by using the <code>function()</code> statement. The contents of the function are contained within <code>{</code> and <code>}</code>. If the function returns a value, a <code>return()</code> statement can be used; alternately, if there is no return statement, the last computation in the function will be returned.</p>
 <p>In python, functions are defined using the <code>def</code> command, with the function name, parentheses, and the function arguments to follow. The first line of the function definition ends with a <code>:</code>, and all subsequent lines of the function are indented (this is how python knows where the end of the function is). A python function return statement is <code>return &lt;value&gt;</code>, with no parentheses needed.</p>
 <p>Note that in python, the <code>return</code> statement is not optional. It is not uncommon to have python functions that don’t return anything; in R, this is a bit less common, for reasons we won’t get into here.</p>
-</section><section id="arguments-and-parameters" class="level2" data-number="13.4"><h2 data-number="13.4" class="anchored" data-anchor-id="arguments-and-parameters">
-<span class="header-section-number">13.4</span> Arguments and Parameters</h2>
+</section>
+<section id="arguments-and-parameters" class="level2" data-number="13.4">
+<h2 data-number="13.4" class="anchored" data-anchor-id="arguments-and-parameters"><span class="header-section-number">13.4</span> Arguments and Parameters</h2>
 <p>An <strong>argument</strong> is the name for the object you pass into a function.</p>
 <p>A <strong>parameter</strong> is the name for the object once it is inside the function (or the name of the thing as defined in the function).</p>
 <div class="callout callout-style-default callout-caution callout-titled">
@@ -719,21 +735,18 @@ Example: Parts of a Function
 <div class="callout-body-container callout-body">
 <p>Let’s examine the difference between arguments and parameters by writing a function that takes a dog’s name and returns “<name> is a good pup!”.</name></p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist">
-<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-6-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-1" role="tab" aria-controls="tabset-6-1" aria-selected="true">R</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-2" role="tab" aria-controls="tabset-6-2" aria-selected="false">Python</a></li>
-</ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-6-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-1" role="tab" aria-controls="tabset-6-1" aria-selected="true">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-2" role="tab" aria-controls="tabset-6-2" aria-selected="false">Python</a></li></ul>
 <div class="tab-content">
 <div id="tabset-6-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-6-1-tab">
 <div class="cell">
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">dog</span> <span class="op">&lt;-</span> <span class="st">"Eddie"</span></span>
-<span></span>
-<span><span class="va">goodpup</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">name</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="va">name</span>, <span class="st">"is a good pup!"</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
-<span></span>
-<span><span class="fu">goodpup</span><span class="op">(</span><span class="va">dog</span><span class="op">)</span></span>
-<span><span class="co">## [1] "Eddie is a good pup!"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>dog <span class="ot">&lt;-</span> <span class="st">"Eddie"</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>goodpup <span class="ot">&lt;-</span> <span class="cf">function</span>(name) {</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">paste</span>(name, <span class="st">"is a good pup!"</span>)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="fu">goodpup</span>(dog)</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "Eddie is a good pup!"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div id="tabset-6-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-2-tab">
@@ -752,8 +765,10 @@ Example: Parts of a Function
 <p>In this example function, when we call <code>goodpup(dog)</code>, <code>dog</code> is the argument. <code>name</code> is the parameter.</p>
 <p>What is happening inside the computer’s memory as <code>goodpup</code> runs?</p>
 <div class="quarto-figure quarto-figure-center">
-<figure class="figure"><p><img src="../images/gen-prog/function_argument_parameters.png" class="img-fluid figure-img"></p>
-<figcaption>A sketch of the execution of the program <code>goodpup</code>, showing that <code>name</code> is only defined within the local environment that is created while <code>goodpup</code> is running. We can never access <code>name</code> in our global environment.</figcaption></figure>
+<figure class="figure">
+<p><img src="../images/gen-prog/function_argument_parameters.png" class="img-fluid figure-img"></p>
+<figcaption>A sketch of the execution of the program <code>goodpup</code>, showing that <code>name</code> is only defined within the local environment that is created while <code>goodpup</code> is running. We can never access <code>name</code> in our global environment.</figcaption>
+</figure>
 </div>
 </div>
 </div>
@@ -772,10 +787,7 @@ Try it out: Function Parts
 <div class="callout-body-container callout-body">
 <p>For each of the following blocks of code, identify the function name, function arguments, parameter names, and return statements. When the function is called, see if you can predict what the output will be. Also determine whether the function output is stored in memory or just printed to the command line.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist">
-<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-7-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-1" role="tab" aria-controls="tabset-7-1" aria-selected="true">Function 1</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-2" role="tab" aria-controls="tabset-7-2" aria-selected="false">Answer</a></li>
-</ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-7-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-1" role="tab" aria-controls="tabset-7-1" aria-selected="true">Function 1</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-2" role="tab" aria-controls="tabset-7-2" aria-selected="false">Answer</a></li></ul>
 <div class="tab-content">
 <div id="tabset-7-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-7-1-tab">
 <div class="cell">
@@ -789,8 +801,7 @@ Try it out: Function Parts
 </div>
 <div id="tabset-7-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-2-tab">
 <ul>
-<li>Function name: <code>hello_world</code>
-</li>
+<li>Function name: <code>hello_world</code></li>
 <li>Function parameters: none</li>
 <li>Function arguments: none</li>
 <li>Function output:</li>
@@ -806,38 +817,34 @@ Try it out: Function Parts
 </div>
 </div>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist">
-<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-8-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-1" role="tab" aria-controls="tabset-8-1" aria-selected="true">Function 2</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-8-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-2" role="tab" aria-controls="tabset-8-2" aria-selected="false">Answer</a></li>
-</ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-8-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-1" role="tab" aria-controls="tabset-8-1" aria-selected="true">Function 2</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-8-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-2" role="tab" aria-controls="tabset-8-2" aria-selected="false">Answer</a></li></ul>
 <div class="tab-content">
 <div id="tabset-8-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-8-1-tab">
 <div class="cell">
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span></span>
-<span><span class="va">my_mean</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">censor_x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="va">x</span>, size <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">-</span> <span class="fl">2</span>, replace <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="va">censor_x</span><span class="op">)</span></span>
-<span><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>my_mean <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  censor_x <span class="ot">&lt;-</span> <span class="fu">sample</span>(x, <span class="at">size =</span> <span class="fu">length</span>(x) <span class="sc">-</span> <span class="dv">2</span>, <span class="at">replace =</span> F)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mean</span>(censor_x)</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">3420523</span><span class="op">)</span></span>
-<span><span class="va">x</span> <span class="op">=</span> <span class="fu">my_mean</span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span></span>
-<span><span class="va">x</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">3420523</span>)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>x <span class="ot">=</span> <span class="fu">my_mean</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>x</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div id="tabset-8-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-8-2-tab">
 <ul>
-<li>Function name: <code>my_mean</code>
-</li>
+<li>Function name: <code>my_mean</code></li>
 <li>Function parameters: x</li>
 <li>Function arguments: 1:10</li>
 <li>Function output: (varies each time the function is run unless you set the seed)</li>
 </ul>
 <div class="cell">
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">3420523</span><span class="op">)</span></span>
-<span><span class="va">x</span> <span class="op">=</span> <span class="fu">my_mean</span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span></span>
-<span><span class="va">x</span></span>
-<span><span class="co">## [1] 6</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">3420523</span>)</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>x <span class="ot">=</span> <span class="fu">my_mean</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">10</span>)</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>x</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 6</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <ul>
 <li>Function output is saved to memory (<code>x</code>) and printed to the command line</li>
@@ -847,21 +854,18 @@ Try it out: Function Parts
 </div>
 </div>
 </div>
-<section id="named-arguments-and-parameter-order" class="level3" data-number="13.4.1"><h3 data-number="13.4.1" class="anchored" data-anchor-id="named-arguments-and-parameter-order">
-<span class="header-section-number">13.4.1</span> Named Arguments and Parameter Order</h3>
+<section id="named-arguments-and-parameter-order" class="level3" data-number="13.4.1">
+<h3 data-number="13.4.1" class="anchored" data-anchor-id="named-arguments-and-parameter-order"><span class="header-section-number">13.4.1</span> Named Arguments and Parameter Order</h3>
 <p>In the examples above, you didn’t have to worry about what order parameters were passed into the function, because there were 0 and 1 parameters, respectively. But what happens when we have a function with multiple parameters?</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist">
-<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-9-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-1" role="tab" aria-controls="tabset-9-1" aria-selected="true">R</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-9-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-2" role="tab" aria-controls="tabset-9-2" aria-selected="false">Python</a></li>
-</ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-9-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-1" role="tab" aria-controls="tabset-9-1" aria-selected="true">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-9-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-2" role="tab" aria-controls="tabset-9-2" aria-selected="false">Python</a></li></ul>
 <div class="tab-content">
 <div id="tabset-9-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-9-1-tab">
 <div class="cell">
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span></span>
-<span><span class="va">divide</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">x</span> <span class="op">/</span> <span class="va">y</span></span>
-<span><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>divide <span class="ot">&lt;-</span> <span class="cf">function</span>(x, y) {</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  x <span class="sc">/</span> y</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div id="tabset-9-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-9-2-tab">
@@ -876,30 +880,27 @@ Try it out: Function Parts
 <p>In this function, the order of the parameters matters! <code>divide(3, 6)</code> does not produce the same result as <code>divide(6, 3)</code>. As you might imagine, this can quickly get confusing as the number of parameters in the function increases.</p>
 <p>In this case, it can be simpler to use the parameter names when you pass in arguments.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist">
-<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-10-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-10-1" role="tab" aria-controls="tabset-10-1" aria-selected="true">R</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-10-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-10-2" role="tab" aria-controls="tabset-10-2" aria-selected="false">Python</a></li>
-</ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-10-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-10-1" role="tab" aria-controls="tabset-10-1" aria-selected="true">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-10-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-10-2" role="tab" aria-controls="tabset-10-2" aria-selected="false">Python</a></li></ul>
 <div class="tab-content">
 <div id="tabset-10-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-10-1-tab">
 <div class="cell">
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu">divide</span><span class="op">(</span><span class="fl">3</span>, <span class="fl">6</span><span class="op">)</span></span>
-<span><span class="co">## [1] 0.5</span></span>
-<span></span>
-<span><span class="fu">divide</span><span class="op">(</span>x <span class="op">=</span> <span class="fl">3</span>, y <span class="op">=</span> <span class="fl">6</span><span class="op">)</span></span>
-<span><span class="co">## [1] 0.5</span></span>
-<span></span>
-<span><span class="fu">divide</span><span class="op">(</span>y <span class="op">=</span> <span class="fl">6</span>, x <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
-<span><span class="co">## [1] 0.5</span></span>
-<span></span>
-<span><span class="fu">divide</span><span class="op">(</span><span class="fl">6</span>, <span class="fl">3</span><span class="op">)</span></span>
-<span><span class="co">## [1] 2</span></span>
-<span></span>
-<span><span class="fu">divide</span><span class="op">(</span>x <span class="op">=</span> <span class="fl">6</span>, y <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
-<span><span class="co">## [1] 2</span></span>
-<span></span>
-<span><span class="fu">divide</span><span class="op">(</span>y <span class="op">=</span> <span class="fl">3</span>, x <span class="op">=</span> <span class="fl">6</span><span class="op">)</span></span>
-<span><span class="co">## [1] 2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">divide</span>(<span class="dv">3</span>, <span class="dv">6</span>)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 0.5</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="fu">divide</span>(<span class="at">x =</span> <span class="dv">3</span>, <span class="at">y =</span> <span class="dv">6</span>)</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 0.5</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a><span class="fu">divide</span>(<span class="at">y =</span> <span class="dv">6</span>, <span class="at">x =</span> <span class="dv">3</span>)</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 0.5</span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a><span class="fu">divide</span>(<span class="dv">6</span>, <span class="dv">3</span>)</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 2</span></span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a><span class="fu">divide</span>(<span class="at">x =</span> <span class="dv">6</span>, <span class="at">y =</span> <span class="dv">3</span>)</span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 2</span></span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a><span class="fu">divide</span>(<span class="at">y =</span> <span class="dv">3</span>, <span class="at">x =</span> <span class="dv">6</span>)</span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div id="tabset-10-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-10-2-tab">
@@ -926,8 +927,9 @@ Try it out: Function Parts
 </div>
 </div>
 <p>As you can see, the order of the arguments doesn’t much matter, as long as you use named arguments, but if you don’t name your arguments, the order very much matters.</p>
-</section><section id="input-validation" class="level3" data-number="13.4.2"><h3 data-number="13.4.2" class="anchored" data-anchor-id="input-validation">
-<span class="header-section-number">13.4.2</span> Input Validation</h3>
+</section>
+<section id="input-validation" class="level3" data-number="13.4.2">
+<h3 data-number="13.4.2" class="anchored" data-anchor-id="input-validation"><span class="header-section-number">13.4.2</span> Input Validation</h3>
 <p>When you write a function, you often assume that your parameters will be of a certain type. But you can’t guarantee that the person using your function knows that they need a certain type of input. In these cases, it’s best to <strong>validate</strong> your function input.</p>
 <div class="callout callout-style-default callout-caution callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -940,31 +942,28 @@ Input Validation Example
 </div>
 <div class="callout-body-container callout-body">
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist">
-<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-11-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-11-1" role="tab" aria-controls="tabset-11-1" aria-selected="true">R</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-11-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-11-2" role="tab" aria-controls="tabset-11-2" aria-selected="false">Python</a></li>
-</ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-11-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-11-1" role="tab" aria-controls="tabset-11-1" aria-selected="true">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-11-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-11-2" role="tab" aria-controls="tabset-11-2" aria-selected="false">Python</a></li></ul>
 <div class="tab-content">
 <div id="tabset-11-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-11-1-tab">
-<p>In R, you can use <code><a href="https://rdrr.io/r/base/stopifnot.html">stopifnot()</a></code> to check for certain essential conditions. If you want to provide a more illuminating error message, you can check your conditions using <code>if()</code> and then use <code>stop("better error message")</code> in the body of the if statement.</p>
+<p>In R, you can use <code>stopifnot()</code> to check for certain essential conditions. If you want to provide a more illuminating error message, you can check your conditions using <code>if()</code> and then use <code>stop("better error message")</code> in the body of the if statement.</p>
 <div class="cell">
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">add</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">x</span> <span class="op">+</span> <span class="va">y</span></span>
-<span><span class="op">}</span></span>
-<span></span>
-<span><span class="fu">add</span><span class="op">(</span><span class="st">"tmp"</span>, <span class="fl">3</span><span class="op">)</span></span>
-<span><span class="co">## Error in x + y: non-numeric argument to binary operator</span></span>
-<span></span>
-<span><span class="va">add</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/stopifnot.html">stopifnot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/numeric.html">is.numeric</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/stopifnot.html">stopifnot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/numeric.html">is.numeric</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="va">x</span> <span class="op">+</span> <span class="va">y</span></span>
-<span><span class="op">}</span></span>
-<span></span>
-<span><span class="fu">add</span><span class="op">(</span><span class="st">"tmp"</span>, <span class="fl">3</span><span class="op">)</span></span>
-<span><span class="co">## Error in add("tmp", 3): is.numeric(x) is not TRUE</span></span>
-<span><span class="fu">add</span><span class="op">(</span><span class="fl">3</span>, <span class="fl">4</span><span class="op">)</span></span>
-<span><span class="co">## [1] 7</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>add <span class="ot">&lt;-</span> <span class="cf">function</span>(x, y) {</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  x <span class="sc">+</span> y</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a><span class="fu">add</span>(<span class="st">"tmp"</span>, <span class="dv">3</span>)</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a><span class="do">## Error in x + y: non-numeric argument to binary operator</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>add <span class="ot">&lt;-</span> <span class="cf">function</span>(x, y) {</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">is.numeric</span>(x))</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="fu">is.numeric</span>(y))</span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>  x <span class="sc">+</span> y</span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a><span class="fu">add</span>(<span class="st">"tmp"</span>, <span class="dv">3</span>)</span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a><span class="do">## Error in add("tmp", 3): is.numeric(x) is not TRUE</span></span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a><span class="fu">add</span>(<span class="dv">3</span>, <span class="dv">4</span>)</span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 7</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div id="tabset-11-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-11-2-tab">
@@ -999,16 +998,18 @@ Input Validation Example
 </div>
 </div>
 <p>Input validation is one aspect of <strong>defensive programming</strong> - programming in such a way that you try to ensure that your programs don’t error out due to unexpected bugs by anticipating ways your programs might be misunderstood or misused <span class="citation" data-cites="DefensiveProgramming2022"><a href="#ref-DefensiveProgramming2022" role="doc-biblioref">[3]</a></span>.</p>
-</section></section><section id="scope" class="level2" data-number="13.5"><h2 data-number="13.5" class="anchored" data-anchor-id="scope">
-<span class="header-section-number">13.5</span> Scope</h2>
+</section>
+</section>
+<section id="scope" class="level2" data-number="13.5">
+<h2 data-number="13.5" class="anchored" data-anchor-id="scope"><span class="header-section-number">13.5</span> Scope</h2>
 <p>When talking about functions, for the first time we start to confront a critical concept in programming, which is scope. <strong>Scope</strong> is the part of the program where the name you’ve given a variable is valid - that is, where you can use a variable.</p>
 <blockquote class="blockquote">
 <p>A variable is only available from inside the region it is created.</p>
 </blockquote>
 <p>What do I mean by the part of a program? The <strong>lexical scope</strong> is the portion of the code (the set of lines of code) where the name is valid.</p>
 <p>The concept of scope is best demonstrated through a series of examples, so in the rest of this section, I’ll show you some examples of how scope works and the concepts that help you figure out what “scope” actually means in practice.</p>
-<section id="name-masking" class="level3" data-number="13.5.1"><h3 data-number="13.5.1" class="anchored" data-anchor-id="name-masking">
-<span class="header-section-number">13.5.1</span> Name Masking</h3>
+<section id="name-masking" class="level3" data-number="13.5.1">
+<h3 data-number="13.5.1" class="anchored" data-anchor-id="name-masking"><span class="header-section-number">13.5.1</span> Name Masking</h3>
 <p>Scope is most clearly demonstrated when we use the same variable name inside and outside a function. Note that this is 1) bad programming practice, and 2) fairly easily avoided if you can make your names even slightly more creative than <code>a</code>, <code>b</code>, and so on. But, for the purposes of demonstration, I hope you’ll forgive my lack of creativity in this area so that you can see how name masking works.</p>
 <div class="callout callout-style-default callout-caution callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -1022,12 +1023,7 @@ Caution
 <div class="callout-body-container callout-body">
 <p>What does this function return, 10 or 20?</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist">
-<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-12-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-12-1" role="tab" aria-controls="tabset-12-1" aria-selected="true">Pseudocode</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-12-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-12-2" role="tab" aria-controls="tabset-12-2" aria-selected="false">Sketch</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-12-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-12-3" role="tab" aria-controls="tabset-12-3" aria-selected="false">R</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-12-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-12-4" role="tab" aria-controls="tabset-12-4" aria-selected="false">Python</a></li>
-</ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-12-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-12-1" role="tab" aria-controls="tabset-12-1" aria-selected="true">Pseudocode</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-12-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-12-2" role="tab" aria-controls="tabset-12-2" aria-selected="false">Sketch</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-12-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-12-3" role="tab" aria-controls="tabset-12-3" aria-selected="false">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-12-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-12-4" role="tab" aria-controls="tabset-12-4" aria-selected="false">Python</a></li></ul>
 <div class="tab-content">
 <div id="tabset-12-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-12-1-tab">
 <pre><code>a = 10
@@ -1041,21 +1037,23 @@ myfun()</code></pre>
 </div>
 <div id="tabset-12-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-12-2-tab">
 <div class="quarto-figure quarto-figure-center">
-<figure class="figure"><p><img src="../images/gen-prog/function-scope.png" class="img-fluid figure-img"></p>
-<figcaption>A sketch of the global environment as well as the environment within <code>myfun()</code>. Because <code>a=20</code> inside <code>myfun()</code>, when we call <code>myfun()</code>, we get the value of <code>a</code> within that environment, instead of within the global environment.</figcaption></figure>
+<figure class="figure">
+<p><img src="../images/gen-prog/function-scope.png" class="img-fluid figure-img"></p>
+<figcaption>A sketch of the global environment as well as the environment within <code>myfun()</code>. Because <code>a=20</code> inside <code>myfun()</code>, when we call <code>myfun()</code>, we get the value of <code>a</code> within that environment, instead of within the global environment.</figcaption>
+</figure>
 </div>
 </div>
 <div id="tabset-12-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-12-3-tab">
 <div class="cell">
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">a</span> <span class="op">&lt;-</span> <span class="fl">10</span></span>
-<span></span>
-<span><span class="va">myfun</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">a</span> <span class="op">&lt;-</span> <span class="fl">20</span></span>
-<span>  <span class="va">a</span></span>
-<span><span class="op">}</span></span>
-<span></span>
-<span><span class="fu">myfun</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">## [1] 20</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>a <span class="ot">&lt;-</span> <span class="dv">10</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>myfun <span class="ot">&lt;-</span> <span class="cf">function</span>() {</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>  a <span class="ot">&lt;-</span> <span class="dv">20</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>  a</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a><span class="fu">myfun</span>()</span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 20</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div id="tabset-12-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-12-4-tab">
@@ -1077,8 +1075,9 @@ myfun()</code></pre>
 </div>
 <p>The lexical scope of the function is the area that is between the braces (in R) or the indented region (in python). Outside the function, <code>a</code> has the value of 10, but inside the function, <code>a</code> has the value of 20. So when we call <code>myfun()</code>, we get 20, because the scope of <code>myfun</code> is the <strong>local context</strong> where <code>a</code> is evaluated, and the value of <code>a</code> in that environment dominates.</p>
 <p>This is an example of <strong>name masking</strong>, where names defined inside of a function mask names defined outside of a function.</p>
-</section><section id="environments-and-scope" class="level3" data-number="13.5.2"><h3 data-number="13.5.2" class="anchored" data-anchor-id="environments-and-scope">
-<span class="header-section-number">13.5.2</span> Environments and Scope</h3>
+</section>
+<section id="environments-and-scope" class="level3" data-number="13.5.2">
+<h3 data-number="13.5.2" class="anchored" data-anchor-id="environments-and-scope"><span class="header-section-number">13.5.2</span> Environments and Scope</h3>
 <p>Another principle of scoping is that if you call a function and then call the same function again, the function’s environment is re-created each time. Each function call is unrelated to the next function call when the function is defined using local variables.</p>
 <div class="callout callout-style-default callout-caution callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -1091,12 +1090,7 @@ Caution
 </div>
 <div class="callout-body-container callout-body">
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist">
-<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-13-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-13-1" role="tab" aria-controls="tabset-13-1" aria-selected="true">Pseudocode</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-13-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-13-2" role="tab" aria-controls="tabset-13-2" aria-selected="false">Sketch</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-13-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-13-3" role="tab" aria-controls="tabset-13-3" aria-selected="false">R</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-13-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-13-4" role="tab" aria-controls="tabset-13-4" aria-selected="false">Python</a></li>
-</ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-13-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-13-1" role="tab" aria-controls="tabset-13-1" aria-selected="true">Pseudocode</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-13-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-13-2" role="tab" aria-controls="tabset-13-2" aria-selected="false">Sketch</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-13-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-13-3" role="tab" aria-controls="tabset-13-3" aria-selected="false">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-13-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-13-4" role="tab" aria-controls="tabset-13-4" aria-selected="false">Python</a></li></ul>
 <div class="tab-content">
 <div id="tabset-13-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-13-1-tab">
 <pre><code>myfun = function() {
@@ -1113,25 +1107,27 @@ myfun()
 </div>
 <div id="tabset-13-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-13-2-tab">
 <div class="quarto-figure quarto-figure-center">
-<figure class="figure"><p><img src="../images/gen-prog/function-scope-environment.png" class="img-fluid figure-img"></p>
-<figcaption>When we define myfun, we create a template for an environment with variables and code to excecute. Each time <code>myfun()</code> is called, that template is used to create a new environment. This prevents successive calls to <code>myfun()</code> from affecting each other – which means <code>a = 1</code> every time.</figcaption></figure>
+<figure class="figure">
+<p><img src="../images/gen-prog/function-scope-environment.png" class="img-fluid figure-img"></p>
+<figcaption>When we define myfun, we create a template for an environment with variables and code to excecute. Each time <code>myfun()</code> is called, that template is used to create a new environment. This prevents successive calls to <code>myfun()</code> from affecting each other – which means <code>a = 1</code> every time.</figcaption>
+</figure>
 </div>
 </div>
 <div id="tabset-13-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-13-3-tab">
 <div class="cell">
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">myfun</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/exists.html">exists</a></span><span class="op">(</span><span class="st">"aa"</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span>    <span class="va">aa</span> <span class="op">&lt;-</span> <span class="fl">1</span></span>
-<span>  <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
-<span>    <span class="va">aa</span> <span class="op">&lt;-</span> <span class="va">aa</span> <span class="op">+</span> <span class="fl">1</span></span>
-<span>  <span class="op">}</span></span>
-<span>  <span class="kw"><a href="https://rdrr.io/r/base/function.html">return</a></span><span class="op">(</span><span class="va">aa</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
-<span></span>
-<span><span class="fu">myfun</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">## [1] 1</span></span>
-<span><span class="fu">myfun</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">## [1] 1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>myfun <span class="ot">&lt;-</span> <span class="cf">function</span>() {</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">exists</span>(<span class="st">"aa"</span>)) {</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>    aa <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> {</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>    aa <span class="ot">&lt;-</span> aa <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(aa)</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a><span class="fu">myfun</span>()</span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 1</span></span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a><span class="fu">myfun</span>()</span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div id="tabset-13-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-13-4-tab">
@@ -1154,8 +1150,9 @@ myfun()
 </div>
 </div>
 </div>
-</section><section id="dynamic-lookup" class="level3" data-number="13.5.3"><h3 data-number="13.5.3" class="anchored" data-anchor-id="dynamic-lookup">
-<span class="header-section-number">13.5.3</span> Dynamic Lookup</h3>
+</section>
+<section id="dynamic-lookup" class="level3" data-number="13.5.3">
+<h3 data-number="13.5.3" class="anchored" data-anchor-id="dynamic-lookup"><span class="header-section-number">13.5.3</span> Dynamic Lookup</h3>
 <p>Scoping determines where to look for values – when, however, is determined by the sequence of steps in the code. When a function is called, the <strong>calling environment</strong> (the global environment or set of environments at the time the function is called) determines what values are used.</p>
 <p>If an object doesn’t exist in the function’s environment, the global environment will be searched next; if there is no object in the global environment, the program will error out. This behavior, combined with changes in the calling environment over time, can mean that the output of a function can change based on objects outside of the function.</p>
 <div class="callout callout-style-default callout-caution callout-titled">
@@ -1169,12 +1166,7 @@ Caution
 </div>
 <div class="callout-body-container callout-body">
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist">
-<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-14-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-14-1" role="tab" aria-controls="tabset-14-1" aria-selected="true">Pseudocode</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-14-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-14-2" role="tab" aria-controls="tabset-14-2" aria-selected="false">Sketch</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-14-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-14-3" role="tab" aria-controls="tabset-14-3" aria-selected="false">R</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-14-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-14-4" role="tab" aria-controls="tabset-14-4" aria-selected="false">Python</a></li>
-</ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-14-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-14-1" role="tab" aria-controls="tabset-14-1" aria-selected="true">Pseudocode</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-14-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-14-2" role="tab" aria-controls="tabset-14-2" aria-selected="false">Sketch</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-14-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-14-3" role="tab" aria-controls="tabset-14-3" aria-selected="false">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-14-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-14-4" role="tab" aria-controls="tabset-14-4" aria-selected="false">Python</a></li></ul>
 <div class="tab-content">
 <div id="tabset-14-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-14-1-tab">
 <pre><code>myfun = function() x + 1
@@ -1191,25 +1183,27 @@ myfun()
 </div>
 <div id="tabset-14-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-14-2-tab">
 <div class="quarto-figure quarto-figure-center">
-<figure class="figure"><p><img src="../images/gen-prog/function-scope-calling-environment.png" class="img-fluid figure-img"></p>
-<figcaption>The state of the global environment at the time the function is called (that is, the state of the calling environment) can change the results of the function</figcaption></figure>
+<figure class="figure">
+<p><img src="../images/gen-prog/function-scope-calling-environment.png" class="img-fluid figure-img"></p>
+<figcaption>The state of the global environment at the time the function is called (that is, the state of the calling environment) can change the results of the function</figcaption>
+</figure>
 </div>
 </div>
 <div id="tabset-14-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-14-3-tab">
 <div class="cell">
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">myfun</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">x</span> <span class="op">+</span> <span class="fl">1</span></span>
-<span><span class="op">}</span></span>
-<span></span>
-<span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fl">14</span></span>
-<span></span>
-<span><span class="fu">myfun</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">## [1] 15</span></span>
-<span></span>
-<span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fl">20</span></span>
-<span></span>
-<span><span class="fu">myfun</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">## [1] 21</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>myfun <span class="ot">&lt;-</span> <span class="cf">function</span>() {</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>  x <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="dv">14</span></span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a><span class="fu">myfun</span>()</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 15</span></span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="dv">20</span></span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a><span class="fu">myfun</span>()</span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 21</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div id="tabset-14-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-14-4-tab">
@@ -1246,40 +1240,35 @@ Try It Out: Function Scope
 <div class="callout-body-container callout-body">
 <p>What does the following function return? Make a prediction, then run the code yourself. <span class="citation" data-cites="advr">From <a href="#ref-advr" role="doc-biblioref">[2, Ch. 6]</a></span></p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist">
-<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-15-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-15-1" role="tab" aria-controls="tabset-15-1" aria-selected="true">R code</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-15-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-15-2" role="tab" aria-controls="tabset-15-2" aria-selected="false">R solution</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-15-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-15-3" role="tab" aria-controls="tabset-15-3" aria-selected="false">Python code</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-15-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-15-4" role="tab" aria-controls="tabset-15-4" aria-selected="false">Python solution</a></li>
-</ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-15-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-15-1" role="tab" aria-controls="tabset-15-1" aria-selected="true">R code</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-15-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-15-2" role="tab" aria-controls="tabset-15-2" aria-selected="false">R solution</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-15-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-15-3" role="tab" aria-controls="tabset-15-3" aria-selected="false">Python code</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-15-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-15-4" role="tab" aria-controls="tabset-15-4" aria-selected="false">Python solution</a></li></ul>
 <div class="tab-content">
 <div id="tabset-15-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-15-1-tab">
 <div class="cell">
-<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">f</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">f</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
-<span>    <span class="va">f</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="op">{</span></span>
-<span>      <span class="va">x</span> <span class="op">^</span> <span class="fl">2</span></span>
-<span>    <span class="op">}</span></span>
-<span>    <span class="fu">f</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1</span></span>
-<span>  <span class="op">}</span></span>
-<span>  <span class="fu">f</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">*</span> <span class="fl">2</span></span>
-<span><span class="op">}</span></span>
-<span><span class="fu">f</span><span class="op">(</span><span class="fl">10</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>f <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>  f <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>    f <span class="ot">&lt;-</span> <span class="cf">function</span>() {</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>      x <span class="sc">^</span> <span class="dv">2</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">f</span>() <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">f</span>(x) <span class="sc">*</span> <span class="dv">2</span></span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a><span class="fu">f</span>(<span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div id="tabset-15-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-15-2-tab">
 <div class="cell">
-<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">f</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">f</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
-<span>    <span class="va">f</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="op">)</span> <span class="op">{</span></span>
-<span>      <span class="va">x</span> <span class="op">^</span> <span class="fl">2</span></span>
-<span>    <span class="op">}</span></span>
-<span>    <span class="fu">f</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fl">1</span></span>
-<span>  <span class="op">}</span></span>
-<span>  <span class="fu">f</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">*</span> <span class="fl">2</span></span>
-<span><span class="op">}</span></span>
-<span><span class="fu">f</span><span class="op">(</span><span class="fl">10</span><span class="op">)</span></span>
-<span><span class="co">## [1] 202</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>f <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  f <span class="ot">&lt;-</span> <span class="cf">function</span>(x) {</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>    f <span class="ot">&lt;-</span> <span class="cf">function</span>() {</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>      x <span class="sc">^</span> <span class="dv">2</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">f</span>() <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">f</span>(x) <span class="sc">*</span> <span class="dv">2</span></span>
+<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a><span class="fu">f</span>(<span class="dv">10</span>)</span>
+<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 202</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div id="tabset-15-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-15-3-tab">
@@ -1311,32 +1300,36 @@ Try It Out: Function Scope
 </div>
 </div>
 </div>
-</section></section><section id="sec-functions-refs" class="level2" data-number="13.6"><h2 data-number="13.6" class="anchored" data-anchor-id="sec-functions-refs">
-<span class="header-section-number">13.6</span> References</h2>
+</section>
+</section>
+<section id="sec-functions-refs" class="level2" data-number="13.6">
+<h2 data-number="13.6" class="anchored" data-anchor-id="sec-functions-refs"><span class="header-section-number">13.6</span> References</h2>
 
 
 <div id="refs" class="references csl-bib-body" data-entry-spacing="0" role="list">
 <div id="ref-r4ds" class="csl-entry" role="listitem">
-<div class="csl-left-margin">[1] </div>
-<div class="csl-right-inline">G. Grolemund and H. Wickham, <em>R for <span>Data</span> <span>Science</span></em>, 1st ed. O’Reilly Media, 2017 [Online]. Available: <a href="https://r4ds.had.co.nz/">https://r4ds.had.co.nz/</a>. [Accessed: May 09, 2022]</div>
+<div class="csl-left-margin">[1] </div><div class="csl-right-inline">G. Grolemund and H. Wickham, <em>R for <span>Data</span> <span>Science</span></em>, 1st ed. O’Reilly Media, 2017 [Online]. Available: <a href="https://r4ds.had.co.nz/">https://r4ds.had.co.nz/</a>. [Accessed: May 09, 2022]</div>
 </div>
 <div id="ref-advr" class="csl-entry" role="listitem">
-<div class="csl-left-margin">[2] </div>
-<div class="csl-right-inline">H. Wickham, <em>Advanced <span>R</span></em>, 2nd ed. CRC Press, 2019 [Online]. Available: <a href="http://adv-r.had.co.nz/">http://adv-r.had.co.nz/</a>. [Accessed: May 09, 2022]</div>
+<div class="csl-left-margin">[2] </div><div class="csl-right-inline">H. Wickham, <em>Advanced <span>R</span></em>, 2nd ed. CRC Press, 2019 [Online]. Available: <a href="http://adv-r.had.co.nz/">http://adv-r.had.co.nz/</a>. [Accessed: May 09, 2022]</div>
 </div>
 <div id="ref-DefensiveProgramming2022" class="csl-entry" role="listitem">
-<div class="csl-left-margin">[3] </div>
-<div class="csl-right-inline">Wikipedia Contributors, <span>“Defensive programming,”</span> <em>Wikipedia</em>. Wikimedia Foundation, Apr. 2022 [Online]. Available: <a href="https://en.wikipedia.org/w/index.php?title=Defensive_programming&amp;oldid=1084121123">https://en.wikipedia.org/w/index.php?title=Defensive_programming&amp;oldid=1084121123</a>. [Accessed: May 31, 2022]</div>
+<div class="csl-left-margin">[3] </div><div class="csl-right-inline">Wikipedia Contributors, <span>“Defensive programming,”</span> <em>Wikipedia</em>. Wikimedia Foundation, Apr. 2022 [Online]. Available: <a href="https://en.wikipedia.org/w/index.php?title=Defensive_programming&amp;oldid=1084121123">https://en.wikipedia.org/w/index.php?title=Defensive_programming&amp;oldid=1084121123</a>. [Accessed: May 31, 2022]</div>
 </div>
 <div id="ref-martelliPythonCookbook2002" class="csl-entry" role="listitem">
-<div class="csl-left-margin">[4] </div>
-<div class="csl-right-inline">A. Martelli and D. Ascher, <em>Python <span>Cookbook</span></em>. O’Reilly Media, 2002 [Online]. Available: <a href="https://learning.oreilly.com/library/view/python-cookbook/0596001673/ch05s24.html">https://learning.oreilly.com/library/view/python-cookbook/0596001673/ch05s24.html</a>. [Accessed: May 31, 2022]</div>
+<div class="csl-left-margin">[4] </div><div class="csl-right-inline">A. Martelli and D. Ascher, <em>Python <span>Cookbook</span></em>. O’Reilly Media, 2002 [Online]. Available: <a href="https://learning.oreilly.com/library/view/python-cookbook/0596001673/ch05s24.html">https://learning.oreilly.com/library/view/python-cookbook/0596001673/ch05s24.html</a>. [Accessed: May 31, 2022]</div>
 </div>
 </div>
-</section><aside id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><hr>
+</section>
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr>
 <ol>
 <li id="fn1"><p>This is not strictly true, you can of course use pass-by-reference, but we will not be covering that in this class as we are strictly dealing with the bare minimum of learning how to write a function here.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-</ol></aside></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
+</ol>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
     const mode = bsSheetEl.getAttribute("data-mode");
@@ -1515,18 +1508,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -1558,7 +1540,47 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/srvanderplas\.github\.io\/stat-computing-r-python\/");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
   function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
@@ -1593,7 +1615,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
     });
   }
   const xrefs = window.document.querySelectorAll('a.quarto-xref');
@@ -1608,27 +1634,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       }
     }
     stripColumnClz(note)
-    const typesetMath = (el) => {
-      if (window.MathJax) {
-        // MathJax Typeset
-        window.MathJax.typeset([el]);
-      } else if (window.katex) {
-        // KaTeX Render
-        var mathElements = el.getElementsByClassName("math");
-        var macros = [];
-        for (var i = 0; i < mathElements.length; i++) {
-          var texText = mathElements[i].firstChild;
-          if (mathElements[i].tagName == "SPAN") {
-            window.katex.render(texText.data, mathElements[i], {
-              displayMode: mathElements[i].classList.contains('display'),
-              throwOnError: false,
-              macros: macros,
-              fleqn: false
-            });
-          }
-        }
-      }
-    }
     if (id === null || id.startsWith('sec-')) {
       // Special case sections, only their first couple elements
       const container = document.createElement("div");
@@ -1643,10 +1648,14 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             break;
           }
         }
-        typesetMath(container);
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
         return container.innerHTML
       } else {
-        typesetMath(note);
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
         return note.innerHTML;
       }
     } else {
@@ -1655,8 +1664,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       if (anchorLink) {
         anchorLink.remove();
       }
-      typesetMath(note);
-      return note.innerHTML;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
     }
   }
   for (var i=0; i<xrefs.length; i++) {
@@ -1876,29 +1892,35 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
   }
 });
-</script><script src="https://giscus.app/client.js" data-repo="srvanderplas/stat-computing-r-python" data-repo-id="R_kgDOIvwd2g" data-category="General" data-category-id="DIC_kwDOIvwd2s4CTksR" data-mapping="pathname" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="light" data-lang="en" crossorigin="anonymous" async="">
-</script><input type="hidden" id="giscus-base-theme" value="light"><input type="hidden" id="giscus-alt-theme" value="dark"><nav class="page-navigation"><div class="nav-page nav-page-previous">
-      <a href="../part-gen-prog/04-control-struct.html" class="pagination-link  aria-label=" structures="">
+</script>
+<script src="https://giscus.app/client.js" data-repo="srvanderplas/stat-computing-r-python" data-repo-id="R_kgDOIvwd2g" data-category="General" data-category-id="DIC_kwDOIvwd2s4CTksR" data-mapping="pathname" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="light" data-lang="en" crossorigin="anonymous" async="">
+</script>
+<input type="hidden" id="giscus-base-theme" value="light">
+<input type="hidden" id="giscus-alt-theme" value="dark">
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../part-gen-prog/04-control-struct.html" class="pagination-link" aria-label="Control Structures">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Control Structures</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../part-gen-prog/06-debugging.html" class="pagination-link" aria-label="<span class='chapter-number'>14</span>&nbsp; <span class='chapter-title'>Debugging</span>">
+      <a href="../part-gen-prog/06-debugging.html" class="pagination-link" aria-label="Debugging">
         <span class="nav-page-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Debugging</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
 </div> <!-- /content -->
-<footer class="footer"><div class="nav-footer">
+<footer class="footer">
+  <div class="nav-footer">
     <div class="nav-footer-left">
 <p>Copyright 2024, Susan Vanderplas</p>
 </div>   
     <div class="nav-footer-center">
       &nbsp;
-    </div>
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/srvanderplas/stat-computing-r-python/edit/main/part-gen-prog/05-functions.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li></ul></div></div>
     <div class="nav-footer-right">
       <ul class="footer-items list-unstyled">
-<li class="nav-item compact">
+    <li class="nav-item compact">
     <a class="nav-link" href="https://github.com/srvanderplas">
       <i class="bi bi-github" role="img">
 </i> 
@@ -1917,9 +1939,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     </a>
   </li>  
 </ul>
-</div>
+    </div>
   </div>
 </footer>
+
+
 
 
 </body></html>

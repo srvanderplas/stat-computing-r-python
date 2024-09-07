@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.515">
+<meta name="generator" content="quarto-1.5.57">
+
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
 <meta name="dcterms.date" content="2024-09-07">
-<title>Statistical Computing using R and Python - 12&nbsp; Control Structures</title>
+
+<title>12&nbsp; Control Structures – Statistical Computing using R and Python</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -31,7 +34,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -53,6 +56,7 @@ div.sourceCode
 pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
 }
 </style>
+
 
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../site_libs/quarto-nav/headroom.min.js"></script>
@@ -76,7 +80,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
 <link href="../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <link href="../site_libs/quarto-contrib/fontawesome6-0.1.0/all.css" rel="stylesheet">
-<link href="../site_libs/quarto-contrib/fontawesome6-0.1.0/latex-fontsize.css" rel="stylesheet"><script id="quarto-search-options" type="application/json">{
+<link href="../site_libs/quarto-contrib/fontawesome6-0.1.0/latex-fontsize.css" rel="stylesheet">
+<script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
   "collapse-after": 3,
@@ -97,35 +102,79 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-more-match-text": "more match in this document",
     "search-more-matches-text": "more matches in this document",
     "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancel",
     "search-submit-button-title": "Submit",
     "search-label": "Search"
   }
-}</script><script async="" src="https://www.googletagmanager.com/gtag/js?id=G-4ZFBDKXJXP"></script><script type="text/javascript">
+}</script>
+<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-4ZFBDKXJXP"></script>
+
+<script type="text/javascript">
 
 window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
-</script><script src="https://kit.fontawesome.com/baac5f0610.js" crossorigin="anonymous"></script><script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script><script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script><link rel="stylesheet" href="../build_deps/style.css">
+</script>
+<script src="https://kit.fontawesome.com/baac5f0610.js" crossorigin="anonymous"></script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../build_deps/style.css">
 </head>
+
 <body class="nav-sidebar floating">
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top"><nav class="quarto-secondary-nav"><div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
         <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../part-gen-prog/00-gen-prog.html">Part II: General Programming</a></li><li class="breadcrumb-item"><a href="../part-gen-prog/04-control-struct.html"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Control Structures</span></a></li></ol></nav>
-        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
-      <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
         <i class="bi bi-search"></i>
       </button>
     </div>
-  </nav></header><!-- content --><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto"><div class="pt-lg-2 mt-2 text-left sidebar-header">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="../">Statistical Computing using R and Python</a> 
         <div class="sidebar-tools-main">
@@ -141,7 +190,7 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
         </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
-<li class="sidebar-item">
+        <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Preface</span></a>
@@ -151,12 +200,12 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
       <div class="sidebar-item-container"> 
             <a href="../part-tools/00-tools-intro.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Part I: Tools</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">
-<li class="sidebar-item">
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../part-tools/01-computer-basics.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Computer Basics</span></span></a>
@@ -193,17 +242,17 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
   </div>
 </li>
       </ul>
-</li>
+  </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="../part-gen-prog/00-gen-prog.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Part II: General Programming</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">
-<li class="sidebar-item">
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../part-gen-prog/00-intro.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Introduction to Programming</span></span></a>
@@ -264,17 +313,17 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
   </div>
 </li>
       </ul>
-</li>
+  </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="../part-wrangling/00-wrangling.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Part III: Data Wrangling</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">
-<li class="sidebar-item">
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../part-wrangling/01-data-input.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Data Input</span></span></a>
@@ -347,17 +396,17 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
   </div>
 </li>
       </ul>
-</li>
+  </li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="../part-advanced-topics/00-advanced.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Part IV: Advanced Topics</span></a>
-          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" aria-expanded="true" aria-label="Toggle section">
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">
-<li class="sidebar-item">
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
+          <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../part-advanced-topics/01-simulation.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Simulation and Reproducibility</span></span></a>
@@ -370,7 +419,7 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
   </div>
 </li>
       </ul>
-</li>
+  </li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../graveyard.html" class="sidebar-item-text sidebar-link">
@@ -378,41 +427,41 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
   </div>
 </li>
     </ul>
-</div>
-</nav><div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        <nav id="TOC" role="doc-toc" class="toc-active"><h2 id="toc-title">Table of contents</h2>
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
    
   <ul>
-<li><a href="#objectives" id="toc-objectives" class="nav-link active" data-scroll-target="#objectives"><span class="header-section-number">12.1</span> <i class="fa-solid fa-bullseye" aria-label="bullseye"></i> Objectives</a></li>
+  <li><a href="#objectives" id="toc-objectives" class="nav-link active" data-scroll-target="#objectives"><span class="header-section-number">12.1</span> <i class="fa-solid fa-bullseye" aria-label="bullseye"></i> Objectives</a></li>
   <li><a href="#mindset" id="toc-mindset" class="nav-link" data-scroll-target="#mindset"><span class="header-section-number">12.2</span> Mindset</a></li>
-  <li>
-<a href="#conditional-statements" id="toc-conditional-statements" class="nav-link" data-scroll-target="#conditional-statements"><span class="header-section-number">12.3</span> Conditional Statements</a>
+  <li><a href="#conditional-statements" id="toc-conditional-statements" class="nav-link" data-scroll-target="#conditional-statements"><span class="header-section-number">12.3</span> Conditional Statements</a>
   <ul class="collapse">
-<li><a href="#representing-conditional-statements-as-diagrams" id="toc-representing-conditional-statements-as-diagrams" class="nav-link" data-scroll-target="#representing-conditional-statements-as-diagrams"><span class="header-section-number">12.3.1</span> Representing Conditional Statements as Diagrams</a></li>
+  <li><a href="#representing-conditional-statements-as-diagrams" id="toc-representing-conditional-statements-as-diagrams" class="nav-link" data-scroll-target="#representing-conditional-statements-as-diagrams"><span class="header-section-number">12.3.1</span> Representing Conditional Statements as Diagrams</a></li>
   <li><a href="#chaining-conditional-statements-else-if" id="toc-chaining-conditional-statements-else-if" class="nav-link" data-scroll-target="#chaining-conditional-statements-else-if"><span class="header-section-number">12.3.2</span> Chaining Conditional Statements: Else-If</a></li>
-  </ul>
-</li>
-  <li>
-<a href="#loops" id="toc-loops" class="nav-link" data-scroll-target="#loops"><span class="header-section-number">12.4</span> Loops</a>
+  </ul></li>
+  <li><a href="#loops" id="toc-loops" class="nav-link" data-scroll-target="#loops"><span class="header-section-number">12.4</span> Loops</a>
   <ul class="collapse">
-<li><a href="#while-loops" id="toc-while-loops" class="nav-link" data-scroll-target="#while-loops"><span class="header-section-number">12.4.1</span> While Loops</a></li>
+  <li><a href="#while-loops" id="toc-while-loops" class="nav-link" data-scroll-target="#while-loops"><span class="header-section-number">12.4.1</span> While Loops</a></li>
   <li><a href="#for-loops" id="toc-for-loops" class="nav-link" data-scroll-target="#for-loops"><span class="header-section-number">12.4.2</span> For Loops</a></li>
-  </ul>
-</li>
-  <li>
-<a href="#other-control-structures" id="toc-other-control-structures" class="nav-link" data-scroll-target="#other-control-structures"><span class="header-section-number">12.5</span> Other Control Structures</a>
+  </ul></li>
+  <li><a href="#other-control-structures" id="toc-other-control-structures" class="nav-link" data-scroll-target="#other-control-structures"><span class="header-section-number">12.5</span> Other Control Structures</a>
   <ul class="collapse">
-<li><a href="#conditional-statements-1" id="toc-conditional-statements-1" class="nav-link" data-scroll-target="#conditional-statements-1"><span class="header-section-number">12.5.1</span> Conditional Statements</a></li>
+  <li><a href="#conditional-statements-1" id="toc-conditional-statements-1" class="nav-link" data-scroll-target="#conditional-statements-1"><span class="header-section-number">12.5.1</span> Conditional Statements</a></li>
   <li><a href="#loops-1" id="toc-loops-1" class="nav-link" data-scroll-target="#loops-1"><span class="header-section-number">12.5.2</span> Loops</a></li>
-  </ul>
-</li>
+  </ul></li>
   <li><a href="#sec-control-struct-refs" id="toc-sec-control-struct-refs" class="nav-link" data-scroll-target="#sec-control-struct-refs"><span class="header-section-number">12.6</span> References</a></li>
-  </ul><div class="toc-actions"><ul><li><a href="https://github.com/srvanderplas/stat-computing-r-python/edit/main/part-gen-prog/04-control-struct.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li></ul></div></nav>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/srvanderplas/stat-computing-r-python/edit/main/part-gen-prog/04-control-struct.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../part-gen-prog/00-gen-prog.html">Part II: General Programming</a></li><li class="breadcrumb-item"><a href="../part-gen-prog/04-control-struct.html"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Control Structures</span></a></li></ol></nav><div class="quarto-title">
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../part-gen-prog/00-gen-prog.html">Part II: General Programming</a></li><li class="breadcrumb-item"><a href="../part-gen-prog/04-control-struct.html"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Control Structures</span></a></li></ol></nav>
+<div class="quarto-title">
 <h1 class="title"><span id="sec-control-struct" class="quarto-section-identifier"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Control Structures</span></span></h1>
 </div>
 
@@ -433,17 +482,22 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
   
 
 
-</header><p>Control structures are statements in a program that determine when code is evaluated (and how many times it might be evaluated). There are two main types of control structures: if-statements and loops.</p>
-<section id="objectives" class="level2" data-number="12.1"><h2 data-number="12.1" class="anchored" data-anchor-id="objectives">
-<span class="header-section-number">12.1</span> <i class="fa-solid fa-bullseye" aria-label="bullseye"></i> Objectives</h2>
+</header>
+
+
+<p>Control structures are statements in a program that determine when code is evaluated (and how many times it might be evaluated). There are two main types of control structures: if-statements and loops.</p>
+<section id="objectives" class="level2" data-number="12.1">
+<h2 data-number="12.1" class="anchored" data-anchor-id="objectives"><span class="header-section-number">12.1</span> <i class="fa-solid fa-bullseye" aria-label="bullseye"></i> Objectives</h2>
 <ul>
 <li>Understand how to use conditional statements</li>
 <li>Understand how conditional statements are evaluated by a program</li>
 <li>Use program flow diagrams to break a problem into parts and evaluate how a program will execute</li>
 <li>Understand how to use loops</li>
 <li>Select the appropriate type of loop for a problem</li>
-</ul></section><section id="mindset" class="level2" data-number="12.2"><h2 data-number="12.2" class="anchored" data-anchor-id="mindset">
-<span class="header-section-number">12.2</span> Mindset</h2>
+</ul>
+</section>
+<section id="mindset" class="level2" data-number="12.2">
+<h2 data-number="12.2" class="anchored" data-anchor-id="mindset"><span class="header-section-number">12.2</span> Mindset</h2>
 <p>Before we start on the types of control structures, let’s get in the right mindset. We’re all used to “if-then” logic, and use it in everyday conversation, but computers require another level of specificity when you’re trying to provide instructions.</p>
 <p>Check out this video of the classic “make a peanut butter sandwich instructions challenge”:</p>
 <div class="youtube-video-container">
@@ -452,12 +506,15 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
 </div>
 <p>Here’s another example:</p>
 <div class="quarto-figure quarto-figure-center">
-<figure class="figure"><p><img src="../images/gen-prog/conditionals.png" class="img-fluid figure-img"></p>
-<figcaption>‘If you’re done being pedantic, we should get dinner.’ ‘You did it again!’ ‘No, I didn’t.’ Image from Randal Munroe, xkcd.com, available under a <a href="https://creativecommons.org/licenses/by-nc/2.5/">CC-By 2.5 license</a>.</figcaption></figure>
+<figure class="figure">
+<p><img src="../images/gen-prog/conditionals.png" class="img-fluid figure-img"></p>
+<figcaption>‘If you’re done being pedantic, we should get dinner.’ ‘You did it again!’ ‘No, I didn’t.’ Image from Randal Munroe, xkcd.com, available under a <a href="https://creativecommons.org/licenses/by-nc/2.5/">CC-By 2.5 license</a>.</figcaption>
+</figure>
 </div>
 <p>The key takeaways from these bits of media are that you should read this section with a focus on exact precision - state <em>exactly</em> what you mean, and the computer will do what you say. If you instead expect the computer to get what you mean, you’re going to have a bad time.</p>
-</section><section id="conditional-statements" class="level2" data-number="12.3"><h2 data-number="12.3" class="anchored" data-anchor-id="conditional-statements">
-<span class="header-section-number">12.3</span> Conditional Statements</h2>
+</section>
+<section id="conditional-statements" class="level2" data-number="12.3">
+<h2 data-number="12.3" class="anchored" data-anchor-id="conditional-statements"><span class="header-section-number">12.3</span> Conditional Statements</h2>
 <p>Conditional statements determine if code is evaluated.</p>
 <p>They look like this:</p>
 <pre><code>if (condition)
@@ -469,34 +526,31 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
 <p>When this statement is read by the computer, the computer checks to see if condition is true or false. If the condition is true, then (thing to do) is also run. If the condition is false, then (other thing to do) is run instead.</p>
 <p>Let’s try this out:</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist">
-<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" aria-current="page">R</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Python</a></li>
-</ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" aria-current="page">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Python</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <div class="cell">
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fl">3</span></span>
-<span><span class="va">y</span> <span class="op">&lt;-</span> <span class="fl">1</span></span>
-<span></span>
-<span><span class="kw">if</span> <span class="op">(</span><span class="va">x</span> <span class="op">&gt;</span> <span class="fl">2</span><span class="op">)</span> <span class="op">{</span> </span>
-<span>  <span class="va">y</span> <span class="op">&lt;-</span> <span class="fl">8</span></span>
-<span><span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
-<span>  <span class="va">y</span> <span class="op">&lt;-</span> <span class="fl">4</span></span>
-<span><span class="op">}</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"x ="</span>, <span class="va">x</span>, <span class="st">"; y ="</span>, <span class="va">y</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">## [1] "x = 3 ; y = 8"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="dv">3</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (x <span class="sc">&gt;</span> <span class="dv">2</span>) { </span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  y <span class="ot">&lt;-</span> <span class="dv">8</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  y <span class="ot">&lt;-</span> <span class="dv">4</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"x ="</span>, x, <span class="st">"; y ="</span>, y))</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "x = 3 ; y = 8"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>In R, the logical condition after <code>if</code> must be in parentheses. It is common to then enclose the statement to be run if the condition is true in <code><a href="https://rdrr.io/r/base/Paren.html">{}</a></code> so that it is clear what code matches the if statement. You can technically put the condition on the line after the <code>if (x &gt; 2)</code> line, and everything will still work, but then it gets hard to figure out what to do with the else statement - it technically would also go on the same line, and that gets hard to read.</p>
+<p>In R, the logical condition after <code>if</code> must be in parentheses. It is common to then enclose the statement to be run if the condition is true in <code>{}</code> so that it is clear what code matches the if statement. You can technically put the condition on the line after the <code>if (x &gt; 2)</code> line, and everything will still work, but then it gets hard to figure out what to do with the else statement - it technically would also go on the same line, and that gets hard to read.</p>
 <div class="cell">
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fl">3</span></span>
-<span><span class="va">y</span> <span class="op">&lt;-</span> <span class="fl">1</span></span>
-<span></span>
-<span><span class="kw">if</span> <span class="op">(</span><span class="va">x</span> <span class="op">&gt;</span> <span class="fl">2</span><span class="op">)</span> <span class="va">y</span> <span class="op">&lt;-</span> <span class="fl">8</span> <span class="kw">else</span> <span class="va">y</span> <span class="op">&lt;-</span> <span class="fl">4</span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"x ="</span>, <span class="va">x</span>, <span class="st">"; y ="</span>, <span class="va">y</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">## [1] "x = 3 ; y = 8"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="dv">3</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (x <span class="sc">&gt;</span> <span class="dv">2</span>) y <span class="ot">&lt;-</span> <span class="dv">8</span> <span class="cf">else</span> y <span class="ot">&lt;-</span> <span class="dv">4</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"x ="</span>, x, <span class="st">"; y ="</span>, y))</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "x = 3 ; y = 8"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>So while the 2nd version of the code technically works, the first version with the brackets is much easier to read and understand. Please try to emulate the first version!</p>
 </div>
@@ -531,16 +585,19 @@ Warning
 <p>Python will throw errors if you mess up the spacing. This is one thing that is very annoying about Python… but it’s a consequence of trying to make the code more readable.</p>
 </div>
 </div>
-<section id="representing-conditional-statements-as-diagrams" class="level3" data-number="12.3.1"><h3 data-number="12.3.1" class="anchored" data-anchor-id="representing-conditional-statements-as-diagrams">
-<span class="header-section-number">12.3.1</span> Representing Conditional Statements as Diagrams</h3>
+<section id="representing-conditional-statements-as-diagrams" class="level3" data-number="12.3.1">
+<h3 data-number="12.3.1" class="anchored" data-anchor-id="representing-conditional-statements-as-diagrams"><span class="header-section-number">12.3.1</span> Representing Conditional Statements as Diagrams</h3>
 <p>A common way to represent conditional logic is to draw a flow chart diagram.</p>
 <p>In a flow chart, conditional statements are represented as diamonds, and other code is represented as a rectangle. Yes/no or True/False branches are labeled. Typically, after a conditional statement, the program flow returns to a single point.</p>
 <div class="quarto-figure quarto-figure-center">
-<figure class="figure"><p><img src="../images/gen-prog/flow-chart1.png" class="img-fluid figure-img"></p>
-<figcaption>Program flow diagram outline of a simple if/else statement</figcaption></figure>
+<figure class="figure">
+<p><img src="../images/gen-prog/flow-chart1.png" class="img-fluid figure-img"></p>
+<figcaption>Program flow diagram outline of a simple if/else statement</figcaption>
+</figure>
 </div>
-</section><section id="chaining-conditional-statements-else-if" class="level3" data-number="12.3.2"><h3 data-number="12.3.2" class="anchored" data-anchor-id="chaining-conditional-statements-else-if">
-<span class="header-section-number">12.3.2</span> Chaining Conditional Statements: Else-If</h3>
+</section>
+<section id="chaining-conditional-statements-else-if" class="level3" data-number="12.3.2">
+<h3 data-number="12.3.2" class="anchored" data-anchor-id="chaining-conditional-statements-else-if"><span class="header-section-number">12.3.2</span> Chaining Conditional Statements: Else-If</h3>
 <p>In many cases, it can be helpful to have a long chain of conditional statements describing a sequence of alternative statements.</p>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -554,49 +611,51 @@ Example - Conditional Evaluation
 <div class="callout-body-container callout-body">
 <p>Suppose I want to determine what categorical age bracket someone falls into based on their numerical age. All of the bins are mutually exclusive - you can’t be in the 25-40 bracket and the 41-55 bracket.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist">
-<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">Program Flow Map</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">R</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-3" role="tab" aria-controls="tabset-2-3" aria-selected="false">Python</a></li>
-</ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">Program Flow Map</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-3" role="tab" aria-controls="tabset-2-3" aria-selected="false">Python</a></li></ul>
 <div class="tab-content">
 <div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
 <div class="quarto-figure quarto-figure-center">
-<figure class="figure"><p><img src="../images/gen-prog/age-category-prog-flow.png" class="img-fluid figure-img"></p>
-<figcaption>Program flow map for a series of mutually exclusive categories. If our goal is to take a numeric age variable and create a categorical set of age brackets, such as &lt;18, 18-25, 26-40, 41-55, 56-65, and &gt;65, we can do this with a series of if-else statements chained together. Only one of the bracket assignments is evaluated, so it is important to place the most restrictive condition first.</figcaption></figure>
+<figure class="figure">
+<p><img src="../images/gen-prog/age-category-prog-flow.png" class="img-fluid figure-img"></p>
+<figcaption>Program flow map for a series of mutually exclusive categories. If our goal is to take a numeric age variable and create a categorical set of age brackets, such as &lt;18, 18-25, 26-40, 41-55, 56-65, and &gt;65, we can do this with a series of if-else statements chained together. Only one of the bracket assignments is evaluated, so it is important to place the most restrictive condition first.</figcaption>
+</figure>
 </div>
 <p>The important thing to realize when examining this program flow map is that if <code>age &lt;= 18</code> is true, then <strong>none of the other conditional statements even get evaluated</strong>. That is, once a statement is true, none of the other statements matter. Because of this, it is important to place the most restrictive statement first.</p>
 <div class="quarto-figure quarto-figure-center">
-<figure class="figure"><p><img src="../images/gen-prog/age-category-prog-flow2.png" class="img-fluid figure-img"></p>
-<figcaption>Program flow map for a series of mutually exclusive categories, emphasizing that only some statements are evaluated. When age = 40, only (age &lt;= 18), (age &lt;= 25), and (age &lt;= 40) are evaluated conditionally. Of the assignment statements, only bracket = ‘26-40’ is evaluated when age = 40.</figcaption></figure>
+<figure class="figure">
+<p><img src="../images/gen-prog/age-category-prog-flow2.png" class="img-fluid figure-img"></p>
+<figcaption>Program flow map for a series of mutually exclusive categories, emphasizing that only some statements are evaluated. When age = 40, only (age &lt;= 18), (age &lt;= 25), and (age &lt;= 40) are evaluated conditionally. Of the assignment statements, only bracket = ‘26-40’ is evaluated when age = 40.</figcaption>
+</figure>
 </div>
 <p>If for some reason you wrote your conditional statements in the wrong order, the wrong label would get assigned:</p>
 <div class="quarto-figure quarto-figure-center">
-<figure class="figure"><p><img src="../images/gen-prog/age-category-prog-flow3.png" class="img-fluid figure-img"></p>
-<figcaption>Program flow map for a series of mutually exclusive categories, with category labels in the wrong order - &lt;40 is evaluated first, and so &lt;= 25 and &lt;= 18 will never be evaluated and the wrong label will be assigned for anything in those categories.</figcaption></figure>
+<figure class="figure">
+<p><img src="../images/gen-prog/age-category-prog-flow3.png" class="img-fluid figure-img"></p>
+<figcaption>Program flow map for a series of mutually exclusive categories, with category labels in the wrong order - &lt;40 is evaluated first, and so &lt;= 25 and &lt;= 18 will never be evaluated and the wrong label will be assigned for anything in those categories.</figcaption>
+</figure>
 </div>
 <p>In code, we would write this statement using <code>else-if</code> (or <code>elif</code>) statements.</p>
 </div>
 <div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
 <div class="cell">
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">age</span> <span class="op">&lt;-</span> <span class="fl">40</span> <span class="co"># change this as you will to see how the code works</span></span>
-<span></span>
-<span><span class="kw">if</span> <span class="op">(</span><span class="va">age</span> <span class="op">&lt;</span> <span class="fl">18</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">bracket</span> <span class="op">&lt;-</span> <span class="st">"&lt;18"</span></span>
-<span><span class="op">}</span> <span class="kw">else</span> <span class="kw">if</span> <span class="op">(</span><span class="va">age</span> <span class="op">&lt;=</span> <span class="fl">25</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">bracket</span> <span class="op">&lt;-</span> <span class="st">"18-25"</span></span>
-<span><span class="op">}</span> <span class="kw">else</span> <span class="kw">if</span> <span class="op">(</span><span class="va">age</span> <span class="op">&lt;=</span> <span class="fl">40</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">bracket</span> <span class="op">&lt;-</span> <span class="st">"26-40"</span></span>
-<span><span class="op">}</span> <span class="kw">else</span> <span class="kw">if</span> <span class="op">(</span><span class="va">age</span> <span class="op">&lt;=</span> <span class="fl">55</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">bracket</span> <span class="op">&lt;-</span> <span class="st">"41-55"</span> </span>
-<span><span class="op">}</span> <span class="kw">else</span> <span class="kw">if</span> <span class="op">(</span><span class="va">age</span> <span class="op">&lt;=</span> <span class="fl">65</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">bracket</span> <span class="op">&lt;-</span> <span class="st">"56-65"</span></span>
-<span><span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
-<span>  <span class="va">bracket</span> <span class="op">&lt;-</span> <span class="st">"&gt;65"</span></span>
-<span><span class="op">}</span></span>
-<span></span>
-<span><span class="va">bracket</span></span>
-<span><span class="co">## [1] "26-40"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>age <span class="ot">&lt;-</span> <span class="dv">40</span> <span class="co"># change this as you will to see how the code works</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (age <span class="sc">&lt;</span> <span class="dv">18</span>) {</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  bracket <span class="ot">&lt;-</span> <span class="st">"&lt;18"</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> <span class="cf">if</span> (age <span class="sc">&lt;=</span> <span class="dv">25</span>) {</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  bracket <span class="ot">&lt;-</span> <span class="st">"18-25"</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> <span class="cf">if</span> (age <span class="sc">&lt;=</span> <span class="dv">40</span>) {</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  bracket <span class="ot">&lt;-</span> <span class="st">"26-40"</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> <span class="cf">if</span> (age <span class="sc">&lt;=</span> <span class="dv">55</span>) {</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  bracket <span class="ot">&lt;-</span> <span class="st">"41-55"</span> </span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> <span class="cf">if</span> (age <span class="sc">&lt;=</span> <span class="dv">65</span>) {</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  bracket <span class="ot">&lt;-</span> <span class="st">"56-65"</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  bracket <span class="ot">&lt;-</span> <span class="st">"&gt;65"</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>bracket</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "26-40"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div id="tabset-2-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-3-tab">
@@ -636,21 +695,18 @@ Try it out - Chained If/Else Statements
 </div>
 <div class="callout-body-container callout-body">
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist">
-<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">Problem</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">Flow Map</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-3" role="tab" aria-controls="tabset-3-3" aria-selected="false">R Solution</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-4" role="tab" aria-controls="tabset-3-4" aria-selected="false">Python Solution</a></li>
-</ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">Problem</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">Flow Map</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-3" role="tab" aria-controls="tabset-3-3" aria-selected="false">R Solution</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-4" role="tab" aria-controls="tabset-3-4" aria-selected="false">Python Solution</a></li></ul>
 <div class="tab-content">
 <div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
 <p>The US Tax code has brackets, such that the first $10,275 of your income is taxed at 10%, anything between $10,275 and $41,775 is taxed at 12%, and so on.</p>
 <p>Here is the table of tax brackets for single filers in 2022:</p>
-<table class="table">
-<thead><tr class="header">
+<table class="caption-top table">
+<thead>
+<tr class="header">
 <th>rate</th>
 <th>Income</th>
-</tr></thead>
+</tr>
+</thead>
 <tbody>
 <tr class="odd">
 <td>10%</td>
@@ -689,76 +745,78 @@ Try it out - Chained If/Else Statements
 </div>
 <div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
 <div class="quarto-figure quarto-figure-center">
-<figure class="figure"><p><img src="../images/gen-prog/tax-brackets.png" class="img-fluid figure-img"></p>
-<figcaption>The control flow diagram for the tax brackets</figcaption></figure>
+<figure class="figure">
+<p><img src="../images/gen-prog/tax-brackets.png" class="img-fluid figure-img"></p>
+<figcaption>The control flow diagram for the tax brackets</figcaption>
+</figure>
 </div>
 <p>Control flow diagrams can be extremely helpful when figuring out how programs work (and where gaps in your logic are when you’re debugging). It can be very helpful to map out your program flow as you’re untangling a problem.</p>
 </div>
 <div id="tabset-3-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-3-tab">
 <div class="cell">
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Start with total income</span></span>
-<span><span class="va">income</span> <span class="op">&lt;-</span> <span class="fl">200000</span></span>
-<span></span>
-<span><span class="co"># x will hold income that hasn't been taxed yet</span></span>
-<span><span class="va">x</span> <span class="op">&lt;-</span> <span class="va">income</span></span>
-<span><span class="co"># y will hold taxes paid</span></span>
-<span><span class="va">y</span> <span class="op">&lt;-</span> <span class="fl">0</span></span>
-<span></span>
-<span><span class="kw">if</span> <span class="op">(</span><span class="va">x</span> <span class="op">&lt;=</span> <span class="fl">10275</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">y</span> <span class="op">&lt;-</span> <span class="va">x</span><span class="op">*</span><span class="fl">.1</span> <span class="co"># tax paid</span></span>
-<span>  <span class="va">x</span> <span class="op">&lt;-</span> <span class="fl">0</span> <span class="co"># All money has been taxed</span></span>
-<span><span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
-<span>  <span class="va">y</span> <span class="op">&lt;-</span> <span class="va">y</span> <span class="op">+</span> <span class="fl">10275</span> <span class="op">*</span> <span class="fl">.1</span></span>
-<span>  <span class="va">x</span> <span class="op">&lt;-</span> <span class="va">x</span> <span class="op">-</span> <span class="fl">10275</span> <span class="co"># Money remaining that hasn't been taxed</span></span>
-<span><span class="op">}</span></span>
-<span></span>
-<span><span class="kw">if</span> <span class="op">(</span><span class="va">x</span> <span class="op">&lt;=</span> <span class="op">(</span><span class="fl">41775</span> <span class="op">-</span> <span class="fl">10275</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">y</span> <span class="op">&lt;-</span> <span class="va">y</span> <span class="op">+</span> <span class="va">x</span> <span class="op">*</span> <span class="fl">.12</span></span>
-<span>  <span class="va">x</span> <span class="op">&lt;-</span> <span class="fl">0</span></span>
-<span><span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
-<span>  <span class="va">y</span> <span class="op">&lt;-</span> <span class="va">y</span> <span class="op">+</span> <span class="op">(</span><span class="fl">41775</span> <span class="op">-</span> <span class="fl">10275</span><span class="op">)</span> <span class="op">*</span> <span class="fl">.12</span></span>
-<span>  <span class="va">x</span> <span class="op">&lt;-</span> <span class="va">x</span> <span class="op">-</span> <span class="op">(</span><span class="fl">41775</span> <span class="op">-</span> <span class="fl">10275</span><span class="op">)</span> </span>
-<span><span class="op">}</span></span>
-<span></span>
-<span><span class="kw">if</span> <span class="op">(</span><span class="va">x</span> <span class="op">&lt;=</span> <span class="op">(</span><span class="fl">89075</span> <span class="op">-</span> <span class="fl">41775</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">y</span> <span class="op">&lt;-</span> <span class="va">y</span> <span class="op">+</span> <span class="va">x</span> <span class="op">*</span> <span class="fl">.22</span></span>
-<span>  <span class="va">x</span> <span class="op">&lt;-</span> <span class="fl">0</span></span>
-<span><span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
-<span>  <span class="va">y</span> <span class="op">&lt;-</span> <span class="va">y</span> <span class="op">+</span> <span class="op">(</span><span class="fl">89075</span> <span class="op">-</span> <span class="fl">41775</span><span class="op">)</span> <span class="op">*</span> <span class="fl">.22</span></span>
-<span>  <span class="va">x</span> <span class="op">&lt;-</span> <span class="va">x</span> <span class="op">-</span> <span class="op">(</span><span class="fl">89075</span> <span class="op">-</span> <span class="fl">41775</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
-<span></span>
-<span><span class="kw">if</span> <span class="op">(</span><span class="va">x</span> <span class="op">&lt;=</span> <span class="op">(</span><span class="fl">170050</span> <span class="op">-</span> <span class="fl">89075</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">y</span> <span class="op">&lt;-</span> <span class="va">y</span> <span class="op">+</span> <span class="va">x</span> <span class="op">*</span> <span class="fl">.24</span></span>
-<span>  <span class="va">x</span> <span class="op">&lt;-</span> <span class="fl">0</span></span>
-<span><span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
-<span>  <span class="va">y</span> <span class="op">&lt;-</span> <span class="va">y</span> <span class="op">+</span> <span class="op">(</span><span class="fl">170050</span> <span class="op">-</span> <span class="fl">89075</span><span class="op">)</span> <span class="op">*</span> <span class="fl">.24</span></span>
-<span>  <span class="va">x</span> <span class="op">&lt;-</span> <span class="va">x</span> <span class="op">-</span> <span class="op">(</span><span class="fl">170050</span> <span class="op">-</span> <span class="fl">89075</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
-<span></span>
-<span><span class="kw">if</span> <span class="op">(</span><span class="va">x</span> <span class="op">&lt;=</span> <span class="op">(</span><span class="fl">215950</span> <span class="op">-</span> <span class="fl">170050</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">y</span> <span class="op">&lt;-</span> <span class="va">y</span> <span class="op">+</span> <span class="va">x</span> <span class="op">*</span> <span class="fl">.32</span></span>
-<span>  <span class="va">x</span> <span class="op">&lt;-</span> <span class="fl">0</span></span>
-<span><span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
-<span>  <span class="va">y</span> <span class="op">&lt;-</span> <span class="va">y</span> <span class="op">+</span> <span class="op">(</span><span class="fl">215950</span> <span class="op">-</span> <span class="fl">170050</span><span class="op">)</span> <span class="op">*</span> <span class="fl">.32</span></span>
-<span>  <span class="va">x</span> <span class="op">&lt;-</span> <span class="va">x</span> <span class="op">-</span> <span class="op">(</span><span class="fl">215950</span> <span class="op">-</span> <span class="fl">170050</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
-<span></span>
-<span><span class="kw">if</span> <span class="op">(</span><span class="va">x</span> <span class="op">&lt;=</span> <span class="op">(</span><span class="fl">539900</span> <span class="op">-</span> <span class="fl">215950</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">y</span> <span class="op">&lt;-</span> <span class="va">y</span> <span class="op">+</span> <span class="va">x</span> <span class="op">*</span> <span class="fl">.35</span></span>
-<span>  <span class="va">x</span> <span class="op">&lt;-</span> <span class="fl">0</span></span>
-<span><span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span>
-<span>  <span class="va">y</span> <span class="op">&lt;-</span> <span class="va">y</span> <span class="op">+</span> <span class="op">(</span><span class="fl">539900</span> <span class="op">-</span> <span class="fl">215950</span><span class="op">)</span> <span class="op">*</span> <span class="fl">.35</span></span>
-<span>  <span class="va">x</span> <span class="op">&lt;-</span> <span class="va">x</span> <span class="op">-</span> <span class="op">(</span><span class="fl">539900</span> <span class="op">-</span> <span class="fl">215950</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
-<span></span>
-<span><span class="kw">if</span> <span class="op">(</span><span class="va">x</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">y</span> <span class="op">&lt;-</span> <span class="va">y</span> <span class="op">+</span> <span class="va">x</span> <span class="op">*</span> <span class="fl">.37</span></span>
-<span><span class="op">}</span></span>
-<span></span>
-<span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="st">"Total Tax Rate on $"</span>, <span class="va">income</span>, <span class="st">" in income = "</span>, <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="va">y</span><span class="op">/</span><span class="va">income</span>, <span class="fl">4</span><span class="op">)</span><span class="op">*</span><span class="fl">100</span>, <span class="st">"%"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">## [1] "Total Tax Rate on $ 2e+05  in income =  22.12 %"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Start with total income</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>income <span class="ot">&lt;-</span> <span class="dv">200000</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># x will hold income that hasn't been taxed yet</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> income</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co"># y will hold taxes paid</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (x <span class="sc">&lt;=</span> <span class="dv">10275</span>) {</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  y <span class="ot">&lt;-</span> x<span class="sc">*</span>.<span class="dv">1</span> <span class="co"># tax paid</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> <span class="dv">0</span> <span class="co"># All money has been taxed</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  y <span class="ot">&lt;-</span> y <span class="sc">+</span> <span class="dv">10275</span> <span class="sc">*</span> .<span class="dv">1</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> x <span class="sc">-</span> <span class="dv">10275</span> <span class="co"># Money remaining that hasn't been taxed</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (x <span class="sc">&lt;=</span> (<span class="dv">41775</span> <span class="sc">-</span> <span class="dv">10275</span>)) {</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>  y <span class="ot">&lt;-</span> y <span class="sc">+</span> x <span class="sc">*</span> .<span class="dv">12</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>  y <span class="ot">&lt;-</span> y <span class="sc">+</span> (<span class="dv">41775</span> <span class="sc">-</span> <span class="dv">10275</span>) <span class="sc">*</span> .<span class="dv">12</span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> x <span class="sc">-</span> (<span class="dv">41775</span> <span class="sc">-</span> <span class="dv">10275</span>) </span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (x <span class="sc">&lt;=</span> (<span class="dv">89075</span> <span class="sc">-</span> <span class="dv">41775</span>)) {</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>  y <span class="ot">&lt;-</span> y <span class="sc">+</span> x <span class="sc">*</span> .<span class="dv">22</span></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>  y <span class="ot">&lt;-</span> y <span class="sc">+</span> (<span class="dv">89075</span> <span class="sc">-</span> <span class="dv">41775</span>) <span class="sc">*</span> .<span class="dv">22</span></span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> x <span class="sc">-</span> (<span class="dv">89075</span> <span class="sc">-</span> <span class="dv">41775</span>)</span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (x <span class="sc">&lt;=</span> (<span class="dv">170050</span> <span class="sc">-</span> <span class="dv">89075</span>)) {</span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>  y <span class="ot">&lt;-</span> y <span class="sc">+</span> x <span class="sc">*</span> .<span class="dv">24</span></span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>  y <span class="ot">&lt;-</span> y <span class="sc">+</span> (<span class="dv">170050</span> <span class="sc">-</span> <span class="dv">89075</span>) <span class="sc">*</span> .<span class="dv">24</span></span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> x <span class="sc">-</span> (<span class="dv">170050</span> <span class="sc">-</span> <span class="dv">89075</span>)</span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (x <span class="sc">&lt;=</span> (<span class="dv">215950</span> <span class="sc">-</span> <span class="dv">170050</span>)) {</span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>  y <span class="ot">&lt;-</span> y <span class="sc">+</span> x <span class="sc">*</span> .<span class="dv">32</span></span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a>  y <span class="ot">&lt;-</span> y <span class="sc">+</span> (<span class="dv">215950</span> <span class="sc">-</span> <span class="dv">170050</span>) <span class="sc">*</span> .<span class="dv">32</span></span>
+<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> x <span class="sc">-</span> (<span class="dv">215950</span> <span class="sc">-</span> <span class="dv">170050</span>)</span>
+<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (x <span class="sc">&lt;=</span> (<span class="dv">539900</span> <span class="sc">-</span> <span class="dv">215950</span>)) {</span>
+<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a>  y <span class="ot">&lt;-</span> y <span class="sc">+</span> x <span class="sc">*</span> .<span class="dv">35</span></span>
+<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a>  y <span class="ot">&lt;-</span> y <span class="sc">+</span> (<span class="dv">539900</span> <span class="sc">-</span> <span class="dv">215950</span>) <span class="sc">*</span> .<span class="dv">35</span></span>
+<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> x <span class="sc">-</span> (<span class="dv">539900</span> <span class="sc">-</span> <span class="dv">215950</span>)</span>
+<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (x <span class="sc">&gt;</span> <span class="dv">0</span>) {</span>
+<span id="cb7-58"><a href="#cb7-58" aria-hidden="true" tabindex="-1"></a>  y <span class="ot">&lt;-</span> y <span class="sc">+</span> x <span class="sc">*</span> .<span class="dv">37</span></span>
+<span id="cb7-59"><a href="#cb7-59" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb7-60"><a href="#cb7-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-61"><a href="#cb7-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-62"><a href="#cb7-62" aria-hidden="true" tabindex="-1"></a><span class="fu">print</span>(<span class="fu">paste</span>(<span class="st">"Total Tax Rate on $"</span>, income, <span class="st">" in income = "</span>, <span class="fu">round</span>(y<span class="sc">/</span>income, <span class="dv">4</span>)<span class="sc">*</span><span class="dv">100</span>, <span class="st">"%"</span>))</span>
+<span id="cb7-63"><a href="#cb7-63" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "Total Tax Rate on $ 2e+05  in income =  22.12 %"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div id="tabset-3-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-4-tab">
@@ -829,8 +887,10 @@ Try it out - Chained If/Else Statements
 </div>
 </div>
 </div>
-</section></section><section id="loops" class="level2" data-number="12.4"><h2 data-number="12.4" class="anchored" data-anchor-id="loops">
-<span class="header-section-number">12.4</span> Loops</h2>
+</section>
+</section>
+<section id="loops" class="level2" data-number="12.4">
+<h2 data-number="12.4" class="anchored" data-anchor-id="loops"><span class="header-section-number">12.4</span> Loops</h2>
 <!-- https://www.py4e.com/html3/05-iterations -->
 <p>Often, we write programs which update a variable in a way that the new value of the variable depends on the old value:</p>
 <pre><code>x = x + 1</code></pre>
@@ -840,8 +900,8 @@ Try it out - Chained If/Else Statements
 x = x + 1</code></pre>
 <p>We sometimes use the word <strong>increment</strong> to talk about adding one to the value of <code>x</code>; <strong>decrement</strong> means subtracting one from the value of <code>x</code>.</p>
 <p>A particularly powerful tool for making these types of repetitive changes in programming is the <strong>loop</strong>, which executes statements a certain number of times. Loops can be written in several different ways, but all loops allow for executing a block of code a variable number of times.</p>
-<section id="while-loops" class="level3" data-number="12.4.1"><h3 data-number="12.4.1" class="anchored" data-anchor-id="while-loops">
-<span class="header-section-number">12.4.1</span> While Loops</h3>
+<section id="while-loops" class="level3" data-number="12.4.1">
+<h3 data-number="12.4.1" class="anchored" data-anchor-id="while-loops"><span class="header-section-number">12.4.1</span> While Loops</h3>
 <p>In the previous section, we discussed conditional statements, where a block of code is only executed <em>if</em> a logical statement is true. The simplest type of loop is the <strong>while</strong> loop, which executes a block of code until a statement is no longer true.</p>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -854,38 +914,36 @@ Example - While Loops
 </div>
 <div class="callout-body-container callout-body">
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist">
-<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true">Flow Map</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false">R</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-3" role="tab" aria-controls="tabset-4-3" aria-selected="false">Python</a></li>
-</ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true">Flow Map</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-3" role="tab" aria-controls="tabset-4-3" aria-selected="false">Python</a></li></ul>
 <div class="tab-content">
 <div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
 <div class="quarto-figure quarto-figure-center">
-<figure class="figure"><p><img src="../images/gen-prog/while-loop-flow.png" class="img-fluid figure-img"></p>
-<figcaption>Flow map showing while-loop pseudocode (while x &lt;= N) { # code that changes x in some way} and the program flow map expansion where we check if x &gt; N (exiting the loop if true); otherwise, we continue into the loop, execute the main body of #code and then change x and start over.</figcaption></figure>
+<figure class="figure">
+<p><img src="../images/gen-prog/while-loop-flow.png" class="img-fluid figure-img"></p>
+<figcaption>Flow map showing while-loop pseudocode (while x &lt;= N) { # code that changes x in some way} and the program flow map expansion where we check if x &gt; N (exiting the loop if true); otherwise, we continue into the loop, execute the main body of #code and then change x and start over.</figcaption>
+</figure>
 </div>
 </div>
 <div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
 <div class="cell">
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fl">0</span></span>
-<span></span>
-<span><span class="kw">while</span> <span class="op">(</span><span class="va">x</span> <span class="op">&lt;</span> <span class="fl">10</span><span class="op">)</span> <span class="op">{</span> </span>
-<span>  <span class="co"># Everything in here is executed </span></span>
-<span>  <span class="co"># during each iteration of the loop</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
-<span>  <span class="va">x</span> <span class="op">&lt;-</span> <span class="va">x</span> <span class="op">+</span> <span class="fl">1</span></span>
-<span><span class="op">}</span></span>
-<span><span class="co">## [1] 0</span></span>
-<span><span class="co">## [1] 1</span></span>
-<span><span class="co">## [1] 2</span></span>
-<span><span class="co">## [1] 3</span></span>
-<span><span class="co">## [1] 4</span></span>
-<span><span class="co">## [1] 5</span></span>
-<span><span class="co">## [1] 6</span></span>
-<span><span class="co">## [1] 7</span></span>
-<span><span class="co">## [1] 8</span></span>
-<span><span class="co">## [1] 9</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> (x <span class="sc">&lt;</span> <span class="dv">10</span>) { </span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Everything in here is executed </span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># during each iteration of the loop</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(x)</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> x <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 0</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 1</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 2</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 3</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 4</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 5</span></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 6</span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 7</span></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 8</span></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 9</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div id="tabset-4-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-3-tab">
@@ -922,12 +980,7 @@ Try it Out - While Loops
 </div>
 <div class="callout-body-container callout-body">
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist">
-<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-5-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-1" role="tab" aria-controls="tabset-5-1" aria-selected="true">Problem</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-2" role="tab" aria-controls="tabset-5-2" aria-selected="false">Math Notation</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-3" role="tab" aria-controls="tabset-5-3" aria-selected="false">R Solution</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-4" role="tab" aria-controls="tabset-5-4" aria-selected="false">Python solution</a></li>
-</ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-5-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-1" role="tab" aria-controls="tabset-5-1" aria-selected="true">Problem</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-2" role="tab" aria-controls="tabset-5-2" aria-selected="false">Math Notation</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-3" role="tab" aria-controls="tabset-5-3" aria-selected="false">R Solution</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-4" role="tab" aria-controls="tabset-5-4" aria-selected="false">Python solution</a></li></ul>
 <div class="tab-content">
 <div id="tabset-5-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-5-1-tab">
 <p>Write a while loop that verifies that <span class="math display">\[\lim_{N \rightarrow \infty} \prod_{k=1}^N \left(1 + \frac{1}{k^2}\right) = \frac{e^\pi - e^{-\pi}}{2\pi}.\]</span></p>
@@ -942,24 +995,24 @@ Try it Out - While Loops
 <p>In this problem, we can just keep increasing <span class="math inline">\(k\)</span> and keep track of the cumulative product. So we define <code>k=1</code>, <code>prod = 1</code>, and <code>ans</code> before the loop starts. Then, we loop over <code>k</code>, multiplying <code>prod</code> by <span class="math inline">\((1 + 1/k^2)\)</span> and then incrementing <span class="math inline">\(k\)</span> by one each time. At each iteration, we test whether <code>prod</code> is close enough to <code>ans</code> to stop the loop.</p>
 </div>
 <div id="tabset-5-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-3-tab">
-<p>In R, you will use <code>pi</code> and <code><a href="https://rdrr.io/r/base/Log.html">exp()</a></code> - these are available by default without any additional libraries or packages.</p>
+<p>In R, you will use <code>pi</code> and <code>exp()</code> - these are available by default without any additional libraries or packages.</p>
 <div class="cell">
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">k</span> <span class="op">&lt;-</span> <span class="fl">1</span></span>
-<span><span class="va">prod</span> <span class="op">&lt;-</span> <span class="fl">1</span></span>
-<span><span class="va">ans</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span><span class="op">(</span><span class="va">pi</span><span class="op">)</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html">exp</a></span><span class="op">(</span><span class="op">-</span><span class="va">pi</span><span class="op">)</span><span class="op">)</span><span class="op">/</span><span class="op">(</span><span class="fl">2</span><span class="op">*</span><span class="va">pi</span><span class="op">)</span></span>
-<span><span class="va">delta</span> <span class="op">&lt;-</span> <span class="fl">0.0001</span></span>
-<span></span>
-<span><span class="kw">while</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">prod</span> <span class="op">-</span> <span class="va">ans</span><span class="op">)</span> <span class="op">&gt;=</span> <span class="fl">0.0001</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">prod</span> <span class="op">&lt;-</span> <span class="va">prod</span> <span class="op">*</span> <span class="op">(</span><span class="fl">1</span> <span class="op">+</span> <span class="fl">1</span><span class="op">/</span><span class="va">k</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span></span>
-<span>  <span class="va">k</span> <span class="op">&lt;-</span> <span class="va">k</span> <span class="op">+</span> <span class="fl">1</span></span>
-<span><span class="op">}</span></span>
-<span></span>
-<span><span class="va">k</span></span>
-<span><span class="co">## [1] 36761</span></span>
-<span><span class="va">prod</span></span>
-<span><span class="co">## [1] 3.675978</span></span>
-<span><span class="va">ans</span></span>
-<span><span class="co">## [1] 3.676078</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>k <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>prod <span class="ot">&lt;-</span> <span class="dv">1</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>ans <span class="ot">&lt;-</span> (<span class="fu">exp</span>(pi) <span class="sc">-</span> <span class="fu">exp</span>(<span class="sc">-</span>pi))<span class="sc">/</span>(<span class="dv">2</span><span class="sc">*</span>pi)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>delta <span class="ot">&lt;-</span> <span class="fl">0.0001</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> (<span class="fu">abs</span>(prod <span class="sc">-</span> ans) <span class="sc">&gt;=</span> <span class="fl">0.0001</span>) {</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  prod <span class="ot">&lt;-</span> prod <span class="sc">*</span> (<span class="dv">1</span> <span class="sc">+</span> <span class="dv">1</span><span class="sc">/</span>k<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  k <span class="ot">&lt;-</span> k <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>k</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 36761</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>prod</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 3.675978</span></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>ans</span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 3.676078</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div id="tabset-5-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-4-tab">
@@ -1001,75 +1054,72 @@ Warning: Avoid Infinite Loops
 <p>You want to try very hard to avoid ever creating an infinite loop - it can cause your session to crash.</p>
 <p>One common way to avoid infinite loops is to create a second variable that just counts how many times the loop has run. If that variable gets over a certain threshold, you exit the loop.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist">
-<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-6-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-1" role="tab" aria-controls="tabset-6-1" aria-selected="true">R</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-2" role="tab" aria-controls="tabset-6-2" aria-selected="false">Python</a></li>
-</ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-6-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-1" role="tab" aria-controls="tabset-6-1" aria-selected="true">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-2" role="tab" aria-controls="tabset-6-2" aria-selected="false">Python</a></li></ul>
 <div class="tab-content">
 <div id="tabset-6-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-6-1-tab">
 <p>This while loop runs until either x &lt; 10 or n &gt; 50 - so it will run an indeterminate number of times and depends on the random values added to x. Since this process (a ‘random walk’) could theoretically continue forever, we add the n&gt;50 check to the loop so that we don’t tie up the computer for eternity.</p>
 <div class="cell">
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fl">0</span></span>
-<span><span class="va">n</span> <span class="op">&lt;-</span> <span class="fl">0</span> <span class="co"># count the number of times the loop runs</span></span>
-<span></span>
-<span><span class="kw">while</span> <span class="op">(</span><span class="va">x</span> <span class="op">&lt;</span> <span class="fl">10</span><span class="op">)</span> <span class="op">{</span> </span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
-<span>  <span class="va">x</span> <span class="op">&lt;-</span> <span class="va">x</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span> <span class="co"># add a random normal (0, 1) draw each time</span></span>
-<span>  <span class="va">n</span> <span class="op">&lt;-</span> <span class="va">n</span> <span class="op">+</span> <span class="fl">1</span></span>
-<span>  <span class="kw">if</span> <span class="op">(</span><span class="va">n</span> <span class="op">&gt;</span> <span class="fl">50</span><span class="op">)</span> </span>
-<span>    <span class="kw">break</span> <span class="co"># this stops the loop if n &gt; 50</span></span>
-<span><span class="op">}</span></span>
-<span><span class="co">## [1] 0</span></span>
-<span><span class="co">## [1] -2.483887</span></span>
-<span><span class="co">## [1] -3.156365</span></span>
-<span><span class="co">## [1] -3.109075</span></span>
-<span><span class="co">## [1] -5.059853</span></span>
-<span><span class="co">## [1] -4.621781</span></span>
-<span><span class="co">## [1] -5.01906</span></span>
-<span><span class="co">## [1] -4.758039</span></span>
-<span><span class="co">## [1] -6.043028</span></span>
-<span><span class="co">## [1] -7.421951</span></span>
-<span><span class="co">## [1] -7.559164</span></span>
-<span><span class="co">## [1] -6.808895</span></span>
-<span><span class="co">## [1] -6.976251</span></span>
-<span><span class="co">## [1] -6.492914</span></span>
-<span><span class="co">## [1] -5.582069</span></span>
-<span><span class="co">## [1] -6.449451</span></span>
-<span><span class="co">## [1] -6.609232</span></span>
-<span><span class="co">## [1] -6.227992</span></span>
-<span><span class="co">## [1] -6.613149</span></span>
-<span><span class="co">## [1] -7.710121</span></span>
-<span><span class="co">## [1] -7.485293</span></span>
-<span><span class="co">## [1] -7.521665</span></span>
-<span><span class="co">## [1] -7.781983</span></span>
-<span><span class="co">## [1] -7.678083</span></span>
-<span><span class="co">## [1] -10.19004</span></span>
-<span><span class="co">## [1] -9.048326</span></span>
-<span><span class="co">## [1] -8.9011</span></span>
-<span><span class="co">## [1] -8.910024</span></span>
-<span><span class="co">## [1] -9.408845</span></span>
-<span><span class="co">## [1] -8.067595</span></span>
-<span><span class="co">## [1] -7.89333</span></span>
-<span><span class="co">## [1] -8.043417</span></span>
-<span><span class="co">## [1] -7.791677</span></span>
-<span><span class="co">## [1] -7.291793</span></span>
-<span><span class="co">## [1] -7.989199</span></span>
-<span><span class="co">## [1] -5.870562</span></span>
-<span><span class="co">## [1] -4.527546</span></span>
-<span><span class="co">## [1] -4.336485</span></span>
-<span><span class="co">## [1] -2.75752</span></span>
-<span><span class="co">## [1] -3.114483</span></span>
-<span><span class="co">## [1] -4.213958</span></span>
-<span><span class="co">## [1] -4.742444</span></span>
-<span><span class="co">## [1] -4.953916</span></span>
-<span><span class="co">## [1] -5.58898</span></span>
-<span><span class="co">## [1] -5.630472</span></span>
-<span><span class="co">## [1] -5.769251</span></span>
-<span><span class="co">## [1] -5.660802</span></span>
-<span><span class="co">## [1] -5.685198</span></span>
-<span><span class="co">## [1] -5.844308</span></span>
-<span><span class="co">## [1] -6.883034</span></span>
-<span><span class="co">## [1] -5.869053</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="dv">0</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">0</span> <span class="co"># count the number of times the loop runs</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> (x <span class="sc">&lt;</span> <span class="dv">10</span>) { </span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(x)</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> x <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="dv">1</span>) <span class="co"># add a random normal (0, 1) draw each time</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">&lt;-</span> n <span class="sc">+</span> <span class="dv">1</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (n <span class="sc">&gt;</span> <span class="dv">50</span>) </span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">break</span> <span class="co"># this stops the loop if n &gt; 50</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 0</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] -2.483887</span></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] -3.156365</span></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] -3.109075</span></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] -5.059853</span></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] -4.621781</span></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] -5.01906</span></span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] -4.758039</span></span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] -6.043028</span></span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] -7.421951</span></span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] -7.559164</span></span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] -6.808895</span></span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] -6.976251</span></span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] -6.492914</span></span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] -5.582069</span></span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] -6.449451</span></span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] -6.609232</span></span>
+<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] -6.227992</span></span>
+<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] -6.613149</span></span>
+<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] -7.710121</span></span>
+<span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] -7.485293</span></span>
+<span id="cb15-32"><a href="#cb15-32" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] -7.521665</span></span>
+<span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] -7.781983</span></span>
+<span id="cb15-34"><a href="#cb15-34" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] -7.678083</span></span>
+<span id="cb15-35"><a href="#cb15-35" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] -10.19004</span></span>
+<span id="cb15-36"><a href="#cb15-36" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] -9.048326</span></span>
+<span id="cb15-37"><a href="#cb15-37" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] -8.9011</span></span>
+<span id="cb15-38"><a href="#cb15-38" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] -8.910024</span></span>
+<span id="cb15-39"><a href="#cb15-39" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] -9.408845</span></span>
+<span id="cb15-40"><a href="#cb15-40" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] -8.067595</span></span>
+<span id="cb15-41"><a href="#cb15-41" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] -7.89333</span></span>
+<span id="cb15-42"><a href="#cb15-42" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] -8.043417</span></span>
+<span id="cb15-43"><a href="#cb15-43" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] -7.791677</span></span>
+<span id="cb15-44"><a href="#cb15-44" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] -7.291793</span></span>
+<span id="cb15-45"><a href="#cb15-45" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] -7.989199</span></span>
+<span id="cb15-46"><a href="#cb15-46" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] -5.870562</span></span>
+<span id="cb15-47"><a href="#cb15-47" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] -4.527546</span></span>
+<span id="cb15-48"><a href="#cb15-48" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] -4.336485</span></span>
+<span id="cb15-49"><a href="#cb15-49" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] -2.75752</span></span>
+<span id="cb15-50"><a href="#cb15-50" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] -3.114483</span></span>
+<span id="cb15-51"><a href="#cb15-51" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] -4.213958</span></span>
+<span id="cb15-52"><a href="#cb15-52" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] -4.742444</span></span>
+<span id="cb15-53"><a href="#cb15-53" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] -4.953916</span></span>
+<span id="cb15-54"><a href="#cb15-54" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] -5.58898</span></span>
+<span id="cb15-55"><a href="#cb15-55" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] -5.630472</span></span>
+<span id="cb15-56"><a href="#cb15-56" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] -5.769251</span></span>
+<span id="cb15-57"><a href="#cb15-57" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] -5.660802</span></span>
+<span id="cb15-58"><a href="#cb15-58" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] -5.685198</span></span>
+<span id="cb15-59"><a href="#cb15-59" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] -5.844308</span></span>
+<span id="cb15-60"><a href="#cb15-60" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] -6.883034</span></span>
+<span id="cb15-61"><a href="#cb15-61" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] -5.869053</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div id="tabset-6-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-2-tab">
@@ -1143,12 +1193,15 @@ Warning: Avoid Infinite Loops
 <p>In both of the examples above, there are more efficient ways to write a random walk, but we will get to that later. The important thing here is that we want to make sure that our loops don’t run for all eternity.</p>
 </div>
 </div>
-</section><section id="for-loops" class="level3" data-number="12.4.2"><h3 data-number="12.4.2" class="anchored" data-anchor-id="for-loops">
-<span class="header-section-number">12.4.2</span> For Loops</h3>
+</section>
+<section id="for-loops" class="level3" data-number="12.4.2">
+<h3 data-number="12.4.2" class="anchored" data-anchor-id="for-loops"><span class="header-section-number">12.4.2</span> For Loops</h3>
 <p>Another common type of loop is a <strong>for</strong> loop. In a for loop, we run the block of code, iterating through a series of values (commonly, one to N, but not always). Generally speaking, for loops are known as <strong>definite</strong> loops because the code inside a for loop is executed a specific number of times. While loops are known as <strong>indefinite</strong> loops because the code within a while loop is evaluated until the condition is falsified, which is not always a known number of times.</p>
 <div class="quarto-figure quarto-figure-center">
-<figure class="figure"><p><img src="../images/tools/monster-parade.jpeg" class="img-fluid figure-img"></p>
-<figcaption>A visual demonstration of for loops iterating through a vector of monsters to dress them up for a parade. Image by <a href="https://twitter.com/allison_horst/status/1636395184106917889?s=20">Allison Horst</a>.</figcaption></figure>
+<figure class="figure">
+<p><img src="../images/tools/monster-parade.jpeg" class="img-fluid figure-img" alt="Illustrated for loop where the input vector is a parade of monsters, including monsters that are circles, triangles, and squares. The for loop they enter has an if-else statement: if the monster is a triangle, it gets sunglasses. Otherwise, it gets a hat. The output is the parade of monsters where the same input parade of monsters shows up, now wearing either sunglasses (if triangular) or a hat (if any other shape)."></p>
+<figcaption>A visual demonstration of for loops iterating through a vector of monsters to dress them up for a parade. Image by <a href="https://twitter.com/allison_horst/status/1636395184106917889?s=20">Allison Horst</a>.</figcaption>
+</figure>
 </div>
 <div class="callout callout-style-default callout-caution callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -1161,28 +1214,26 @@ Example - For Loop Syntax
 </div>
 <div class="callout-body-container callout-body">
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist">
-<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-7-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-1" role="tab" aria-controls="tabset-7-1" aria-selected="true">Flow Map</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-2" role="tab" aria-controls="tabset-7-2" aria-selected="false">R</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-3" role="tab" aria-controls="tabset-7-3" aria-selected="false">Python</a></li>
-</ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-7-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-1" role="tab" aria-controls="tabset-7-1" aria-selected="true">Flow Map</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-2" role="tab" aria-controls="tabset-7-2" aria-selected="false">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-3" role="tab" aria-controls="tabset-7-3" aria-selected="false">Python</a></li></ul>
 <div class="tab-content">
 <div id="tabset-7-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-7-1-tab">
 <div class="quarto-figure quarto-figure-center">
-<figure class="figure"><p><img src="../images/gen-prog/for-loop-flow.png" class="img-fluid figure-img"></p>
-<figcaption>Flow map showing for-loop pseudocode (for j in 1 to N) { # code} and the program flow map expansion where j starts at 1 and we check if j &gt; N (exiting the loop if true); otherwise, we continue into the loop, execute the main body of #code and then increment j and start over.</figcaption></figure>
+<figure class="figure">
+<p><img src="../images/gen-prog/for-loop-flow.png" class="img-fluid figure-img"></p>
+<figcaption>Flow map showing for-loop pseudocode (for j in 1 to N) { # code} and the program flow map expansion where j starts at 1 and we check if j &gt; N (exiting the loop if true); otherwise, we continue into the loop, execute the main body of #code and then increment j and start over.</figcaption>
+</figure>
 </div>
 </div>
 <div id="tabset-7-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-2-tab">
 <div class="cell">
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">5</span> <span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">i</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
-<span><span class="co">## [1] 1</span></span>
-<span><span class="co">## [1] 2</span></span>
-<span><span class="co">## [1] 3</span></span>
-<span><span class="co">## [1] 4</span></span>
-<span><span class="co">## [1] 5</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span> ) {</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(i)</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 1</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 2</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 3</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 4</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 5</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div id="tabset-7-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-3-tab">
@@ -1202,60 +1253,57 @@ Example - For Loop Syntax
 </div>
 </div>
 <p>For loops are often run from 1 to N (or 0 to N-1 in python) but in essence, a for loop is very commonly used to do a task for every value of a vector.</p>
-<section id="example---for-loops" class="level4 ex" data-number="12.4.2.1"><h4 data-number="12.4.2.1" class="anchored" data-anchor-id="example---for-loops">
-<span class="header-section-number">12.4.2.1</span> Example - For Loops</h4>
+<section id="example---for-loops" class="level4 ex" data-number="12.4.2.1">
+<h4 data-number="12.4.2.1" class="anchored" data-anchor-id="example---for-loops"><span class="header-section-number">12.4.2.1</span> Example - For Loops</h4>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist">
-<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-8-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-1" role="tab" aria-controls="tabset-8-1" aria-selected="true">R</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-8-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-2" role="tab" aria-controls="tabset-8-2" aria-selected="false">Python</a></li>
-</ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-8-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-1" role="tab" aria-controls="tabset-8-1" aria-selected="true">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-8-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-2" role="tab" aria-controls="tabset-8-2" aria-selected="false">Python</a></li></ul>
 <div class="tab-content">
 <div id="tabset-8-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-8-1-tab">
 <p>For instance, in R, there is a built-in variable called <code>month.name</code>. Type <code>month.name</code> into your R console to see what it looks like. If we want to iterate along the values of month.name, we can:</p>
 <div class="cell">
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="va">month.name</span><span class="op">)</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="va">i</span><span class="op">)</span></span>
-<span><span class="co">## [1] "January"</span></span>
-<span><span class="co">## [1] "February"</span></span>
-<span><span class="co">## [1] "March"</span></span>
-<span><span class="co">## [1] "April"</span></span>
-<span><span class="co">## [1] "May"</span></span>
-<span><span class="co">## [1] "June"</span></span>
-<span><span class="co">## [1] "July"</span></span>
-<span><span class="co">## [1] "August"</span></span>
-<span><span class="co">## [1] "September"</span></span>
-<span><span class="co">## [1] "October"</span></span>
-<span><span class="co">## [1] "November"</span></span>
-<span><span class="co">## [1] "December"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> month.name)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(i)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "January"</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "February"</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "March"</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "April"</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "May"</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "June"</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "July"</span></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "August"</span></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "September"</span></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "October"</span></span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "November"</span></span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "December"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>We can even pick out the first 3 letters of each month name and store them into a vector called <code>abbr3</code></p>
 <div class="cell">
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Create new vector of the correct length</span></span>
-<span><span class="va">abbr3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="st">""</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">month.name</span><span class="op">)</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># We have to iterate along the index (1 to length) instead of the name </span></span>
-<span><span class="co"># in this case because we want to store the result in a corresponding</span></span>
-<span><span class="co"># row of a new vector</span></span>
-<span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">month.name</span><span class="op">)</span><span class="op">)</span></span>
-<span>  <span class="va">abbr3</span><span class="op">[</span><span class="va">i</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/substr.html">substr</a></span><span class="op">(</span><span class="va">month.name</span><span class="op">[</span><span class="va">i</span><span class="op">]</span>, <span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># We can combine the two vectors into a data frame </span></span>
-<span><span class="co"># so that each row corresponds to a month and there are two columns:</span></span>
-<span><span class="co"># full month name, and abbreviation</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>full_name <span class="op">=</span> <span class="va">month.name</span>, abbrev <span class="op">=</span> <span class="va">abbr3</span><span class="op">)</span></span>
-<span><span class="co">##    full_name abbrev</span></span>
-<span><span class="co">## 1    January    Jan</span></span>
-<span><span class="co">## 2   February    Feb</span></span>
-<span><span class="co">## 3      March    Mar</span></span>
-<span><span class="co">## 4      April    Apr</span></span>
-<span><span class="co">## 5        May    May</span></span>
-<span><span class="co">## 6       June    Jun</span></span>
-<span><span class="co">## 7       July    Jul</span></span>
-<span><span class="co">## 8     August    Aug</span></span>
-<span><span class="co">## 9  September    Sep</span></span>
-<span><span class="co">## 10   October    Oct</span></span>
-<span><span class="co">## 11  November    Nov</span></span>
-<span><span class="co">## 12  December    Dec</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create new vector of the correct length</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>abbr3 <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="st">""</span>, <span class="fu">length</span>(month.name))</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a><span class="co"># We have to iterate along the index (1 to length) instead of the name </span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a><span class="co"># in this case because we want to store the result in a corresponding</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a><span class="co"># row of a new vector</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(month.name))</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>  abbr3[i] <span class="ot">&lt;-</span> <span class="fu">substr</span>(month.name[i], <span class="dv">1</span>, <span class="dv">3</span>)</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a><span class="co"># We can combine the two vectors into a data frame </span></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a><span class="co"># so that each row corresponds to a month and there are two columns:</span></span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a><span class="co"># full month name, and abbreviation</span></span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(<span class="at">full_name =</span> month.name, <span class="at">abbrev =</span> abbr3)</span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a><span class="do">##    full_name abbrev</span></span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a><span class="do">## 1    January    Jan</span></span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a><span class="do">## 2   February    Feb</span></span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a><span class="do">## 3      March    Mar</span></span>
+<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a><span class="do">## 4      April    Apr</span></span>
+<span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a><span class="do">## 5        May    May</span></span>
+<span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a><span class="do">## 6       June    Jun</span></span>
+<span id="cb20-21"><a href="#cb20-21" aria-hidden="true" tabindex="-1"></a><span class="do">## 7       July    Jul</span></span>
+<span id="cb20-22"><a href="#cb20-22" aria-hidden="true" tabindex="-1"></a><span class="do">## 8     August    Aug</span></span>
+<span id="cb20-23"><a href="#cb20-23" aria-hidden="true" tabindex="-1"></a><span class="do">## 9  September    Sep</span></span>
+<span id="cb20-24"><a href="#cb20-24" aria-hidden="true" tabindex="-1"></a><span class="do">## 10   October    Oct</span></span>
+<span id="cb20-25"><a href="#cb20-25" aria-hidden="true" tabindex="-1"></a><span class="do">## 11  November    Nov</span></span>
+<span id="cb20-26"><a href="#cb20-26" aria-hidden="true" tabindex="-1"></a><span class="do">## 12  December    Dec</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div id="tabset-8-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-8-2-tab">
@@ -1301,18 +1349,23 @@ Example - For Loop Syntax
 </div>
 </div>
 </div>
-</section></section></section><section id="other-control-structures" class="level2" data-number="12.5"><h2 data-number="12.5" class="anchored" data-anchor-id="other-control-structures">
-<span class="header-section-number">12.5</span> Other Control Structures</h2>
-<section id="conditional-statements-1" class="level3" data-number="12.5.1"><h3 data-number="12.5.1" class="anchored" data-anchor-id="conditional-statements-1">
-<span class="header-section-number">12.5.1</span> Conditional Statements</h3>
+</section>
+</section>
+</section>
+<section id="other-control-structures" class="level2" data-number="12.5">
+<h2 data-number="12.5" class="anchored" data-anchor-id="other-control-structures"><span class="header-section-number">12.5</span> Other Control Structures</h2>
+<section id="conditional-statements-1" class="level3" data-number="12.5.1">
+<h3 data-number="12.5.1" class="anchored" data-anchor-id="conditional-statements-1"><span class="header-section-number">12.5.1</span> Conditional Statements</h3>
 <p>case statements, e.g.&nbsp;<code>case_when</code> in tidyverse</p>
-</section><section id="loops-1" class="level3" data-number="12.5.2"><h3 data-number="12.5.2" class="anchored" data-anchor-id="loops-1">
-<span class="header-section-number">12.5.2</span> Loops</h3>
-<section id="controlling-loops" class="level4" data-number="12.5.2.1"><h4 data-number="12.5.2.1" class="anchored" data-anchor-id="controlling-loops">
-<span class="header-section-number">12.5.2.1</span> Controlling Loops</h4>
-<p>While I do not often use break, next, and continue statements, they do exist in both languages and can be useful for controlling the flow of program execution. I have moved the section on this to <a href="../graveyard.html#sec-controlling-loops" class="quarto-xref"><span>Section&nbsp;31.3</span></a> for the sake of brevity and to reduce the amount of new material those without programming experience are being exposed to in this section.</p>
-</section><section id="other-types-of-loops" class="level4" data-number="12.5.2.2"><h4 data-number="12.5.2.2" class="anchored" data-anchor-id="other-types-of-loops">
-<span class="header-section-number">12.5.2.2</span> Other Types of Loops</h4>
+</section>
+<section id="loops-1" class="level3" data-number="12.5.2">
+<h3 data-number="12.5.2" class="anchored" data-anchor-id="loops-1"><span class="header-section-number">12.5.2</span> Loops</h3>
+<section id="controlling-loops" class="level4" data-number="12.5.2.1">
+<h4 data-number="12.5.2.1" class="anchored" data-anchor-id="controlling-loops"><span class="header-section-number">12.5.2.1</span> Controlling Loops</h4>
+<p>While I do not often use break, next, and continue statements, they do exist in both languages and can be useful for controlling the flow of program execution. I have moved the section on this to <a href="../graveyard.html#sec-controlling-loops" class="quarto-xref"><span>Section 31.3</span></a> for the sake of brevity and to reduce the amount of new material those without programming experience are being exposed to in this section.</p>
+</section>
+<section id="other-types-of-loops" class="level4" data-number="12.5.2.2">
+<h4 data-number="12.5.2.2" class="anchored" data-anchor-id="other-types-of-loops"><span class="header-section-number">12.5.2.2</span> Other Types of Loops</h4>
 <p>There are other types of loops in most languages, such as the do-while loop, which runs the code first and then evaluates the logical condition to determine whether the loop will be run again.</p>
 <div class="callout callout-style-default callout-warning callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -1325,19 +1378,16 @@ Example: do-while loops
 </div>
 <div class="callout-body-container callout-body">
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist">
-<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-9-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-1" role="tab" aria-controls="tabset-9-1" aria-selected="true">R</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-9-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-2" role="tab" aria-controls="tabset-9-2" aria-selected="false">Python</a></li>
-</ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-9-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-1" role="tab" aria-controls="tabset-9-1" aria-selected="true">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-9-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-2" role="tab" aria-controls="tabset-9-2" aria-selected="false">Python</a></li></ul>
 <div class="tab-content">
 <div id="tabset-9-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-9-1-tab">
 <p>In R, do-while loops are most naturally implemented using a very primitive type of iteration: a <code>repeat</code> statement.</p>
 <div class="cell">
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw">repeat</span> <span class="op">{</span></span>
-<span>  <span class="co"># statements go here</span></span>
-<span>  <span class="kw">if</span> <span class="op">(</span><span class="va">condition</span><span class="op">)</span></span>
-<span>    <span class="kw">break</span> <span class="co"># this exits the repeat statement</span></span>
-<span><span class="op">}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="cf">repeat</span> {</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="co"># statements go here</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (condition)</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">break</span> <span class="co"># this exits the repeat statement</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div id="tabset-9-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-9-2-tab">
@@ -1353,12 +1403,18 @@ Example: do-while loops
 </div>
 </div>
 </div>
-<p>An additional means of running code an indeterminate number of times is the use of <strong>recursion</strong>, which we cannot cover until we learn about functions. I have added an additional section, <a href="../graveyard.html#sec-recursion" class="quarto-xref"><span>Section&nbsp;31.4</span></a>, to cover this topic, but it is not essential to being able to complete most basic data programming tasks. Recursion is useful when working with structures such as trees (including phylogenetic trees) and nested lists.</p>
-</section></section></section><section id="sec-control-struct-refs" class="level2" data-number="12.6"><h2 data-number="12.6" class="anchored" data-anchor-id="sec-control-struct-refs">
-<span class="header-section-number">12.6</span> References</h2>
+<p>An additional means of running code an indeterminate number of times is the use of <strong>recursion</strong>, which we cannot cover until we learn about functions. I have added an additional section, <a href="../graveyard.html#sec-recursion" class="quarto-xref"><span>Section 31.4</span></a>, to cover this topic, but it is not essential to being able to complete most basic data programming tasks. Recursion is useful when working with structures such as trees (including phylogenetic trees) and nested lists.</p>
+</section>
+</section>
+</section>
+<section id="sec-control-struct-refs" class="level2" data-number="12.6">
+<h2 data-number="12.6" class="anchored" data-anchor-id="sec-control-struct-refs"><span class="header-section-number">12.6</span> References</h2>
 
 
-</section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
     const mode = bsSheetEl.getAttribute("data-mode");
@@ -1537,18 +1593,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
     return false;
   }
-  const clipboard = new window.ClipboardJS('.code-copy-button', {
-    text: function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-    }
-  });
-  clipboard.on('success', function(e) {
+  const onCopySuccess = function(e) {
     // button target
     const button = e.trigger;
     // don't keep focus
@@ -1580,7 +1625,47 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }, 1000);
     // clear code selection
     e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
   });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/srvanderplas\.github\.io\/stat-computing-r-python\/");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
   function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
@@ -1615,7 +1700,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       try { href = new URL(href).hash; } catch {}
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
-      return note.innerHTML;
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
     });
   }
   const xrefs = window.document.querySelectorAll('a.quarto-xref');
@@ -1630,27 +1719,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       }
     }
     stripColumnClz(note)
-    const typesetMath = (el) => {
-      if (window.MathJax) {
-        // MathJax Typeset
-        window.MathJax.typeset([el]);
-      } else if (window.katex) {
-        // KaTeX Render
-        var mathElements = el.getElementsByClassName("math");
-        var macros = [];
-        for (var i = 0; i < mathElements.length; i++) {
-          var texText = mathElements[i].firstChild;
-          if (mathElements[i].tagName == "SPAN") {
-            window.katex.render(texText.data, mathElements[i], {
-              displayMode: mathElements[i].classList.contains('display'),
-              throwOnError: false,
-              macros: macros,
-              fleqn: false
-            });
-          }
-        }
-      }
-    }
     if (id === null || id.startsWith('sec-')) {
       // Special case sections, only their first couple elements
       const container = document.createElement("div");
@@ -1665,10 +1733,14 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             break;
           }
         }
-        typesetMath(container);
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
         return container.innerHTML
       } else {
-        typesetMath(note);
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
         return note.innerHTML;
       }
     } else {
@@ -1677,8 +1749,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       if (anchorLink) {
         anchorLink.remove();
       }
-      typesetMath(note);
-      return note.innerHTML;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
     }
   }
   for (var i=0; i<xrefs.length; i++) {
@@ -1898,29 +1977,35 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
   }
 });
-</script><script src="https://giscus.app/client.js" data-repo="srvanderplas/stat-computing-r-python" data-repo-id="R_kgDOIvwd2g" data-category="General" data-category-id="DIC_kwDOIvwd2s4CTksR" data-mapping="pathname" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="light" data-lang="en" crossorigin="anonymous" async="">
-</script><input type="hidden" id="giscus-base-theme" value="light"><input type="hidden" id="giscus-alt-theme" value="dark"><nav class="page-navigation"><div class="nav-page nav-page-previous">
-      <a href="../part-gen-prog/035-matrix-calcs.html" class="pagination-link  aria-label=" calculations="">
+</script>
+<script src="https://giscus.app/client.js" data-repo="srvanderplas/stat-computing-r-python" data-repo-id="R_kgDOIvwd2g" data-category="General" data-category-id="DIC_kwDOIvwd2s4CTksR" data-mapping="pathname" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="light" data-lang="en" crossorigin="anonymous" async="">
+</script>
+<input type="hidden" id="giscus-base-theme" value="light">
+<input type="hidden" id="giscus-alt-theme" value="dark">
+<nav class="page-navigation">
+  <div class="nav-page nav-page-previous">
+      <a href="../part-gen-prog/035-matrix-calcs.html" class="pagination-link" aria-label="Matrix Calculations">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Matrix Calculations</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../part-gen-prog/05-functions.html" class="pagination-link" aria-label="<span class='chapter-number'>13</span>&nbsp; <span class='chapter-title'>Writing Functions</span>">
+      <a href="../part-gen-prog/05-functions.html" class="pagination-link" aria-label="Writing Functions">
         <span class="nav-page-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Writing Functions</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
 </div> <!-- /content -->
-<footer class="footer"><div class="nav-footer">
+<footer class="footer">
+  <div class="nav-footer">
     <div class="nav-footer-left">
 <p>Copyright 2024, Susan Vanderplas</p>
 </div>   
     <div class="nav-footer-center">
       &nbsp;
-    </div>
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/srvanderplas/stat-computing-r-python/edit/main/part-gen-prog/04-control-struct.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li></ul></div></div>
     <div class="nav-footer-right">
       <ul class="footer-items list-unstyled">
-<li class="nav-item compact">
+    <li class="nav-item compact">
     <a class="nav-link" href="https://github.com/srvanderplas">
       <i class="bi bi-github" role="img">
 </i> 
@@ -1939,9 +2024,11 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     </a>
   </li>  
 </ul>
-</div>
+    </div>
   </div>
 </footer>
+
+
 
 
 </body></html>
