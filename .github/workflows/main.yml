@@ -11,6 +11,7 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GH_PAT: ${{ secrets.GH_PAT }}
       GITHUB_PAT: ${{ secrets.GH_PAT }}
+      venv_dir: '.virtualenvs'
     steps:
     - uses: actions/checkout@v3
 
@@ -29,6 +30,15 @@ jobs:
         && sudo apt install gh -y
       shell: /bin/bash {0}
 
+    - uses: getsentry/action-setup-venv@v2.1.0
+      id: book
+      with:
+        venv-dir: '${{ inputs.venv_dir }}'
+        python-version: 3.11.2
+        cache-dependency-path: |
+          requirements.txt
+          requirements-frozen.txt
+        install-cmd: pip install -r requirements.txt -c requirements-frozen.txt
 
     - name: Set RENV_PATHS_ROOT
       shell: bash
@@ -38,6 +48,7 @@ jobs:
     - name: Install and activate renv
       run: |
         install.packages("renv")
+        renv::use_python("${{ inputs.venv_dir }}/bin/activate")
         renv::activate()
       shell: Rscript {0}
 
@@ -66,14 +77,14 @@ jobs:
         options(renv.download.override = utils::download.file)
         renv::restore()
 
-    - name: Setup python virtualenv
-      run: |
-        if(!"reticulate" %in% installed.packages()) install.packages("reticulate")
-        reticulate::virtualenv_create("book", packages = c("matplotlib", "numpy"))
-        reticulate::virtualenv_install("book", c("numpy", "pandas", "lxml"),
-          pip_options = c("--no-binary=numpy",  "--force-reinstall"))
+    # - name: Setup python virtualenv
+    #   run: |
+    #     if(!"reticulate" %in% installed.packages()) install.packages("reticulate")
+    #     reticulate::virtualenv_create("book", packages = c("matplotlib", "numpy"))
+    #     reticulate::virtualenv_install("book", c("numpy", "pandas", "lxml"),
+    #       pip_options = c("--no-binary=numpy",  "--force-reinstall"))
 
-      shell: Rscript {0}
+      # shell: Rscript {0}
 
     - uses: quarto-dev/quarto-actions/setup@v2
       with:
