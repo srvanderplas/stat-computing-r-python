@@ -65,32 +65,23 @@ jobs:
       shell: bash
       run: |
         echo "RENV_PATHS_ROOT=${{ runner.temp }}/renv" >> $GITHUB_ENV
-
     - name: Install and activate renv
       run: |
         install.packages("renv")
         renv::activate()
       shell: Rscript {0}
-
     - name: Get R and OS version
       id: get-version
       run: |
-        R --version > rvers.txt
-        echo "R_VERS=$(sed -E 's/.*([0-9]\.[0-9]\.[0-9]).*/\1/g' rvers.txt | sed  '/.\..\../!d')"  >> $GITHUB_ENV
-        echo "OS_VERS=$(uname)" >> $GITHUB_ENV
-
+        cat("##[set-output name=os-version;]", sessionInfo()$running, "\n", sep = "")
+        cat("##[set-output name=r-version;]", R.Version()$version.string, sep = "")
+      shell: Rscript {0}
     - name: Restore Renv package cache
-      id: r_cache
       uses: actions/cache@v4
       with:
         path: ${{ env.RENV_PATHS_ROOT }}
-        key: ${{ env.OS_VERS }}-${{ env.R_VERS }}-${{ inputs.cache-version }}-${{ hashFiles('renv.lock') }}
-        restore-keys: ${{ env.OS_VERS }}-${{ env.R_VERS }}-${{inputs.cache-version }}-
-
-    - name: Install Renv packages if cache fails
-      run: |
-        renv::restore()
-      shell: Rscript {0}
+        key: ${{ steps.get-version.outputs.os-version }}-${{ steps.get-version.outputs.r-version }}-${{ inputs.cache-version }}-${{ hashFiles('renv.lock') }}
+        restore-keys: ${{ steps.get-version.outputs.os-version }}-${{ steps.get-version.outputs.r-version }}-${{inputs.cache-version }}-
 
     - uses: quarto-dev/quarto-actions/setup@v2
       with:
