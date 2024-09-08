@@ -77,11 +77,18 @@ jobs:
         echo "R_VERS=$(sed -E 's/.*([0-9]\.[0-9]\.[0-9]).*/\1/g' rvers.txt | sed  '/.\..\../!d')"  >> $GITHUB_ENV
         echo "OS_VERS=$(uname)" >> $GITHUB_ENV
     - name: Restore Renv package cache
+      id: r_cache
       uses: actions/cache@v4
       with:
         path: ${{ env.RENV_PATHS_ROOT }}
         key: ${{ env.OS_VERS }}-${{ env.R_VERS }}-${{ inputs.cache-version }}-${{ hashFiles('renv.lock') }}
         restore-keys: ${{ env.OS_VERS }}-${{ env.R_VERS }}-${{inputs.cache-version }}-
+
+    - name: Install Renv packages if cache fails
+      if: steps.r_cache.outputs.cache-hit != 'true'
+      run: |
+        renv::restore()
+      shell: Rscript {0}
 
     - uses: quarto-dev/quarto-actions/setup@v2
       with:
