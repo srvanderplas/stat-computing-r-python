@@ -47,6 +47,11 @@ jobs:
         path: venv
         key: pip-${{ steps.setup_python.outputs.python-version }}-${{ hashFiles('requirements.txt') }}
 
+    - name: Set environment variables
+      id: set-env-vars
+      run: |
+        echo 'RETICULATE_PYTHON=${{ runner.temp }}/venv/bin/python' >> $GITHUB_ENV
+
     - name: Restore Python package cache
       if: steps.python_cache.outputs.cache-hit != 'true'
       run: |
@@ -60,16 +65,6 @@ jobs:
 
         # Install dependencies
         venv/bin/python3 -m pip install -r requirements.txt
-#
-#     - name: Set RENV_PATHS_ROOT, R_VERSION, and OS_VERSION
-#       id: get-version
-#       run: |
-#         system("echo 'RENV_PATHS_ROOT=${{ runner.temp }}/renv' >> $GITHUB_ENV\n")
-#         system(sprintf("echo 'OS_VERSION=%s' >> $GITHUB_ENV\n", sessionInfo()$running))
-#         system(sprintf("echo 'R_VERSION=%s' >> $GITHUB_ENV\n", R.Version()$version.string))
-#         #cat("##[set-output name=os-version;]", sessionInfo()$running, "\n", sep = "")
-#         #cat("##[set-output name=r-version;]", R.Version()$version.string, sep = "")
-#       shell: Rscript {0}
 
     - name: Renv setup
       uses: r-lib/actions/setup-renv@v2
