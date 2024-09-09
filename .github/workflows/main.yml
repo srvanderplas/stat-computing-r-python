@@ -32,6 +32,9 @@ jobs:
         && sudo apt install gh -y
       shell: /bin/bash {0}
 
+    - name: Renv setup
+      uses: r-lib/actions/setup-renv@v2
+
     - name: Setup Python
       id: setup-python
       uses: actions/setup-python@v5
@@ -54,22 +57,34 @@ jobs:
       run: |
         echo 'RETICULATE_PYTHON=venv/bin/python3' >> $GITHUB_ENV
 
-    - name: Restore Python package cache
+    - name: Restore Python package cache in R
       if: steps.python_cache.outputs.cache-hit != 'true'
+      shell: Rscript {0}
       run: |
         # Check if venv exists (restored from secondary keys if any, and delete)
         # You might not need this line if you only have one primary key for the venv caching
         # I kept it in my code as a fail-safe
-        if [ -d "venv" ]; then rm -rf venv; fi
+        if (reticulate::virtualenv_exists("venv")) {
+          reticulate::virtualenv_remove("venv")
+        }
 
-        # Re-create the venv
-        python3 -m venv venv
+        # Re-create the venv and install deps
+        python_ver <- readLines(".python-version")
+        reticulate::virtualenv_create("venv", requirements = "requirements.txt", python = python_ver)
 
-        # Install dependencies
-        venv/bin/python3 -m pip install -r requirements.txt
-
-    - name: Renv setup
-      uses: r-lib/actions/setup-renv@v2
+    # - name: Restore Python package cache
+    #   if: steps.python_cache.outputs.cache-hit != 'true'
+    #   run: |
+    #     # Check if venv exists (restored from secondary keys if any, and delete)
+    #     # You might not need this line if you only have one primary key for the venv caching
+    #     # I kept it in my code as a fail-safe
+    #     if [ -d "venv" ]; then rm -rf venv; fi
+    #
+    #     # Re-create the venv
+    #     python3 -m venv venv
+    #
+    #     # Install dependencies
+    #     venv/bin/python3 -m pip install -r requirements.txt
 
     - uses: quarto-dev/quarto-actions/setup@v2
       with:
