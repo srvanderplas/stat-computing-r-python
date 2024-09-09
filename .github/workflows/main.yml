@@ -32,7 +32,9 @@ jobs:
         && sudo apt install gh -y
       shell: /bin/bash {0}
 
-    - uses: actions/setup-python@v5
+    - name: Setup Python
+      id: setup-python
+      uses: actions/setup-python@v5
       with:
         python-version-file: '.python-version'
         cache-dependency-path: requirements.txt
@@ -42,10 +44,10 @@ jobs:
 
     - name: Cache python packages
       id: python_cache
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
-        path: venv
-        key: pip-${{ steps.setup_python.outputs.python-version }}-${{ hashFiles('requirements.txt') }}
+        path: r-reticulate
+        key: pip-${{ hashFiles('.python-version') }}-${{ hashFiles('requirements.txt') }}
 
     - name: Restore Python package cache
       if: steps.python_cache.outputs.cache-hit != 'true'
@@ -53,35 +55,27 @@ jobs:
         # Check if venv exists (restored from secondary keys if any, and delete)
         # You might not need this line if you only have one primary key for the venv caching
         # I kept it in my code as a fail-safe
-        if [ -d "venv" ]; then rm -rf venv; fi
+        if [ -d "r-reticulate" ]; then rm -rf r-reticulate; fi
 
         # Re-create the venv
-        python3 -m venv venv
+        python3 -m venv r-reticulate
 
         # Install dependencies
-        venv/bin/python3 -m pip install -r requirements.txt
+        r-reticulate/bin/python3 -m pip install -r requirements.txt
 
-    - name: Set RENV_PATHS_ROOT
-      shell: bash
-      run: |
-        echo "RENV_PATHS_ROOT=${{ runner.temp }}/renv" >> $GITHUB_ENV
-    - name: Install and activate renv
-      run: |
-        install.packages("renv")
-        renv::activate()
+    - name: Renv setup
+      uses: r-lib/actions/setup-renv@v2
+
+    - name: Reticulate checks
       shell: Rscript {0}
-    - name: Get R and OS version
-      id: get-version
       run: |
-        cat("##[set-output name=os-version;]", sessionInfo()$running, "\n", sep = "")
-        cat("##[set-output name=r-version;]", R.Version()$version.string, sep = "")
-      shell: Rscript {0}
-    - name: Restore Renv package cache
-      uses: actions/cache@v4
-      with:
-        path: ${{ env.RENV_PATHS_ROOT }}
-        key: ${{ steps.get-version.outputs.os-version }}-${{ steps.get-version.outputs.r-version }}-${{ inputs.cache-version }}-${{ hashFiles('renv.lock') }}
-        restore-keys: ${{ steps.get-version.outputs.os-version }}-${{ steps.get-version.outputs.r-version }}-${{inputs.cache-version }}-
+        if(!"r-reticulate" %in% reticulate::virtualenv_list()) {
+          if(!reticulate::py_available()){
+            reticulate::py_install(version = readLines(".python-version"))
+          }
+          reticulate::virtualenv_create("r-reticulate", requirements = "requirements.txt", python = readLines(".python-version"))
+        }
+        reticulate::use_python("r-reticulate")
 
     - uses: quarto-dev/quarto-actions/setup@v2
       with:
@@ -94,7 +88,7 @@ jobs:
         quarto render --execute-debug
 
     - name: "Deploy to gh-pages"
-      uses: peaceiris/actions-gh-pages@v3
+      uses: peaceiris/actions-gh-pages@v4
       if: github.ref == 'refs/heads/main'
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
