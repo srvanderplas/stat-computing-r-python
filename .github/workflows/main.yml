@@ -46,7 +46,7 @@ jobs:
       id: python_cache
       uses: actions/cache@v4
       with:
-        path: r-reticulate
+        path: $GITHUB_WORKSPACE/r-reticulate
         key: pip-${{ hashFiles('.python-version') }}-${{ hashFiles('requirements.txt') }}
 
     - name: Restore Python package cache
@@ -58,24 +58,32 @@ jobs:
         if [ -d "r-reticulate" ]; then rm -rf r-reticulate; fi
 
         # Re-create the venv
-        python3 -m venv r-reticulate
+        python3 -m venv $GITHUB_WORKSPACE/r-reticulate
 
         # Install dependencies
-        r-reticulate/bin/python3 -m pip install -r requirements.txt
+        $GITHUB_WORKSPACE/r-reticulate/bin/python3 -m pip install -r requirements.txt
+
+        echo "$GITHUB_WORKSPACE/r-reticulate/bin/python3" >> $GITHUB_PATH
+        source r-reticulate/bin/activate
 
     - name: Renv setup
       uses: r-lib/actions/setup-renv@v2
 
+    - name: Renv status
+      shell: Rscript {0}
+      run: |
+        renv::status()
+        renv::diagnostics()
+
     - name: Reticulate checks
       shell: Rscript {0}
       run: |
+        reticulate::py_config()
         if(!"r-reticulate" %in% reticulate::virtualenv_list()) {
-          if(!reticulate::py_available()){
-            reticulate::py_install(version = readLines(".python-version"))
-          }
-          reticulate::virtualenv_create("r-reticulate", requirements = "requirements.txt", python = readLines(".python-version"))
+          reticulate::py_install(version = readLines(".python-version"))
+          reticulate::virtualenv_create("$GITHUB_WORKSPACE/r-reticulate", requirements = "requirements.txt", python = readLines(".python-version"))
         }
-        reticulate::use_python("r-reticulate")
+        reticulate::use_virtualenv("r-reticulate")
 
     - uses: quarto-dev/quarto-actions/setup@v2
       with:
