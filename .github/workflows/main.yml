@@ -32,7 +32,9 @@ jobs:
         && sudo apt install gh -y
       shell: /bin/bash {0}
 
-    - uses: actions/setup-python@v5
+    - name: Setup Python
+      id: setup-python
+      uses: actions/setup-python@v5
       with:
         python-version-file: '.python-version'
         cache-dependency-path: requirements.txt
@@ -45,12 +47,12 @@ jobs:
       uses: actions/cache@v4
       with:
         path: venv
-        key: pip-${{ steps.setup_python.outputs.python-version }}-${{ hashFiles('requirements.txt') }}
+        key: pip--${{ hashFiles('requirements.txt') }}
 
     - name: Set environment variables
       id: set-env-vars
       run: |
-        echo 'RETICULATE_PYTHON=${{ runner.temp }}/venv/bin/python' >> $GITHUB_ENV
+        echo 'RETICULATE_PYTHON=venv/bin/python3' >> $GITHUB_ENV
 
     - name: Restore Python package cache
       if: steps.python_cache.outputs.cache-hit != 'true'
