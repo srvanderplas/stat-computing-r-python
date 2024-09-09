@@ -50,12 +50,7 @@ jobs:
       uses: actions/cache@v4
       with:
         path: venv
-        key: pip--${{ hashFiles('requirements.txt') }}
-
-    - name: Set environment variables
-      id: set-env-vars
-      run: |
-        echo 'RETICULATE_PYTHON=venv/bin/python' >> $GITHUB_ENV
+        key: pip-${{ hashFiles('.python-version') }}-${{ hashFiles('requirements.txt') }}
 
     - name: Restore Python package cache in R
       if: steps.python_cache.outputs.cache-hit != 'true'
