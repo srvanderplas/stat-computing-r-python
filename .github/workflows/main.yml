@@ -66,9 +66,16 @@ jobs:
     - name: Renv setup
       uses: r-lib/actions/setup-renv@v2
 
+    - name: Renv status
+      shell: Rscript {0}
+      run: |
+        renv::status()
+        renv::diagnostics()
+
     - name: Reticulate checks
       shell: Rscript {0}
       run: |
+        reticulate::py_config()
         if(!"r-reticulate" %in% reticulate::virtualenv_list()) {
           if(!reticulate::py_available()){
             reticulate::py_install(version = readLines(".python-version"))
