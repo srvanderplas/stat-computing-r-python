@@ -66,6 +66,7 @@ jobs:
         reticulate::virtualenv_root()
         reticulate::virtualenv_create("venv", requirements="requirements.txt")
         reticulate::use_virtualenv("venv")
+        reticulate::py_config()
         writeLines(
             paste0("RETICULATE_PYTHON=", reticulate::virtualenv_python("venv")),
             Sys.getenv("GITHUB_ENV"))
@@ -89,7 +90,7 @@ jobs:
     - uses: actions/cache@v4  # v4.0.0
       id: cache-venv
       with:
-        path: ${{ env.RETICULATE_PYTHON }}
+        path: .virtualenvs/r-reticulate
         key: setup-venv-${{ runner.os }}-${{ env.PY_CACHE_STR }}
 
     - uses: quarto-dev/quarto-actions/setup@v2
