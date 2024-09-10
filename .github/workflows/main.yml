@@ -57,15 +57,8 @@ jobs:
     - name: Reticulate checks
       shell: Rscript {0}
       run: |
-        reticulate::virtualenv_create('r-reticulate')
+        reticulate::use_virtualenv("$GITHUB_WORKSPACE/venv")
         reticulate::py_config()
-        if(!"venv" %in% reticulate::virtualenv_list()) {
-          reticulate::py_install(version = readLines(".python-version"))
-          reticulate::virtualenv_create("$GITHUB_WORKSPACE/venv", requirements = "requirements.txt", python = readLines(".python-version"))
-        } else {
-
-        }
-        reticulate::use_virtualenv("venv")
 
     - uses: quarto-dev/quarto-actions/setup@v2
       with:
