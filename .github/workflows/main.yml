@@ -40,6 +40,14 @@ jobs:
         cache-dependency-path: requirements.txt
         install-cmd: "./py-deps -i"
 
+    - name: Set python path/vars for R
+      run: |
+        echo "RETICULATE_PYTHON=${{ setup-python-venv.reticulate-python }} >> $GITHUB_ENV"
+        echo "RETICULATE_PYTHON_ENV=${{ setup-python-venv.venv-path }} >> $GITHUB_ENV"
+    - name: Test
+      run: echo $RETICULATE_PYTHON; echo $RETICULATE_PYTHON_ENV;
+
+
     - name: Renv setup
       uses: r-lib/actions/setup-renv@v2
 
@@ -52,9 +60,6 @@ jobs:
 
     - name: Reticulate checks
       shell: Rscript {0}
-      with:
-        RETICULATE_PYTHON: ${{ setup-python-venv.reticulate-python }}
-        RETICULATE_PYTHON_ENV: ${{ setup-python-venv.venv-path }}
       run: |
         reticulate::virtualenv_create('r-reticulate')
         reticulate::py_config()
