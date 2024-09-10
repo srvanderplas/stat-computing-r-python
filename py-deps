@@ -1,12 +1,59 @@
 #!/bin/bash
 
-# Update dependencies required by the book
-pipdeptree -r --warn silence | grep -E '^\w+' > requirements.txt
 
-# Install requirements
-pip install -r requirements.txt
+SetRequirements() {
+  # Update dependencies required by the book
+  pipdeptree -r --warn silence | grep -E '^\w+' > requirements.txt
+  echo "Requirements file updated successfully!"
+}
 
-# Update package versions from what's installed
-# pip --disable-pip-version-check list --outdated --format=json | \
-# python -c "import json, sys; print('\n'.join([x['name'] for x in json.load(sys.stdin)]))" | \
-# xargs -n1 pip install -U
+
+Install() {
+  # Install requirements
+  pip install -r requirements.txt
+  echo "Packages in requirements.txt installed with pip"
+}
+
+
+Update() {
+  # Update package versions from what's installed
+  pip --disable-pip-version-check list --outdated --format=json | \
+  python -c "import json, sys; print('\n'.join([x['name'] for x in json.load(sys.stdin)]))" | \
+  xargs -n1 pip install -U
+  echo "Package version update complete"
+
+  SetRequirements
+}
+
+
+Help() {
+  echo "Handle book's python dependencies."
+  echo
+  echo "Syntax: py-deps [-h|i|s|u]"
+  echo "Options:"
+  echo "h   Print the help text"
+  echo "i   pip install packages from requirements.txt file"
+  echo "s   Set requirements - examine all qmd files for python deps and update requirements.txt accordingly."
+  echo "u   Update all python package versions required by pip. Will also set requirements to updated versions."
+  echo
+}
+
+while getopts ":hisu" option; do
+  case $option in
+    h) # display Help
+      Help
+      exit;;
+    i) # install pkgs
+      Install
+      exit;;
+    s) # set requirements file
+      SetRequirements
+      exit;;
+    u) # update python pkgs
+      Update
+      exit;;
+    \?) # invalid option
+      echo "Error: Invalid option"
+      exit;;
+  esac
+done
