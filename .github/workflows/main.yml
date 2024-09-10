@@ -38,31 +38,6 @@ jobs:
       with:
         python-version-file: '.python-version'
         cache-dependency-path: requirements.txt
-#
-#     - name: Cache python packages
-#       id: python_cache
-#       uses: actions/cache@v4
-#       with:
-#         path: $GITHUB_WORKSPACE/r-reticulate
-#         key: pip-${{ hashFiles('.python-version') }}-${{ hashFiles('requirements.txt') }}
-#
-#     - name: Restore Python package cache
-#       if: steps.python_cache.outputs.cache-hit != 'true'
-#       run: |
-#         # Check if venv exists (restored from secondary keys if any, and delete)
-#         # You might not need this line if you only have one primary key for the venv caching
-#         # I kept it in my code as a fail-safe
-#         if [ -d "r-reticulate" ]; then rm -rf r-reticulate; fi
-#
-#         # Re-create the venv
-#         python3 -m venv $GITHUB_WORKSPACE/r-reticulate
-#
-#         # Install dependencies
-#         $GITHUB_WORKSPACE/r-reticulate/bin/python3 -m pip install -r requirements.txt
-#
-#         echo "$GITHUB_WORKSPACE/r-reticulate/bin/python3" >> $GITHUB_PATH
-#         source r-reticulate/bin/activate
-
     - name: Renv setup
       uses: r-lib/actions/setup-renv@v2
 
@@ -76,11 +51,13 @@ jobs:
       shell: Rscript {0}
       run: |
         reticulate::py_config()
-        if(!"r-reticulate" %in% reticulate::virtualenv_list()) {
+        if(!"venv" %in% reticulate::virtualenv_list()) {
           reticulate::py_install(version = readLines(".python-version"))
-          reticulate::virtualenv_create("$GITHUB_WORKSPACE/r-reticulate", requirements = "requirements.txt", python = readLines(".python-version"))
+          reticulate::virtualenv_create("$GITHUB_WORKSPACE/venv", requirements = "requirements.txt", python = readLines(".python-version"))
+        } else {
+
         }
-        reticulate::use_virtualenv("r-reticulate")
+        reticulate::use_virtualenv("venv")
 
     - uses: quarto-dev/quarto-actions/setup@v2
       with:
