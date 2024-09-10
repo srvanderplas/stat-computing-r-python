@@ -15,9 +15,6 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Change ownership of /github/home
-      run: sudo chown -R $(whoami) /github/home
-
     - name: Install system dependencies
       if: runner.os == 'Linux'
       run: |
@@ -31,22 +28,6 @@ jobs:
         && sudo apt update \
         && sudo apt install gh -y
       shell: /bin/bash {0}
-
-#
-#     - name: Setup Python and virtual environment using requirements file
-#       id: setup-python-venv
-#       uses: srvanderplas/action-setup-venv@v1.1.5
-#       with:
-#         python-version-file: '.python-version'
-#         cache-dependency-path: requirements.txt
-#         install-cmd: "./py-deps -i"
-
-    # - name: Test
-    #   run: |
-    #     echo $RETICULATE_PYTHON;
-    #     echo $RETICULATE_PYTHON_ENV;
-    #     echo "$pythonLocation" >> $GITHUB_PATH;
-    #
 
     - name: Renv setup
       uses: r-lib/actions/setup-renv@v2
@@ -67,15 +48,18 @@ jobs:
         reticulate::virtualenv_create("venv", requirements="requirements.txt")
         reticulate::use_virtualenv("venv")
         reticulate::py_config()
+        # Set reticulate_python env var
         writeLines(
             paste0("RETICULATE_PYTHON=", reticulate::virtualenv_python("venv")),
             Sys.getenv("GITHUB_ENV"))
+        # Paste string to describe cache
         writeLines(
             paste0("PY_CACHE_STR=python",
               paste(
                 readLines(".python-version"),
                 reticulate::virtualenv_python("venv"),
-                digest::digest(readLines("requirements.txt"))
+                digest::digest(readLines("requirements.txt")),
+                sep = "-"
             )),
             Sys.getenv("GITHUB_ENV"))
 
@@ -89,7 +73,7 @@ jobs:
       id: cache-venv
       with:
         path: .virtualenvs/r-reticulate
-        key: setup-venv-${{ runner.os }}-${{ env.PY_CACHE_STR }}
+        key: setup-venv-${{ env.PY_CACHE_STR }}
 
     - uses: quarto-dev/quarto-actions/setup@v2
       with:
