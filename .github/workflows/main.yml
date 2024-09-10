@@ -11,6 +11,7 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GH_PAT: ${{ secrets.GH_PAT }}
       GITHUB_PAT: ${{ secrets.GH_PAT }}
+      WORKON_HOME: "~/.virtualenvs"
 
     steps:
     - uses: actions/checkout@v4
@@ -23,7 +24,7 @@ jobs:
       run: |
         sudo apt update
         sudo apt upgrade
-        sudo apt install -y libudunits2-dev libgdal-dev python3-virtualenv virtualenv virtualenvwrapper
+        sudo apt install -y libudunits2-dev libgdal-dev
         type -p curl >/dev/null || (sudo apt update && sudo apt install curl -y)
         curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
         && sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg \
@@ -39,6 +40,7 @@ jobs:
         python-version-file: '.python-version'
         cache-dependency-path: requirements.txt
         install-cmd: "./py-deps -i"
+        workon-home: "$WORKON_HOME"
 
     - name: Test
       run: |
