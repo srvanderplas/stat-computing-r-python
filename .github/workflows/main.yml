@@ -34,33 +34,36 @@ jobs:
 
     - name: Setup Python and virtual environment using requirements file
       id: setup-python-venv
-      uses: srvanderplas/action-setup-venv@v1.1.2
+      uses: srvanderplas/action-setup-venv@v1.1.3
       with:
         python-version-file: '.python-version'
         cache-dependency-path: requirements.txt
         install-cmd: "./py-deps -i"
 
-
     - name: Renv setup
       uses: r-lib/actions/setup-renv@v2
 
-    - name: Renv status
+    - name: Renv and R install status
       shell: Rscript {0}
       run: |
         renv::status()
         renv::diagnostics()
+        devtools::session_info()
 
     - name: Reticulate checks
       shell: Rscript {0}
+      with:
+        RETICULATE_PYTHON: ${{ setup-python-venv.reticulate-python }}
+        RETICULATE_PYTHON_ENV: ${{ setup-python-venv.venv-path }}
       run: |
-        # reticulate::virtualenv_create('r-reticulate')
-        # reticulate::py_config()
-        # if(!"venv" %in% reticulate::virtualenv_list()) {
-        #   reticulate::py_install(version = readLines(".python-version"))
-        #   reticulate::virtualenv_create("$GITHUB_WORKSPACE/venv", requirements = "requirements.txt", python = readLines(".python-version"))
-        # } else {
-        #
-        # }
+        reticulate::virtualenv_create('r-reticulate')
+        reticulate::py_config()
+        if(!"venv" %in% reticulate::virtualenv_list()) {
+          reticulate::py_install(version = readLines(".python-version"))
+          reticulate::virtualenv_create("$GITHUB_WORKSPACE/venv", requirements = "requirements.txt", python = readLines(".python-version"))
+        } else {
+
+        }
         reticulate::use_virtualenv("venv")
 
     - uses: quarto-dev/quarto-actions/setup@v2
