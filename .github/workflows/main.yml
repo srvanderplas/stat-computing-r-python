@@ -63,15 +63,34 @@ jobs:
       run: |
         reticulate::install_python(version=readLines(".python-version"))
         reticulate::py_install(c("virtualenv"))
-        reticulate::virtualenv_root(".")
+        reticulate::virtualenv_root()
         reticulate::virtualenv_create("venv", requirements="requirements.txt")
         reticulate::use_virtualenv("venv")
+        writeLines(
+            paste0("RETICULATE_PYTHON=", reticulate::virtualenv_python("venv")),
+            Sys.getenv("GITHUB_ENV"))
+        writeLines(
+            paste0("PY_CACHE_STR=python",
+              paste(
+                readLines(".python-version"),
+                reticulate::virtualenv_python("venv"),
+                digest::digest(readLines("requirements.txt"))
+            )),
+            Sys.getenv("GITHUB_ENV"))
+
+
 
     - name: Reticulate checks
       shell: Rscript {0}
       run: |
         devtools::session_info()
         reticulate::py_config()
+
+    - uses: actions/cache@v4  # v4.0.0
+      id: cache-venv
+      with:
+        path: ${{ env.RETICULATE_PYTHON }}
+        key: setup-venv-${{ runner.os }}-${{ env.PY_CACHE_STR }}
 
     - uses: quarto-dev/quarto-actions/setup@v2
       with:
