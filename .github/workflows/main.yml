@@ -35,12 +35,11 @@ jobs:
 
     - name: Setup Python and virtual environment using requirements file
       id: setup-python-venv
-      uses: srvanderplas/action-setup-venv@v1.1.4
+      uses: srvanderplas/action-setup-venv@v1.1.5
       with:
         python-version-file: '.python-version'
         cache-dependency-path: requirements.txt
         install-cmd: "./py-deps -i"
-        workon-home: "$WORKON_HOME"
 
     - name: Test
       run: |
@@ -61,7 +60,11 @@ jobs:
     - name: Reticulate checks
       shell: Rscript {0}
       run: |
-        system("source venv/bin/activate")
+        print(getwd())
+
+        system("bash venv/bin/activate")
+        system("which python")
+
         devtools::session_info()
         reticulate::py_config()
         reticulate::use_virtualenv("${{ env.VIRTUAL_ENV }}")
