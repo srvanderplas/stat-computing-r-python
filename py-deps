@@ -27,9 +27,14 @@ FindRequirements() {
   sed -i -e 's/^PIL$/pillow/g' py-imports-clean
   # replace sklearn with scikit-learn
   sed -i -e 's/^sklearn$/scikit-learn/g' py-imports-clean
+  # replace cv2 with opencv
+  sed -i -e 's/^cv2/opencv/g' py-imports-clean
 
+  # Python system packages assembled from here: https://docs.python.org/3/library/index.html
+  # Need to not install these, since python/pip will error out :(
   set_difference py-imports-clean py-system-pkgs > py-imports-install
 
+  # Remove temp files created when assembling packages
   rm py-imports py-imports-clean
   mv py-imports-install requirements.txt
 }
