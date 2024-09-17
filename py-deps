@@ -3,23 +3,24 @@
 
 SetRequirements() {
   # Update dependencies required by the book
-  pipdeptree -r --warn silence | grep -E '^\w+' > requirements.txt
+  # pipdeptree -r -f --warn silence | grep -E '^[a-zA-Z0-9\-]+' > requirements.txt
+  pip3 freeze > requirements.txt
   echo "Requirements file updated successfully!"
 }
 
 
 Install() {
   # Install requirements
-  pip install -r requirements.txt
+  pip3 install -r requirements.txt
   echo "Packages in requirements.txt installed with pip"
 }
 
 
 Update() {
   # Update package versions from what's installed
-  pip --disable-pip-version-check list --outdated --format=json | \
+  pip3 --disable-pip-version-check list --outdated --format=json | \
   python -c "import json, sys; print('\n'.join([x['name'] for x in json.load(sys.stdin)]))" | \
-  xargs -n1 pip install -U
+  xargs -n1 pip3 install -U
   echo "Package version update complete"
 
   SetRequirements
