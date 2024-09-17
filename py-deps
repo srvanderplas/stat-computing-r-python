@@ -1,10 +1,46 @@
 #!/bin/bash
+set_union () {
+   sort $1 $2 | uniq
+}
 
+set_intersection () {
+   sort $1 $2 | uniq -d
+}
+
+set_difference () {
+   sort $1 $2 $2 | uniq -u
+}
+
+set_symmetric_difference() {
+   sort $1 $2 | uniq -u
+}
+
+FindRequirements() {
+  grep -r "from .* import .*" --include "*.qmd" . | awk '{ match( $0, /:from ([A-z0-9]*).?.*? import .*$/, arr) ; if(arr[1] != "") print arr[1] } ' | sort | uniq > py-imports
+  grep -r "import .* as .*" --include "*.qmd" . | awk '{ match( $0, /:import ([A-z0-9]*).?.*? as .*$/, arr) ; if(arr[1] != "") print arr[1] } ' | sort | uniq >> py-imports
+  grep -r "import .*" --include "*.qmd" . | awk '{ match( $0, /:import ([A-z0-9]*).*$/, arr) ; if(arr[1] != "") print arr[1] } ' | sort | uniq >> py-imports
+  # deduplicate
+  cat requirements.txt >> py-imports
+  cat py-imports | sort | uniq  > py-imports-clean
+
+  # replace PIL with pillow... ugh python sucks
+  sed -i -e 's/^PIL$/pillow/g' py-imports-clean
+  # replace sklearn with scikit-learn
+  sed -i -e 's/^sklearn$/scikit-learn/g' py-imports-clean
+
+
+  set_difference py-imports-clean py-system-pkgs > py-imports-install
+
+  rm py-imports py-imports-clean
+  mv py-imports-install requirements.txt
+}
 
 SetRequirements() {
   # Update dependencies required by the book
   # pipdeptree -r -f --warn silence | grep -E '^[a-zA-Z0-9\-]+' > requirements.txt
-  pip3 freeze > requirements.txt
+  pip-chill --no-version > requirements.txt
+  FindRequirements
+
   echo "Requirements file updated successfully!"
 }
 
