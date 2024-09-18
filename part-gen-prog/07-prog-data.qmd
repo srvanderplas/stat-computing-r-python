@@ -460,7 +460,7 @@ To look at this, we'll need a bit more data. I found a list of NYC zip codes by 
 
 ```{r get-nyc-zip-borough, echo = F, include = F, eval = F}
 library(xml2)
-library(tidyverse)
+library(readr)
 page <- read_html("https://www.nycbynatives.com/nyc_info/new_york_city_zip_codes.php")
 nyc_zip_borough <- data.frame(ZipCode = c(xml_find_all(page, ".//tr/td[1]"), 
                                           xml_find_all(page, ".//tr/td[4]")) %>%
@@ -471,7 +471,7 @@ nyc_zip_borough <- data.frame(ZipCode = c(xml_find_all(page, ".//tr/td[1]"),
                                 purrr::map_chr(xml_text) %>% 
                                 stringr::str_trim()) %>%
   unique()
-write_csv(nyc_zip_borough, "data/nyc_zip_borough.csv")
+write_csv(nyc_zip_borough, file = file.path("../", "data", "nyc_zip_borough.csv"))
 ```
 
 ::: panel-tabset
@@ -479,7 +479,7 @@ write_csv(nyc_zip_borough, "data/nyc_zip_borough.csv")
 #### R {-}
 
 ```{r merge-dog-borough-info}
-borough_zip <- read_csv("https://raw.githubusercontent.com/srvanderplas/unl-stat850/main/data/nyc_zip_borough.csv")
+borough_zip <- read_csv("https://raw.githubusercontent.com/srvanderplas/stat-computing-r-python/main/data/nyc_zip_borough.csv")
 
 # Remove the Borough column from dogs
 dogs <- dogs[, which(names(dogs) != "Borough")]
@@ -491,8 +491,7 @@ head(dogs)
 #### Python {-}
 
 ```{python merge-dog-borough-info-py}
-borough_zip = pd.read_csv("https://raw.githubusercontent.com/srvanderplas/unl-stat850/main/data/nyc_zip_borough.csv")
-
+borough_zip = pd.read_csv("https://raw.githubusercontent.com/srvanderplas/stat-computing-r-python/main/data/nyc_zip_borough.csv")
 dogs = dogs.drop('Borough', axis = 1) # drop borough column
 dogs = pd.merge(dogs, borough_zip, on = 'ZipCode')
 dogs.head()
