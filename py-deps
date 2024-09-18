@@ -23,6 +23,7 @@ FindRequirements() {
   grep -r "import .*" --include "*.qmd" . | awk '{ match( $0, /:import ([A-z0-9]*).*$/, arr) ; if(arr[1] != "") print arr[1] } ' | sort | uniq >> py-imports
   # deduplicate
   cat requirements.txt >> py-imports
+  cat py-deps-reqs >> py-imports
   cat py-imports | sort | uniq  > py-imports-clean
 
   # replace PIL with pillow... ugh python sucks
