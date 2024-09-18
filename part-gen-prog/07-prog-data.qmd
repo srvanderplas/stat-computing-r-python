@@ -21,6 +21,15 @@ As you've probably guessed by now, this  section will primarily be focused on ex
 
 - Create new variables and columns or reformat existing columns in provided data structures
 
+```{python}
+#| include: false
+#| echo: false
+#| message: false
+#| warning: false
+import warnings
+warnings.filterwarnings("ignore", category=FutureWarning)
+```
+
 ## Artwork Dimensions
 
 The Tate Art Museum assembled a collection of 70,000 artworks (last updated in 2014). They cataloged information including accession number, artwork dimensions, units, title, date, medium, inscription, and even URLs for images of the art. 
@@ -146,7 +155,7 @@ We might be interested in the aspect ratio of the artwork - let's take a look at
 
 ::: panel-tabset
 
-####R {-}
+#### R {-}
 
 ```{r hist-dims-art, fig.height = 4, fig.width = 12}
 par(mfrow=c(1, 3)) # 3 plots on one row
@@ -267,7 +276,7 @@ The downside to this is that we have to write out `artwork$aspect_hw` or `artwor
 
 One mistake I see people make frequently is to calculate `height/width`, but then not assign that value to a variable. 
 
-If you're not using `<-` in R^[(or `=` or `->` if you're a total heathen)] or `=` in Python, then you're not saving that information to be referenced later - you're just calculating values temporarily and possibly printing them as output. 
+**If you're not using `<-` in R^[(or `=`, or `->` if you're a total heathen)] or `=` in Python, then you're not saving that information** to be referenced later - you're just calculating values temporarily and possibly printing them as output. 
 
 :::
 
@@ -393,7 +402,7 @@ You may need to run `pip install plotnine` in the terminal if you have not used 
 from plotnine import *
 
 (
-  ggplot(aes(x = 'LicenseIssuedDate'), data = dogs) + 
+  ggplot(mapping = aes(x = 'LicenseIssuedDate'), data = dogs) + 
   geom_histogram() # Create a histogram
 )
 
@@ -443,7 +452,7 @@ dogs["License_length_yr"] = dogs.License_length.dt.days/365.25
 
 ```{python dog-license-length2-py}
 (
-  ggplot(aes(x = "License_length_yr"), data = dogs) + 
+  ggplot(mapping = aes(x = "License_length_yr"), data = dogs) + 
   geom_histogram(bins = 30)+
   scale_x_continuous(limits = (0,10))
 )
@@ -460,7 +469,7 @@ To look at this, we'll need a bit more data. I found a list of NYC zip codes by 
 
 ```{r get-nyc-zip-borough, echo = F, include = F, eval = F}
 library(xml2)
-library(tidyverse)
+library(readr)
 page <- read_html("https://www.nycbynatives.com/nyc_info/new_york_city_zip_codes.php")
 nyc_zip_borough <- data.frame(ZipCode = c(xml_find_all(page, ".//tr/td[1]"), 
                                           xml_find_all(page, ".//tr/td[4]")) %>%
@@ -471,7 +480,7 @@ nyc_zip_borough <- data.frame(ZipCode = c(xml_find_all(page, ".//tr/td[1]"),
                                 purrr::map_chr(xml_text) %>% 
                                 stringr::str_trim()) %>%
   unique()
-write_csv(nyc_zip_borough, "../data/nyc_zip_borough.csv")
+write_csv(nyc_zip_borough, file = file.path("../", "data", "nyc_zip_borough.csv"))
 ```
 
 ::: panel-tabset
@@ -491,8 +500,7 @@ head(dogs)
 #### Python {-}
 
 ```{python merge-dog-borough-info-py}
-borough_zip = pd.read_csv("https://raw.githubusercontent.com/srvanderplas/unl-stat850/main/data/nyc_zip_borough.csv")
-
+borough_zip = pd.read_csv("https://raw.githubusercontent.com/srvanderplas/stat-computing-r-python/main/data/nyc_zip_borough.csv")
 dogs = dogs.drop('Borough', axis = 1) # drop borough column
 dogs = pd.merge(dogs, borough_zip, on = 'ZipCode')
 dogs.head()
@@ -502,7 +510,6 @@ dogs.head()
 
 Now that we have borough, let's write a function that will take a dataset and spit out a list of the top 5 dog breeds registered in that area.
 
-### Custom Summary Function
 
 ::: panel-tabset
 
@@ -528,8 +535,6 @@ def top_5_breeds(data):
 
 :::
 
-
-### For Loop Summary
 
 Now, using that function, lets write a for loop that loops through the 5 boroughs and spits out the top 5 breeds in each borough:
 
@@ -581,7 +586,6 @@ for i in boroughs:
 
 :::
 
-### Summary Data Frame
 
 If we wanted to save these results as a summary data frame, we could totally do that!
 
@@ -712,10 +716,11 @@ library(ggplot2)
 
 ggplot(
   data = tarantino, 
-  aes(x = minutes_in, color = movie)
+  aes(x = minutes_in, color = type)
 ) + 
   geom_density() + 
-  facet_wrap(~type)
+  scale_color_manual(values = c("black", "grey")) +
+  facet_wrap(~movie)
 ```
 
 #### Python {-}
@@ -725,12 +730,11 @@ You may need to run `pip install plotnine` in the terminal if you have not used 
 ```{python tarantino-hist-py}
 from plotnine import *
 
-(
-  ggplot(tarantino, aes(x = 'minutes_in', color = 'movie')) + 
-  geom_density() + 
-  facet_wrap("type")
-)
-
+plot = ggplot(data = tarantino, mapping = aes(x = 'minutes_in', color = "type")) 
+plot = plot + geom_density()
+plot = plot + scale_color_manual(values = ["black", "grey"]) 
+plot = plot + facet_wrap("movie")
+plot.show()
 ```
 
 :::
@@ -787,12 +791,11 @@ tarantino_words = tarantino.query("type == 'word'")
 
 # Step 2 - 6 most common words
 
+plot = ggplot(tarantino, aes(x = 'minutes_in', color = 'movie'))
+plot = plot + geom_density() 
+plot = plot + facet_wrap("type")
 
-(
-  ggplot(tarantino, aes(x = 'minutes_in', color = 'movie')) + 
-  geom_density() + 
-  facet_wrap("type")
-)
+plot.show()
 
 ```
 

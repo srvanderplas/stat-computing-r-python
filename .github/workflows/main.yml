@@ -45,7 +45,7 @@ jobs:
         reticulate::install_python(version=readLines(".python-version"))
         reticulate::py_install(c("virtualenv"))
         reticulate::virtualenv_root()
-        reticulate::virtualenv_create("venv", requirements="requirements.txt")
+        reticulate::virtualenv_create("venv", requirements="pyenv/requirements.txt")
         reticulate::use_virtualenv("venv")
         reticulate::py_config()
         # Set reticulate_python env var
@@ -58,7 +58,7 @@ jobs:
               paste(
                 readLines(".python-version"),
                 reticulate::virtualenv_python("venv"),
-                digest::digest(readLines("requirements.txt")),
+                digest::digest(readLines("pyenv/requirements.txt")),
                 sep = "-"
             )),
             Sys.getenv("GITHUB_ENV"))

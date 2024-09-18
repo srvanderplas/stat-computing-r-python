@@ -1,0 +1,103 @@
+#!/bin/bash
+
+# From https://stackoverflow.com/a/13038235/2859168
+set_union () {
+   sort $1 $2 | uniq
+}
+
+set_intersection () {
+   sort $1 $2 | uniq -d
+}
+
+set_difference () {
+   sort $1 $2 $2 | uniq -u
+}
+
+set_symmetric_difference() {
+   sort $1 $2 | uniq -u
+}
+
+FindRequirements() {
+  grep -r "from .* import .*" --include "*.qmd" . | awk '{ match( $0, /:from ([A-z0-9]*).?.*? import .*$/, arr) ; if(arr[1] != "") print arr[1] } ' | sort | uniq > pyenv/py-imports
+  grep -r "import .* as .*" --include "*.qmd" . | awk '{ match( $0, /:import ([A-z0-9]*).?.*? as .*$/, arr) ; if(arr[1] != "") print arr[1] } ' | sort | uniq >> pyenv/py-imports
+  grep -r "import .*" --include "*.qmd" . | awk '{ match( $0, /:import ([A-z0-9]*).*$/, arr) ; if(arr[1] != "") print arr[1] } ' | sort | uniq >> pyenv/py-imports
+  # deduplicate
+  cat pyenv/requirements.txt >> pyenv/py-imports
+  cat pyenv/py-deps-reqs >> pyenv/py-imports
+  cat pyenv/py-imports | sort | uniq  > pyenv/py-imports-clean
+
+  # replace PIL with pillow... ugh python sucks
+  sed -i -e 's/^PIL$/pillow/g' pyenv/py-imports-clean
+  # replace sklearn with scikit-learn
+  sed -i -e 's/^sklearn$/scikit-learn/g' pyenv/py-imports-clean
+  # replace cv2 with opencv
+  sed -i -e 's/^cv2/opencv/g' pyenv/py-imports-clean
+
+  # Python system packages assembled from here: https://docs.python.org/3/library/index.html
+  # Need to not install these, since python/pip will error out :(
+  set_difference pyenv/py-imports-clean pyenv/py-system-pkgs > pyenv/py-imports-install
+
+  # Remove temp files created when assembling packages
+  rm pyenv/py-imports pyenv/py-imports-clean
+  mv pyenv/py-imports-install pyenv/requirements.txt
+}
+
+SetRequirements() {
+  # Update dependencies required by the book
+  # pipdeptree -r -f --warn silence | grep -E '^[a-zA-Z0-9\-]+' > requirements.txt
+  pip-chill --no-version > pyenv/requirements.txt
+  FindRequirements
+
+  echo "Requirements file updated successfully!"
+}
+
+
+Install() {
+  # Install requirements
+  pip3 install -r pyenv/requirements.txt
+  echo "Packages in requirements.txt installed with pip"
+}
+
+
+Update() {
+  # Update package versions from what's installed
+  pip3 --disable-pip-version-check list --outdated --format=json | \
+  python -c "import json, sys; print('\n'.join([x['name'] for x in json.load(sys.stdin)]))" | \
+  xargs -n1 pip3 install -U
+  echo "Package version update complete"
+
+  SetRequirements
+}
+
+
+Help() {
+  echo "Handle book's python dependencies."
+  echo
+  echo "Syntax: py-deps [-h|i|s|u]"
+  echo "Options:"
+  echo "h   Print the help text"
+  echo "i   pip install packages from requirements.txt file"
+  echo "s   Set requirements - examine all qmd files for python deps and update requirements.txt accordingly."
+  echo "u   Update all python package versions required by pip. Will also set requirements to updated versions."
+  echo
+}
+
+while getopts ":hisu" option; do
+  case $option in
+    h) # display Help
+      Help
+      exit;;
+    i) # install pkgs
+      Install
+      exit;;
+    s) # set requirements file
+      SetRequirements
+      exit;;
+    u) # update python pkgs
+      Update
+      exit;;
+    \?) # invalid option
+      echo "Error: Invalid option"
+      exit;;
+  esac
+done
