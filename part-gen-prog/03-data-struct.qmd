@@ -18,7 +18,7 @@ You will need the `numpy` and `pandas` packages for this section. Pick one of th
 ### System Terminal
 
 ```{bash, eval = F}
-pip3 install numpy pandas
+pip3 install numpy pandas lxml
 ```
 
 ### R Terminal
@@ -26,15 +26,15 @@ pip3 install numpy pandas
 This package installation method requires that you have a virtual environment set up (that is, if you are on Windows, don't try to install packages this way).
 
 ```{r, eval = F}
-reticulate::py_install(c("numpy", "pandas"))
+reticulate::py_install(c("numpy", "pandas", "lxml"))
 ```
 
 ### Python Terminal
 
-In a python chunk (or the python terminal), you can run the following command. This depends on something called "IPython magic" commands, so if it doesn't work for you, try the System Terminal method instead.
+In a python chunk (or the python terminal), you can run the following command. This depends on something called ["IPython magic"](https://ipython.readthedocs.io/en/stable/index.html#) commands, so if it doesn't work for you, try the System Terminal method instead.
 
 ```{python, eval = F}
-%pip install numpy pandas
+%pip install numpy pandas lxml
 ```
 
 :::
@@ -211,6 +211,7 @@ print(digits_pi)
 Python has multiple things that look like vectors, including the `pandas` library's Series structure. 
 A **Series** is a one-dimensional array-like object containing a sequence of values and an associated array of labels (called its index).
 
+
 ```{python series-pandas-1, error = F}
 import pandas as pd
 digits_pi = pd.Series([3,1,4,1,5,9,2,6,5,3,5])
@@ -304,12 +305,12 @@ One particularly useful trick is to create a **logical vector** that goes along 
 
 If we let the black lego represent "True" and the grey lego represent "False", we can use the logical vector to pull out all values in the main vector.
 
-| Black = True, Grey = False                                                                                                                                                                                                                                                                             | Grey = True, Black = False                                                                                                                                                                                                                                                                            |
+| Black `==` True, Grey `==` False                                                                                                                                                                                                                                                                             | Grey `==` True, Black `==` False                                                                                                                                                                                                                                                                            |
 |------------------------------------|------------------------------------|
-| ![a pink/purple hued set of 1x3 bricks representing a vector and a corresponding set of 1x1 black bricks representing the logical index vector of the same length. The grey bricks (and corresponding values of the previous vector) have been removed (filtered out).](../images/gen-prog/lego-logical-black.png) | ![a pink/purple hued set of 1x3 bricks representing a vector and a corresponding set of 1x1 grey bricks representing the logical index vector of the same length. The black bricks (and corresponding values of the previous vector) have been removed (filtered out).](../images/gen-prog/lego-logical-grey.png) |
+| ![a pink/purple-hued set of 1x3 bricks representing a vector and a corresponding set of 1x1 black bricks representing the logical index vector of the same length. The grey bricks (and corresponding values of the previous vector) have been removed (filtered out).](../images/gen-prog/lego-logical-black.png) | ![a pink/purple-hued set of 1x3 bricks representing a vector and a corresponding set of 1x1 grey bricks representing the logical index vector of the same length. The black bricks (and corresponding values of the previous vector) have been removed (filtered out).](../images/gen-prog/lego-logical-grey.png) |
 
 Note that for logical indexing to work properly, the logical index must be the same length as the vector we're indexing. 
-This constraint will return when we talk about data frames, but for now just keep in mind that logical indexing doesn't make sense when this constraint isn't true.
+This constraint will return when we talk about data frames, but for now, just keep in mind that logical indexing doesn't make sense when this constraint isn't true.
 
 ::: panel-tabset
 ### Indexing with logical vectors in R {.unnumbered}
@@ -353,7 +354,7 @@ animals[~good_pets] # equivalent to using bad_pets
 
 ### Reviewing Types
 
-As vectors are a collection of things of a single type, what happens if we try to make a vector with differently-typed things?
+As vectors are a collection of things of a single type, what happens if we try to make a vector with differently typed things?
 
 ::: panel-tabset
 #### R {.unnumbered}
@@ -386,7 +387,7 @@ As a reminder, this is an example of **implicit** type conversion - R and python
 ::: panel-tabset
 #### Problem {.unnumbered}
 
-Create a vector of the integers from one to 30. Use logical indexing to pick out only the numbers which are multiples of 3.
+Create a vector of the integers from one to 30. Use logical indexing to pick out only the numbers that are multiples of 3.
 
 #### R Solution {.unnumbered}
 
@@ -654,9 +655,9 @@ data = pd.read_html("https://worldpopulationreview.com/states")[0]
 list(data.columns) # get names
 
 # Create a few population series
-population2022 = pd.Series(data['2022 Population'].values, index = data['State'].values)
-population2021 = pd.Series(data['2021 Population'].values, index = data['State'].values)
-population2010 = pd.Series(data['2010 Census'].values, index = data['State'].values)
+population2024 = pd.Series(data['2024 Population'].values, index = data['State'].values)
+population2023 = pd.Series(data['2023 Population'].values, index = data['State'].values)
+population2020 = pd.Series(data['2020 Population'].values, index = data['State'].values)
 ```
 
 Suppose that we want to sort each population vector by the population in that year.
@@ -665,13 +666,13 @@ Suppose that we want to sort each population vector by the population in that ye
 import pandas as pd
 data = pd.read_html("https://worldpopulationreview.com/states")[0]
 
-population2022 = pd.Series(data['2022 Population'].values, index = data['State'].values).sort_values()
-population2021 = pd.Series(data['2021 Population'].values, index = data['State'].values).sort_values()
-population2010 = pd.Series(data['2010 Census'].values, index = data['State'].values).sort_values()
+population2024 = pd.Series(data['2024 Population'].values, index = data['State'].values).sort_values()
+population2023 = pd.Series(data['2023 Population'].values, index = data['State'].values).sort_values()
+populationCensus = pd.Series(data['2020 Population'].values, index = data['State'].values).sort_values()
 
-population2022.head()
-population2021.head()
-population2010.head()
+population2024.head()
+population2023.head()
+populationCensus.head()
 ```
 
 The only problem is that by doing this, we've now lost the ordering that matched across all 3 vectors. 
@@ -681,23 +682,23 @@ In these situations, sorting by one value can actually destroy the connection be
 #### R
 
 ```{r vector-analysis-r}
-df <- read.csv("https://raw.githubusercontent.com/srvanderplas/Stat151/main/data/population2022.csv")
+df <- read.csv("https://raw.githubusercontent.com/srvanderplas/stat-computing-r-python/main/data/population2024.csv")
 
 # Use vectors instead of the data frame
 state <- df$State
-pop2022 <- df$Pop
-pop2021 <- df$Pop2021
-pop2010 <- df$Pop2010
+pop2024 <- df$X2024.Population
+pop2023 <- df$X2023.Population
+pop2020 <- df$X2020.Population
 
 # Create a vector to index population in 2022 in order
-order2022 <- order(pop2022)
+order2024 <- order(pop2024)
 
 # To keep variables together, we have to do things like this:
-head(state[order2022])
-head(pop2022[order2022])
+head(state[order2024])
+head(pop2024[order2024])
 
 # It makes more sense just to reorder the whole data frame:
-head(df[order2022,])
+head(df[order2024,])
 ```
 
 :::
@@ -813,7 +814,7 @@ row.names(state_facts) <- NULL # get rid of row names
 head(state_facts)
 
 # Write data out so that we can read it in using Python
-write.csv(state_facts, file = "data/state_facts.csv", row.names = F)
+write.csv(state_facts, file = "../data/state_facts.csv", row.names = F)
 ```
 
 We can write out the built in R data and read it in using `pd.read_csv`, which creates a DataFrame in pandas.
@@ -821,7 +822,7 @@ We can write out the built in R data and read it in using `pd.read_csv`, which c
 ```{python state-facts-tryitout-py}
 import pandas as pd
 
-state_facts = pd.read_csv("https://raw.githubusercontent.com/srvanderplas/unl-stat850/main/data/state_facts.csv")
+state_facts = pd.read_csv("https://raw.githubusercontent.com/srvanderplas/stat-computing-r-python/main/data/state_facts.csv")
 ```
 
 
