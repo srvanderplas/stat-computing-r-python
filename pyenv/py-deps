@@ -18,34 +18,34 @@ set_symmetric_difference() {
 }
 
 FindRequirements() {
-  grep -r "from .* import .*" --include "*.qmd" . | awk '{ match( $0, /:from ([A-z0-9]*).?.*? import .*$/, arr) ; if(arr[1] != "") print arr[1] } ' | sort | uniq > py-imports
-  grep -r "import .* as .*" --include "*.qmd" . | awk '{ match( $0, /:import ([A-z0-9]*).?.*? as .*$/, arr) ; if(arr[1] != "") print arr[1] } ' | sort | uniq >> py-imports
-  grep -r "import .*" --include "*.qmd" . | awk '{ match( $0, /:import ([A-z0-9]*).*$/, arr) ; if(arr[1] != "") print arr[1] } ' | sort | uniq >> py-imports
+  grep -r "from .* import .*" --include "*.qmd" . | awk '{ match( $0, /:from ([A-z0-9]*).?.*? import .*$/, arr) ; if(arr[1] != "") print arr[1] } ' | sort | uniq > pyenv/py-imports
+  grep -r "import .* as .*" --include "*.qmd" . | awk '{ match( $0, /:import ([A-z0-9]*).?.*? as .*$/, arr) ; if(arr[1] != "") print arr[1] } ' | sort | uniq >> pyenv/py-imports
+  grep -r "import .*" --include "*.qmd" . | awk '{ match( $0, /:import ([A-z0-9]*).*$/, arr) ; if(arr[1] != "") print arr[1] } ' | sort | uniq >> pyenv/py-imports
   # deduplicate
-  cat requirements.txt >> py-imports
-  cat py-deps-reqs >> py-imports
-  cat py-imports | sort | uniq  > py-imports-clean
+  cat pyenv/requirements.txt >> pyenv/py-imports
+  cat pyenv/py-deps-reqs >> pyenv/py-imports
+  cat pyenv/py-imports | sort | uniq  > pyenv/py-imports-clean
 
   # replace PIL with pillow... ugh python sucks
-  sed -i -e 's/^PIL$/pillow/g' py-imports-clean
+  sed -i -e 's/^PIL$/pillow/g' pyenv/py-imports-clean
   # replace sklearn with scikit-learn
-  sed -i -e 's/^sklearn$/scikit-learn/g' py-imports-clean
+  sed -i -e 's/^sklearn$/scikit-learn/g' pyenv/py-imports-clean
   # replace cv2 with opencv
-  sed -i -e 's/^cv2/opencv/g' py-imports-clean
+  sed -i -e 's/^cv2/opencv/g' pyenv/py-imports-clean
 
   # Python system packages assembled from here: https://docs.python.org/3/library/index.html
   # Need to not install these, since python/pip will error out :(
-  set_difference py-imports-clean py-system-pkgs > py-imports-install
+  set_difference pyenv/py-imports-clean pyenv/py-system-pkgs > pyenv/py-imports-install
 
   # Remove temp files created when assembling packages
-  rm py-imports py-imports-clean
-  mv py-imports-install requirements.txt
+  rm pyenv/py-imports pyenv/py-imports-clean
+  mv pyenv/py-imports-install pyenv/requirements.txt
 }
 
 SetRequirements() {
   # Update dependencies required by the book
   # pipdeptree -r -f --warn silence | grep -E '^[a-zA-Z0-9\-]+' > requirements.txt
-  pip-chill --no-version > requirements.txt
+  pip-chill --no-version > pyenv/requirements.txt
   FindRequirements
 
   echo "Requirements file updated successfully!"
@@ -54,7 +54,7 @@ SetRequirements() {
 
 Install() {
   # Install requirements
-  pip3 install -r requirements.txt
+  pip3 install -r pyenv/requirements.txt
   echo "Packages in requirements.txt installed with pip"
 }
 
