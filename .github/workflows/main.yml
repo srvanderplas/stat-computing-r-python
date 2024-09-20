@@ -40,6 +40,15 @@ jobs:
       run: |
         renv::status()
         renv::diagnostics()
+        # Paste string to describe cache
+        writeLines(
+            paste0("PY_CACHE_STR=python",
+              paste(
+                readLines(".python-version"),
+                digest::digest(readLines("pyenv/requirements.txt")),
+                sep = "-"
+            )),
+            Sys.getenv("GITHUB_ENV"))
 
     - name: Restore reticulate cache
       id: restore-reticulate-cache
@@ -89,7 +98,6 @@ jobs:
             paste0("PY_CACHE_STR=python",
               paste(
                 readLines(".python-version"),
-                reticulate::virtualenv_python("venv"),
                 digest::digest(readLines("pyenv/requirements.txt")),
                 sep = "-"
             )),
@@ -100,23 +108,6 @@ jobs:
       run: |
         devtools::session_info()
         reticulate::py_config()
-
-    - uses: actions/cache@v4  # v4.0.0
-      id: cache-venv-deps2
-      with:
-        path: ~/.pyenv
-        key: pyenv-${{ env.PY_CACHE_STR }}
-    - uses: actions/cache@v4  # v4.0.0
-      id: cache-venv
-      with:
-        path: ~/.virtualenvs/venv
-        key: reticulate-venv-${{ env.PY_CACHE_STR }}
-    - uses: actions/cache@v4  # v4.0.0
-      id: cache-venv-deps1
-      with:
-        path: ~/.local/share/r-reticulate
-        key: local-share-reticulate-${{ env.PY_CACHE_STR }}
-
 
     - uses: quarto-dev/quarto-actions/setup@v2
       with:
