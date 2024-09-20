@@ -11,6 +11,9 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GH_PAT: ${{ secrets.GH_PAT }}
       GITHUB_PAT: ${{ secrets.GH_PAT }}
+      PYENV_PATHS_ROOT: '~/.pyenv'
+      PYENV_PATHS_VENV: '~/.virtualenvs/venv'
+      PYENV_PATHS_RETICULATE: '~/.local/share/r-reticulate'
 
     steps:
     - uses: actions/checkout@v4
@@ -38,7 +41,36 @@ jobs:
         renv::status()
         renv::diagnostics()
 
+    - name: Restore reticulate cache
+      id: restore-reticulate-cache
+      uses: actions/cache@v4
+      with:
+        path: |
+          ${{ env.PYENV_PATHS_RETICULATE }}
+        key: local-share-reticulate-${{ env.PY_CACHE_STR }}
+        restore-keys: local-share-reticulate-
+
+    - name: Restore venv cache
+      id: restore-venv-cache
+      uses: actions/cache@v4
+      with:
+        path: |
+          ${{ env.PYENV_PATHS_VENV }}
+        key: pyenv-${{ env.PY_CACHE_STR }}
+        restore-keys: pyenv-
+
+    - name: Restore pyenv cache
+      id: restore-pyenv-cache
+      uses: actions/cache@v4
+      with:
+        path: |
+          ${{ env.PYENV_PATHS_ROOT }}
+        key: reticulate-venv-${{ env.PY_CACHE_STR }}
+        restore-keys: reticulate-venv-
+
+
     - name: Setup Python/venv with reqs file in reticulate
+      if: ${{ steps.restore-pyenv-cache.outputs.cache-hit != 'true'  && steps.restore-venv-cache.outputs.cache-hit != 'true' && steps.restore-reticulate-cache.outputs.cache-hit != 'true' }}
       id: setup-reticulate-venv
       shell: Rscript {0}
       run: |
@@ -70,20 +102,21 @@ jobs:
         reticulate::py_config()
 
     - uses: actions/cache@v4  # v4.0.0
+      id: cache-venv-deps2
+      with:
+        path: ~/.pyenv
+        key: pyenv-${{ env.PY_CACHE_STR }}
+    - uses: actions/cache@v4  # v4.0.0
       id: cache-venv
       with:
-        path: ~/.virtualenvs/r-reticulate
+        path: ~/.virtualenvs/venv
         key: reticulate-venv-${{ env.PY_CACHE_STR }}
     - uses: actions/cache@v4  # v4.0.0
       id: cache-venv-deps1
       with:
         path: ~/.local/share/r-reticulate
         key: local-share-reticulate-${{ env.PY_CACHE_STR }}
-    - uses: actions/cache@v4  # v4.0.0
-      id: cache-venv-deps2
-      with:
-        path: ~/.pyenv
-        key: pyenv-${{ env.PY_CACHE_STR }}
+
 
     - uses: quarto-dev/quarto-actions/setup@v2
       with:
