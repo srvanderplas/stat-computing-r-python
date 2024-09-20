@@ -6,43 +6,40 @@ This entire section is only appropriate if you've already had linear algebra.
 
 ## {{< fa bullseye >}} Objectives
 
-- Understand how to do matrix algebra in relevant programming languages
+-   Understand how to do matrix algebra in relevant programming languages
 
-
-
-While R, SAS, and Python are all extremely powerful statistical programming languages, the core of most programming languages is the ability to do basic calculations and matrix arithmetic. 
+While R and Python are extremely powerful statistical programming languages, the core of most programming languages is the ability to do basic calculations and matrix arithmetic.
 As almost every dataset is stored as a matrix-like structure (data sets and data frames both allow for multiple types, which isn't quite compatible with more canonical matrices), it is useful to know how to do matrix-level calculations in whatever language you are planning to use to work with data.
 
 In this section, we will essentially be using our programming language as overgrown calculators.
 
 ## Matrix Operations
 
-| Operation                    | R      | SAS                             | Python     |
-|:---------|:-------|:-------|:-------|
-| Addition                     | \+     | \+                              | \+         |
-| Subtraction                  | \-     | \-                              | \-         |
-| Elementwise Multiplication   | \*     | \#                              | \*         |
-| Division                     | /      | /                               | /          |
-| Modulo (Remainder)           | %%     | MOD                             | %          |
-| Integer Division             | %/%    | FLOOR(x\\y)                     | //         |
-| Elementwise Exponentiation   | \^     | \##                             | `**`       |
-| Matrix/Vector Multiplication | %\*%   | \*                              |  `np.dot()`          |
-| Matrix Exponentiation        | \^     | \*\*                            | `np.exp()` |
-| Matrix Transpose             | `t(A)` | `A`\` | `np.transpose(A)` |            |
-| Matrix Determinant | `det(A)` | `det(A)` | `np.linalg.det(A)` |
-| Matrix Diagonal | `diag(A)` | `diag(A)` | `np.linalg.diag(A)` |
-| Matrix Inverse | `solve(A)` | `solve(A, diag({...}))` | `np.linalg.inv(A)` |
+| Operation                    | R          | Python              |
+|:-----------------------------|:-----------|:--------------------|
+| Addition                     | \+         | \+                  |
+| Subtraction                  | \-         | \-                  |
+| Elementwise Multiplication   | \*         | \*                  |
+| Division                     | /          | /                   |
+| Modulo (Remainder)           | %%         | \%                  |
+| Integer Division             | %/%        | //                  |
+| Elementwise Exponentiation   | \^         | `**`                |
+| Matrix/Vector Multiplication | %\*%       | `np.dot()`          |
+| Matrix Exponentiation        | \^         | `np.exp()`          |
+| Matrix Transpose             | `t(A)`     | `np.transpose(A)`   |
+| Matrix Determinant           | `det(A)`   | `np.linalg.det(A)`  |
+| Matrix Diagonal              | `diag(A)`  | `np.linalg.diag(A)` |
+| Matrix Inverse               | `solve(A)` | `np.linalg.inv(A)`  |
 
-: Table of common mathematical and matrix operations in R, SAS, and Python [@PythonProgramming]. {#tbl-math-ops}
+: Table of common mathematical and matrix operations in R and Python [@PythonProgramming]. {#tbl-math-ops}
 
 ::: callout-demo
-### Basic Mathematical Operators 
+### Basic Mathematical Operators
 
 ::: panel-tabset
-
 #### R {.unnumbered}
 
-```{r math-operators-sas}
+```{r math-operators-r}
 x <- 1:10
 y <- seq(3, 30, by = 3)
 
@@ -56,7 +53,7 @@ t(x) %*% y
 
 #### Python {.unnumbered}
 
-```{python}
+```{python math-operators-py}
 import numpy as np
 
 x = np.array(range(1, 11))
@@ -69,23 +66,6 @@ x / y
 x ** 2
 np.dot(x.T, y)
 ```
-
-#### SAS {.unnumbered}
-
-By default, SAS creates row vectors with `do(a, b, by = c)` syntax. The transpose operator (a single backtick) can be used to transform `A` into `A`\`.
-
-    proc iml; 
-      x = do(1, 10, 1);
-      y = do(3, 30, 3);
-
-      z = x + y;
-      z2 = x - y;
-      z3 = x # y;
-      z4 = x/y;
-      z5 = x##2;
-      z6 = x` * y;
-      print z, z2, z3, z4, z5, z6;
-    quit;
 :::
 :::
 
@@ -95,10 +75,9 @@ By default, SAS creates row vectors with `do(a, b, by = c)` syntax. The transpos
 Other matrix operations, such as determinants and extraction of the matrix diagonal, are similarly easy:
 
 ::: panel-tabset
-
 #### R {.unnumbered}
 
-```{r matrix-operations}
+```{r matrix-operations-r}
 mat <- matrix(c(1, 2, 3, 6, 4, 5, 7, 8, 9), nrow = 3, byrow = T)
 mat
 t(mat) # transpose
@@ -121,40 +100,24 @@ np.diag(mat)
 np.diag(np.diag(mat))
 np.diag(range(1, 4))
 ```
-
-#### SAS {.unnumbered}
-
-    proc iml;
-      mat = {1 2 3, 6 4 5, 7 8 9}; 
-      tmat = mat`; /* transpose */
-      determinant = det(mat); /* get the determinant */
-      diagonal_vector = vecdiag(mat); /* get the diagonal as a vector */
-      diagonal_mat = diag(mat); /* get the diagonal as a square matrix */
-                                /* with 0 on off-diagonal entries */
-      
-      dm = diag({1 2 3}); /* make a square matrix with vector as the diagonal */
-      
-      print tmat, determinant, diagonal_vector, diagonal_mat, dm;
-    quit;
 :::
 :::
-
 
 ::: callout-demo
-
 ### Matrix Inverse
 
-The other important matrix-related function is the inverse. 
-In R, `A^-1` will get you the elementwise reciprocal of the matrix. 
-Not exactly what we'd like to see... Instead, in R and SAS, we use the `solve()` function. 
-The inverse is defined as the matrix B such that `AB = I` where `I` is the identity matrix (1's on diagonal, 0's off-diagonal). 
-So if we `solve(A)` (in R) or `solve(A, diag(n))` in SAS (where n is a vector of 1s the size of A), we will get the inverse matrix. 
+The other important matrix-related function is the inverse.
+In R, `A^-1` will get you the elementwise reciprocal of the matrix.
+Not exactly what we'd like to see...
+Instead, we use the `solve()` function.
+The inverse is defined as the matrix B such that `AB = I` where `I` is the identity matrix (1's on diagonal, 0's off-diagonal).
+So if we `solve(A)` (in R) or `solve(A, diag(n))` in SAS (where n is a vector of 1s the size of A), we will get the inverse matrix.
 In Python, we use the `np.linalg.inv()` function to invert a matrix, which may be a bit more linguistically familiar.
 
 ::: panel-tabset
 #### R {.unnumbered}
 
-```{r invert-matrix-example}
+```{r invert-matrix-example-r}
 mat <- matrix(c(1, 2, 3, 6, 4, 5, 7, 8, 9), nrow = 3, byrow = T)
 
 minv <- solve(mat) # get the inverse
@@ -174,27 +137,7 @@ minv
 np.dot(mat, minv)
 np.round(np.dot(mat, minv), 2)
 ```
-
-#### SAS {.unnumbered}
-
-[Documentation](https://documentation.sas.com/?docsetId=imlug&docsetTarget=imlug_langref_sect208.htm&docsetVersion=14.2&locale=en)
-
-```
-    proc iml;
-      mat = {1 2 3, 6 4 5, 7 8 9};
-
-      mat_inv = solve(mat, diag({1 1 1})); /* get the inverse */
-      mat_inv2 = inv(mat); /* less efficient and less accurate */
-      print mat_inv, mat_inv2;
-
-      id = mat * mat_inv;
-      id2 = mat * mat_inv2;
-      print id, id2; 
-    quit;
-```
-
 :::
-
 :::
 
 ## References
