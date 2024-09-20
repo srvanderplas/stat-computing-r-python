@@ -605,7 +605,65 @@ Table&nbsp;23.1: Table of string functions in R and python. <code>x</code> is th
 <figure class="quarto-float quarto-float-tbl figure"><figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-parse-numbers-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Table&nbsp;23.2: Different “messy” number formats
 </figcaption><div aria-describedby="tbl-parse-numbers-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<p>ModuleNotFoundError: No module named ‘pandas’ ModuleNotFoundError: No module named ‘numpy’ ModuleNotFoundError: No module named ‘IPython’ ModuleNotFoundError: No module named ‘tabulate’ NameError: name ‘pd’ is not defined NameError: name ‘tabulate’ is not defined NameError: name ‘df’ is not defined</p>
+<table class="cell caption-top table table-sm table-striped small">
+<thead><tr class="header">
+<th></th>
+<th style="text-align: right;">int_col</th>
+<th style="text-align: right;">float_col</th>
+<th style="text-align: left;">mix_col</th>
+<th style="text-align: right;">missing_col</th>
+<th style="text-align: left;">money_col</th>
+<th style="text-align: left;">eu_numbers</th>
+<th style="text-align: left;">boolean_col</th>
+<th style="text-align: left;">custom</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>0</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">1.1</td>
+<td style="text-align: left;">a</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">£1,000.00</td>
+<td style="text-align: left;">1.000.000,00</td>
+<td style="text-align: left;">True</td>
+<td style="text-align: left;">Y</td>
+</tr>
+<tr class="even">
+<td>1</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">1.2</td>
+<td style="text-align: left;">2</td>
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">£2,400.00</td>
+<td style="text-align: left;">2.000.342,00</td>
+<td style="text-align: left;">False</td>
+<td style="text-align: left;">Y</td>
+</tr>
+<tr class="odd">
+<td>2</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">1.3</td>
+<td style="text-align: left;">3</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">£2,400.00</td>
+<td style="text-align: left;">3.141,59</td>
+<td style="text-align: left;">True</td>
+<td style="text-align: left;">N</td>
+</tr>
+<tr class="even">
+<td>3</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">4.7</td>
+<td style="text-align: left;">4</td>
+<td style="text-align: right;">nan</td>
+<td style="text-align: left;">£2,400.00</td>
+<td style="text-align: left;">34,25</td>
+<td style="text-align: left;">True</td>
+<td style="text-align: left;">N</td>
+</tr>
+</tbody>
+</table>
 </div>
 </figure>
 </div>
@@ -707,22 +765,34 @@ Converting Columns Using Your Best Guess
 <p>Similarly, Python does basically the same thing as R: mix_col, money_col, and custom are all left as strings, while floats, integers, and logical values are handled correctly.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>fixed_df <span class="op">=</span> df.infer_objects()</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'df' is not defined</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>fixed_df.dtypes</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'fixed_df' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>fixed_df.dtypes</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">## int_col          int64</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co">## float_col      float64</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co">## mix_col         object</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">## missing_col    float64</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">## money_col       object</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co">## eu_numbers      object</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co">## boolean_col       bool</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co">## custom          object</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co">## dtype: object</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>As in R, we can set the locale in Python to change how things are read in.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> babel.numbers <span class="im">import</span> parse_decimal</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co">## ModuleNotFoundError: No module named 'babel'</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert eu_numbers column specifically</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>fixed_df[<span class="st">'eu_numbers'</span>] <span class="op">=</span> fixed_df[<span class="st">'eu_numbers'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: parse_decimal(x, locale <span class="op">=</span> <span class="st">'it'</span>))</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'fixed_df' is not defined</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>fixed_df[<span class="st">'eu_numbers'</span>] <span class="op">=</span> pd.to_numeric(fixed_df[<span class="st">'eu_numbers'</span>])</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'pd' is not defined</span></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>fixed_df.dtypes</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'fixed_df' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert eu_numbers column specifically</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>fixed_df[<span class="st">'eu_numbers'</span>] <span class="op">=</span> fixed_df[<span class="st">'eu_numbers'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: parse_decimal(x, locale <span class="op">=</span> <span class="st">'it'</span>))</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>fixed_df[<span class="st">'eu_numbers'</span>] <span class="op">=</span> pd.to_numeric(fixed_df[<span class="st">'eu_numbers'</span>])</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>fixed_df.dtypes</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="co">## int_col          int64</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co">## float_col      float64</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co">## mix_col         object</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="co">## missing_col    float64</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="co">## money_col       object</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="co">## eu_numbers     float64</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="co">## boolean_col       bool</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="co">## custom          object</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="co">## dtype: object</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
@@ -767,9 +837,16 @@ Converting Columns Directly
 <div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>df_numeric <span class="op">=</span> df.<span class="bu">apply</span>(pd.to_numeric, errors<span class="op">=</span><span class="st">'coerce'</span>)</span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'df' is not defined</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>df_numeric.dtypes</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'df_numeric' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>df_numeric.dtypes</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="co">## int_col          int64</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co">## float_col      float64</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="co">## mix_col        float64</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co">## missing_col    float64</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="co">## money_col      float64</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="co">## eu_numbers     float64</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="co">## boolean_col       bool</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="co">## custom         float64</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="co">## dtype: object</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
@@ -833,16 +910,24 @@ Example: Converting Y/N data
 <div class="cell">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Categorical (factor) approach</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>fixed_df[<span class="st">'custom1'</span>] <span class="op">=</span> fixed_df[<span class="st">'custom'</span>].astype(<span class="st">"category"</span>) <span class="co"># convert to categorical variable</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'fixed_df' is not defined</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Equality/boolean approach</span></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>fixed_df[<span class="st">'custom2'</span>] <span class="op">=</span> fixed_df[<span class="st">'custom'</span>] <span class="op">==</span> <span class="st">"Y"</span></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'fixed_df' is not defined</span></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="co"># string replacement</span></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>fixed_df[<span class="st">'custom3'</span>] <span class="op">=</span> fixed_df[<span class="st">'custom'</span>].replace([<span class="st">"Y"</span>, <span class="st">"N"</span>], [<span class="st">"1"</span>, <span class="st">"0"</span>]).astype(<span class="st">"int"</span>)</span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'fixed_df' is not defined</span></span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>fixed_df.dtypes</span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'fixed_df' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Equality/boolean approach</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>fixed_df[<span class="st">'custom2'</span>] <span class="op">=</span> fixed_df[<span class="st">'custom'</span>] <span class="op">==</span> <span class="st">"Y"</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="co"># string replacement</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>fixed_df[<span class="st">'custom3'</span>] <span class="op">=</span> fixed_df[<span class="st">'custom'</span>].replace([<span class="st">"Y"</span>, <span class="st">"N"</span>], [<span class="st">"1"</span>, <span class="st">"0"</span>]).astype(<span class="st">"int"</span>)</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>fixed_df.dtypes</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="co">## int_col           int64</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="co">## float_col       float64</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="co">## mix_col          object</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="co">## missing_col     float64</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="co">## money_col        object</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="co">## eu_numbers      float64</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="co">## boolean_col        bool</span></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="co">## custom           object</span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a><span class="co">## custom1        category</span></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a><span class="co">## custom2            bool</span></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a><span class="co">## custom3           int64</span></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a><span class="co">## dtype: object</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
@@ -885,37 +970,46 @@ Example: find and replace
 <p>In python, a similar approach doesn’t work out, because the pound sign is not handled correctly.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> babel.numbers <span class="im">import</span> parse_decimal</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co">## ModuleNotFoundError: No module named 'babel'</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>fixed_df <span class="op">=</span> df.infer_objects()</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'df' is not defined</span></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert eu_numbers column</span></span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>fixed_df[<span class="st">'eu_numbers'</span>] <span class="op">=</span> fixed_df[<span class="st">'eu_numbers'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: parse_decimal(x, locale <span class="op">=</span> <span class="st">'it'</span>))</span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'fixed_df' is not defined</span></span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>fixed_df[<span class="st">'eu_numbers'</span>] <span class="op">=</span> pd.to_numeric(fixed_df[<span class="st">'eu_numbers'</span>])</span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'pd' is not defined</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>fixed_df <span class="op">=</span> df.infer_objects()</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert eu_numbers column</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>fixed_df[<span class="st">'eu_numbers'</span>] <span class="op">=</span> fixed_df[<span class="st">'eu_numbers'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: parse_decimal(x, locale <span class="op">=</span> <span class="st">'it'</span>))</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>fixed_df[<span class="st">'eu_numbers'</span>] <span class="op">=</span> pd.to_numeric(fixed_df[<span class="st">'eu_numbers'</span>])</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert money_col</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>fixed_df[<span class="st">'money_col'</span>] <span class="op">=</span> fixed_df[<span class="st">'money_col'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: parse_decimal(x, locale <span class="op">=</span> <span class="st">'en_GB'</span>))</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="co">## babel.numbers.NumberFormatError: '£1,000.00' is not a valid decimal number</span></span>
 <span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert money_col</span></span>
-<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>fixed_df[<span class="st">'money_col'</span>] <span class="op">=</span> fixed_df[<span class="st">'money_col'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: parse_decimal(x, locale <span class="op">=</span> <span class="st">'en_GB'</span>))</span>
-<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'fixed_df' is not defined</span></span>
-<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>fixed_df.dtypes</span>
-<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'fixed_df' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>fixed_df.dtypes</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="co">## int_col          int64</span></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a><span class="co">## float_col      float64</span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a><span class="co">## mix_col         object</span></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a><span class="co">## missing_col    float64</span></span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a><span class="co">## money_col       object</span></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a><span class="co">## eu_numbers     float64</span></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a><span class="co">## boolean_col       bool</span></span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a><span class="co">## custom          object</span></span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a><span class="co">## dtype: object</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove £ from string</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>fixed_df[<span class="st">'money_col'</span>] <span class="op">=</span> fixed_df[<span class="st">'money_col'</span>].<span class="bu">str</span>.removeprefix(<span class="st">"£"</span>)</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'fixed_df' is not defined</span></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Then parse the number</span></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>fixed_df[<span class="st">'money_col'</span>] <span class="op">=</span> fixed_df[<span class="st">'money_col'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: parse_decimal(x))</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'fixed_df' is not defined</span></span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Then convert to numeric</span></span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>fixed_df[<span class="st">'money_col'</span>] <span class="op">=</span> pd.to_numeric(fixed_df[<span class="st">'money_col'</span>])</span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'pd' is not defined</span></span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>fixed_df.dtypes</span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'fixed_df' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Then parse the number</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>fixed_df[<span class="st">'money_col'</span>] <span class="op">=</span> fixed_df[<span class="st">'money_col'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: parse_decimal(x))</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Then convert to numeric</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>fixed_df[<span class="st">'money_col'</span>] <span class="op">=</span> pd.to_numeric(fixed_df[<span class="st">'money_col'</span>])</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>fixed_df.dtypes</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="co">## int_col          int64</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="co">## float_col      float64</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="co">## mix_col         object</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="co">## missing_col    float64</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="co">## money_col      float64</span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="co">## eu_numbers     float64</span></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="co">## boolean_col       bool</span></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="co">## custom          object</span></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a><span class="co">## dtype: object</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
@@ -947,33 +1041,42 @@ Example: find and replace
 <div id="tabset-6-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-2-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> babel.numbers <span class="im">import</span> parse_decimal</span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co">## ModuleNotFoundError: No module named 'babel'</span></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>fixed_df <span class="op">=</span> df.infer_objects()</span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'df' is not defined</span></span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert eu_numbers column: </span></span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Replace . with nothing (remove .), then</span></span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Replace , with .</span></span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>fixed_df[<span class="st">'eu_numbers'</span>] <span class="op">=</span> fixed_df[<span class="st">'eu_numbers'</span>].<span class="op">\</span></span>
-<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="bu">str</span>.replace(<span class="st">'\.'</span>, <span class="st">''</span>).<span class="op">\</span></span>
-<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="bu">str</span>.replace(<span class="st">','</span>, <span class="st">'.'</span>)</span>
-<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'fixed_df' is not defined</span></span>
-<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>fixed_df[<span class="st">'eu_numbers'</span>] <span class="op">=</span> pd.to_numeric(fixed_df[<span class="st">'eu_numbers'</span>])</span>
-<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'pd' is not defined</span></span>
-<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert money_col</span></span>
-<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>fixed_df[<span class="st">'money_col'</span>] <span class="op">=</span> fixed_df[<span class="st">'money_col'</span>].<span class="op">\</span></span>
-<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a><span class="bu">str</span>.removeprefix(<span class="st">"£"</span>).<span class="op">\</span></span>
-<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a><span class="bu">str</span>.replace(<span class="st">','</span>, <span class="st">''</span>)</span>
-<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'fixed_df' is not defined</span></span>
-<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>fixed_df[<span class="st">'money_col'</span>] <span class="op">=</span> pd.to_numeric(fixed_df[<span class="st">'money_col'</span>])</span>
-<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'pd' is not defined</span></span>
-<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a>fixed_df.dtypes</span>
-<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'fixed_df' is not defined</span></span>
-<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a>fixed_df</span>
-<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'fixed_df' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>fixed_df <span class="op">=</span> df.infer_objects()</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert eu_numbers column: </span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Replace . with nothing (remove .), then</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Replace , with .</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>fixed_df[<span class="st">'eu_numbers'</span>] <span class="op">=</span> fixed_df[<span class="st">'eu_numbers'</span>].<span class="op">\</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="bu">str</span>.replace(<span class="st">'\.'</span>, <span class="st">''</span>).<span class="op">\</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="bu">str</span>.replace(<span class="st">','</span>, <span class="st">'.'</span>)</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>fixed_df[<span class="st">'eu_numbers'</span>] <span class="op">=</span> pd.to_numeric(fixed_df[<span class="st">'eu_numbers'</span>])</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="co">## ValueError: Unable to parse string "1.000.000.00" at position 0</span></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert money_col</span></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>fixed_df[<span class="st">'money_col'</span>] <span class="op">=</span> fixed_df[<span class="st">'money_col'</span>].<span class="op">\</span></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a><span class="bu">str</span>.removeprefix(<span class="st">"£"</span>).<span class="op">\</span></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a><span class="bu">str</span>.replace(<span class="st">','</span>, <span class="st">''</span>)</span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>fixed_df[<span class="st">'money_col'</span>] <span class="op">=</span> pd.to_numeric(fixed_df[<span class="st">'money_col'</span>])</span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>fixed_df.dtypes</span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a><span class="co">## int_col          int64</span></span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a><span class="co">## float_col      float64</span></span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a><span class="co">## mix_col         object</span></span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a><span class="co">## missing_col    float64</span></span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a><span class="co">## money_col      float64</span></span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a><span class="co">## eu_numbers      object</span></span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a><span class="co">## boolean_col       bool</span></span>
+<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a><span class="co">## custom          object</span></span>
+<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a><span class="co">## dtype: object</span></span>
+<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a>fixed_df</span>
+<span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a><span class="co">##    int_col  float_col mix_col  ...    eu_numbers  boolean_col custom</span></span>
+<span id="cb15-32"><a href="#cb15-32" aria-hidden="true" tabindex="-1"></a><span class="co">## 0        1        1.1       a  ...  1.000.000.00         True      Y</span></span>
+<span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a><span class="co">## 1        2        1.2       2  ...  2.000.342.00        False      Y</span></span>
+<span id="cb15-34"><a href="#cb15-34" aria-hidden="true" tabindex="-1"></a><span class="co">## 2        3        1.3       3  ...      3.141.59         True      N</span></span>
+<span id="cb15-35"><a href="#cb15-35" aria-hidden="true" tabindex="-1"></a><span class="co">## 3        4        4.7       4  ...         34.25         True      N</span></span>
+<span id="cb15-36"><a href="#cb15-36" aria-hidden="true" tabindex="-1"></a><span class="co">## </span></span>
+<span id="cb15-37"><a href="#cb15-37" aria-hidden="true" tabindex="-1"></a><span class="co">## [4 rows x 8 columns]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
@@ -1028,9 +1131,14 @@ Example: Separating columns
 <div class="cell">
 <div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>table3 <span class="op">=</span> r.table3</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>table3[[<span class="st">'cases'</span>, <span class="st">'pop'</span>]] <span class="op">=</span> table3.rate.<span class="bu">str</span>.split(<span class="st">"/"</span>, expand <span class="op">=</span> <span class="va">True</span>)</span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="co">## AttributeError: 'dict' object has no attribute 'rate'</span></span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>table3</span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="co">## {'country': ['Afghanistan', 'Afghanistan', 'Brazil', 'Brazil', 'China', 'China'], 'year': [1999.0, 2000.0, 1999.0, 2000.0, 1999.0, 2000.0], 'rate': ['745/19987071', '2666/20595360', '37737/172006362', '80488/174504898', '212258/1272915272', '213766/1280428583']}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>table3</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co">##        country    year               rate   cases         pop</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="co">## 0  Afghanistan  1999.0       745/19987071     745    19987071</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="co">## 1  Afghanistan  2000.0      2666/20595360    2666    20595360</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="co">## 2       Brazil  1999.0    37737/172006362   37737   172006362</span></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="co">## 3       Brazil  2000.0    80488/174504898   80488   174504898</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="co">## 4        China  1999.0  212258/1272915272  212258  1272915272</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="co">## 5        China  2000.0  213766/1280428583  213766  1280428583</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>This uses python’s <strong>multiassign</strong> capability. Python can assign multiple things at once if those things are specified as a sequence (e.g.&nbsp;cases, pop). In this case, we split the rate column and assign two new columns, essentially adding two columns to our data frame and labeling them at the same time.</p>
 </div>
@@ -1088,17 +1196,20 @@ Example: Joining columns
 <div id="tabset-8-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-8-3-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="co">## ModuleNotFoundError: No module named 'pandas'</span></span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>table5 <span class="op">=</span> r.table5</span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Concatenate the two columns with string addition</span></span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>table5[<span class="st">'yyyy'</span>] <span class="op">=</span> table5.century <span class="op">+</span> table5.year</span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="co">## AttributeError: 'dict' object has no attribute 'century'</span></span>
-<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="co"># convert to number</span></span>
-<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>table5[<span class="st">'yyyy'</span>] <span class="op">=</span> pd.to_numeric(table5.yyyy)</span>
-<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'pd' is not defined</span></span>
-<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>table5</span>
-<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a><span class="co">## {'country': ['Afghanistan', 'Afghanistan', 'Brazil', 'Brazil', 'China', 'China'], 'century': ['19', '20', '19', '20', '19', '20'], 'year': ['99', '00', '99', '00', '99', '00'], 'rate': ['745/19987071', '2666/20595360', '37737/172006362', '80488/174504898', '212258/1272915272', '213766/1280428583']}</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>table5 <span class="op">=</span> r.table5</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Concatenate the two columns with string addition</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>table5[<span class="st">'yyyy'</span>] <span class="op">=</span> table5.century <span class="op">+</span> table5.year</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="co"># convert to number</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>table5[<span class="st">'yyyy'</span>] <span class="op">=</span> pd.to_numeric(table5.yyyy)</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>table5</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a><span class="co">##        country century year               rate  yyyy</span></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a><span class="co">## 0  Afghanistan      19   99       745/19987071  1999</span></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a><span class="co">## 1  Afghanistan      20   00      2666/20595360  2000</span></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a><span class="co">## 2       Brazil      19   99    37737/172006362  1999</span></span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a><span class="co">## 3       Brazil      20   00    80488/174504898  2000</span></span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a><span class="co">## 4        China      19   99  212258/1272915272  1999</span></span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a><span class="co">## 5        China      20   00  213766/1280428583  2000</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
@@ -1373,31 +1484,28 @@ Ex: <code>[abc]</code> will match any single character <code>a</code>, <code>b</
 <div id="tabset-12-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-12-2-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="co">## ModuleNotFoundError: No module named 'pandas'</span></span>
-<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> re</span>
-<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>phone_num_variants <span class="op">=</span> pd.Series([<span class="st">"(123) 456-7980"</span>, <span class="st">"123.456.7890"</span>, <span class="st">"+1 123-456-7890"</span>])</span>
-<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'pd' is not defined</span></span>
-<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>phone_regex <span class="op">=</span> re.<span class="bu">compile</span>(<span class="st">"\+?[0-9]{0,3}? ?\(?([0-9]</span><span class="sc">{3}</span><span class="st">)?\)?.?([0-9]</span><span class="sc">{3}</span><span class="st">).?([0-9]</span><span class="sc">{4}</span><span class="st">)"</span>)</span>
-<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a><span class="co"># \+?[0-9]{0,3} matches the country code, if specified, </span></span>
-<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a><span class="co">#    but won't take the first 3 digits from the area code </span></span>
-<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a><span class="co">#    unless a country code is also specified</span></span>
-<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a><span class="co"># \( and \) match literal parentheses if they exist</span></span>
-<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a><span class="co"># ([0-9]{3})? captures the area code, if it exists</span></span>
-<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a><span class="co"># .? matches any character</span></span>
-<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a><span class="co"># ([0-9]{3}) captures the exchange code</span></span>
-<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a><span class="co"># ([0-9]{4}) captures the 4-digit individual code</span></span>
-<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a>res <span class="op">=</span> phone_num_variants.<span class="bu">str</span>.findall(phone_regex)</span>
-<span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'phone_num_variants' is not defined</span></span>
-<span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a>res2 <span class="op">=</span> phone_num_variants.<span class="bu">str</span>.replace(phone_regex, <span class="st">"</span><span class="ch">\\</span><span class="st">1</span><span class="ch">\\</span><span class="st">2</span><span class="ch">\\</span><span class="st">3"</span>)</span>
-<span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'phone_num_variants' is not defined</span></span>
-<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a><span class="co"># We didn't capture the country code, so it remained in the string</span></span>
-<span id="cb30-22"><a href="#cb30-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb30-23"><a href="#cb30-23" aria-hidden="true" tabindex="-1"></a>human_talk <span class="op">=</span> <span class="st">"blah, blah, blah. Do you want to go for a walk? I think I'm going to treat myself to some ice cream for working so hard. "</span></span>
-<span id="cb30-24"><a href="#cb30-24" aria-hidden="true" tabindex="-1"></a>dog_hears <span class="op">=</span> re.findall(<span class="vs">r"walk|treat"</span>, human_talk)</span>
-<span id="cb30-25"><a href="#cb30-25" aria-hidden="true" tabindex="-1"></a>dog_hears</span>
-<span id="cb30-26"><a href="#cb30-26" aria-hidden="true" tabindex="-1"></a><span class="co">## ['walk', 'treat']</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> re</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>phone_num_variants <span class="op">=</span> pd.Series([<span class="st">"(123) 456-7980"</span>, <span class="st">"123.456.7890"</span>, <span class="st">"+1 123-456-7890"</span>])</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>phone_regex <span class="op">=</span> re.<span class="bu">compile</span>(<span class="st">"\+?[0-9]{0,3}? ?\(?([0-9]</span><span class="sc">{3}</span><span class="st">)?\)?.?([0-9]</span><span class="sc">{3}</span><span class="st">).?([0-9]</span><span class="sc">{4}</span><span class="st">)"</span>)</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a><span class="co"># \+?[0-9]{0,3} matches the country code, if specified, </span></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a><span class="co">#    but won't take the first 3 digits from the area code </span></span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a><span class="co">#    unless a country code is also specified</span></span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a><span class="co"># \( and \) match literal parentheses if they exist</span></span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a><span class="co"># ([0-9]{3})? captures the area code, if it exists</span></span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a><span class="co"># .? matches any character</span></span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a><span class="co"># ([0-9]{3}) captures the exchange code</span></span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a><span class="co"># ([0-9]{4}) captures the 4-digit individual code</span></span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a>res <span class="op">=</span> phone_num_variants.<span class="bu">str</span>.findall(phone_regex)</span>
+<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a>res2 <span class="op">=</span> phone_num_variants.<span class="bu">str</span>.replace(phone_regex, <span class="st">"</span><span class="ch">\\</span><span class="st">1</span><span class="ch">\\</span><span class="st">2</span><span class="ch">\\</span><span class="st">3"</span>)</span>
+<span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a><span class="co">## ValueError: Cannot use a compiled regex as replacement pattern with regex=False</span></span>
+<span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a><span class="co"># We didn't capture the country code, so it remained in the string</span></span>
+<span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a>human_talk <span class="op">=</span> <span class="st">"blah, blah, blah. Do you want to go for a walk? I think I'm going to treat myself to some ice cream for working so hard. "</span></span>
+<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a>dog_hears <span class="op">=</span> re.findall(<span class="vs">r"walk|treat"</span>, human_talk)</span>
+<span id="cb30-22"><a href="#cb30-22" aria-hidden="true" tabindex="-1"></a>dog_hears</span>
+<span id="cb30-23"><a href="#cb30-23" aria-hidden="true" tabindex="-1"></a><span class="co">## ['walk', 'treat']</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
@@ -1445,29 +1553,35 @@ Ex: <code>[abc]</code> will match any single character <code>a</code>, <code>b</
 <div id="tabset-13-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-13-2-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="co">## ModuleNotFoundError: No module named 'pandas'</span></span>
-<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> re</span>
-<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>strings <span class="op">=</span> pd.Series([<span class="st">"abcdefghijklmnopqrstuvwxyzABAB"</span>,</span>
-<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a><span class="st">"banana orange strawberry apple"</span>,</span>
-<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a><span class="st">"ana went to montana to eat a banana"</span>,</span>
-<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a><span class="st">"call me at 432-394-2873. Do you want to go for a walk? I'm going to treat myself to some ice cream for working so hard."</span>,</span>
-<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a><span class="st">"phone: (123) 456-7890, nuid: 12345678, bank account balance: $50,000,000.23"</span>,</span>
-<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a><span class="st">"1600 Pennsylvania Ave NW, Washington D.C., 20500"</span>])</span>
-<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'pd' is not defined</span></span>
-<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a>phone_regex <span class="op">=</span> re.<span class="bu">compile</span>(<span class="vs">r"\(?([0-9]</span><span class="sc">{3}</span><span class="vs">)?\)?.?([0-9]</span><span class="sc">{3}</span><span class="vs">).([0-9]</span><span class="sc">{4}</span><span class="vs">)"</span>)</span>
-<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a>dog_regex <span class="op">=</span> re.<span class="bu">compile</span>(<span class="vs">r"(walk|treat)"</span>)</span>
-<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a>addr_regex <span class="op">=</span> re.<span class="bu">compile</span>(<span class="vs">r"([0-9]*) ([A-z0-9 ]{3,}), ([A-z\\. ]{3,}), ([0-9]</span><span class="sc">{5}</span><span class="vs">)"</span>)</span>
-<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a>abab_regex <span class="op">=</span> re.<span class="bu">compile</span>(<span class="vs">r"(..)\1"</span>)</span>
-<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a>pd.DataFrame({</span>
-<span id="cb32-19"><a href="#cb32-19" aria-hidden="true" tabindex="-1"></a>  <span class="st">"text"</span>: strings,</span>
-<span id="cb32-20"><a href="#cb32-20" aria-hidden="true" tabindex="-1"></a>  <span class="st">"phone"</span>: strings.<span class="bu">str</span>.contains(phone_regex),</span>
-<span id="cb32-21"><a href="#cb32-21" aria-hidden="true" tabindex="-1"></a>  <span class="st">"dog"</span>: strings.<span class="bu">str</span>.contains(dog_regex),</span>
-<span id="cb32-22"><a href="#cb32-22" aria-hidden="true" tabindex="-1"></a>  <span class="st">"addr"</span>: strings.<span class="bu">str</span>.contains(addr_regex),</span>
-<span id="cb32-23"><a href="#cb32-23" aria-hidden="true" tabindex="-1"></a>  <span class="st">"abab"</span>: strings.<span class="bu">str</span>.contains(abab_regex)})</span>
-<span id="cb32-24"><a href="#cb32-24" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'pd' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> re</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>strings <span class="op">=</span> pd.Series([<span class="st">"abcdefghijklmnopqrstuvwxyzABAB"</span>,</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a><span class="st">"banana orange strawberry apple"</span>,</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a><span class="st">"ana went to montana to eat a banana"</span>,</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a><span class="st">"call me at 432-394-2873. Do you want to go for a walk? I'm going to treat myself to some ice cream for working so hard."</span>,</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a><span class="st">"phone: (123) 456-7890, nuid: 12345678, bank account balance: $50,000,000.23"</span>,</span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a><span class="st">"1600 Pennsylvania Ave NW, Washington D.C., 20500"</span>])</span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a>phone_regex <span class="op">=</span> re.<span class="bu">compile</span>(<span class="vs">r"\(?([0-9]</span><span class="sc">{3}</span><span class="vs">)?\)?.?([0-9]</span><span class="sc">{3}</span><span class="vs">).([0-9]</span><span class="sc">{4}</span><span class="vs">)"</span>)</span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>dog_regex <span class="op">=</span> re.<span class="bu">compile</span>(<span class="vs">r"(walk|treat)"</span>)</span>
+<span id="cb32-13"><a href="#cb32-13" aria-hidden="true" tabindex="-1"></a>addr_regex <span class="op">=</span> re.<span class="bu">compile</span>(<span class="vs">r"([0-9]*) ([A-z0-9 ]{3,}), ([A-z\\. ]{3,}), ([0-9]</span><span class="sc">{5}</span><span class="vs">)"</span>)</span>
+<span id="cb32-14"><a href="#cb32-14" aria-hidden="true" tabindex="-1"></a>abab_regex <span class="op">=</span> re.<span class="bu">compile</span>(<span class="vs">r"(..)\1"</span>)</span>
+<span id="cb32-15"><a href="#cb32-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-16"><a href="#cb32-16" aria-hidden="true" tabindex="-1"></a>pd.DataFrame({</span>
+<span id="cb32-17"><a href="#cb32-17" aria-hidden="true" tabindex="-1"></a>  <span class="st">"text"</span>: strings,</span>
+<span id="cb32-18"><a href="#cb32-18" aria-hidden="true" tabindex="-1"></a>  <span class="st">"phone"</span>: strings.<span class="bu">str</span>.contains(phone_regex),</span>
+<span id="cb32-19"><a href="#cb32-19" aria-hidden="true" tabindex="-1"></a>  <span class="st">"dog"</span>: strings.<span class="bu">str</span>.contains(dog_regex),</span>
+<span id="cb32-20"><a href="#cb32-20" aria-hidden="true" tabindex="-1"></a>  <span class="st">"addr"</span>: strings.<span class="bu">str</span>.contains(addr_regex),</span>
+<span id="cb32-21"><a href="#cb32-21" aria-hidden="true" tabindex="-1"></a>  <span class="st">"abab"</span>: strings.<span class="bu">str</span>.contains(abab_regex)})</span>
+<span id="cb32-22"><a href="#cb32-22" aria-hidden="true" tabindex="-1"></a><span class="co">##                                                 text  phone  ...   addr   abab</span></span>
+<span id="cb32-23"><a href="#cb32-23" aria-hidden="true" tabindex="-1"></a><span class="co">## 0                     abcdefghijklmnopqrstuvwxyzABAB  False  ...  False   True</span></span>
+<span id="cb32-24"><a href="#cb32-24" aria-hidden="true" tabindex="-1"></a><span class="co">## 1                     banana orange strawberry apple  False  ...  False   True</span></span>
+<span id="cb32-25"><a href="#cb32-25" aria-hidden="true" tabindex="-1"></a><span class="co">## 2                ana went to montana to eat a banana  False  ...  False   True</span></span>
+<span id="cb32-26"><a href="#cb32-26" aria-hidden="true" tabindex="-1"></a><span class="co">## 3  call me at 432-394-2873. Do you want to go for...   True  ...  False  False</span></span>
+<span id="cb32-27"><a href="#cb32-27" aria-hidden="true" tabindex="-1"></a><span class="co">## 4  phone: (123) 456-7890, nuid: 12345678, bank ac...   True  ...  False  False</span></span>
+<span id="cb32-28"><a href="#cb32-28" aria-hidden="true" tabindex="-1"></a><span class="co">## 5   1600 Pennsylvania Ave NW, Washington D.C., 20500  False  ...   True  False</span></span>
+<span id="cb32-29"><a href="#cb32-29" aria-hidden="true" tabindex="-1"></a><span class="co">## </span></span>
+<span id="cb32-30"><a href="#cb32-30" aria-hidden="true" tabindex="-1"></a><span class="co">## [6 rows x 5 columns]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
