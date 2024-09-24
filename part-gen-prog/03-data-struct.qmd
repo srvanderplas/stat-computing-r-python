@@ -380,6 +380,130 @@ animals[~good_pets] # equivalent to using bad_pets
 ```
 :::
 
+### Math with Vectors
+
+In order to talk about mathematical operations on (numerical) vectors, we first need to consider different ways we could combine vectors. 
+If the vectors are the same length, we could perform mathematical operations on the elements (and if they're not the same length we could come up with some convention to coerce them to be the same length). 
+
+\begin{align}
+\left[\begin{array}{c}a_1\\a_2\\a_3\end{array}\right] + \left[\begin{array}{c}b_1\\b_2\\b_3\end{array}\right] = \left[\begin{array}{c}a_1+b_1\\a_2 + b_2\\a_3 + b_3\end{array}\right]
+\end{align}
+
+: Element-wise sum of two vectors
+
+We could also think about performing mathematical operations on all of the entries in a vector - e.g. taking the sum of all vector entries, or the mean, or the standard deviation. 
+This reduces a vector of numbers to a single (scalar) number via a defined function. 
+We can use standard built-in functions, or we could define our own (see @sec-functions). 
+
+Another option is to think of vectors as a way to specify items, and define mathematical ways to combine different sets of items. 
+These vector operations are more akin to set operations, where the product of two vectors is the product set of all combinations of an item from vector 1 and an item from vector 2. 
+Technically, these operations are typically also defined for lists, but they may make more sense in practice when the vector same-type constraint is imposed. 
+
+We can finally combine vectors using linear algebra; if you are interested in these definitions, see @sec-matrix-calcs. 
+
+#### Element-wise Operations
+
+When using numeric vectors, the element-wise operations are the same for vectors and scalars (@tbl-math-operators2 is the same exact table as @tbl-math-operators in @sec-calculator). 
+
+| Operation        | R symbol | Python symbol |
+|------------------|----------|---------------|
+| Addition         | `+`      | `+`           |
+| Subtraction      | `-`      | `-`           |
+| Multiplication   | `*`      | `*`           |
+| Division         | `/`      | `/`           |
+| Integer Division | `%/%`    | `//`          |
+| Modular Division | `%%`     | `%`           |
+| Exponentiation   | `^`      | `**`          |
+
+: Element-wise mathematical operators in R and Python {#tbl-math-operators2}
+
+::: panel-tabset
+##### R
+```{r}
+a <- c(1:5)
+b <- c(6:10)
+
+a + b
+b - a
+a * b
+b / a
+b %/% a
+b %% a
+a ^ b
+```
+##### Python
+
+```{python}
+import numpy as np
+
+a = np.array([1, 2, 3, 4, 5])
+b = np.array([6, 7, 8, 9, 10])
+
+a + b
+b - a
+a * b
+b / a
+b // a
+b % a
+a ** b
+```
+
+:::
+
+#### Vector-to-Scalar Operations
+Let's cover a few built-in or commonly-used vector summary operations here, focusing on those which are most useful for statistics. 
+
+Function | R | Python
+---- | ---- | ----
+length | `length(x)` | `len(x)`
+mean | `mean(x)` | `x.average()`
+variance | `var(x)` | `x.var()`
+standard deviation | `sd(x)` | `x.std()`
+
+::: panel-tabset
+##### R
+```{r}
+set.seed(30420983)
+x <- sample(1:100, size = 10)
+x
+length(x)
+mean(x)
+var(x)
+sd(x)
+
+# 5 number summary + mean
+summary(x)
+```
+
+
+##### Python
+
+```{python}
+import numpy as np
+import random # need for setting the seed
+
+random.seed(30420983)
+x = random.sample(range(1, 101), 10)
+x = np.array(x)
+x
+len(x)
+x.mean()
+x.var()
+x.std()
+```
+
+If we want to use Pandas, we can get a summary of our vector using `.describe()`, but this requires converting our numpy array to a Pandas series.
+
+```{python}
+import pandas as pd
+x = pd.Series(x)
+x
+x.describe()
+```
+
+:::
+
+
 ### Reviewing Types
 
 As vectors are a collection of things of a single type, what happens if we try to make a vector with differently typed things?
