@@ -414,22 +414,15 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
   </ul>
 </li>
   <li>
-<a href="#sec-math-logic" id="toc-sec-math-logic" class="nav-link" data-scroll-target="#sec-math-logic"><span class="header-section-number">31.2</span> Mathematical Logic</a>
+<a href="#sec-controlling-loops" id="toc-sec-controlling-loops" class="nav-link" data-scroll-target="#sec-controlling-loops"><span class="header-section-number">31.2</span> Controlling Loops with Break, Next, Continue</a>
   <ul class="collapse">
-<li><a href="#and-or-and-not" id="toc-and-or-and-not" class="nav-link" data-scroll-target="#and-or-and-not"><span class="header-section-number">31.2.1</span> And, Or, and Not</a></li>
-  <li><a href="#de-morgans-laws" id="toc-de-morgans-laws" class="nav-link" data-scroll-target="#de-morgans-laws"><span class="header-section-number">31.2.2</span> De Morgan’s Laws</a></li>
+<li><a href="#break-statement" id="toc-break-statement" class="nav-link" data-scroll-target="#break-statement"><span class="header-section-number">31.2.1</span> Break Statement</a></li>
+  <li><a href="#nextcontinue-statement" id="toc-nextcontinue-statement" class="nav-link" data-scroll-target="#nextcontinue-statement"><span class="header-section-number">31.2.2</span> Next/Continue Statement</a></li>
   </ul>
 </li>
-  <li>
-<a href="#sec-controlling-loops" id="toc-sec-controlling-loops" class="nav-link" data-scroll-target="#sec-controlling-loops"><span class="header-section-number">31.3</span> Controlling Loops with Break, Next, Continue</a>
-  <ul class="collapse">
-<li><a href="#break-statement" id="toc-break-statement" class="nav-link" data-scroll-target="#break-statement"><span class="header-section-number">31.3.1</span> Break Statement</a></li>
-  <li><a href="#nextcontinue-statement" id="toc-nextcontinue-statement" class="nav-link" data-scroll-target="#nextcontinue-statement"><span class="header-section-number">31.3.2</span> Next/Continue Statement</a></li>
-  </ul>
-</li>
-  <li><a href="#sec-recursion" id="toc-sec-recursion" class="nav-link" data-scroll-target="#sec-recursion"><span class="header-section-number">31.4</span> Recursion</a></li>
-  <li><a href="#sec-text-encoding" id="toc-sec-text-encoding" class="nav-link" data-scroll-target="#sec-text-encoding"><span class="header-section-number">31.5</span> Text Encoding</a></li>
-  <li><a href="#sec-other-topics-refs" id="toc-sec-other-topics-refs" class="nav-link" data-scroll-target="#sec-other-topics-refs"><span class="header-section-number">31.6</span> References</a></li>
+  <li><a href="#sec-recursion" id="toc-sec-recursion" class="nav-link" data-scroll-target="#sec-recursion"><span class="header-section-number">31.3</span> Recursion</a></li>
+  <li><a href="#sec-text-encoding" id="toc-sec-text-encoding" class="nav-link" data-scroll-target="#sec-text-encoding"><span class="header-section-number">31.4</span> Text Encoding</a></li>
+  <li><a href="#sec-other-topics-refs" id="toc-sec-other-topics-refs" class="nav-link" data-scroll-target="#sec-other-topics-refs"><span class="header-section-number">31.5</span> References</a></li>
   </ul><div class="toc-actions"><ul><li><a href="https://github.com/srvanderplas/stat-computing-r-python/edit/main/graveyard.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li></ul></div></nav>
     </div>
 <!-- main -->
@@ -569,107 +562,19 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
 </tbody>
 </table>
 </div>
-</section></section><section id="sec-math-logic" class="level2" data-number="31.2"><h2 data-number="31.2" class="anchored" data-anchor-id="sec-math-logic">
-<span class="header-section-number">31.2</span> Mathematical Logic</h2>
-<p>In <a href="part-gen-prog/03-data-struct.html" class="quarto-xref"><span>Chapter 10</span></a> and <a href="part-gen-prog/04-control-struct.html" class="quarto-xref"><span>Chapter 12</span></a> we talk about more complicated data structures and control structures (for loops, if statements). I’ve included this section because it may be useful to review some concepts from mathematical logic.</p>
-<p>Unfortunately, to best demonstrate mathematical logic, I’m going to need you to know that a vector is like a list of the same type of thing. In R, vectors are defined using <code><a href="https://rdrr.io/r/base/c.html">c()</a></code>, so <code>c(1, 2, 3)</code> produces a vector with entries 1, 2, 3. In Python, we’ll primarily use <code>numpy</code> arrays, which we create using <code>np.array([1, 2, 3])</code>. Technically, this is creating a list, and then converting that list to a numpy array.</p>
-<section id="and-or-and-not" class="level3" data-number="31.2.1"><h3 data-number="31.2.1" class="anchored" data-anchor-id="and-or-and-not">
-<span class="header-section-number">31.2.1</span> And, Or, and Not</h3>
-<p>We can combine logical statements using and, or, and not.</p>
-<ul>
-<li>(X AND Y) requires that both X and Y are true.</li>
-<li>(X OR Y) requires that one of X or Y is true.</li>
-<li>(NOT X) is true if X is false, and false if X is true. Sometimes called <strong>negation</strong>.</li>
-</ul>
-<p>In R, we use <code>!</code> to symbolize NOT, in Python, we use <code>~</code> for vector-wise negation (NOT).</p>
-<p>Order of operations dictates that NOT is applied before other operations. So <code>NOT X AND Y</code> is read as <code>(NOT X) AND (Y)</code>. You must use parentheses to change the way this is interpreted.</p>
-<div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist">
-<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">R</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">Python</a></li>
-</ul>
-<div class="tab-content">
-<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
-<div class="cell">
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="cn">TRUE</span>, <span class="cn">FALSE</span>, <span class="cn">TRUE</span>, <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="va">y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="cn">TRUE</span>, <span class="cn">TRUE</span>, <span class="cn">FALSE</span>, <span class="cn">FALSE</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">x</span> <span class="op">&amp;</span> <span class="va">y</span> <span class="co"># AND</span></span>
-<span><span class="co">## [1]  TRUE FALSE FALSE FALSE</span></span>
-<span><span class="va">x</span> <span class="op">|</span> <span class="va">y</span> <span class="co"># OR</span></span>
-<span><span class="co">## [1]  TRUE  TRUE  TRUE FALSE</span></span>
-<span><span class="op">!</span><span class="va">x</span> <span class="op">&amp;</span> <span class="va">y</span> <span class="co"># NOT X AND Y</span></span>
-<span><span class="co">## [1] FALSE  TRUE FALSE FALSE</span></span>
-<span><span class="va">x</span> <span class="op">&amp;</span> <span class="op">!</span><span class="va">y</span> <span class="co"># X AND NOT Y</span></span>
-<span><span class="co">## [1] FALSE FALSE  TRUE FALSE</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</div>
-<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
-<div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.array([<span class="va">True</span>, <span class="va">False</span>, <span class="va">True</span>, <span class="va">False</span>])</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.array([<span class="va">True</span>, <span class="va">True</span>, <span class="va">False</span>, <span class="va">False</span>])</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>x <span class="op">&amp;</span> y</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co">## array([ True, False, False, False])</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>x <span class="op">|</span> y</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="co">## array([ True,  True,  True, False])</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="op">~</span>x <span class="op">&amp;</span> y</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co">## array([False,  True, False, False])</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>x <span class="op">&amp;</span> <span class="op">~</span>y</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co">## array([False, False,  True, False])</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-</div>
-</div>
-</div>
-</section><section id="de-morgans-laws" class="level3" data-number="31.2.2"><h3 data-number="31.2.2" class="anchored" data-anchor-id="de-morgans-laws">
-<span class="header-section-number">31.2.2</span> De Morgan’s Laws</h3>
-<p><a href="https://en.wikipedia.org/wiki/De_Morgan%27s_laws">De Morgan’s Laws</a> are a set of rules for how to combine logical statements. You can represent them in a number of ways:</p>
-<ul>
-<li>NOT(A or B) is equivalent to NOT(A) and NOT(B)</li>
-<li>NOT(A and B) is equivalent to NOT(A) or NOT(B)</li>
-</ul>
-<div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist">
-<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">Definitions</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">DeMorgan’s First Law</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-3" role="tab" aria-controls="tabset-3-3" aria-selected="false">DeMorgan’s Second Law</a></li>
-</ul>
-<div class="tab-content">
-<div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure"><p><img src="images/other/SetA and SetB.png" class="img-fluid figure-img"></p>
-<figcaption>Venn Diagram of Set A and Set B</figcaption></figure>
-</div>
-<p>Suppose that we set the convention that <img src="images/other/TrueFalse.png" class="img-fluid" alt="Shaded regions are TRUE, unshaded regions are FALSE">.</p>
-</div>
-<div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure"><p><img src="images/other/DeMorgan1.png" class="img-fluid figure-img"></p>
-<figcaption>A venn diagram illustration of De Morgan’s laws showing that the region that is outside of the union of A OR B (aka NOT (A OR B)) is the same as the region that is outside of (NOT A) and (NOT B)</figcaption></figure>
-</div>
-</div>
-<div id="tabset-3-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-3-tab">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure"><p><img src="images/other/DeMorgan2.png" class="img-fluid figure-img"></p>
-<figcaption>A venn diagram illustration of De Morgan’s laws showing that the region that is outside of the union of A AND B (aka NOT (A AND B)) is the same as the region that is outside of (NOT A) OR (NOT B)</figcaption></figure>
-</div>
-</div>
-</div>
-</div>
-</section></section><section id="sec-controlling-loops" class="level2" data-number="31.3"><h2 data-number="31.3" class="anchored" data-anchor-id="sec-controlling-loops">
-<span class="header-section-number">31.3</span> Controlling Loops with Break, Next, Continue</h2>
+</section></section><section id="sec-controlling-loops" class="level2" data-number="31.2"><h2 data-number="31.2" class="anchored" data-anchor-id="sec-controlling-loops">
+<span class="header-section-number">31.2</span> Controlling Loops with Break, Next, Continue</h2>
 <!-- https://www.py4e.com/html3/05-iterations -->
 <!-- https://www.datamentor.io/r-programming/break-next/ -->
 <p>Sometimes it is useful to control the statements in a loop with a bit more precision. You may want to skip over code and proceed directly to the next iteration, or, as demonstrated in the previous section with the <code><a href="https://rdrr.io/r/base/Control.html">break</a></code> statement, it may be useful to exit the loop prematurely.</p>
-<section id="break-statement" class="level3" data-number="31.3.1"><h3 data-number="31.3.1" class="anchored" data-anchor-id="break-statement">
-<span class="header-section-number">31.3.1</span> Break Statement</h3>
+<section id="break-statement" class="level3" data-number="31.2.1"><h3 data-number="31.2.1" class="anchored" data-anchor-id="break-statement">
+<span class="header-section-number">31.2.1</span> Break Statement</h3>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure"><p><img src="images/other/break-statement.png" class="img-fluid figure-img"></p>
 <figcaption>A break statement is used to exit a loop prematurely</figcaption></figure>
 </div>
-</section><section id="nextcontinue-statement" class="level3" data-number="31.3.2"><h3 data-number="31.3.2" class="anchored" data-anchor-id="nextcontinue-statement">
-<span class="header-section-number">31.3.2</span> Next/Continue Statement</h3>
+</section><section id="nextcontinue-statement" class="level3" data-number="31.2.2"><h3 data-number="31.2.2" class="anchored" data-anchor-id="nextcontinue-statement">
+<span class="header-section-number">31.2.2</span> Next/Continue Statement</h3>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure"><p><img src="images/other/next-statement-flow.png" class="img-fluid figure-img"></p>
 <figcaption>A next (or continue) statement is used to skip the body of the loop and continue to the next iteration</figcaption></figure>
@@ -688,13 +593,13 @@ Example: Next/continue and Break statements
 <p>We can do different things based on whether i is evenly divisible by 3, 5, or both 3 and 5 (thus divisible by 15)</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
-<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true">R</a></li>
-<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false">Python</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">R</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">Python</a></li>
 </ul>
 <div class="tab-content">
-<div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
+<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
 <div class="cell">
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">20</span><span class="op">)</span> <span class="op">{</span></span>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">20</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="kw">if</span> <span class="op">(</span><span class="va">i</span> <span class="op"><a href="https://rdrr.io/r/base/Arithmetic.html">%%</a></span> <span class="fl">15</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/print.html">print</a></span><span class="op">(</span><span class="st">"Exiting now"</span><span class="op">)</span></span>
 <span>    <span class="kw">break</span></span>
@@ -725,35 +630,35 @@ Example: Next/continue and Break statements
 <span><span class="co">## [1] "Exiting now"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
-<div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
+<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, <span class="dv">20</span>):</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> i<span class="op">%</span><span class="dv">15</span> <span class="op">==</span> <span class="dv">0</span>:</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Exiting now"</span>)</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">break</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">elif</span> i<span class="op">%</span><span class="dv">3</span> <span class="op">==</span> <span class="dv">0</span>:</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Divisible by 3"</span>)</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">continue</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"After the next statement"</span>) <span class="co"># this should never execute</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">elif</span> i<span class="op">%</span><span class="dv">5</span> <span class="op">==</span> <span class="dv">0</span>:</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Divisible by 5"</span>)</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span>: </span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(i)</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co">## 1</span></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co">## 2</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co">## Divisible by 3</span></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="co">## 4</span></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="co">## Divisible by 5</span></span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="co">## Divisible by 3</span></span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="co">## 7</span></span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="co">## 8</span></span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="co">## Divisible by 3</span></span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="co">## Divisible by 5</span></span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="co">## 11</span></span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="co">## Divisible by 3</span></span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a><span class="co">## 13</span></span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a><span class="co">## 14</span></span>
-<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="co">## Exiting now</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>, <span class="dv">20</span>):</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> i<span class="op">%</span><span class="dv">15</span> <span class="op">==</span> <span class="dv">0</span>:</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Exiting now"</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">break</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">elif</span> i<span class="op">%</span><span class="dv">3</span> <span class="op">==</span> <span class="dv">0</span>:</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Divisible by 3"</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">continue</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"After the next statement"</span>) <span class="co"># this should never execute</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">elif</span> i<span class="op">%</span><span class="dv">5</span> <span class="op">==</span> <span class="dv">0</span>:</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"Divisible by 5"</span>)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">else</span>: </span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(i)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co">## 1</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="co">## 2</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co">## Divisible by 3</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="co">## 4</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="co">## Divisible by 5</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="co">## Divisible by 3</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="co">## 7</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="co">## 8</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="co">## Divisible by 3</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="co">## Divisible by 5</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="co">## 11</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="co">## Divisible by 3</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="co">## 13</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="co">## 14</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="co">## Exiting now</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
@@ -761,12 +666,12 @@ Example: Next/continue and Break statements
 </div>
 </div>
 <p>To be quite honest, I haven’t really ever needed to use next/continue statements when I’m programming, and I rarely use break statements. However, it’s useful to know they exist just in case you come across a problem where you could put either one to use.</p>
-</section></section><section id="sec-recursion" class="level2" data-number="31.4"><h2 data-number="31.4" class="anchored" data-anchor-id="sec-recursion">
-<span class="header-section-number">31.4</span> Recursion</h2>
+</section></section><section id="sec-recursion" class="level2" data-number="31.3"><h2 data-number="31.3" class="anchored" data-anchor-id="sec-recursion">
+<span class="header-section-number">31.3</span> Recursion</h2>
 <p>Under construction.</p>
 <p>In the meantime, check out <span class="citation" data-cites="datamentorRecursion2017"><a href="#ref-datamentorRecursion2017" role="doc-biblioref">[1]</a></span> (R) and <span class="citation" data-cites="parewalabspvtPythonRecursion2020"><a href="#ref-parewalabspvtPythonRecursion2020" role="doc-biblioref">[2]</a></span> (Python) for decent coverage of the basic idea of recursive functions.</p>
-</section><section id="sec-text-encoding" class="level2" data-number="31.5"><h2 data-number="31.5" class="anchored" data-anchor-id="sec-text-encoding">
-<span class="header-section-number">31.5</span> Text Encoding</h2>
+</section><section id="sec-text-encoding" class="level2" data-number="31.4"><h2 data-number="31.4" class="anchored" data-anchor-id="sec-text-encoding">
+<span class="header-section-number">31.4</span> Text Encoding</h2>
 <p>I’ve left this section in because it’s a useful set of tricks, even though it does primarily deal with SAS.</p>
 <p>Don’t know what UTF-8 is? <a href="https://www.youtube.com/watch?v=MijmeoH9LT4">Watch this excellent YouTube video explaining the history of file encoding!</a></p>
 <p>SAS also has procs to accommodate CSV and other delimited files. PROC IMPORT may be the simplest way to do this, but of course a DATA step will work as well. We do have to tell SAS to treat the data file as a UTF-8 file (because of the japanese characters).</p>
@@ -785,7 +690,7 @@ proc print data=poke (obs=10); /* print the first 10 observations */
 <p>Alternately (because UTF-8 is finicky depending on your OS and the OS the data file was created under), you can convert the UTF-8 file to ASCII or some other safer encoding before trying to read it in.</p>
 <p>If I fix the file in R (because I know how to fix it there… another option is to fix it manually),</p>
 <div class="cell">
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://readr.tidyverse.org">readr</a></span><span class="op">)</span></span>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://readr.tidyverse.org">readr</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span></span>
 <span><span class="va">tmp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html">read_csv</a></span><span class="op">(</span><span class="st">"https://raw.githubusercontent.com/shahinrostami/pokemon_dataset/master/pokemon_gen_1_to_8.csv"</span><span class="op">)</span><span class="op">[</span>,<span class="op">-</span><span class="fl">1</span><span class="op">]</span></span>
 <span><span class="fu"><a href="https://readr.tidyverse.org/reference/write_delim.html">write_csv</a></span><span class="op">(</span><span class="va">tmp</span>, <span class="st">"../data/pokemon_gen_1-8.csv"</span><span class="op">)</span></span>
@@ -813,8 +718,8 @@ proc import datafile = pokeloc out=classdat.poke
 proc print data=classdat.poke (obs=10); /* print the first 10 observations */
   run; </code></pre>
 <p>This trick works in so many different situations. It’s very common to read and do initial processing in one language, then do the modeling in another language, and even move to a different language for visualization. Each programming language has its strengths and weaknesses; if you know enough of each of them, you can use each tool where it is most appropriate.</p>
-</section><section id="sec-other-topics-refs" class="level2" data-number="31.6"><h2 data-number="31.6" class="anchored" data-anchor-id="sec-other-topics-refs">
-<span class="header-section-number">31.6</span> References</h2>
+</section><section id="sec-other-topics-refs" class="level2" data-number="31.5"><h2 data-number="31.5" class="anchored" data-anchor-id="sec-other-topics-refs">
+<span class="header-section-number">31.5</span> References</h2>
 
 
 <div id="refs" class="references csl-bib-body" data-entry-spacing="0" role="list">
