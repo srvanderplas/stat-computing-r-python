@@ -459,6 +459,10 @@ length | `length(x)` | `len(x)`
 mean | `mean(x)` | `x.average()`
 variance | `var(x)` | `x.var()`
 standard deviation | `sd(x)` | `x.std()`
+maximum | `max(x)` | `x.max()`
+location of maximum | `which.max(x)` | `x.argmax()`
+minimum | `min(x)` | `x.min()`
+location of minimum | `which.min(x)` | `x.argmin()`
 
 ::: panel-tabset
 ##### R
@@ -470,6 +474,10 @@ length(x)
 mean(x)
 var(x)
 sd(x)
+max(x)
+min(x)
+which.max(x)
+which.min(x)
 
 # 5 number summary + mean
 summary(x)
@@ -490,6 +498,10 @@ len(x)
 x.mean()
 x.var()
 x.std()
+x.max()
+x.min()
+x.argmax()
+x.argmin()
 ```
 
 If we want to use Pandas, we can get a summary of our vector using `.describe()`, but this requires converting our numpy array to a Pandas series.
@@ -503,6 +515,74 @@ x.describe()
 
 :::
 
+
+#### Set Operations
+
+There are 3 basic set operations: union, intersection, and set difference, as well as the Cartesian product. 
+The Cartesian product creates a set of points in vector space (in math terms) or tuples (in python terms), which is usually represented as something other than a vector (in R, a data frame). 
+
+Generally speaking, all of these operations would be valid on lists as well as vectors in R, though in python, these functions are part of `numpy` and require 1-dimensional arrays. 
+There are certainly ways to implement set operations in base python, but they typically do not have convenient named functions - you'd need to write your own or import another library. 
+
+
+Operation | Definition | Symbol (Math) | R function | Python function
+---- | ----  | ---- | ---- | ----
+Union | All elements in A or B | $A \cup B$ | `union(A, B)` | `np.union1d(A, B)`
+Intersection | Elements in both A and B | $A \cap B$ | `intersect(A, B)` | `np.intersect1d(A, B)`
+Set Difference | Elements in A but not B | $A \setminus B$ | `setdiff(A, B)` | `np.setdiff1d(A, B)`
+Cartesian Product | Combination of each element in A with each element in B | $expand.grid(A, B)$ | ... it's complicated, see code. 
+
+::: panel-tabset
+##### R
+
+
+```{r}
+A = c(1:10)
+B = c(1:5) * 2 # evens
+
+union(A, B)
+intersect(A, B)
+setdiff(A, B)
+setdiff(B, A)
+expand.grid(A, B) # this is a data frame
+```
+
+##### Python
+```{python}
+import numpy as np
+
+A = np.array(range(1, 11))
+B = np.array(range(1, 6)) * 2
+
+np.union1d(A, B)
+np.intersect1d(A, B)
+np.setdiff1d(A, B)
+np.setdiff1d(B, A)
+```
+
+To combine numpy arrays with a Cartesian product in base Python, we have to use something called **list comprehension**. 
+I'll leave this example here, but you don't need to fully understand how it works yet, as it is using for loops in a python-centric way.
+
+```{python}
+[[a0, b0] for a0 in A for b0 in B] # sets of coordinates
+[[(a0, b0) for a0 in A] for b0 in B] # vectors of coordinates
+```
+
+We can also use a library that implements the Cartesian product explicitly, and then convert the result to a data type we would prefer to work with, like an array of coordinates, or a data frame. 
+
+```{python}
+# Using a library
+import itertools
+np.array(list(itertools.product(A, B))) # array of 2d coords
+pd.DataFrame(list(itertools.product(A, B))) # data frame
+```
+
+
+::: 
+
+### Logical Operations on Vectors
+
+XXX TODO XXX
 
 ### Reviewing Types
 
