@@ -708,6 +708,148 @@ mean(riemann$y)
 :::
 :::
 
+
+::: callout-caution
+### Example: Integration in 2d
+
+::: panel-tabset
+#### Problem
+
+Let's say that you want to find an estimate for $\pi$, and you know that a circle with radius 1 has an area of exactly that. You also know, that all of the points on this circle can be written as $x^2 + y^2 \le 1$. 
+
+```{r, echo = F}
+#| fig-width: 4
+#| fig-height: 4
+#| out-width: 50%
+#| fig-cap: "The unit circle."
+#| fig-alt: "A circle centered in (0,0) with radius 1."
+fn <- function(x) sqrt(1-x^2)
+ggplot(data.frame(x = seq(-1, 1, length.out = 1000)), aes(x)) + 
+  geom_polygon(aes(y = fn(x)), fill = "grey70", alpha = 0.8) + 
+  geom_polygon(aes(y = -fn(x)), fill = "grey70", alpha = 0.8) + 
+  geom_path(aes(x = sin(theta), y = cos(theta)), 
+            data = data.frame(theta=seq(0,2*pi, by = 0.0001))) + ylab("y")
+  
+```
+
+Evaluating the area of the circle mathematically, would need us to either change to polar-coordinates or separate the graph into suitable functions (half-circles), and evaluate the integral between the top and the bottom:
+$$
+\int_{-1}^1 2 \sqrt{1-x^2} dx
+$$
+Instead, we note that the circle is encapsulated in a square with side length 2. We can reach all points in that square by using two independent uniform random random variables over the interval $[-1,1]$, i.e. when we generate two random values from U[-1,1], and use one as the $x$ coordinate and one as the $y$ coordinate, we get a point in the square. 
+If the sum of the squares of the coordinates are less than 1, the point will also fall inside the circle. If not, the point falls in one of the four corners of the square that are outside the circle.
+
+```{r, echo = F}
+#| fig-width: 4
+#| fig-height: 4
+#| out-width: 50%
+#| fig-cap: "The unit circle  is encapsulated by a square and overlaid with uniform points from U[-1,1] x U[-1,1]. "
+#| fig-alt: "A circle centered in (0,0) with radius 1 overlaid with randomly generated points. The points inside the circle are drawn in a different color from the ones outside the circle."
+
+R <- 1000
+
+random <- data.frame(
+  x = runif(R, min=-1, max=1),
+  y = runif(R, min=-1, max=1)) %>% 
+  mutate(
+    in_circle = x^2+y^2<1
+  )
+
+fn <- function(x) sqrt(1-x^2)
+ggplot(data.frame(x = seq(-1, 1, length.out = 1000)), aes(x)) + 
+  geom_path(aes(x = x, y = y), data = data.frame(x = c(-1, 1, 1, -1, -1), y = c( 1, 1, -1, -1, 1))) +
+  geom_polygon(aes(y = fn(x)), fill = "grey70", alpha = 0.8) + 
+  geom_polygon(aes(y = -fn(x)), fill = "grey70", alpha = 0.8) + 
+  geom_path(aes(x = sin(theta), y = cos(theta)), 
+            data = data.frame(theta=seq(0,2*pi, by = 0.0001))) + ylab("y") + 
+  geom_point(aes(x = x, y = y, colour = in_circle), data = random) + 
+  coord_equal()
+  
+```
+
+How do we get to an estimate of $\pi$ from there? We know that the area of the square is simply $2^2 = 4$. The area of the circle is then directly proportional to the rate at which points fall into the circle, ie. 
+
+$$
+\hat{\pi} = 4 \times \frac{\text{Number of points with } x^2+y^2 \le 1}{\text{Number of points generated}}.
+$$
+The more points we generate, the closer our estimate will be to the real value. 
+
+
+
+This problem is an example for Monte-Carlo Integration using an Acceptance-Rejection approach: we can slightly re-write the simulation and think of the generation of a new point in the circle as a two step process, where we first generate a value for $x$ from U[-1,1], and in second step generate a candidate $c$ for $y$ from U[-1, 1], which we will only accept as $y$, if  $|c| \le \sqrt{1-x^2}$.  Acceptance-Rejection sampling is the basis of a lot of [Markov-Chain Monte-Carlo](https://en.wikipedia.org/wiki/Markov_chain_Monte_Carlo) (MCMC) methods, such as e.g. the [Metropolis-Hastings algorithm](https://en.wikipedia.org/wiki/Metropolis%E2%80%93Hastings_algorithm).
+
+#### R Code
+
+```{r}
+set.seed(20491720)
+
+calculate_pi <- function(R) {
+  x = runif(R, min=-1, max=1)
+  y = runif(R, min=-1, max=1)
+  in_circle = x^2+y^2<1
+  
+  4 * sum(in_circle) / R
+}
+
+# Quite a bit of variability with just 100 values
+calculate_pi(100)
+calculate_pi(100)
+calculate_pi(100)
+
+# Better with 10,000
+calculate_pi(10000)
+calculate_pi(10000)
+
+# Better, but still only good for about 2-3 digits
+calculate_pi(1000000) 
+
+pi
+
+```
+
+#### Python Code
+
+```{python}
+random.seed(20491720)
+
+def calculate_pi(R):
+  x = np.random.uniform(size = R)
+  y = np.random.uniform(size = R)
+  in_circle = x**2+y**2<1
+  
+  return 4 * sum(in_circle) / R
+
+
+# Quite a bit of variability with just 100 values
+calculate_pi(100)
+calculate_pi(100)
+calculate_pi(100)
+
+# Better with 10,000
+calculate_pi(10000)
+calculate_pi(10000)
+
+# Better, but still only good for about 2-3 digits
+calculate_pi(1000000) 
+
+np.pi
+```
+
+#### Numeric integration
+
+```{r}
+set.seed(20491720)
+fn <- function(x)  2*sqrt(1-x^2)
+
+integrate(fn, lower=-1, upper=1)
+
+pi
+```
+
+:::
+:::
+
+
 ::: callout-tip
 ### Try it out
 
@@ -791,6 +933,9 @@ plt.show()
 ```
 :::
 :::
+
+
+
 
 ## Other Resources
 
