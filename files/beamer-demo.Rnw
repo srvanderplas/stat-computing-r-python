@@ -1,0 +1,121 @@
+\documentclass{beamer}					% Document class
+
+\mode<presentation>
+{
+  \usetheme{default}                    % Set theme
+  \usecolortheme{default}               % Set colors
+  \usefonttheme{default}                % Set font theme
+  \setbeamertemplate{caption}[numbered] % Set caption to be numbered
+}
+
+\usepackage{graphicx}  % For including figures
+\usepackage{booktabs}  % For table rules
+\usepackage{hyperref}  % For cross-referencing
+
+\title{Title for a minimal beamer presentation}  % Presentation title
+\author{Author One}                              % Presentation author
+\institute{Name of institution}                  % Author affiliation
+\date{\today}                                    % Today's date
+
+% This creates a bibliography file with the same name as the main file.
+% Mostly, it allows us to have only one text file to lug around.
+\begin{filecontents}{\jobname.bib}
+@article{healyFuckNuance2017,
+	title = {Fuck {Nuance}},
+	volume = {35},
+	doi = {10.1177/0735275117709046},
+	number = {2},
+	journal = {Sociological Theory},
+	author = {Healy, Kieran},
+	month = jun,
+	year = {2017},
+	pages = {118--127}
+}
+@article{lego,
+	title = {Everything is awesome: Don't forget the {Lego}},
+	volume = {55},
+	doi = {10.1111/jpc.14309},
+	number = {8},
+	journal = {Journal of Paediatrics and Child Health},
+	author = {Tagg, Andrew and Roland, Damian and Leo, Grace SY and Knight, Katie and Goldstein, Henry and Davis, Tessa},
+	year = {2019},
+	pages = {921--923},
+}
+\end{filecontents}
+
+
+\begin{document}
+
+% Title page
+% This page includes the informations defined earlier including
+% title, author/s, affiliation/s and the date
+\begin{frame}
+  \titlepage
+\end{frame}
+
+% Outline
+% This page includes the outline (Table of content) of the presentation.
+% All sections and subsections will appear in the outline by default.
+\begin{frame}{Outline}
+  \tableofcontents
+\end{frame}
+
+% The following is the most frequently used slide types in beamer
+% The slide structure is as follows:
+%
+%\begin{frame}{<slide-title>}
+%	<content>
+%\end{frame}
+
+\section{Section One}
+
+\begin{frame}{Slide with bullet points}
+	This is a bullet list of two points:
+    \begin{itemize}
+		\item Point one
+        \item Point two
+	\end{itemize}
+\end{frame}
+
+\begin{frame}{Slide with two columns}
+	\begin{columns}
+		\column{.5\textwidth}
+        Text goes in first column.
+
+    \column{.5\textwidth}
+        Text goes in second column
+	\end{columns}
+\end{frame}
+
+\section{Section Two}
+
+\begin{frame}[fragile]{Slide with R code}
+<<test-chunk, eval = T, echo = T, tidy = F>>=
+library(knitr)
+kable(mtcars[1:5,],
+      label = 'table1',
+      caption = "A test table")
+@
+\end{frame}
+
+\begin{frame}{Slide with figure}
+<<figure1, eval = T, echo = F, fig.cap = "A test plot", fig.width = 6, fig.height = 4>>=
+plot(mtcars$mpg, mtcars$hp, type = 'p')
+@
+\end{frame}
+
+\begin{frame}{Slide with references}
+	This is to reference a figure (Figure \ref{fig:figure1})\\
+    This it to reference a table (Table \ref{tab:table1})\\
+    This is to cite an article \cite{healyFuckNuance2017}\\
+    This is to add an article to the references without mentioning in the text \nocite{lego}\\
+\end{frame}
+\section{References}
+
+% Adding the option 'allowframebreaks' allows the contents of the slide to be expanded in more than one slide.
+\begin{frame}[allowframebreaks]{References}
+	\bibliography{\jobname}
+	\bibliographystyle{apalike}
+\end{frame}
+
+\end{document}
