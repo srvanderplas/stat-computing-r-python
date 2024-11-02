@@ -34,7 +34,7 @@ reticulate::py_install(c("numpy", "pandas", "lxml"))
 In a python chunk (or the python terminal), you can run the following command. This depends on something called ["IPython magic"](https://ipython.readthedocs.io/en/stable/index.html#) commands, so if it doesn't work for you, try the System Terminal method instead.
 
 ```{python, eval = F}
-%pip install numpy pandas lxml
+%pip3 install numpy pandas lxml
 ```
 
 :::
@@ -133,6 +133,34 @@ In Python, we can use single brackets to get an object or a list back out, but w
 :::
 
 We'll talk more about indexing as it relates to vectors, but indexing is a general concept that applies to just about any multi-value object.
+
+### Concatenation
+
+Another important thing to know about lists is how to combine them. 
+If I have rosters for two classes and I want to make a list of all of my students, I need to somehow merge the two lists together.
+
+::: panel-tabset
+#### R
+```{r}
+class1 <- c("Benjamin Sisko", "Odo", "Julian Bashir", "Jadzia Dax", "Miles O'Brien", "Quark", "Kira Nerys", "Elim Garak")
+class2 <- c("Jean-Luc Picard", "William Riker", "Geordi La Forge", "Worf", "Miles O'Brien", "Beverly Crusher", "Deanna Troi", "Data")
+
+students <- c(class1, class2)
+students
+
+unique(students) # get only unique names
+```
+
+#### Python
+```{python}
+class1 = ["Benjamin Sisko", "Odo", "Julian Bashir", "Jadzia Dax", "Miles O'Brien", "Quark", "Kira Nerys", "Elim Garak"]
+class2 = ["Jean-Luc Picard", "William Riker", "Geordi La Forge", "Worf", "Miles O'Brien", "Beverly Crusher", "Deanna Troi", "Data"]
+
+students = class1 + class2
+students
+list(dict.fromkeys(students)) # get only unique names
+```
+:::
 
 ## Vectors
 
@@ -313,7 +341,7 @@ Note that for logical indexing to work properly, the logical index must be the s
 This constraint will return when we talk about data frames, but for now, just keep in mind that logical indexing doesn't make sense when this constraint isn't true.
 
 ::: panel-tabset
-### Indexing with logical vectors in R {.unnumbered}
+#### R {.unnumbered}
 
 ```{r logical-vector-indexing-r}
 # Define a character vector
@@ -333,7 +361,7 @@ school_days
 weekdays[school_days] # print out all school days
 ```
 
-### Indexing with logical vectors in python {.unnumbered}
+#### Python {.unnumbered}
 
 ```{python logical-vector-indexing-python}
 import numpy as np;
@@ -351,6 +379,210 @@ animals[bad_pets]
 animals[~good_pets] # equivalent to using bad_pets
 ```
 :::
+
+### Math with Vectors
+
+In order to talk about mathematical operations on (numerical) vectors, we first need to consider different ways we could combine vectors. 
+If the vectors are the same length, we could perform mathematical operations on the elements (and if they're not the same length we could come up with some convention to coerce them to be the same length). 
+
+\begin{align}
+\left[\begin{array}{c}a_1\\a_2\\a_3\end{array}\right] + \left[\begin{array}{c}b_1\\b_2\\b_3\end{array}\right] = \left[\begin{array}{c}a_1+b_1\\a_2 + b_2\\a_3 + b_3\end{array}\right]
+\end{align}
+
+: Element-wise sum of two vectors
+
+We could also think about performing mathematical operations on all of the entries in a vector - e.g. taking the sum of all vector entries, or the mean, or the standard deviation. 
+This reduces a vector of numbers to a single (scalar) number via a defined function. 
+We can use standard built-in functions, or we could define our own (see @sec-functions). 
+
+Another option is to think of vectors as a way to specify items, and define mathematical ways to combine different sets of items. 
+These vector operations are more akin to set operations, where the product of two vectors is the product set of all combinations of an item from vector 1 and an item from vector 2. 
+Technically, these operations are typically also defined for lists, but they may make more sense in practice when the vector same-type constraint is imposed. 
+
+We can finally combine vectors using linear algebra; if you are interested in these definitions, see @sec-matrix-calcs. 
+
+#### Element-wise Operations
+
+When using numeric vectors, the element-wise operations are the same for vectors and scalars (@tbl-math-operators2 is the same exact table as @tbl-math-operators in @sec-calculator). 
+
+| Operation        | R symbol | Python symbol |
+|------------------|----------|---------------|
+| Addition         | `+`      | `+`           |
+| Subtraction      | `-`      | `-`           |
+| Multiplication   | `*`      | `*`           |
+| Division         | `/`      | `/`           |
+| Integer Division | `%/%`    | `//`          |
+| Modular Division | `%%`     | `%`           |
+| Exponentiation   | `^`      | `**`          |
+
+: Element-wise mathematical operators in R and Python {#tbl-math-operators2}
+
+::: panel-tabset
+##### R
+```{r}
+a <- c(1:5)
+b <- c(6:10)
+
+a + b
+b - a
+a * b
+b / a
+b %/% a
+b %% a
+a ^ b
+```
+##### Python
+
+```{python}
+import numpy as np
+
+a = np.array([1, 2, 3, 4, 5])
+b = np.array([6, 7, 8, 9, 10])
+
+a + b
+b - a
+a * b
+b / a
+b // a
+b % a
+a ** b
+```
+
+:::
+
+#### Vector-to-Scalar Operations
+Let's cover a few built-in or commonly-used vector summary operations here, focusing on those which are most useful for statistics. 
+
+Function | R | Python
+---- | ---- | ----
+length | `length(x)` | `len(x)`
+mean | `mean(x)` | `x.average()`
+variance | `var(x)` | `x.var()`
+standard deviation | `sd(x)` | `x.std()`
+maximum | `max(x)` | `x.max()`
+location of maximum | `which.max(x)` | `x.argmax()`
+minimum | `min(x)` | `x.min()`
+location of minimum | `which.min(x)` | `x.argmin()`
+
+::: panel-tabset
+##### R
+```{r}
+set.seed(30420983)
+x <- sample(1:100, size = 10)
+x
+length(x)
+mean(x)
+var(x)
+sd(x)
+max(x)
+min(x)
+which.max(x)
+which.min(x)
+
+# 5 number summary + mean
+summary(x)
+```
+
+
+##### Python
+
+```{python}
+import numpy as np
+import random # need for setting the seed
+
+random.seed(30420983)
+x = random.sample(range(1, 101), 10)
+x = np.array(x)
+x
+len(x)
+x.mean()
+x.var()
+x.std()
+x.max()
+x.min()
+x.argmax()
+x.argmin()
+```
+
+If we want to use Pandas, we can get a summary of our vector using `.describe()`, but this requires converting our numpy array to a Pandas series.
+
+```{python}
+import pandas as pd
+x = pd.Series(x)
+x
+x.describe()
+```
+
+:::
+
+
+#### Set Operations
+
+There are 3 basic set operations: union, intersection, and set difference, as well as the Cartesian product. 
+The Cartesian product creates a set of points in vector space (in math terms) or tuples (in python terms), which is usually represented as something other than a vector (in R, a data frame). 
+
+Generally speaking, all of these operations would be valid on lists as well as vectors in R, though in python, these functions are part of `numpy` and require 1-dimensional arrays. 
+There are certainly ways to implement set operations in base python, but they typically do not have convenient named functions - you'd need to write your own or import another library. 
+
+
+Operation | Definition | Symbol (Math) | R function | Python function
+---- | ----  | ---- | ---- | ----
+Union | All elements in A or B | $A \cup B$ | `union(A, B)` | `np.union1d(A, B)`
+Intersection | Elements in both A and B | $A \cap B$ | `intersect(A, B)` | `np.intersect1d(A, B)`
+Set Difference | Elements in A but not B | $A \setminus B$ | `setdiff(A, B)` | `np.setdiff1d(A, B)`
+Cartesian Product | Combination of each element in A with each element in B | $expand.grid(A, B)$ | ... it's complicated, see code. 
+
+::: panel-tabset
+##### R
+
+
+```{r}
+A = c(1:10)
+B = c(1:5) * 2 # evens
+
+union(A, B)
+intersect(A, B)
+setdiff(A, B)
+setdiff(B, A)
+expand.grid(A, B) # this is a data frame
+```
+
+##### Python
+```{python}
+import numpy as np
+
+A = np.array(range(1, 11))
+B = np.array(range(1, 6)) * 2
+
+np.union1d(A, B)
+np.intersect1d(A, B)
+np.setdiff1d(A, B)
+np.setdiff1d(B, A)
+```
+
+To combine numpy arrays with a Cartesian product in base Python, we have to use something called **list comprehension**. 
+I'll leave this example here, but you don't need to fully understand how it works yet, as it is using for loops in a python-centric way.
+
+```{python}
+[[a0, b0] for a0 in A for b0 in B] # sets of coordinates
+[[(a0, b0) for a0 in A] for b0 in B] # vectors of coordinates
+```
+
+We can also use a library that implements the Cartesian product explicitly, and then convert the result to a data type we would prefer to work with, like an array of coordinates, or a data frame. 
+
+```{python}
+# Using a library
+import itertools
+np.array(list(itertools.product(A, B))) # array of 2d coords
+pd.DataFrame(list(itertools.product(A, B))) # data frame
+```
+
+
+::: 
+
+### Logical Operations on Vectors
+
+XXX TODO XXX
 
 ### Reviewing Types
 
