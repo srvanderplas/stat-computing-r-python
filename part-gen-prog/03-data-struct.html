@@ -1933,44 +1933,37 @@ Motivating Data Frames: Working with Multiple Vectors
 <div class="sourceCode cell-code" id="cb44"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> pd.read_html(<span class="st">"https://worldpopulationreview.com/states"</span>)[<span class="dv">0</span>]</span>
-<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a><span class="bu">list</span>(data.columns) <span class="co"># get names</span></span>
-<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a><span class="co">## ['Rank', 'State', '2024 Population', 'Growth Rate', '2023 Population', '2020 Population', 'Growth Since 2020', '% of US', 'Density (/mi²)']</span></span>
-<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a few population series</span></span>
-<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a>population2024 <span class="op">=</span> pd.Series(data[<span class="st">'2024 Population'</span>].values, index <span class="op">=</span> data[<span class="st">'State'</span>].values)</span>
-<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>population2023 <span class="op">=</span> pd.Series(data[<span class="st">'2023 Population'</span>].values, index <span class="op">=</span> data[<span class="st">'State'</span>].values)</span>
-<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a>population2020 <span class="op">=</span> pd.Series(data[<span class="st">'2020 Population'</span>].values, index <span class="op">=</span> data[<span class="st">'State'</span>].values)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a><span class="co">## ImportError: Missing optional dependency 'lxml'.  Use pip or conda to install lxml.</span></span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a><span class="bu">list</span>(data.columns) <span class="co"># get names</span></span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'data' is not defined</span></span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a few population series</span></span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>population2024 <span class="op">=</span> pd.Series(data[<span class="st">'2024 Population'</span>].values, index <span class="op">=</span> data[<span class="st">'State'</span>].values)</span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'data' is not defined</span></span>
+<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a>population2023 <span class="op">=</span> pd.Series(data[<span class="st">'2023 Population'</span>].values, index <span class="op">=</span> data[<span class="st">'State'</span>].values)</span>
+<span id="cb44-12"><a href="#cb44-12" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'data' is not defined</span></span>
+<span id="cb44-13"><a href="#cb44-13" aria-hidden="true" tabindex="-1"></a>population2020 <span class="op">=</span> pd.Series(data[<span class="st">'2020 Population'</span>].values, index <span class="op">=</span> data[<span class="st">'State'</span>].values)</span>
+<span id="cb44-14"><a href="#cb44-14" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'data' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Suppose that we want to sort each population vector by the population in that year.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> pd.read_html(<span class="st">"https://worldpopulationreview.com/states"</span>)[<span class="dv">0</span>]</span>
-<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>population2024 <span class="op">=</span> pd.Series(data[<span class="st">'2024 Population'</span>].values, index <span class="op">=</span> data[<span class="st">'State'</span>].values).sort_values()</span>
-<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>population2023 <span class="op">=</span> pd.Series(data[<span class="st">'2023 Population'</span>].values, index <span class="op">=</span> data[<span class="st">'State'</span>].values).sort_values()</span>
-<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>populationCensus <span class="op">=</span> pd.Series(data[<span class="st">'2020 Population'</span>].values, index <span class="op">=</span> data[<span class="st">'State'</span>].values).sort_values()</span>
-<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a>population2024.head()</span>
-<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a><span class="co">## Wyoming         586485</span></span>
-<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a><span class="co">## Vermont         647818</span></span>
-<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a><span class="co">## Alaska          733536</span></span>
-<span id="cb45-12"><a href="#cb45-12" aria-hidden="true" tabindex="-1"></a><span class="co">## North Dakota    788940</span></span>
-<span id="cb45-13"><a href="#cb45-13" aria-hidden="true" tabindex="-1"></a><span class="co">## South Dakota    928767</span></span>
-<span id="cb45-14"><a href="#cb45-14" aria-hidden="true" tabindex="-1"></a><span class="co">## dtype: int64</span></span>
-<span id="cb45-15"><a href="#cb45-15" aria-hidden="true" tabindex="-1"></a>population2023.head()</span>
-<span id="cb45-16"><a href="#cb45-16" aria-hidden="true" tabindex="-1"></a><span class="co">## Wyoming         584057</span></span>
-<span id="cb45-17"><a href="#cb45-17" aria-hidden="true" tabindex="-1"></a><span class="co">## Vermont         647464</span></span>
-<span id="cb45-18"><a href="#cb45-18" aria-hidden="true" tabindex="-1"></a><span class="co">## Alaska          733406</span></span>
-<span id="cb45-19"><a href="#cb45-19" aria-hidden="true" tabindex="-1"></a><span class="co">## North Dakota    783926</span></span>
-<span id="cb45-20"><a href="#cb45-20" aria-hidden="true" tabindex="-1"></a><span class="co">## South Dakota    919318</span></span>
-<span id="cb45-21"><a href="#cb45-21" aria-hidden="true" tabindex="-1"></a><span class="co">## dtype: int64</span></span>
-<span id="cb45-22"><a href="#cb45-22" aria-hidden="true" tabindex="-1"></a>populationCensus.head()</span>
-<span id="cb45-23"><a href="#cb45-23" aria-hidden="true" tabindex="-1"></a><span class="co">## Wyoming         577664</span></span>
-<span id="cb45-24"><a href="#cb45-24" aria-hidden="true" tabindex="-1"></a><span class="co">## Vermont         642936</span></span>
-<span id="cb45-25"><a href="#cb45-25" aria-hidden="true" tabindex="-1"></a><span class="co">## Alaska          732964</span></span>
-<span id="cb45-26"><a href="#cb45-26" aria-hidden="true" tabindex="-1"></a><span class="co">## North Dakota    779563</span></span>
-<span id="cb45-27"><a href="#cb45-27" aria-hidden="true" tabindex="-1"></a><span class="co">## South Dakota    887852</span></span>
-<span id="cb45-28"><a href="#cb45-28" aria-hidden="true" tabindex="-1"></a><span class="co">## dtype: int64</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a><span class="co">## ImportError: Missing optional dependency 'lxml'.  Use pip or conda to install lxml.</span></span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>population2024 <span class="op">=</span> pd.Series(data[<span class="st">'2024 Population'</span>].values, index <span class="op">=</span> data[<span class="st">'State'</span>].values).sort_values()</span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'data' is not defined</span></span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a>population2023 <span class="op">=</span> pd.Series(data[<span class="st">'2023 Population'</span>].values, index <span class="op">=</span> data[<span class="st">'State'</span>].values).sort_values()</span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'data' is not defined</span></span>
+<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a>populationCensus <span class="op">=</span> pd.Series(data[<span class="st">'2020 Population'</span>].values, index <span class="op">=</span> data[<span class="st">'State'</span>].values).sort_values()</span>
+<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'data' is not defined</span></span>
+<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-12"><a href="#cb45-12" aria-hidden="true" tabindex="-1"></a>population2024.head()</span>
+<span id="cb45-13"><a href="#cb45-13" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'population2024' is not defined</span></span>
+<span id="cb45-14"><a href="#cb45-14" aria-hidden="true" tabindex="-1"></a>population2023.head()</span>
+<span id="cb45-15"><a href="#cb45-15" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'population2023' is not defined</span></span>
+<span id="cb45-16"><a href="#cb45-16" aria-hidden="true" tabindex="-1"></a>populationCensus.head()</span>
+<span id="cb45-17"><a href="#cb45-17" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'populationCensus' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The only problem is that by doing this, we’ve now lost the ordering that matched across all 3 vectors. Pandas Series are great for this, because they use labels that allow us to reconstitute which value corresponds to which label, but in R or even in numpy arrays, vectors don’t inherently come with labels. In these situations, sorting by one value can actually destroy the connection between two vectors!</p>
 </div>
@@ -2929,7 +2922,7 @@ Try it out
 <ol>
 <li id="fn1"><p>Throughout this section (and other sections), lego pictures are rendered using https://www.mecabricks.com/en/workshop. It’s a pretty nice tool for building stuff online!<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn2"><p>A similar system exists in R libraries, but R doesn’t handle multiple libraries having the same function names well, which leads to all sorts of confusion. At least python is explicit about it.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-<li id="fn3"><p><a href="https://www.grumpycats.com/">Grumpy cat</a>, <a href="https://www.garfield.com/">Garfield</a>, <a href="https://en.wikipedia.org/wiki/Nyan_Cat">Nyan cat</a>. Jorts and Jean: <a href="https://www.reddit.com/r/AmItheAsshole/comments/rfwgmc/aita_for_perpetuating_ethnic_stereotypes_about/">The initial post</a> and the <a href="https://www.reddit.com/user/throwawayorangecat/comments/rgi000/update_aita_for_perpetuating_stereotypes_about/">update</a> (both are worth a read because the story is hilarious). The cats also have a <a href="https://twitter.com/JortsTheCat">Twitter account</a> where they promote workers rights.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn3"><p><a href="https://www.grumpycats.com/">Grumpy cat</a>, <a href="https://www.garfield.com/">Garfield</a>, <a href="https://en.wikipedia.org/wiki/Nyan_Cat">Nyan cat</a>. Jorts and Jean: <a href="https://www.reddit.com/r/AmItheAsshole/comments/rfwgmc/aita_for_perpetuating_ethnic_stereotypes_about/">The initial post</a> and the <a href="https://web.archive.org/web/20221018203712/https://www.reddit.com/r/AmItheAsshole/comments/rfwgmc/aita_for_perpetuating_ethnic_stereotypes_about/">update</a> (both are worth a read because the story is hilarious). The cats also have a <a href="https://twitter.com/JortsTheCat">Twitter account</a> where they promote workers rights.<a href="#fnref3" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 <li id="fn4"><p>Tidy Tuesday is a collaborative project where the R community gets together and explores a dataset, cleaning it, visualizing it, and generally working to collectively hone R skills together. You can find some very nice YouTube livestreams, as well as lots of examples using the <a href="https://twitter.com/search?q=%23tidytuesday">#tidytuesday twitter tag</a>.<a href="#fnref4" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol></section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
@@ -3529,7 +3522,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     </a>
   </li>  
     <li class="nav-item compact">
-    <a class="nav-link" href="https://datavis.social/@srvanderplas">
+    <a class="nav-link" href="https://datavis.social/%40srvanderplas">
       <i class="bi bi-mastodon" role="img">
 </i> 
     </a>
