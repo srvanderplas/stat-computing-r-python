@@ -397,7 +397,7 @@ ggplotly(p)
 
 ```
 
-As expected, it's pretty rare to see many eruptions before ~1800 AD, which is about when we have reliable historical records^[There are obviously exceptions - we can figure out the exact date and approximate time that there was an earthquake along the Cascadia subduction zone based on a combination of oral histories of the indigenous people and records of a massive tsunami in Japan [Excellent read, if you're interested](https://www.newyorker.com/magazine/2015/07/20/the-really-big-one), and the [Nature paper](https://www.nature.com/articles/379246a0).] for most of the world (exceptions include e.g. Vestuvius, which we have extensive written information about).
+As expected, it's pretty rare to see many eruptions before ~1800 AD, which is about when we have reliable historical records^[There are obviously exceptions - we can figure out the exact date and approximate time that there was an earthquake along the Cascadia subduction zone based on a combination of oral histories of the indigenous people and records of a massive tsunami in Japan [Excellent read, if you're interested](https://www.newyorker.com/magazine/2015/07/20/the-really-big-one), and the [Nature paper](https://doi.org/10.1038/379246a0).] for most of the world (exceptions include e.g. Vestuvius, which we have extensive written information about).
 
 ```{r}
 p <- erupt %>%
@@ -877,23 +877,19 @@ squirrels %>%
 ::: {.callout-caution collapse="true"}
 ### Ecological Regions
 
-We can also plot regions, instead of just points. I downloaded a dataset released by the US Forest Service, [Bailey's Ecoregions and Subregions](https://catalog.data.gov/dataset/baileys-ecoregions-and-subregions-dataset-7dd69) dataset, which categorizes the US into different climate and ecological zones.
-
-To map colors to variables, we have to define a color palette and variable mapping ourselves, and pass that function into the leaflet object we're adding.
+We can also plot regions, instead of just points. I downloaded a dataset released by the state of California, [Crotch's Bumble Bee Range - CDFW](https://catalog.data.gov/dataset/crotchs-bumble-bee-range-cdfw-ds3095-76d4f) [dataset](https://data-cdfw.opendata.arcgis.com/api/download/v1/items/088dd4ad591e46a1a62ab96e196d0740/geojson?layers=0), which shows the range of the Crotch's Bumble Bee (*Bombus crotchii*). 
 
 I've set this chunk to not evaluate because it causes the book to be painfully large.
 ```{r, eval = F}
 library(sf)
-ecoregions <- st_read("data/Bailey_s_Ecoregions_and_Subregions_Dataset.geojson")
+bees <- st_read("../data/Crotch_s_Bumble_Bee_Range_-_CDFW_[ds3095].geojson")
+bees <- sf::st_transform(bees, 4326)
 
-# Define a palette
-region_pal <- colorFactor(c("#E67E22", "#0B5345", "#229954", "#B3B6B7"), ecoregions$DOMAIN)
-
-ecoregions %>%
+bees %>%
 leaflet() %>%
   addTiles() %>%
-  addPolygons(stroke = TRUE, fillOpacity = 0.25,
-              fillColor = ~region_pal(DOMAIN), color = ~region_pal(DOMAIN), label = ~SECTION)
+  addPolygons(stroke = F, fillOpacity = 0.25,
+              fillColor = "yellow")
 ```
 :::
 
