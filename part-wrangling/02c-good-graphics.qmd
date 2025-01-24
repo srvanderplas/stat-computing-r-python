@@ -235,13 +235,13 @@ Imposing order on visual chaos.
 
 What does @fig-rabbit-duck look like to you?
 
-![Is it a rabbit, or a duck?](../images/wrangling/rabbitduck.png){#fig-rabbit-duck}
+![Is it a rabbit, or a duck?](../images/wrangling/rabbitduck.png){#fig-rabbit-duck width="50%" fig-alt="An ambiguous image: when viewed from the right side, it looks like a duck, and when viewed from the bottom side, it looks like a rabbit. The x and y axes are labeled as 'rabbit' and 'duck', respectively."}
 
 When faced with ambiguity, our brains use available context and past experience to try to tip the balance between alternate interpretations of an image. When there is still some ambiguity, many times the brain will just decide to interpret an image as one of the possible options.
 
 #### Illusory Contours {.unnumbered}
 
-![Consider this image - what do you see?](../images/wrangling/IllusoryContour.png)
+![Consider this image - what do you see?](../images/wrangling/IllusoryContour.png){fig-alt="An Illusory contour. It appears to be 3 black circles arranged in a downward-pointing triangle, with a black outline of a triangle pointing upward, and a background-colored (white) downward pointing triangle overlaid on top of the two previously described triangles. In reality, what is shown is a sequence of three pac-man shapes, with the missing pieces oriented inwards, at approximately 30, 150, and 270 degrees from the positive x-axis, with three 60 degree acute angle shapes oriented at 90, 210, and 330 degrees from the positive x-axis. The appearance of two triangles superimposed is an illusory contour that results from Gestalt heuristics." }
 
 Did you see something like "3 circles, a triangle with a black outline, and a white triangle on top of that"? In reality, there are 3 angles and 3 pac-man shapes. But, it's much more likely that we're seeing layers of information, where some of the information is obscured (like the "mouth" of the pac-man circles, or the middle segment of each side of the triangle). This explanation is simpler, and more consistent with our experience.
 
@@ -249,7 +249,7 @@ Did you see something like "3 circles, a triangle with a black outline, and a wh
 
 Now, look at the logo for the Pittsburgh Zoo.
 
-<img src="https://upload.wikimedia.org/wikipedia/en/5/5b/Pittsburgh_Zoo_%26_PPG_Aquarium_logo.svg" alt="What do you see?" width="80%"/>
+![](https://upload.wikimedia.org/wikipedia/en/5/5b/Pittsburgh_Zoo_%26_PPG_Aquarium_logo.svg){fig-alt="The logo of the Pittsburgh Zoo, which manipulates figure-ground perception. If the black portion of the image is considered the figure, the viewer sees a tree and some birds flying; if the white portion of the image is considered the figure, then the viewer sees a gorilla facing a lion, with some fish jumping above the waves at the bottom of the image. When viewed for several minutes, the figure and ground tend to 'flip' back and forth." width="80%"}
 
 Do you see the gorilla and lionness? Or do you see a tree? Here, we're not entirely sure which part of the image is the figure and which is the background.
 :::
@@ -262,51 +262,63 @@ The catchphrase of Gestalt psychology is
 
 That is, what we perceive and the meaning we derive from the visual scene is more than the individual components of that visual scene.
 
-![The Gestalt Heuristics help us to impose order on ambiguous visual stimuli](../images/wrangling/gestalt.jpg)
+![The Gestalt Heuristics help us to impose order on ambiguous visual stimuli](../images/wrangling/gestalt.jpg){fig-alt="The word GESTALT, written such that there is a white bar over the G, illustrating the principle of closure, the E is made up of black squares, indicating proximity, the S has a bar going through it such that the middle part of the S is behind the bar, illustrating continuation, the Ts are both striped, illustrating similarity, and the A and L are smushed together, with a tree appearing within the A (the bar is missing across the A) to illustrate figure/ground."}
 
 You can read about the gestalt rules [here](https://en.wikipedia.org/wiki/Principles_of_grouping), but they are also demonstrated in the figure above.
 
-In graphics, we can leverage the gestalt principles of grouping to create order and meaning. If we color points by another variable, we are creating groups of similar points which assist with the perception of groups instead of individual observations. If we add a trend line, we create the perception that the points are moving "with" the line (in most cases), or occasionally, that the line is dividing up two groups of points. Depending on what features of the data you wish to emphasize, you might choose different aesthetics mappings, facet variables, and factor orders.
+In graphics, we can leverage the Gestalt principles of grouping to create order and meaning. 
+If we color points by another variable, we are creating groups of similar points which assist with the perception of groups instead of individual observations. 
+If we add a trend line, we create the perception that the points are moving "with" the line (in most cases), or occasionally, that the line is dividing up two groups of points. 
+Depending on what features of the data you wish to emphasize, you might choose different aesthetics mappings, facet variables, and factor orders.
 
 ::: callout-caution
-Suppose I want to emphasize the change in the murder rate between 1980 and 2010.
+Suppose I want to emphasize the change in life expectancy between 1982 and 2007. For this, we'll use the Gapminder [@gapminder] data which is found in the `gapminder` packages in R and python. 
 
-I could use a bar chart (showing only the first 4 states alphabetically for space)
+I could use a bar chart (showing only 4 countries for space):
 
 ::: panel-tabset
 #### R {.unnumbered}
 
 ```{r chart-emphasis-bar-r, fig.height = 4, fig.width = 6}
-fbiwide <- read.csv("https://github.com/srvanderplas/Stat151/raw/main/data/fbiwide.csv")
+library(gapminder)
+
 library(dplyr)
 
-fbiwide %>%
-  filter(Year %in% c(1980, 2010)) %>%
-  filter(State %in% c("Alabama", "Alaska", "Arizona", "Arkansas")) %>%
-  ggplot(aes(x = State, y = Murder/Population*100000, fill = factor(Year))) +
+gapminder %>%
+  filter(year %in% c(1982, 2007)) %>%
+  filter(country %in% c("Korea, Rep.", "China", "Afghanistan", "India")) %>%
+  ggplot(aes(x = country, y = lifeExp, fill = factor(year))) +
   geom_col(position = "dodge") +
   coord_flip() +
-  ylab("Murders per 100,000 residents")
+  ylab("Life Expectancy")
 ```
 
 #### Python {.unnumbered}
 
 ```{python chart-emphasis-bar-py, fig.height = 4, fig.width = 6}
+# %pip install gapminder
+from gapminder import gapminder
 import pandas as pd
-fbiwide = r.fbiwide
-fbiwide = fbiwide.assign(YearFactor = pd.Categorical(fbiwide.Year))
-fbiwide = fbiwide.assign(Murder100k = fbiwide.Murder/fbiwide.Population * 100000)
+import seaborn.objects as so
 
-yr1980_2010 = fbiwide[fbiwide.Year.isin([1980,2010])]
-subdata = yr1980_2010[yr1980_2010.State.isin(["Alabama", "Alaska", "Arizona", "Arkansas"])]
+my_gap_82_07 = my_gap[my_gap.year.isin([1982,2007])]
+subdata = my_gap_82_07[my_gap_82_07.country.\
+    isin(["Korea, Rep.", "China", "Afghanistan", "India"])]
+subdata = subdata.assign(yearFactor=pd.Categorical(subdata.year))
 
-(
-ggplot(subdata, aes(x = "State", y = "Murder100k", fill = "YearFactor")) +
-  geom_col(stat='identity', position = "dodge") +
-  coord_flip() +
-  ylab("Murders per 100,000 residents")
-)
+plot = so.Plot(subdata, x = "country", y = "lifeExp", color = "yearFactor").\
+  add(so.Bar(), so.Dodge()).\
+  label(y = "Life Expectancy")
+plot.show()
 ```
+
+```{python}
+#| include: false
+
+import matplotlib.pyplot as plt
+plt.clf()
+```
+
 :::
 
 Or, I could use a line chart
@@ -315,22 +327,33 @@ Or, I could use a line chart
 #### R {.unnumbered}
 
 ```{r chart-emphasis-line-r, fig.height = 4, fig.width = 6}
-fbiwide %>%
-  filter(Year %in% c(1980, 2010)) %>%
-  ggplot(aes(x = Year, y = Murder/Population*100000, group = State)) +
+gapminder %>%
+  filter(year %in% c(1982, 2007)) %>%
+  filter(country %in% c("Korea, Rep.", "China", "Afghanistan", "India")) %>%
+  ggplot(aes(x = year, y = lifeExp, color = country)) +
   geom_line() +
-  ylab("Murders per 100,000 residents")
+  ylab("Life Expectancy")
 ```
 
 #### Python {.unnumbered}
 
 ```{python chart-emphasis-line-py, fig.height = 4, fig.width = 6}
-(
-ggplot(yr1980_2010, aes(x = "Year", y = "Murder100k", group = "State")) +
-  geom_line() +
-  ylab("Murders per 100,000 residents")
-)
+subdata2 = my_gap_82_07[my_gap_82_07.country.\
+    isin(["Korea, Rep.", "China", "Afghanistan", "India"])]
+
+plot = so.Plot(subdata, x = "year", y = "lifeExp", color = "country").\
+  add(so.Lines()).\
+  label(y = "Life Expectancy")
+plot.show()
 ```
+
+```{python}
+#| include: false
+
+import matplotlib.pyplot as plt
+plt.clf()
+```
+
 :::
 
 Or, I could use a box plot
@@ -339,31 +362,39 @@ Or, I could use a box plot
 #### R {.unnumbered}
 
 ```{r chart-emphasis-boxplot-r, fig.height = 4, fig.width = 6}
-fbiwide %>%
-  filter(Year %in% c(1980, 2010)) %>%
-  ggplot(aes(x = factor(Year), y = Murder/Population*100000)) +
-  geom_boxplot() +
-  ylab("Murders per 100,000 residents")
+gapminder |>
+  filter(year %in% c(1982, 2007)) |>
+  ggplot(aes(x = factor(year), y = lifeExp)) + 
+  geom_boxplot() + 
+  ylab("Life Expectancy")
 ```
 
 #### Python {.unnumbered}
 
 ```{python chart-emphasis-boxplot-py, fig.height = 4, fig.width = 6}
+import seaborn as sns
 
-(
-ggplot(yr1980_2010, aes(x = "YearFactor", y = "Murder100k")) +
-  geom_boxplot() +
-  ylab("Murders per 100,000 residents")
-)
+subdata3 = my_gap_82_07.assign(yearFactor=pd.Categorical(my_gap_82_07.year))
+
+sns.boxplot(data = subdata3, x = "year", y = "lifeExp")
+plt.show()
 
 ```
+
+```{python}
+#| include: false
+
+import matplotlib.pyplot as plt
+plt.clf()
+```
+
 :::
 
-Which one best demonstrates that in every state and region, the murder rate decreased?
+Which one best demonstrates that in every country, the life expectancy increased?
 
-The line segment plot connects related observations (from the same state) but allows you to assess similarity between the lines (e.g. almost all states have negative slope). 
-The same information goes into the creation of the other two plots, but the bar chart is extremely cluttered, and the boxplot doesn't allow you to connect single state observations over time. 
-So while you can see an aggregate relationship (overall, the average number of murders in each state per 100k residents decreased) you can't see the individual relationships.
+The line segment plot connects related observations (from the same country) but allows you to assess similarity between the lines (e.g. almost all countries have positive slope). 
+The same information goes into the creation of the other two plots, but the bar chart is extremely cluttered, and the boxplot doesn't allow you to connect single country observations over time. 
+So while you can see an aggregate relationship (overall, the average life expectancy increased) you can't see the individual relationships.
 
 :::
 
@@ -371,23 +402,42 @@ The aesthetic mappings and choices you make when creating plots have a huge impa
 
 [^10-graphics-4]: See [this paper](https://doi.org/10.1080/10618600.2016.1209116) for more details. This is the last chapter of my dissertation, for what it's worth. It was a lot of fun. (no sarcasm, seriously, it was fun!)
 
-## General guidelines for accuracy
+## Representing Data Accurately
 
-There are certain tasks which are easier for us relative to other, similar tasks.
+In order to read data off of a chart correctly, several things must happen in sequence:
 
-```{r accuracy-guidelines, echo = F, fig.cap = "Which of the lines is the longest? Shortest? It is much easier to determine the relative length of the line when the ends are aligned. In fact, the line lengths are the same in both panels."}
+1. The data must be accurately written to the chart, that is, the transformation from data -> geometry must be accurate
+2. The geometric objects that make up the chart must be perceived accurately - the mapping from geometric object size or location to mental model of geometric object size or location must be correct.
+3. The mental model of geometric object size or location must be accurately converted to a numerical value. We know that this isn't lossless, but we hope that this is at least reasonably accurate. 
+
+If step 1 is not done correctly, the chart is misleading or inaccurate. 
+However, steps 2 and 3 depend on our brains accurately **perceiving** and **estimating** information mentally. 
+These steps can involve a lot of effort, and as mental effort increases, we tend to take shortcuts. 
+Sometimes, these shortcuts work well, but not always.
+
+When you design a chart, it's good to consider what mental tasks viewers of your chart need to perform. 
+Then, ask yourself whether there is an equivalent way to represent the data that requires fewer mental operations, or a different representation that requires **easier** mental calculations.
+
+```{r accuracy-guidelines}
+#| fig-cap: Which of the lines is the longest? Shortest? It is much easier to determine the relative length of the line when the ends are aligned. The three lines have the same length in both panels, but the operation is much more difficult when the lines do not start or end at the same place.
+#| fig-alt: A chart with two panels. The left panel is labeled 'Aligned scale' and features three lines of different lengths which all start at the bottom of the chart. The right panel is labeled 'Unaligned scale' and features three lines of different lengths which start at different locations.  It is easier to compare the lengths of the lines in the left panel, since they all start in the same place.
+#| fig-width: 8
+#| fig-height: 4
+#| out-width: 75%
+#| echo: false
+
 segs <- bind_rows(
   tibble(x = 1:3, y1 = 0, y2 = c(2.5, 2.75, 2.25), type = "Aligned scale"),
   tibble(x = 1:3, y1 = c(1, 0, .5), y2 = c(1, 0, .5) + c(2.5, 2.75, 2.25), type = "Unaligned scale")
 )
 ggplot(segs, aes(x = x, xend = x, y = y1, yend = y2)) +
-  geom_segment() + facet_wrap(~type) + coord_fixed() +
+  geom_segment() + facet_wrap(~type) + coord_fixed(ratio = 0.5) +
   theme(axis.text = element_blank(), axis.ticks = element_blank(), axis.title = element_blank())
 ```
 
 When making judgments corresponding to numerical quantities, there is an order of tasks from easiest (1) to hardest (6), with equivalent tasks at the same level.[^10-graphics-5]
 
-[^10-graphics-5]: See [this paper](https://www.doi.org/10.2307/2288400) for the major source of this ranking; other follow-up studies have been integrated, but the essential order is largely unchanged. Note that most of the items in this ranking were not examined in the linked paper, but are a synthesis of different experiments and conceptual knowledge in psychology as well as statistical graphics.
+[^10-graphics-5]: See [this paper](https://www.doi.org/10.2307/2288400) for the major source of this ranking; other follow-up studies have been integrated, but the essential order is largely unchanged^[Interestingly, while it is widely believed that @clevelandGraphicalPerceptionTheory1984 established this hierarchy experimentally, only a few of the items were ranked based on experiments in that paper and the follow up papers.]. Most of the items in this ranking were not examined in the linked paper, but are a synthesis of different experiments and conceptual knowledge in psychology as well as statistical graphics. 
 
 1.  Position (common scale)
 2.  Position (non-aligned scale)
@@ -396,11 +446,53 @@ When making judgments corresponding to numerical quantities, there is an order o
 5.  Volume, Density, Curvature
 6.  Shading, Color Saturation, Color Hue
 
-If we compare a pie chart and a stacked bar chart, the bar chart asks readers to make judgements of position on a non-aligned scale, while a pie chart asks readers to assess angle. This is one reason why pie charts are not preferable -- they make it harder on the reader, and as a result we are less accurate when reading information from pie charts.
 
-When creating a chart, it is helpful to consider which variables you want to show, and how accurate reader perception needs to be to get useful information from the chart. In many cases, less is more - you can easily overload someone, which may keep them from engaging with your chart at all. Variables which require the reader to notice small changes should be shown on position scales (x, y) rather than using color, alpha blending, etc.
+If we compare a pie chart and a stacked bar chart, the bar chart asks readers to make judgments of position on a non-aligned scale, while a pie chart asks readers to assess angle.
+This is one reason why pie charts tend not to be a good general option -- people must compare values using area or angle instead of position or length, which is a more difficult judgment under most circumstances. 
+When there are a limited number of categories (2-4) and you have data that is easily compared to quarters of a circle, it may be justifiable to use a pie chart over a stacked bar chart - some studies have shown that pie charts are preferable under these conditions. 
+As a general rule, though, we have an easier time comparing position than angle or area. 
 
-There is also a general increase in dimensionality from 1-3 to 4 (2d) to 5 (3d). In general, showing information in 3 dimensions when 2 will suffice is misleading - the addition of that extra dimension causes an increase in chart area allocated to the item that is disproportionate to the actual area.
+```{r pie-vs-bar}
+#| echo: false
+#| fig-width: 4
+#| fig-height: 4
+#| layout-ncol: 2
+#| fig-scap: ["Stacked bar chart", "Pie chart"]
+#| fig-cap: Stacked bar and pie charts showing the relative proportion of people in North America living in the US, Canada, and Mexico in 2007. Which chart is easier to read relative information (e.g. there are about 3x as many people living in Mexico as Canada) from? Which chart is easier to estimate raw proportions (e.g. the US makes up about 70% of the population of North America) from?
+#| fig-alt: ['A stacked bar chart showing the proportion of people living in North America by country', 'A pie chart showing the proportion of people living in North America by country']
+
+gap_nam <- filter(gapminder, country %in% c("Canada", "United States", "Mexico"))
+
+filter(gap_nam, year == 2007) |>
+  ggplot(aes(fill = country, x = 1, weight = pop)) + 
+  geom_bar(position = "fill") + 
+  ylab("% Population") + 
+  scale_x_continuous(limits = c(0.5, 1.5), breaks = NULL, name = "") + 
+  coord_fixed() + 
+  ggtitle("Relative Population of North America\nby Country, 2007") + 
+  scale_fill_manual(values = c("Canada" = "red", "Mexico" = "green4", "United States" = "blue"))
+
+filter(gap_nam, year == 2007) |>
+  ggplot(aes(fill = country, x = 1, weight = pop)) + 
+  geom_bar(position = "fill") + 
+  ylab("% Population") + 
+  scale_x_continuous(limits = c(0.5, 1.5), breaks = NULL, name = "") + 
+  ggtitle("Relative Population of North America\nby Country, 2007") + 
+  scale_fill_manual(values = c("Canada" = "red", "Mexico" = "green4", "United States" = "blue")) + 
+  coord_polar(theta = "y")
+```
+
+
+
+When creating a chart, it is helpful to consider which variables you want to show, and how accurate reader perception needs to be to get useful information from the chart. 
+In many cases, less is more - you can easily overload someone, which may keep them from engaging with your chart at all.
+Variables which require the reader to notice small changes should be shown on position scales (x, y) rather than using color, alpha blending, etc.
+
+Consider the hierarchy of graphical tasks again.
+You may notice a general increase in dimensionality from 1-3 to 4 (2d) to 5 (3d). 
+In general, showing information in 3 dimensions when 2 will suffice can be misleading. 
+Just *how* misleading depends a lot on the type of chart you're using.
+Most of the time, the addition of an extra dimension causes an increase in chart area allocated to the item that is disproportionate to the actual numerical value being represented.
 
 ```{r disproportionate-pixels, include = F}
 imgs <- list.files("../images/wrangling", "3d_pie", full.names = T)
@@ -412,7 +504,7 @@ tmp <- tibble(portfolio = c("Cash", "Bond", "Stocks"),
 tmp
 ```
 
-![Here, the area and height both encode the same variable, leading to a far disproportionate number of pixels allocated to "Stocks" than "Cash Investments" (h/t Junk Charts). In the first chart, stocks make up 60% of the portfolio, but have 67.5% of the pixels; Cash makes up 5% of the portfolio but those investments represent 2.3% of the pixels.](../images/wrangling/3d_graphs_suck.jpg).
+![Here, the area and height both encode the same variable, leading to a far disproportionate number of pixels allocated to "Stocks" than "Cash Investments" (h/t Junk Charts). In the first chart, stocks make up 60% of the portfolio, but have 67.5% of the pixels; Cash makes up 5% of the portfolio but those investments represent 2.3% of the pixels.](../images/wrangling/3d_graphs_suck.jpg){#fig-disproportionate-pixels fig-alt="A three-dimensional pie chart, where each of the sections has a different height - this seems to double-encode the value represented by the angle of the pie slice. As a result, the area of the chart devoted to one sector is vastly larger than the area of the chart devoted to the other sectors, even though the true values are not nearly so different."}
 
 [Ted ED: How to spot a misleading graph - Lea Gaslowitz](https://youtu.be/E91bGT9BjYk)
 
