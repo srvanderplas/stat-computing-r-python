@@ -7,7 +7,7 @@
 
 ## What are you asking me to install?
 
-It's generally a good idea to be skeptical when someone is telling you to install things.
+It's a good idea to be skeptical when someone is telling you to install things.
 🤨 Here's a very broad overview of what each of these programs or services does and why I'm asking you to install or sign up for them.
 
 | Program     | Logo                                                                                                                                       | Purpose                                                                                                                                                                                                       |
@@ -29,23 +29,37 @@ While some parts of this book are fairly language-agnostic (R and python are bot
 
 If you're just trying to learn R, perhaps you don't need to install python or quarto.
 If you're not working with other people, maybe you don't need to install `git`. 
-You are welcome to make those executive decisions for yourself, but if you're not sure, you might just want to install the whole toolbox - you'll hopefully learn how to use all of the tools along the way, and it'll be less confusing later if you already have access to all of the tools and don't need to go back and get something else when you need it.
+You are welcome to make those decisions for yourself, but if you're not sure, you might just want to install the whole toolbox - you'll hopefully learn how to use all of the tools along the way, and it'll be less confusing later if you already have access to all of the tools and don't need to go back and get something else when you need it.
 
 ## Installation Process
 
 In this section, I will provide you with links to set up various programs on your own machine.
 If you have trouble with these instructions or encounter an error, post on the class message board or contact me for help.
 
-1.  Download and run the R installer for your operating system from CRAN:
+1.  Install R (and associated tools)
 
-    -   {{< fa brands windows >}} Windows: <https://cran.rstudio.com/bin/windows/base/>
-    -   {{< fa brands apple >}} Mac: <https://cran.rstudio.com/bin/macosx/>
-    -   {{< fa brands linux >}} Linux: <https://cran.rstudio.com/bin/linux/> (pick your distribution)
+::: panel-tabset
 
-    If you are on {{< fa brands windows >}} Windows, you should also install the [Rtools4 package](https://cran.rstudio.com/bin/windows/Rtools/); this will ensure you get fewer warnings later when installing packages.
-    
-    If you are on {{< fa brands apple >}} Mac, you should also install XCode, which is a set of developer tools. You can get it from the App store, but it's better to set yourself up with  [Homebrew](https://brew.sh/) and then use homebrew to install XCode. If you prefer a different package manager, that's fine - Homebrew is widely used, but there are other options. Ultimately, you just need to have XCode so that you can compile R packages. 
+### {{< fa brands windows >}} Windows
 
+1. Get the R installer from CRAN: https://cran.rstudio.com/bin/windows/base/
+
+2. Install the Rtools4 package that matches the R version you installed: https://cran.rstudio.com/bin/windows/Rtools/    
+For example, if you installed R 4.4.3, you should download RTools 4.4. If you installed R 4.0.1, you should install RTools 4.0. 
+
+### {{< fa brands apple >}} Mac
+
+1. Get the R installer from CRAN: https://cran.rstudio.com/bin/macosx/
+
+2. Install XCode - a set of developer tools - so that you can install R packages more easily. There are two ways to do this:
+
+  a. Get XCode [from the App store directly](https://apps.apple.com/us/app/xcode/id497799835?mt=12) (simple, but you may have to do other things later)
+  b. Install [Homebrew](https://brew.sh/) and then use homebrew to install XCode.^[If you prefer a different package manager, that's fine - Homebrew is widely used, but there are other options. Ultimately, you just need to have XCode so that you can compile R packages.] 
+  
+I personally suggest option b, because Homebrew is used for a lot of different software-development related things, and having it will make life easier later. 
+  
+::: {.callout-info collapse=true}
+#### Installing Homebrew + XCode
 ```
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 ```
@@ -55,6 +69,29 @@ brew install mas # Search the apple store
 mas search xcode # find xcode
 mas install 497799835 # install the program by ID
 ```
+:::
+  
+
+
+### {{< fa brands linux >}} Linux
+
+If you're using a distribution derived from Debian, Fedora, RedHat, Suse, or Ubuntu, follow the instructions below.
+
+If you don't know your distribution (or if you're working on a derivative distribution, like Mint), you can figure out which set of instructions to follow by executing `lsb_release -a` in your system terminal.
+
+If you're using Arch or another distribution that isn't derived from something listed above, google for instructions specific to your distribution - these instructions cover the most common, user-friendly distributions, but if you've chosen something more niche, it is assumed you can figure out how to install R. (If that isn't the case, leave a comment below with your distribution, so I know how best to update this book.)
+
+---
+
+#### Installation Instructions {-}
+
+1. Get the R installer from CRAN: https://cran.rstudio.com/bin/linux/ -  pick your distribution, and follow the distribution-specific instructions from there. 
+
+
+You could install R using your package manager, but often this version is out of date. The instructions for each version will get you a more up-to-date version that will be easier to work with.
+
+:::
+
 
 2.  Download and install the latest version of [python 3](https://www.python.org/downloads/)
 
@@ -96,13 +133,31 @@ If you want to be safe, go ahead and complete these steps as well.
 Open RStudio on your computer and explore a bit.
 
 -   Can you find the R console? Type in `2+2` to make sure the result is `4`.
--   Run the following code in the R console:
+-   Run the following code in the R console to set up some basic packages:
 
 ``` r
-install.packages(
-  c("tidyverse", "reticulate", "rmarkdown", "knitr", "quarto")
-)
+install.packages(c("tidyverse", "rmarkdown", "knitr", "quarto"))
 ```
+
+-   Run the following code in the R console to set up Python:
+
+``` r
+install.packages("reticulate")
+reticulate::virtualenv_create("stat-python") # Create a python environment
+reticulate::virtualenv_install("stat-python", c("numpy", "matplotlib", "pandas"))
+```
+
+-   Configure RStudio to use the python virtual environment you created:
+    -   Go to Tools -> Global Options -> Python
+    -   Click the Python interpreter Select button
+    -   Click Virtual Environments
+    -   Choose `stat-python` and hit "Select"
+    -   Restart RStudio when prompted to ensure the setting takes effect.
+
+-   Test out Python:
+    - Go to the Console tab, and click on the R logo. A dropdown should be present with an option to select Python. 
+    - Wait for the Python prompt to appear (it will look like this: `>>>`)
+    - Type `2 + 2`, hit enter, and make sure the result is `4`. 
 
 -   Can you find the text editor?
     -   Create a new quarto document (File -\> New File -\> Quarto Document).
