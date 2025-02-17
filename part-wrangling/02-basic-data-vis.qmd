@@ -4,24 +4,24 @@ This section is intended as a very light overview of how you might create charts
 
 ## {{< fa bullseye >}} Objectives 
 
-- Use ggplot2/plotnine to create a chart
+- Use ggplot2/seaborn to create a chart
 - Begin to identify issues with data formatting
 
 ## Package Installation 
 
-You will need the `plotnine` (python) and `ggplot2` (R) packages for this section. 
+You will need the `seaborn` (python) and `ggplot2` (R) packages for this section. 
 
 ```{r, eval = F}
 install.packages("ggplot2")
 ```
 
-To install plotnine, pick one of the following methods (you can read more about them and decide which is appropriate for you in @sec-py-pkg-install)
+To install seaborn, pick one of the following methods (you can read more about them and decide which is appropriate for you in @sec-py-pkg-install)
 
 ::: panel-tabset
 ### System Terminal
 
 ```{bash, eval = F}
-pip3 install plotnine matplotlib
+pip3 install seaborn matplotlib
 ```
 
 ### R Terminal
@@ -29,7 +29,7 @@ pip3 install plotnine matplotlib
 This package installation method requires that you have a virtual environment set up (that is, if you are on Windows, don't try to install packages this way).
 
 ```{r, eval = F}
-reticulate::py_install(c("plotnine", "matplotlib"))
+reticulate::py_install(c("seaborn", "matplotlib"))
 ```
 
 ### Python Terminal
@@ -37,7 +37,7 @@ reticulate::py_install(c("plotnine", "matplotlib"))
 In a python chunk (or the python terminal), you can run the following command. This depends on something called "IPython magic" commands, so if it doesn't work for you, try the System Terminal method instead.
 
 ```{python, eval = F}
-%pip install plotnine matplotlib
+%pip install seaborn matplotlib
 ```
 
 Once you have run this command, please comment it out so that you don't reinstall the same packages every time.
@@ -47,7 +47,7 @@ Once you have run this command, please comment it out so that you don't reinstal
 ## First Steps
 
 Now that you can read data in to R and python and define new variables, you can create plots! 
-Data visualization is a skill that takes a lifetime to learn, but for now, let's start out easy:  let's talk about how to make (basic) plots in R (with `ggplot2`) and in python (with `plotnine`, which is a ggplot2 clone).
+Data visualization is a skill that takes a lifetime to learn, but for now, let's start out easy:  let's talk about how to make (basic) plots in R (with `ggplot2`) and in python (with `seaborn`, which has similar).
 
 ### Graphing HBCU Enrollment
 Let's work with Historically Black College and University enrollment. 
@@ -68,7 +68,8 @@ library(ggplot2)
 
 ```{python plotting-data-python}
 import pandas as pd
-from plotnine import *
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 hbcu_all = pd.read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-02-02/hbcu_all.csv')
 
@@ -79,7 +80,7 @@ hbcu_all = pd.read_csv('https://raw.githubusercontent.com/rfordatascience/tidytu
 
 ### Making a Line Chart
 
-ggplot2 and plotnine work with data frames. 
+ggplot2 and seaborn work with data frames. 
 
 If you pass a data frame in as the data argument, you can refer to columns in that data with "bare" column names (you don't have to reference the full data object using `df$name` or `df.name`; you can instead use `name` or `"name"`).
 
@@ -96,12 +97,22 @@ ggplot(hbcu_all, aes(x = Year, y = `4-year`)) + geom_line() +
 ```
 
 #### Python
-```{python line-graph-python}
+
+```{python line-graph-python-p9, eval = F, include = F}
 
 ggplot(hbcu_all, aes(x = "Year", y = "4-year")) + geom_line() + \
-  ggtitle("4-year HBCU College Enrollment")
+ ggtitle("4-year HBCU College Enrollment")
 
 ```
+
+```{python line-graph-python-seaborn}
+
+plot = sns.lineplot(hbcu_all, x = "Year", y = "4-year")
+plot.set_title("4-year HBCU College Enrollment")
+plt.show()
+```
+
+
 
 :::
 :::
@@ -146,7 +157,7 @@ In the long form of the data, we have a row for each data point (year x measurem
 ### Making a (Better) Line Chart
 
 If we had wanted to show all of the available data before, we would have needed to add a separate line for each column, coloring each one manually, and then we would have wanted to create a legend manually (which is a pain). 
-Converting the data to long form means we can use ggplot2/plotnine to do all of this for us with only a single `geom_line` statement.
+Converting the data to long form means we can use ggplot2/seaborn to do all of this for us with only a single plot statement (`geom_line` or `sns.lineplot`).
 Having the data in the right form to plot is very important if you want to get the plot you're imagining with relatively little effort.
 
 
@@ -161,12 +172,19 @@ ggplot(hbcu_long, aes(x = Year, y = value, color = type)) + geom_line() +
 ```
 
 #### Python
-```{python long-form-demo-python}
+```{python long-form-demo-python-p9, eval = F, include = F}
 
 ggplot(hbcu_long, aes(x = "Year", y = "value", color = "variable")) + geom_line() + \
   ggtitle("HBCU College Enrollment") + \
   theme(subplots_adjust={'right':0.75}) # This moves the key so it takes up 25% of the area
 ```
+
+```{python long-form-demo-python-p9, }
+plot = sns.lineplot(hbcu_long, x = "Year", y = "value", hue = "variable")
+plot.set_title("4-year HBCU College Enrollment")
+plt.show()
+```
+
 
 :::
 :::
