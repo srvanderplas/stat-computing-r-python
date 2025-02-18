@@ -2,12 +2,14 @@
 
 ## {{< fa bullseye >}} Objectives
 
+-   Understand the limitations of pseudorandom number generation
 -   Program a simulation for a specific task, process, or model
--   Understand the limitaitons of pseudorandom number generation
+-   Determine the appropriate data structure to use for storing simulation task results
+
 
 Simulation is an extremely important part of computational statistics.
 Bayesian statistics, in particular, relies on Markov Chain Monte Carlo (MCMC) to get results from even the most basic of models.
-In this module, we're going to touch on a few foundational pieces of simulation in computing, and you will get more exposure to simulation-based methods in other courses down the line.
+In this module, we're going to touch on a few foundational pieces of simulation in computing. Hopefully, you will get more exposure to simulation in both theory and methods courses down the line.
 
 ## Pseudorandom Number Generation
 
@@ -242,6 +244,152 @@ plt.show()
 ::::
 :::
 
+Simulation from different distributions can be used to determine which estimators are most appropriate for a given scenario, to determine how likely it is to observe a specific value in a sample of size $n$, and for many other applications. 
+
+:::: callout-caution
+
+### Example: Mean vs. Median
+
+Suppose you want to determine which estimator is better - mean or median - for $t$-distributions with different degrees of freedom and different numbers of observations.
+
+You consider degrees of freedom $\nu = 2, 5, 10, 30$ and samples of size $n = 10, 20, 30, 50$. 
+For each sample, you calculate the mean and median, $\hat\theta$, and you repeat this process $N=1000$ times. 
+You then calculate the bias of the sample estimator $\hat\theta$ (mean, median) and the MSE of that estimator.
+The **bias** is $\text{Bias}(\hat\theta, \theta) = \text{Bias}_\theta\left[\hat\theta\right] = E_{x|\theta}\left[\hat\theta\right]- \theta = E_{x|\theta} \left[\hat\theta - \theta\right]$. 
+The **MSE** (mean squared error) of $\hat\theta$ is $\text{MSE}(\hat\theta) = E\left[(\hat\theta-\theta)^2\right]$. 
+We know that the MSE is related to the bias and the variance of $\hat\theta$: $\text{MSE}(\hat\theta) = \left(\text{Bias}(\hat\theta,\theta)\right)^2+\text{Var}(\hat\theta)$ (the Bias-Variance tradeoff). 
+
+How can you use this information to determine which estimator is preferable in each $\nu, n$ situation?
+
+::: panel-tabset
+
+#### R
+
+First, let's conduct the simulation. 
+I find it helpful to make a function to simulate the data and calculate the necessary quantities, and then to use the `purrr` package to run my function $N$ times with each parameter set.
+
+I always save the original simulated data, even when it's not explicitly necessary, because I want to know exactly what results contributed, and this is the easiest way to get it. 
+This is *not* the most memory efficient way to go, so if you are concerned about overflowing your computer's memory, you might omit saving the data once you're confident the simulation function works as planned.
+
+```{r t-dist-bias-sim-r}
+library(tibble)
+library(purrr)
+library(tidyr)
+library(dplyr)
+
+# Write a function to draw a single sample
+draw_sample <- function(n = 10, v = 2) {
+  my_samp <- rt(n, v)
+  tibble(data = list(my_samp), mean = mean(my_samp), median = median(my_samp))
+}
+
+pars <- expand_grid(n = c(10, 20, 30, 50), v = c(2, 5, 10, 30), id = 1:1000)
+
+# Only recompute results if they're not present already
+if (!file.exists("data/t-sim-results.RDS")) {
+  results <- pars |>
+  rowwise() |>
+  mutate(res = map2(n, v, draw_sample))
+  
+  results <- unnest(results, "res")
+  saveRDS(results, file = "data/t-sim-results.RDS")
+} else {
+  results <- readRDS("data/t-sim-results.RDS")
+}
+
+
+result_sum <- results |>
+  pivot_longer(mean:median, names_to = "estimator", values_to = "value") |>
+  group_by(n, v, estimator) |>
+  summarize(bias = mean(value), variance = var(value), mse = mean(value^2))
+
+```
+
+Now that I have the simulation summaries, I can think about plotting the results to focus on the difference in Bias/MSE between estimators under different parameter sets.
+As our goal is to determine whether mean or median is preferable, we should focus on making that comparison as easy as possible by plotting mean and median lines on the same plot. 
+
+```{r t-dist-bias-sim-results-r-chart}
+#| fig-cap: "Summary chart of t-distribution estimator simulation results. Across $n$ and $\nu$, we see that the bias is around zero - that is, both mean and median are unbiased estimators (which is sensible given that the $t$-distribution is symmetrical). We see that when $\nu=2$, the variance component is much higher than $\nu=5,10,30$, and as MSE is the sum of the bias and variance, the MSE is also higher in this case. At $\nu=5$, the mean and median perform fairly similarly; but for $\nu=2$, the median has lower variance and thus lower MSE than the mean, which is due to the very heavy tails of the $t$-distribution with low degrees of freedom; the mean is influenced by the higher chances of extreme observations. Thus, when $\nu=2$, we would prefer the median as an estimator. When $\nu=10,30$, however, the mean has lower variance and thus MSE than the median across all values of $n$, indicating that when there are sufficient degrees of freedom, we should prefer the mean as an estimator."
+#| fig-alt: "A chart showing lines comparing the mean and median performance under simulation. The chart has three columns and four rows, with columns corresponding to the bias, variance, and mse and rows to  degrees of freedom (2, 5, 10, 30) shown as rows. The y-axis of each subplot is the expected value of the corresponding measurement (bias, variance, mse), and the x-axis of each subplot is the number of observations in the sample (10, 20, 30, 50). In each subplot, there are two lines showing the mean and median. The first row is allocated much more space than subsequent rows, with y values ranging between 0 and .75, while subsequent rows range between 0 and 0.15. The lines representing bias (first column) are very flat and close to 0, though there is more variability around the 0 line when degrees of freedom = 2. The variance and MSE tend to decrease as n increases across all panels, but again when DF=2, there is more variability and the trend is less clear. When DF=2, the mean line is higher than the median line for the variance and MSE over all values of n, indicating that the variance of the mean is higher than the variance of the median (the MSE is the bias + variance, and is technically redundant here). When DF=5 and we look at the variance or MSE, the lines are very close and it is difficult to determine which estimator would be better. When DF=10 or DF=20 and we consider the variance or MSE, the median line is higher than the mean across all values of n, indicating that in these situations we would prefer the mean as an estimator over the median."
+library(ggplot2)
+result_sum |> 
+  pivot_longer(bias:mse, names_to = "quantity", values_to = "value") |>
+  mutate(quantity = factor(quantity, levels = c("bias", "variance", "mse"), ordered = T)) |>
+  ggplot(aes(x = n, y = value, linetype = estimator, color = factor(v))) + 
+  geom_line() + 
+  guides(color = 'none') + 
+  facet_grid(v~quantity, scales = "free_y", space = "free_y") + 
+  xlab("Sample Size") + ylab("Expected Value") +
+  theme_bw()
+```
+
+#### Python
+
+```{python t-dist-bias-sim-py}
+from scipy.stats import t # t distribution class
+import numpy as np # mean, median
+import pandas as pd
+
+rv = t(2)
+n_opts = [10, 20, 30, 50]
+v_opts = [2, 5, 10, 30]
+
+pars = [(n, v, i) for n in n_opts for v in v_opts for i in range(1000)]
+# Simulate t-data for each parameter combination and iteration
+# IMO, it's easier to use list comprehension for this, 
+# but you could absolutely write a function instead
+data = [t(x[1]).rvs(x[0]) for x in pars]
+median= [np.median(dat) for dat in data]
+mean = [np.mean(dat) for dat in data]
+
+# Construct a data structure to hold all results together
+results = pd.DataFrame(pars, columns = ['n', 'df', 'i'])
+results['data'] = data
+results['median'] = median
+results['mean'] = mean
+
+def mse(x, x0=0):
+  return np.mean((x - x0)**2)
+
+# summarize
+res_sum = results.groupby(['n', 'df']).agg({'median': ['mean', 'var', mse], 'mean': ['mean', 'var', mse]})
+# Merge column indices together
+res_sum.columns = ['_'.join(col) for col in res_sum.columns]
+# "Ungroup" python style
+res_sum = res_sum.reset_index()
+# Melt to long form
+res_sum_long = pd.melt(res_sum, id_vars=['n', 'df'], var_name = 'est', value_name = 'value')
+res_sum_long[['estimator', 'measure']] = res_sum_long.est.str.split("_", expand = True)
+res_sum_long['measure'] = res_sum_long['measure'].str.replace('mean', 'bias', regex = True)
+res_sum_long = res_sum_long.drop('est', axis = 1)
+```
+
+Now that I have the simulation summaries, I can think about plotting the results to focus on the difference in Bias/MSE between estimators under different parameter sets.
+As our goal is to determine whether mean or median is preferable, we should focus on making that comparison as easy as possible by plotting mean and median lines on the same plot. 
+
+
+```{python t-dist-bias-sim-results-py-chart}
+#| fig-cap: "Summary chart of t-distribution estimator simulation results. Across $n$ and $\nu$, we see that the bias is around zero - that is, both mean and median are unbiased estimators (which is sensible given that the $t$-distribution is symmetrical). We see that when $\nu=2$, the variance component is much higher than $\nu=5,10,30$, and as MSE is the sum of the bias and variance, the MSE is also higher in this case. At $\nu=5$, the mean and median perform fairly similarly; but for $\nu=2$, the median has lower variance and thus lower MSE than the mean, which is due to the very heavy tails of the $t$-distribution with low degrees of freedom; the mean is influenced by the higher chances of extreme observations. Thus, when $\nu=2$, we would prefer the median as an estimator. When $\nu=10,30$, however, the mean has lower variance and thus MSE than the median across all values of $n$, indicating that when there are sufficient degrees of freedom, we should prefer the mean as an estimator."
+#| fig-alt: "A chart showing lines comparing the mean and median performance under simulation. The chart has three columns and four rows, with columns corresponding to the bias, variance, and mse and rows to  degrees of freedom (2, 5, 10, 30) shown as rows. The y-axis of each subplot is the expected value of the corresponding measurement (bias, variance, mse), and the x-axis of each subplot is the number of observations in the sample (10, 20, 30, 50). In each subplot, there are two lines showing the mean and median. The first row has a much higher range than subsequent rows, with y values ranging between 0 and .75, while subsequent rows range between 0 and 0.15. The lines representing bias (first column) are very flat and close to 0, though there is more variability around the 0 line when degrees of freedom = 2. The variance and MSE tend to decrease as n increases across all panels, but again when DF=2, there is more variability and the trend is less clear. When DF=2, the mean line is higher than the median line for the variance and MSE over all values of n, indicating that the variance of the mean is higher than the variance of the median (the MSE is the bias + variance, and is technically redundant here). When DF=5 and we look at the variance or MSE, the lines are very close and it is difficult to determine which estimator would be better. When DF=10 or DF=20 and we consider the variance or MSE, the median line is higher than the mean across all values of n, indicating that in these situations we would prefer the mean as an estimator over the median."
+import seaborn.objects as so
+import matplotlib.pyplot as plt
+(
+  so.Plot(res_sum_long, x = "n", y = "value", linestyle = 'estimator')
+  .add(so.Line())
+  .facet('measure', 'df')
+  .share(y="row")
+  .label(x = "Sample Size", y = "Value")
+  .show()
+)
+```
+
+:::
+
+Considering the results we obtained, it seems clear that when we have a very low ($\nu<=5$) degrees of freedom, the median is a preferable estimator because it has lower variance; when we have a higher number of degrees of freedom, the mean is a preferable estimator on the basis of variance. 
+Both estimators are asymptotically unbiased, and are unbiased even for small sample sizes when the distribution is symmetric. 
+
+::::
+
 ## Simulation to test model assumptions
 
 One of the more powerful ways to use simulation in practice is to use it to test the assumptions of your model.
@@ -250,7 +398,8 @@ How bad will your results be?
 Where can you trust the results, and where should you be cautious?
 
 ::: column-margin
-The `purrr::map` notation specifies that we're using the `map` function from the `purrr` package.
+
+The `purrr::map` notation specifies that we are using the `map` function from the `purrr` package.
 When functions are named generically, and there may be more than one package with a function name, it is often more readable to specify the package name along with the function.
 
 `purrr::map` takes an argument and for each "group" calls the compute_interval function, storing the results in `res`.
