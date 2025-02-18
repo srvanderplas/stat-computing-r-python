@@ -1,0 +1,2653 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.13">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<meta name="dcterms.date" content="2025-02-17">
+<title>24&nbsp; Reshaping Data – Statistical Computing using R and Python</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../part-wrangling/06-data-join.html" rel="next">
+<link href="../part-wrangling/04-strings.html" rel="prev">
+<link href="../build_deps/favicon.ico" rel="icon">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-956927e86c41ce4880e87387fca38fc6.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-d191db7fc3c3d9a11a0015f971215285.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-a6a20e1f3421b91263cccd7600f4fca8.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-85a12a5bf62cb014e1c5b1f957cca82b.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/quarto-contrib/fontawesome6-0.1.0/all.css" rel="stylesheet">
+<link href="../site_libs/quarto-contrib/fontawesome6-0.1.0/latex-fontsize.css" rel="stylesheet"><script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script><script async="" src="https://www.googletagmanager.com/gtag/js?id=G-4ZFBDKXJXP"></script><script type="text/javascript">
+
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
+</script><script src="https://kit.fontawesome.com/baac5f0610.js" crossorigin="anonymous"></script><link rel="stylesheet" href="../build_deps/style.css">
+</head>
+<body class="nav-sidebar docked">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top"><nav class="quarto-secondary-nav"><div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../part-wrangling/00-wrangling.html">Part III: Data Wrangling</a></li><li class="breadcrumb-item"><a href="../part-wrangling/05-data-reshape.html"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Reshaping Data</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="navigation" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Search" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav></header><!-- content --><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation docked overflow-auto"><div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">Statistical Computing using R and Python</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/srvanderplas/stat-computing-r-python/" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Search"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Preface</span></a>
+  </div>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../part-tools/00-tools-intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Part I: Tools</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-1" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-tools/01-computer-basics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Computer Basics</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-tools/02-setting-up-computer.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Setting Up Your Computer</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-tools/03-Rstudio-interface.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">RStudio’s Interface</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-tools/04-scripts-notebooks.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Scripts and Notebooks</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-tools/05-git-and-github.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Version Control with Git</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-tools/06-documents.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Reproducibility and Professional Communication</span></span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../part-gen-prog/00-gen-prog.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Part II: General Programming</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-2" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-gen-prog/00-intro.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Introduction to Programming</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-gen-prog/01-basic-var-types.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">8</span>&nbsp; <span class="chapter-title">Variables and Basic Data Types</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-gen-prog/02-prog-functions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">9</span>&nbsp; <span class="chapter-title">Using Functions and Libraries</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-gen-prog/03-data-struct.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">10</span>&nbsp; <span class="chapter-title">Data Structures</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-gen-prog/035-matrix-calcs.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">11</span>&nbsp; <span class="chapter-title">Matrix Calculations</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-gen-prog/04-control-struct.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">12</span>&nbsp; <span class="chapter-title">Control Structures</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-gen-prog/05-functions.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">13</span>&nbsp; <span class="chapter-title">Writing Functions</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-gen-prog/06-debugging.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">14</span>&nbsp; <span class="chapter-title">Debugging</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-gen-prog/07-prog-data.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">15</span>&nbsp; <span class="chapter-title">Programming With Data</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-gen-prog/99-extra.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Other Helpful Programming Resources</span></span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../part-wrangling/00-wrangling.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Part III: Data Wrangling</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-3" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-wrangling/01-data-input.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Data Input</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-wrangling/02-basic-data-vis.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Data Visualization Basics</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-wrangling/02a-eda.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Exploratory Data Analysis</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-wrangling/02b-graphics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Data Visualization</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-wrangling/02c-good-graphics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Creating Good Charts</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-wrangling/03-data-cleaning.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Data Cleaning</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-wrangling/04-strings.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Working with Strings</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-wrangling/05-data-reshape.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Reshaping Data</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-wrangling/06-data-join.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Joining Data</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-wrangling/07-datetime.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Dates and Times</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-wrangling/08-functional-prog.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Functional Programming</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-wrangling/09-spatial-formats.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Spatial data</span></span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item sidebar-item-section">
+      <div class="sidebar-item-container"> 
+            <a href="../part-advanced-topics/00-advanced.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Part IV: Advanced Topics</span></a>
+          <a class="sidebar-item-toggle text-start" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar-section-4" role="navigation" aria-expanded="true" aria-label="Toggle section">
+            <i class="bi bi-chevron-right ms-2"></i>
+          </a> 
+      </div>
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-advanced-topics/01-simulation.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Simulation and Reproducibility</span></span></a>
+  </div>
+</li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../part-advanced-topics/06-interactive-graphics.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">30</span>&nbsp; <span class="chapter-title">Interactive Graphics</span></span></a>
+  </div>
+</li>
+      </ul>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../graveyard.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">31</span>&nbsp; <span class="chapter-title">Other Topics</span></span></a>
+  </div>
+</li>
+    </ul>
+</div>
+</nav><div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active"><h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+<li><a href="#objectives" id="toc-objectives" class="nav-link active" data-scroll-target="#objectives"><span class="header-section-number">24.1</span> <i class="fa-solid fa-bullseye" aria-label="bullseye"></i> Objectives</a></li>
+  <li>
+<a href="#tidy-and-messy-data" id="toc-tidy-and-messy-data" class="nav-link" data-scroll-target="#tidy-and-messy-data"><span class="header-section-number">24.2</span> Tidy and Messy Data</a>
+  <ul class="collapse">
+<li><a href="#motivating-example" id="toc-motivating-example" class="nav-link" data-scroll-target="#motivating-example"><span class="header-section-number">24.2.1</span> Motivating Example</a></li>
+  <li><a href="#defining-tidy-data" id="toc-defining-tidy-data" class="nav-link" data-scroll-target="#defining-tidy-data"><span class="header-section-number">24.2.2</span> Defining Tidy data</a></li>
+  <li><a href="#examples-messy-data" id="toc-examples-messy-data" class="nav-link" data-scroll-target="#examples-messy-data">Examples: Messy Data</a></li>
+  </ul>
+</li>
+  <li><a href="#additional-reading" id="toc-additional-reading" class="nav-link" data-scroll-target="#additional-reading"><span class="header-section-number">24.3</span> Additional reading</a></li>
+  <li>
+<a href="#pivot-operations" id="toc-pivot-operations" class="nav-link" data-scroll-target="#pivot-operations"><span class="header-section-number">24.4</span> Pivot operations</a>
+  <ul class="collapse">
+<li><a href="#longer" id="toc-longer" class="nav-link" data-scroll-target="#longer"><span class="header-section-number">24.4.1</span> Longer</a></li>
+  <li><a href="#wider" id="toc-wider" class="nav-link" data-scroll-target="#wider"><span class="header-section-number">24.4.2</span> Wider</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#sec-gas-price-ex" id="toc-sec-gas-price-ex" class="nav-link" data-scroll-target="#sec-gas-price-ex"><span class="header-section-number">24.5</span> Example: Gas Prices Data</a>
+  <ul class="collapse">
+<li><a href="#setup-gas-price-data-cleaning" id="toc-setup-gas-price-data-cleaning" class="nav-link" data-scroll-target="#setup-gas-price-data-cleaning"><span class="header-section-number">24.5.1</span> Setup: Gas Price Data Cleaning</a></li>
+  </ul>
+</li>
+  <li><a href="#other-resources" id="toc-other-resources" class="nav-link" data-scroll-target="#other-resources"><span class="header-section-number">24.6</span> Other resources</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references"><span class="header-section-number">24.7</span> References</a></li>
+  </ul><div class="toc-actions"><ul><li><a href="https://github.com/srvanderplas/stat-computing-r-python/edit/main/part-wrangling/05-data-reshape.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content column-body" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../part-wrangling/00-wrangling.html">Part III: Data Wrangling</a></li><li class="breadcrumb-item"><a href="../part-wrangling/05-data-reshape.html"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Reshaping Data</span></a></li></ol></nav><div class="quarto-title">
+<h1 class="title"><span id="sec-data-reshape" class="quarto-section-identifier"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Reshaping Data</span></span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta column-body">
+
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">February 17, 2025</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+
+</header><section id="objectives" class="level2" data-number="24.1"><h2 data-number="24.1" class="anchored" data-anchor-id="objectives">
+<span class="header-section-number">24.1</span> <i class="fa-solid fa-bullseye" aria-label="bullseye"></i> Objectives</h2>
+<p>Broadly, your objective while reading this chapter is to be able to identify datasets which have “messy” formats and determine a sequence of operations to transition the data into “tidy” format. To do this, you should be master the following concepts:</p>
+<ul>
+<li>Determine what data format is necessary to generate a desired plot or statistical model</li>
+<li>Understand the differences between “wide” and “long” format data and how to transition between the two structures</li>
+</ul></section><section id="tidy-and-messy-data" class="level2" data-number="24.2"><h2 data-number="24.2" class="anchored" data-anchor-id="tidy-and-messy-data">
+<span class="header-section-number">24.2</span> Tidy and Messy Data</h2>
+<section id="motivating-example" class="level3" data-number="24.2.1"><h3 data-number="24.2.1" class="anchored" data-anchor-id="motivating-example">
+<span class="header-section-number">24.2.1</span> Motivating Example</h3>
+<p>Consider the spreadsheet screenshot in <a href="#fig-human-readable" class="quarto-xref">Figure&nbsp;<span class="quarto-unresolved-ref">fig-human-readable</span></a>.</p>
+<div id="fig-human-readable" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-human-readable-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="../images/wrangling/Data-human-consumption.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-human-readable-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;24.1: Spreadsheet intended for human consumption, from <span class="citation" data-cites="mccallumBadDataHandbook2013"><a href="#ref-mccallumBadDataHandbook2013" role="doc-biblioref">[1]</a></span> (Chapter 3)
+</figcaption></figure>
+</div>
+<p>This spreadsheet shows New Zealand High School certificate achievement levels for a boys-only school. Typically, students would get level 1 in year 11, level 2 in year 12, and level 3 in year 13, but it is possible for students to gain multiple levels in a single year. This data is organized to show the number of students gaining each type of certification (broken out by gender) across each of the 3 years. There are many blank cells that provide ample space to see the data, and all of the necessary variables are represented: there are essentially three 2x3 tables showing the number of students attaining each NCEA level in each year of school. If all of the information is present in this table, is there really a problem? Perhaps not if the goal is just to display the data, but analyzing this data effectively, or plotting it in a way that is useful, requires some restructuring. <a href="#fig-machine-readable" class="quarto-xref">Figure&nbsp;<span class="quarto-unresolved-ref">fig-machine-readable</span></a> shows a restructured version of this data in a more compact rectangular format.</p>
+<div id="fig-machine-readable" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-machine-readable-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="../images/wrangling/Data-machine-consumption.png" class="img-fluid figure-img">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-machine-readable-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;24.2: Spreadsheet reorganized for data analysis
+</figcaption></figure>
+</div>
+<p>In <a href="#fig-machine-readable" class="quarto-xref">Figure&nbsp;<span class="quarto-unresolved-ref">fig-machine-readable</span></a>, each column contains one variable: Year, gender, level, and total number of students. Each row contains one observation. We still have 18 data points, but this format is optimized for statistical analysis, rather than to display for (human) visual consumption. We will refer to this restructured data as “tidy” data: it has a single column for each variable and a single row for each observation.</p>
+</section><section id="defining-tidy-data" class="level3" data-number="24.2.2"><h3 data-number="24.2.2" class="anchored" data-anchor-id="defining-tidy-data">
+<span class="header-section-number">24.2.2</span> Defining Tidy data</h3>
+<p>The illustrations below are lifted from an <a href="https://www.openscapes.org/blog/2020/10/12/tidy-data/">excellent blog post</a> <span class="citation" data-cites="lowndesTidyDataEfficiency2020"><a href="#ref-lowndesTidyDataEfficiency2020" role="doc-biblioref">[2]</a></span> about tidy data; they’re reproduced here because</p>
+<ol type="1">
+<li>they’re beautiful and licensed as CCA-4.0-by, and</li>
+<li>they might be more memorable than the equivalent paragraphs of text without illustration.</li>
+</ol>
+<p>Most of the time, data does not come in a format suitable for analysis. Spreadsheets are generally optimized for data entry or viewing, rather than for statistical analysis:</p>
+<ul>
+<li>Tables may be laid out for easy data entry, so that there are multiple observations in a single row</li>
+<li>It may be visually preferable to arrange columns of data to show multiple times or categories on the same row for easy comparison</li>
+</ul>
+<p>When we analyze data, however, we care much more about the fundamental structure of observations: discrete units of data collection. Each observation may have several corresponding variables that may be measured simultaneously, but fundamentally each discrete data point is what we are interested in analyzing.</p>
+<p>The structure of <strong>tidy data</strong> reflects this preference for keeping the data in a fundamental form: each observation is in its own row, any observed variables are in single columns. This format is inherently rectangular, which is also important for statistical analysis - our methods are typically designed to work with matrices of data.</p>
+<div id="fig-tidy-data-definition" class="quarto-float quarto-figure quarto-figure-center anchored" alt="Stylized text providing an overview of Tidy Data. The top reads “Tidy data is a standard way of mapping the meaning of a dataset to its structure. - Hadley Wickham.” On the left reads “In tidy data: each variable forms a column; each observation forms a row; each cell is a single measurement.” There is an example table on the lower right with columns ‘id’, ‘name’ and ‘color’ with observations for different cats, illustrating tidy data structure.">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-tidy-data-definition-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="../images/wrangling/tidydata_1.jpg" class="img-fluid figure-img" alt="Stylized text providing an overview of Tidy Data. The top reads “Tidy data is a standard way of mapping the meaning of a dataset to its structure. - Hadley Wickham.” On the left reads “In tidy data: each variable forms a column; each observation forms a row; each cell is a single measurement.” There is an example table on the lower right with columns ‘id’, ‘name’ and ‘color’ with observations for different cats, illustrating tidy data structure.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-tidy-data-definition-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;24.3: Tidy data format, illustrated.
+</figcaption></figure>
+</div>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="../images/wrangling/tidydata_2.jpg" class="img-fluid figure-img" alt="There are two sets of anthropomorphized data tables. The top group of three tables are all rectangular and smiling, with a shared speech bubble reading “our columns are variables and our rows are observations!”. Text to the left of that group reads “The standard structure of tidy data means that “tidy datasets are all alike…” The lower group of four tables are all different shapes, look ragged and concerned, and have different speech bubbles reading (from left to right) “my column are values and my rows are variables”, “I have variables in columns AND in rows”, “I have multiple variables in a single column”, and “I don’t even KNOW what my deal is.” Next to the frazzled data tables is text “...but every messy dataset is messy in its own way. -Hadley Wickham.”"></p>
+<figcaption>An illustration of the principle that every messy dataset is messy in its own way.</figcaption></figure>
+</div>
+<p>The preference for tidy data has several practical implications: it is easier to reuse code on tidy data, allowing for analysis using a standardized set of tools (rather than having to build a custom tool for each data analysis job).</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="../images/wrangling/tidydata_3.jpg" class="img-fluid figure-img" alt="On the left is a happy cute fuzzy monster holding a rectangular data frame with a tool that fits the data frame shape. On the workbench behind the monster are other data frames of similar rectangular shape, and neatly arranged tools that also look like they would fit those data frames. The workbench looks uncluttered and tidy. The text above the tidy workbench reads “When working with tidy data, we can use the same tools in similar ways for different datasets…” On the right is a cute monster looking very frustrated, using duct tape and other tools to haphazardly tie data tables together, each in a different way. The monster is in front of a messy, cluttered workbench. The text above the frustrated monster reads “...but working with untidy data often means reinventing the wheel with one-time approaches that are hard to iterate or reuse.”"></p>
+<figcaption>Tidy data is easier to manage because the same tools and approaches apply to multiple datasets.</figcaption></figure>
+</div>
+<p>In addition, standardized tools for data analysis means that it is easier to collaborate with others: if everyone starts with the same set of assumptions about the data set, you can borrow methods and tools from a collaborator’s analysis and easily apply them to your own data set.</p>
+<div id="fig-tidy-data-advantages" class="quarto-layout-panel">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-tidy-data-advantages-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="../images/wrangling/tidydata_4.jpg" class="img-fluid figure-img" alt="Two happy looking round fuzzy monsters, each holding a similarly shaped wrench with the word “wrangle” on it. Between their tools is held up a rectangular data table labeled “TIDY.”"></p>
+<figcaption>Collaboration with tidy data.</figcaption></figure>
+</div>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="../images/wrangling/tidydata_5.jpg" class="img-fluid figure-img" alt="Cute fuzzy monsters putting rectangular data tables onto a conveyor belt. Along the conveyor belt line are different automated “stations” that update the data, reading “WRANGLE”, “VISUALIZE”, and “MODEL”. A monster at the end of the conveyor belt is carrying away a table that reads “Complete analysis.”"></p>
+<figcaption>Tidy data enables standardized workflows.</figcaption></figure>
+</div>
+</div>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-tidy-data-advantages-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;24.4: Tidy data makes it easier to collaborate with others and analyze new data using standardized workflows.
+</figcaption></figure>
+</div>
+</section><section id="examples-messy-data" class="level3 unnumbered callout-demo"><h3 class="unnumbered anchored" data-anchor-id="examples-messy-data">Examples: Messy Data</h3>
+<p>These datasets all display the same data: TB cases documented by the WHO in Afghanistan, Brazil, and China, between 1999 and 2000. There are 4 variables: country, year, cases, and population, but each table has a different layout.</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist">
+<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" aria-current="page">Table 1</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">2</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false">3</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-4" role="tab" aria-controls="tabset-1-4" aria-selected="false">4</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-5" role="tab" aria-controls="tabset-1-5" aria-selected="false">5</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Table 1</caption>
+<thead><tr class="header">
+<th style="text-align: left;">country</th>
+<th style="text-align: right;">year</th>
+<th style="text-align: right;">cases</th>
+<th style="text-align: right;">population</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Afghanistan</td>
+<td style="text-align: right;">1999</td>
+<td style="text-align: right;">745</td>
+<td style="text-align: right;">19987071</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Afghanistan</td>
+<td style="text-align: right;">2000</td>
+<td style="text-align: right;">2666</td>
+<td style="text-align: right;">20595360</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Brazil</td>
+<td style="text-align: right;">1999</td>
+<td style="text-align: right;">37737</td>
+<td style="text-align: right;">172006362</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Brazil</td>
+<td style="text-align: right;">2000</td>
+<td style="text-align: right;">80488</td>
+<td style="text-align: right;">174504898</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">China</td>
+<td style="text-align: right;">1999</td>
+<td style="text-align: right;">212258</td>
+<td style="text-align: right;">1272915272</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">China</td>
+<td style="text-align: right;">2000</td>
+<td style="text-align: right;">213766</td>
+<td style="text-align: right;">1280428583</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Here, each observation is a single row, each variable is a column, and everything is nicely arranged for e.g.&nbsp;regression or statistical analysis. We can easily compute another measure, such as cases per 100,000 population, by taking cases/population * 100000 (this would define a new column).</p>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Table 2</caption>
+<thead><tr class="header">
+<th style="text-align: left;">country</th>
+<th style="text-align: right;">year</th>
+<th style="text-align: left;">type</th>
+<th style="text-align: right;">count</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Afghanistan</td>
+<td style="text-align: right;">1999</td>
+<td style="text-align: left;">cases</td>
+<td style="text-align: right;">745</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Afghanistan</td>
+<td style="text-align: right;">1999</td>
+<td style="text-align: left;">population</td>
+<td style="text-align: right;">19987071</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Afghanistan</td>
+<td style="text-align: right;">2000</td>
+<td style="text-align: left;">cases</td>
+<td style="text-align: right;">2666</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Afghanistan</td>
+<td style="text-align: right;">2000</td>
+<td style="text-align: left;">population</td>
+<td style="text-align: right;">20595360</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Brazil</td>
+<td style="text-align: right;">1999</td>
+<td style="text-align: left;">cases</td>
+<td style="text-align: right;">37737</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Brazil</td>
+<td style="text-align: right;">1999</td>
+<td style="text-align: left;">population</td>
+<td style="text-align: right;">172006362</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Brazil</td>
+<td style="text-align: right;">2000</td>
+<td style="text-align: left;">cases</td>
+<td style="text-align: right;">80488</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Brazil</td>
+<td style="text-align: right;">2000</td>
+<td style="text-align: left;">population</td>
+<td style="text-align: right;">174504898</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">China</td>
+<td style="text-align: right;">1999</td>
+<td style="text-align: left;">cases</td>
+<td style="text-align: right;">212258</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">China</td>
+<td style="text-align: right;">1999</td>
+<td style="text-align: left;">population</td>
+<td style="text-align: right;">1272915272</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">China</td>
+<td style="text-align: right;">2000</td>
+<td style="text-align: left;">cases</td>
+<td style="text-align: right;">213766</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">China</td>
+<td style="text-align: right;">2000</td>
+<td style="text-align: left;">population</td>
+<td style="text-align: right;">1280428583</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Here, we have 4 columns again, but we now have 12 rows: one of the columns is an indicator of which of two numerical observations is recorded in that row; a second column stores the value. This form of the data is more easily plotted in e.g.&nbsp;ggplot2, if we want to show lines for both cases and population, but computing per capita cases would be much more difficult in this form than in the arrangement in table 1.</p>
+</div>
+<div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Table 3</caption>
+<thead><tr class="header">
+<th style="text-align: left;">country</th>
+<th style="text-align: right;">year</th>
+<th style="text-align: left;">rate</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Afghanistan</td>
+<td style="text-align: right;">1999</td>
+<td style="text-align: left;">745/19987071</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Afghanistan</td>
+<td style="text-align: right;">2000</td>
+<td style="text-align: left;">2666/20595360</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Brazil</td>
+<td style="text-align: right;">1999</td>
+<td style="text-align: left;">37737/172006362</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Brazil</td>
+<td style="text-align: right;">2000</td>
+<td style="text-align: left;">80488/174504898</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">China</td>
+<td style="text-align: right;">1999</td>
+<td style="text-align: left;">212258/1272915272</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">China</td>
+<td style="text-align: right;">2000</td>
+<td style="text-align: left;">213766/1280428583</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>This form has only 3 columns, because the rate variable (which is a character) stores both the case count and the population. We can’t do <em>anything</em> with this format as it stands, because we can’t do math on data stored as characters. However, this form might be easier to read and record for a human being.</p>
+</div>
+<div id="tabset-1-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-4-tab">
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Table 4a</caption>
+<thead><tr class="header">
+<th style="text-align: left;">country</th>
+<th style="text-align: right;">1999</th>
+<th style="text-align: right;">2000</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Afghanistan</td>
+<td style="text-align: right;">745</td>
+<td style="text-align: right;">2666</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Brazil</td>
+<td style="text-align: right;">37737</td>
+<td style="text-align: right;">80488</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">China</td>
+<td style="text-align: right;">212258</td>
+<td style="text-align: right;">213766</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Table 4b</caption>
+<thead><tr class="header">
+<th style="text-align: left;">country</th>
+<th style="text-align: right;">1999</th>
+<th style="text-align: right;">2000</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Afghanistan</td>
+<td style="text-align: right;">19987071</td>
+<td style="text-align: right;">20595360</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Brazil</td>
+<td style="text-align: right;">172006362</td>
+<td style="text-align: right;">174504898</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">China</td>
+<td style="text-align: right;">1272915272</td>
+<td style="text-align: right;">1280428583</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>In this form, we have two tables - one for population, and one for cases. Each year’s observations are in a separate column. This format is often found in separate sheets of an excel workbook. To work with this data, we’ll need to transform each table so that there is a column indicating which year an observation is from, and then merge the two tables together by country and year.</p>
+</div>
+<div id="tabset-1-5" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-5-tab">
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Table 5</caption>
+<thead><tr class="header">
+<th style="text-align: left;">country</th>
+<th style="text-align: left;">century</th>
+<th style="text-align: left;">year</th>
+<th style="text-align: left;">rate</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Afghanistan</td>
+<td style="text-align: left;">19</td>
+<td style="text-align: left;">99</td>
+<td style="text-align: left;">745/19987071</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Afghanistan</td>
+<td style="text-align: left;">20</td>
+<td style="text-align: left;">00</td>
+<td style="text-align: left;">2666/20595360</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Brazil</td>
+<td style="text-align: left;">19</td>
+<td style="text-align: left;">99</td>
+<td style="text-align: left;">37737/172006362</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Brazil</td>
+<td style="text-align: left;">20</td>
+<td style="text-align: left;">00</td>
+<td style="text-align: left;">80488/174504898</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">China</td>
+<td style="text-align: left;">19</td>
+<td style="text-align: left;">99</td>
+<td style="text-align: left;">212258/1272915272</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">China</td>
+<td style="text-align: left;">20</td>
+<td style="text-align: left;">00</td>
+<td style="text-align: left;">213766/1280428583</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Table 5 is very similar to table 3, but the year has been separated into two columns - century, and year. This is more common with year, month, and day in separate columns (or date and time in separate columns), often to deal with the fact that spreadsheets don’t always handle dates the way you’d hope they would.</p>
+</div>
+</div>
+</div>
+</section><div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Try it out: Classifying Messy Data
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist">
+<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">Problem</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">Table 1</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-3" role="tab" aria-controls="tabset-2-3" aria-selected="false">2</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-4" role="tab" aria-controls="tabset-2-4" aria-selected="false">3</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-5" role="tab" aria-controls="tabset-2-5" aria-selected="false">4</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-6-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-6" role="tab" aria-controls="tabset-2-6" aria-selected="false">5</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
+<p>For each of the datasets in the previous example, determine whether each table is tidy. If it is not, identify which rule or rules it violates.</p>
+<p>What would you have to do in order to compute a standardized TB infection rate per 100,000 people?</p>
+</div>
+<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Table 1</caption>
+<thead><tr class="header">
+<th style="text-align: left;">country</th>
+<th style="text-align: right;">year</th>
+<th style="text-align: right;">cases</th>
+<th style="text-align: right;">population</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Afghanistan</td>
+<td style="text-align: right;">1999</td>
+<td style="text-align: right;">745</td>
+<td style="text-align: right;">19987071</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Afghanistan</td>
+<td style="text-align: right;">2000</td>
+<td style="text-align: right;">2666</td>
+<td style="text-align: right;">20595360</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Brazil</td>
+<td style="text-align: right;">1999</td>
+<td style="text-align: right;">37737</td>
+<td style="text-align: right;">172006362</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Brazil</td>
+<td style="text-align: right;">2000</td>
+<td style="text-align: right;">80488</td>
+<td style="text-align: right;">174504898</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">China</td>
+<td style="text-align: right;">1999</td>
+<td style="text-align: right;">212258</td>
+<td style="text-align: right;">1272915272</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">China</td>
+<td style="text-align: right;">2000</td>
+<td style="text-align: right;">213766</td>
+<td style="text-align: right;">1280428583</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>This is tidy data. Computing a standardized infection rate is as simple as creating the variable rate = cases/population*100,000.</p>
+</div>
+<div id="tabset-2-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-3-tab">
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Table 2</caption>
+<thead><tr class="header">
+<th style="text-align: left;">country</th>
+<th style="text-align: right;">year</th>
+<th style="text-align: left;">type</th>
+<th style="text-align: right;">count</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Afghanistan</td>
+<td style="text-align: right;">1999</td>
+<td style="text-align: left;">cases</td>
+<td style="text-align: right;">745</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Afghanistan</td>
+<td style="text-align: right;">1999</td>
+<td style="text-align: left;">population</td>
+<td style="text-align: right;">19987071</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Afghanistan</td>
+<td style="text-align: right;">2000</td>
+<td style="text-align: left;">cases</td>
+<td style="text-align: right;">2666</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Afghanistan</td>
+<td style="text-align: right;">2000</td>
+<td style="text-align: left;">population</td>
+<td style="text-align: right;">20595360</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Brazil</td>
+<td style="text-align: right;">1999</td>
+<td style="text-align: left;">cases</td>
+<td style="text-align: right;">37737</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Brazil</td>
+<td style="text-align: right;">1999</td>
+<td style="text-align: left;">population</td>
+<td style="text-align: right;">172006362</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Brazil</td>
+<td style="text-align: right;">2000</td>
+<td style="text-align: left;">cases</td>
+<td style="text-align: right;">80488</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Brazil</td>
+<td style="text-align: right;">2000</td>
+<td style="text-align: left;">population</td>
+<td style="text-align: right;">174504898</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">China</td>
+<td style="text-align: right;">1999</td>
+<td style="text-align: left;">cases</td>
+<td style="text-align: right;">212258</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">China</td>
+<td style="text-align: right;">1999</td>
+<td style="text-align: left;">population</td>
+<td style="text-align: right;">1272915272</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">China</td>
+<td style="text-align: right;">2000</td>
+<td style="text-align: left;">cases</td>
+<td style="text-align: right;">213766</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">China</td>
+<td style="text-align: right;">2000</td>
+<td style="text-align: left;">population</td>
+<td style="text-align: right;">1280428583</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Each variable does not have its own column (so a single year’s observation of one country actually has 2 rows). Computing a standardized infection rate requires moving cases and population so that each variable has its own column, and then you can proceed using the process in 1.</p>
+</div>
+<div id="tabset-2-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-4-tab">
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Table 3</caption>
+<thead><tr class="header">
+<th style="text-align: left;">country</th>
+<th style="text-align: right;">year</th>
+<th style="text-align: left;">rate</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Afghanistan</td>
+<td style="text-align: right;">1999</td>
+<td style="text-align: left;">745/19987071</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Afghanistan</td>
+<td style="text-align: right;">2000</td>
+<td style="text-align: left;">2666/20595360</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Brazil</td>
+<td style="text-align: right;">1999</td>
+<td style="text-align: left;">37737/172006362</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Brazil</td>
+<td style="text-align: right;">2000</td>
+<td style="text-align: left;">80488/174504898</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">China</td>
+<td style="text-align: right;">1999</td>
+<td style="text-align: left;">212258/1272915272</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">China</td>
+<td style="text-align: right;">2000</td>
+<td style="text-align: left;">213766/1280428583</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Each value does not have its own cell (and each variable does not have its own column). In Table 3, you’d have to separate the numerator and denominator of each cell, convert each to a numeric variable, and then you could proceed as in 1.</p>
+</div>
+<div id="tabset-2-5" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-5-tab">
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Table 4a</caption>
+<thead><tr class="header">
+<th style="text-align: left;">country</th>
+<th style="text-align: right;">1999</th>
+<th style="text-align: right;">2000</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Afghanistan</td>
+<td style="text-align: right;">745</td>
+<td style="text-align: right;">2666</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Brazil</td>
+<td style="text-align: right;">37737</td>
+<td style="text-align: right;">80488</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">China</td>
+<td style="text-align: right;">212258</td>
+<td style="text-align: right;">213766</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Table 4b</caption>
+<thead><tr class="header">
+<th style="text-align: left;">country</th>
+<th style="text-align: right;">1999</th>
+<th style="text-align: right;">2000</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Afghanistan</td>
+<td style="text-align: right;">19987071</td>
+<td style="text-align: right;">20595360</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Brazil</td>
+<td style="text-align: right;">172006362</td>
+<td style="text-align: right;">174504898</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">China</td>
+<td style="text-align: right;">1272915272</td>
+<td style="text-align: right;">1280428583</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>There are multiple observations in each row because there is not a column for year. To compute the rate, you’d need to “stack” the two columns in each table into a single column, add a year column that is 1999, 1999, 1999, 2000, 2000, 2000, and then merge the two tables. Then you could proceed as in 1.</p>
+</div>
+<div id="tabset-2-6" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-6-tab">
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Table 5</caption>
+<thead><tr class="header">
+<th style="text-align: left;">country</th>
+<th style="text-align: left;">century</th>
+<th style="text-align: left;">year</th>
+<th style="text-align: left;">rate</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Afghanistan</td>
+<td style="text-align: left;">19</td>
+<td style="text-align: left;">99</td>
+<td style="text-align: left;">745/19987071</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Afghanistan</td>
+<td style="text-align: left;">20</td>
+<td style="text-align: left;">00</td>
+<td style="text-align: left;">2666/20595360</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Brazil</td>
+<td style="text-align: left;">19</td>
+<td style="text-align: left;">99</td>
+<td style="text-align: left;">37737/172006362</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Brazil</td>
+<td style="text-align: left;">20</td>
+<td style="text-align: left;">00</td>
+<td style="text-align: left;">80488/174504898</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">China</td>
+<td style="text-align: left;">19</td>
+<td style="text-align: left;">99</td>
+<td style="text-align: left;">212258/1272915272</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">China</td>
+<td style="text-align: left;">20</td>
+<td style="text-align: left;">00</td>
+<td style="text-align: left;">213766/1280428583</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Each variable does not have its own column (there are two columns for year, in addition to the issues noted in table3). Computing the rate would be similar to table 3; the year issues aren’t actually a huge deal unless you plot them, at which point 99 will seem to be bigger than 00 (so you’d need to combine the two year columns together first).</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p>It is actually impossible to have a table that violates only one of the rules of tidy data - you have to violate at least two. So a simpler way to state the rules might be:</p>
+<ol type="1">
+<li>Each data set goes into its own table (or tibble, if you are using R)</li>
+<li>Each variable gets its own column</li>
+</ol></section><section id="additional-reading" class="level2 callout-learnmore" data-number="24.3"><h2 data-number="24.3" class="anchored" data-anchor-id="additional-reading">
+<span class="header-section-number">24.3</span> Additional reading</h2>
+<p><span class="citation" data-cites="internationalbusinessmachinesRisksUsingSpreadsheets2018"><a href="#ref-internationalbusinessmachinesRisksUsingSpreadsheets2018" role="doc-biblioref">[3]</a></span> - IBM SPSS ad that talks about the perils of spreadsheets</p>
+<p><span class="citation" data-cites="obeirneHorrorStories2020"><a href="#ref-obeirneHorrorStories2020" role="doc-biblioref">[4]</a></span> - assembled news stories involving spreadsheet mishaps</p>
+</section><p>You have learned some of the skills to tidy data in <a href="#sec-strings" class="quarto-xref"><span class="quarto-unresolved-ref">sec-strings</span></a>, and you’ll learn more in <a href="#sec-data-join" class="quarto-xref"><span class="quarto-unresolved-ref">sec-data-join</span></a>, but by the end of this chapter you will have many of the skills needed to wrangle the most common “messy” data sets into “tidy” form.</p>
+<section id="pivot-operations" class="level2" data-number="24.4"><h2 data-number="24.4" class="anchored" data-anchor-id="pivot-operations">
+<span class="header-section-number">24.4</span> Pivot operations</h2>
+<p>It’s fairly common for data to come in forms which are convenient for either human viewing or data entry. Unfortunately, these forms aren’t necessarily the most friendly for analysis.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="../images/wrangling/original-dfs-tidy.png" class="img-fluid figure-img"></p>
+<figcaption>Wide and Long format data. <a href="https://github.com/gadenbuie/tidyexplain/raw/main/images/static/png/original-dfs-tidy.png">Source</a></figcaption></figure>
+</div>
+<p>The two operations we’ll learn here are wide -&gt; long and long -&gt; wide.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="../images/wrangling/tidyr-pivoting.gif" class="img-fluid figure-img"></p>
+<figcaption>Pivoting from wide to long (and back) <a href="https://raw.githubusercontent.com/gadenbuie/tidyexplain/main/images/tidyr-pivoting.gif">Source</a></figcaption></figure>
+</div>
+<p>This animation uses the R functions <code><a href="https://tidyr.tidyverse.org/reference/pivot_wider.html">pivot_wider()</a></code> and <code><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html">pivot_longer()</a></code> <a href="https://github.com/kelseygonzalez/tidyexplain/tree/wider_longer">Animation source</a>, but the concept is the same in both R and python.</p>
+<section id="longer" class="level3" data-number="24.4.1"><h3 data-number="24.4.1" class="anchored" data-anchor-id="longer">
+<span class="header-section-number">24.4.1</span> Longer</h3>
+<p>In many cases, the data come in what we might call “wide” form - some of the column names are not names of variables, but instead, are themselves values of another variable.</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist">
+<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">Picture the Operation</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">R</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-3" role="tab" aria-controls="tabset-3-3" aria-selected="false">Python</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
+<p>Tables 4a and 4b are good examples of data which is in “wide” form and should be in long(er) form: the years, which are variables, are column names, and the values are cases and population respectively.</p>
+<div class="cell">
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">table4a</span></span>
+<span><span class="co">## # A tibble: 3 × 3</span></span>
+<span><span class="co">##   country     `1999` `2000`</span></span>
+<span><span class="co">##   &lt;chr&gt;        &lt;dbl&gt;  &lt;dbl&gt;</span></span>
+<span><span class="co">## 1 Afghanistan    745   2666</span></span>
+<span><span class="co">## 2 Brazil       37737  80488</span></span>
+<span><span class="co">## 3 China       212258 213766</span></span>
+<span><span class="va">table4b</span></span>
+<span><span class="co">## # A tibble: 3 × 3</span></span>
+<span><span class="co">##   country         `1999`     `2000`</span></span>
+<span><span class="co">##   &lt;chr&gt;            &lt;dbl&gt;      &lt;dbl&gt;</span></span>
+<span><span class="co">## 1 Afghanistan   19987071   20595360</span></span>
+<span><span class="co">## 2 Brazil       172006362  174504898</span></span>
+<span><span class="co">## 3 China       1272915272 1280428583</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The solution to this is to rearrange the data into “long form”: to take the columns which contain values and “stack” them, adding a variable to indicate which column each value came from. To do this, we have to duplicate the values in any column which isn’t being stacked (e.g.&nbsp;country, in both the example above and the image below).</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="../images/wrangling/tidyr_pivot_longer.png" class="img-fluid figure-img" alt="A wide-to-long transformation operation, where the values of the id variables are repeated for each column which is used as a key; the values in each column are moved into a value column. There is a row of data in the transformed data frame for each combination of id variables and key variables."></p>
+<figcaption>A visual representation of what the pivot_longer operation looks like in practice.</figcaption></figure>
+</div>
+<p>Once our data are in long form, we can (if necessary) separate values that once served as column labels into actual variables, and we’ll have tidy(er) data.</p>
+</div>
+<div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
+<div class="cell">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">tba</span> <span class="op">&lt;-</span> <span class="va">table4a</span> <span class="op">%&gt;%</span> </span>
+<span>  <span class="fu">pivot_longer</span><span class="op">(</span><span class="op">-</span><span class="va">country</span>, names_to <span class="op">=</span> <span class="st">"year"</span>, values_to <span class="op">=</span> <span class="st">"cases"</span><span class="op">)</span></span>
+<span><span class="va">tbb</span> <span class="op">&lt;-</span> <span class="va">table4b</span> <span class="op">%&gt;%</span> </span>
+<span>  <span class="fu">pivot_longer</span><span class="op">(</span><span class="op">-</span><span class="va">country</span>, names_to <span class="op">=</span> <span class="st">"year"</span>, values_to <span class="op">=</span> <span class="st">"population"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># To get the tidy data, we join the two together (see Table joins below)</span></span>
+<span><span class="fu">left_join</span><span class="op">(</span><span class="va">tba</span>, <span class="va">tbb</span>, by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"country"</span>, <span class="st">"year"</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="co"># make year numeric b/c it's dumb not to</span></span>
+<span>  <span class="fu">mutate</span><span class="op">(</span>year <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="va">year</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">## # A tibble: 6 × 4</span></span>
+<span><span class="co">##   country      year  cases population</span></span>
+<span><span class="co">##   &lt;chr&gt;       &lt;dbl&gt;  &lt;dbl&gt;      &lt;dbl&gt;</span></span>
+<span><span class="co">## 1 Afghanistan  1999    745   19987071</span></span>
+<span><span class="co">## 2 Afghanistan  2000   2666   20595360</span></span>
+<span><span class="co">## 3 Brazil       1999  37737  172006362</span></span>
+<span><span class="co">## 4 Brazil       2000  80488  174504898</span></span>
+<span><span class="co">## 5 China        1999 212258 1272915272</span></span>
+<span><span class="co">## 6 China        2000 213766 1280428583</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The columns are moved to a variable with the name passed to the argument “names_to” (hopefully, that is easy to remember), and the values are moved to a variable with the name passed to the argument “values_to” (again, hopefully easy to remember).</p>
+<p>We identify ID variables (variables which we don’t want to pivot) by not including them in the pivot statement. We can do this in one of two ways:</p>
+<ul>
+<li>select only variables we want to pivot: <code>pivot_longer(table4a, cols =</code>1999<code>:</code>2000<code>, names_to = "year", values_to = "cases")</code>
+</li>
+<li>select variables we don’t want to pivot, using <code>-</code> to remove them. (see above, where <code>-country</code> excludes country from the pivot operation)</li>
+</ul>
+<p>Which option is easier depends how many things you’re pivoting (and how the columns are structured).</p>
+<p>If we wanted to avoid the table join, we could do this process another way: first, we would add a column to each tibble called id with values “cases” and “population” respectively. Then, we could bind the two tables together by row (so stack them on top of each other). We could then do a wide-to-long pivot, followed by a long-to-wide pivot to get our data into tidy form.</p>
+<div class="cell">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># Create ID columns</span></span>
+<span><span class="va">table4a.x</span> <span class="op">&lt;-</span> <span class="va">table4a</span> <span class="op">%&gt;%</span> <span class="fu">mutate</span><span class="op">(</span>id <span class="op">=</span> <span class="st">"cases"</span><span class="op">)</span></span>
+<span><span class="va">table4b.x</span> <span class="op">&lt;-</span> <span class="va">table4b</span> <span class="op">%&gt;%</span> <span class="fu">mutate</span><span class="op">(</span>id <span class="op">=</span> <span class="st">"population"</span><span class="op">)</span></span>
+<span><span class="co"># Create one table</span></span>
+<span><span class="va">table4</span> <span class="op">&lt;-</span> <span class="fu">bind_rows</span><span class="op">(</span><span class="va">table4a.x</span>, <span class="va">table4b.x</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">table4_long</span> <span class="op">&lt;-</span> <span class="va">table4</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="co"># rearrange columns</span></span>
+<span>  <span class="fu">select</span><span class="op">(</span><span class="va">country</span>, <span class="va">id</span>, <span class="va">`1999`</span>, <span class="va">`2000`</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="co"># Don't pivot country or id</span></span>
+<span>  <span class="fu">pivot_longer</span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">country</span><span class="op">:</span><span class="va">id</span><span class="op">)</span>, names_to <span class="op">=</span> <span class="st">"year"</span>, values_to <span class="op">=</span> <span class="st">"count"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Intermediate fully-long form</span></span>
+<span><span class="va">table4_long</span></span>
+<span><span class="co">## # A tibble: 12 × 4</span></span>
+<span><span class="co">##    country     id         year       count</span></span>
+<span><span class="co">##    &lt;chr&gt;       &lt;chr&gt;      &lt;chr&gt;      &lt;dbl&gt;</span></span>
+<span><span class="co">##  1 Afghanistan cases      1999         745</span></span>
+<span><span class="co">##  2 Afghanistan cases      2000        2666</span></span>
+<span><span class="co">##  3 Brazil      cases      1999       37737</span></span>
+<span><span class="co">##  4 Brazil      cases      2000       80488</span></span>
+<span><span class="co">##  5 China       cases      1999      212258</span></span>
+<span><span class="co">##  6 China       cases      2000      213766</span></span>
+<span><span class="co">##  7 Afghanistan population 1999    19987071</span></span>
+<span><span class="co">##  8 Afghanistan population 2000    20595360</span></span>
+<span><span class="co">##  9 Brazil      population 1999   172006362</span></span>
+<span><span class="co">## 10 Brazil      population 2000   174504898</span></span>
+<span><span class="co">## 11 China       population 1999  1272915272</span></span>
+<span><span class="co">## 12 China       population 2000  1280428583</span></span>
+<span></span>
+<span><span class="co"># make wider, with case and population columns</span></span>
+<span><span class="va">table4_tidy</span> <span class="op">&lt;-</span> <span class="va">table4_long</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu">pivot_wider</span><span class="op">(</span>names_from <span class="op">=</span> <span class="va">id</span>, values_from <span class="op">=</span> <span class="va">count</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">table4_tidy</span></span>
+<span><span class="co">## # A tibble: 6 × 4</span></span>
+<span><span class="co">##   country     year   cases population</span></span>
+<span><span class="co">##   &lt;chr&gt;       &lt;chr&gt;  &lt;dbl&gt;      &lt;dbl&gt;</span></span>
+<span><span class="co">## 1 Afghanistan 1999     745   19987071</span></span>
+<span><span class="co">## 2 Afghanistan 2000    2666   20595360</span></span>
+<span><span class="co">## 3 Brazil      1999   37737  172006362</span></span>
+<span><span class="co">## 4 Brazil      2000   80488  174504898</span></span>
+<span><span class="co">## 5 China       1999  212258 1272915272</span></span>
+<span><span class="co">## 6 China       2000  213766 1280428583</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-3-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-3-tab">
+<p>In Pandas, <code>pandas.melt(...)</code> takes <code>id_vars</code>, <code>value_vars</code>, <code>var_name</code>, and <code>value_name</code>. Otherwise, it functions nearly exactly the same as <code>pivot_longer</code>; the biggest difference is that column selection works differently in python than it does in the tidyverse.</p>
+<p>As in R, we can choose to either do a melt/pivot_longer operation on each table and then join the tables together, or we can concatenate the rows and do a melt/pivot_longer operation followed by a pivot/pivot_wider operation.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Get tables from R</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>table4a <span class="op">=</span> r.table4a</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>table4b <span class="op">=</span> r.table4b</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>tba <span class="op">=</span> pd.melt(table4a, id_vars <span class="op">=</span> [<span class="st">'country'</span>], value_vars <span class="op">=</span> [<span class="st">'1999'</span>, <span class="st">'2000'</span>], var_name <span class="op">=</span> <span class="st">'year'</span>, value_name <span class="op">=</span> <span class="st">'cases'</span>)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>tbb <span class="op">=</span> pd.melt(table4b, id_vars <span class="op">=</span> [<span class="st">'country'</span>], value_vars <span class="op">=</span> [<span class="st">'1999'</span>, <span class="st">'2000'</span>], var_name <span class="op">=</span> <span class="st">'year'</span>, value_name <span class="op">=</span> <span class="st">'population'</span>)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co"># To get the tidy data, we join the two together (see Table joins below)</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>table4_tidy <span class="op">=</span> pd.merge(tba, tbb, on <span class="op">=</span> [<span class="st">"country"</span>, <span class="st">"year"</span>], how <span class="op">=</span> <span class="st">'left'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Here’s the melt/pivot_longer + pivot/pivot_wider version:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Get tables from R</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>table4a <span class="op">=</span> r.table4a</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>table4b <span class="op">=</span> r.table4b</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>table4a[<span class="st">'id'</span>] <span class="op">=</span> <span class="st">"cases"</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>table4b[<span class="st">'id'</span>] <span class="op">=</span> <span class="st">"population"</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>table4 <span class="op">=</span> pd.concat([table4a, table4b])</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Fully long form</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>table4_long <span class="op">=</span> pd.melt(table4, id_vars <span class="op">=</span> [<span class="st">'country'</span>, <span class="st">'id'</span>], value_vars <span class="op">=</span> [<span class="st">'1999'</span>, <span class="st">'2000'</span>], var_name <span class="op">=</span> <span class="st">'year'</span>, value_name <span class="op">=</span> <span class="st">'count'</span>)</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Tidy form - case and population columns</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>table4_tidy2 <span class="op">=</span> pd.pivot(table4_long, index <span class="op">=</span> [<span class="st">'country'</span>, <span class="st">'year'</span>], columns <span class="op">=</span> [<span class="st">'id'</span>], values <span class="op">=</span> <span class="st">'count'</span>)</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="co"># reset_index() gets rid of the grouped index</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>table4_tidy2.reset_index()</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="co">## id      country  year     cases    population</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="co">## 0   Afghanistan  1999     745.0  1.998707e+07</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="co">## 1   Afghanistan  2000    2666.0  2.059536e+07</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="co">## 2        Brazil  1999   37737.0  1.720064e+08</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="co">## 3        Brazil  2000   80488.0  1.745049e+08</span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="co">## 4         China  1999  212258.0  1.272915e+09</span></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="co">## 5         China  2000  213766.0  1.280429e+09</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
+</section><section id="wider" class="level3" data-number="24.4.2"><h3 data-number="24.4.2" class="anchored" data-anchor-id="wider">
+<span class="header-section-number">24.4.2</span> Wider</h3>
+<p>While it’s very common to need to transform data into a longer format, it’s not that uncommon to need to do the reverse operation. When an observation is scattered across multiple rows, your data is too long and needs to be made wider again.</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist">
+<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true">Picture the Operation</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false">R</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-3" role="tab" aria-controls="tabset-4-3" aria-selected="false">Python</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
+<p>Table 2 is an example of a table that is in long format but needs to be converted to a wider layout to be “tidy” - there are separate rows for cases and population, which means that a single observation (one year, one country) has two rows.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="../images/wrangling/tidyr_pivot_wider.png" class="img-fluid figure-img" alt="An illustration of the transition from long data to wide data. In the long data frame, there are alternating rows of cases and populations, with corresponding counts. In the wide data frame, for each combination of id variables country and year, there are two columns: cases, and pop, each with corresponding values. That is, the key variables (cases, pop) in the long data frame become columns in the wide data frame."></p>
+<figcaption>A visual representation of what the pivot_wider operation looks like in practice.</figcaption></figure>
+</div>
+</div>
+<div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
+<div class="cell">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">table2</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu">pivot_wider</span><span class="op">(</span>names_from <span class="op">=</span> <span class="va">type</span>, values_from <span class="op">=</span> <span class="va">count</span><span class="op">)</span></span>
+<span><span class="co">## # A tibble: 6 × 4</span></span>
+<span><span class="co">##   country      year  cases population</span></span>
+<span><span class="co">##   &lt;chr&gt;       &lt;dbl&gt;  &lt;dbl&gt;      &lt;dbl&gt;</span></span>
+<span><span class="co">## 1 Afghanistan  1999    745   19987071</span></span>
+<span><span class="co">## 2 Afghanistan  2000   2666   20595360</span></span>
+<span><span class="co">## 3 Brazil       1999  37737  172006362</span></span>
+<span><span class="co">## 4 Brazil       2000  80488  174504898</span></span>
+<span><span class="co">## 5 China        1999 212258 1272915272</span></span>
+<span><span class="co">## 6 China        2000 213766 1280428583</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-4-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-3-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>table2 <span class="op">=</span> r.table2</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>pd.pivot(table2, index <span class="op">=</span> [<span class="st">'country'</span>, <span class="st">'year'</span>], columns <span class="op">=</span> [<span class="st">'type'</span>], values <span class="op">=</span> <span class="st">'count'</span>).reset_index()</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co">## type      country    year     cases    population</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co">## 0     Afghanistan  1999.0     745.0  1.998707e+07</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="co">## 1     Afghanistan  2000.0    2666.0  2.059536e+07</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co">## 2          Brazil  1999.0   37737.0  1.720064e+08</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co">## 3          Brazil  2000.0   80488.0  1.745049e+08</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co">## 4           China  1999.0  212258.0  1.272915e+09</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="co">## 5           China  2000.0  213766.0  1.280429e+09</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Try it Out!
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>In the next section, we’ll be using the WHO surveillance of disease incidence data (<a href="https://immunizationdata.who.int/">link</a>). I originally wrote this using data from 2020, but the WHO has since migrated to a new system and now provides their data in a much tidier long form (<a href="https://immunizationdata.who.int/global?topic=Reported-cases-and-incidence&amp;location=">link</a>). For demonstration purposes, I’ll continue using the messier 2020 data, but the link is no longer available on the WHO’s site.</p>
+<p>It will require some preprocessing before it’s suitable for a demonstration. I’ll do some of it, but in this section, you’re going to do the rest.</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist">
+<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-5-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-1" role="tab" aria-controls="tabset-5-1" aria-selected="true">Preprocessing</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-2" role="tab" aria-controls="tabset-5-2" aria-selected="false">Problem</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-3" role="tab" aria-controls="tabset-5-3" aria-selected="false">R solution</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-4" role="tab" aria-controls="tabset-5-4" aria-selected="false">Python solution</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-5-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-5-1-tab">
+<p>You don’t have to understand what this code is doing just yet.</p>
+<div class="cell">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://readxl.tidyverse.org">readxl</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://purrr.tidyverse.org/">purrr</a></span><span class="op">)</span> <span class="co"># This uses the map() function as a replacement for for loops. </span></span>
+<span><span class="co"># It's pretty sweet</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tibble.tidyverse.org/">tibble</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/download.file.html">download.file</a></span><span class="op">(</span><span class="st">"https://github.com/srvanderplas/datasets/raw/main/raw/2020_WHO_incidence_series.xls"</span>, <span class="st">"../data/2020_WHO_incidence_series.xls"</span><span class="op">)</span></span>
+<span><span class="va">sheets</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://readxl.tidyverse.org/reference/excel_sheets.html">excel_sheets</a></span><span class="op">(</span><span class="st">"../data/2020_WHO_incidence_series.xls"</span><span class="op">)</span></span>
+<span><span class="va">sheets</span> <span class="op">&lt;-</span> <span class="va">sheets</span><span class="op">[</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">sheets</span><span class="op">)</span><span class="op">)</span><span class="op">]</span> <span class="co"># get rid of 1st and last sheet name</span></span>
+<span></span>
+<span><span class="co"># This command says "for each sheet, read in the excel file with that sheet name"</span></span>
+<span><span class="co"># map_df means paste them all together into a single data frame</span></span>
+<span><span class="va">disease_incidence</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map_dfr.html">map_df</a></span><span class="op">(</span><span class="va">sheets</span>, <span class="op">~</span><span class="fu"><a href="https://readxl.tidyverse.org/reference/read_excel.html">read_xls</a></span><span class="op">(</span>path <span class="op">=</span><span class="st">"../data/2020_WHO_incidence_series.xls"</span>, sheet <span class="op">=</span> <span class="va">.</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># Alternately, we could write a loop:</span></span>
+<span><span class="va">disease_incidence2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/tibble.html">tibble</a></span><span class="op">(</span><span class="op">)</span> <span class="co"># Blank data frame</span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">sheets</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">disease_incidence2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/bind_rows.html">bind_rows</a></span><span class="op">(</span></span>
+<span>    <span class="va">disease_incidence2</span>, </span>
+<span>    <span class="fu"><a href="https://readxl.tidyverse.org/reference/read_excel.html">read_xls</a></span><span class="op">(</span>path <span class="op">=</span> <span class="st">"../data/2020_WHO_incidence_series.xls"</span>, sheet <span class="op">=</span> <span class="va">sheets</span><span class="op">[</span><span class="va">i</span><span class="op">]</span><span class="op">)</span></span>
+<span>  <span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="co"># export for Python (and R, if you want)</span></span>
+<span><span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/write_delim.html">write_csv</a></span><span class="op">(</span><span class="va">disease_incidence</span>, file <span class="op">=</span> <span class="st">"../data/2020_who_disease_incidence.csv"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-5-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-2-tab">
+<p>Download the exported data <a href="../data/2020_who_disease_incidence.csv">here</a> and import it into Python and R. Transform it into long format, so that there is a year column. You should end up with a table that has dimensions of approximately 6 columns and 83,000 rows (or something close to that).</p>
+<p>Can you make a line plot of cases of measles in Bangladesh over time?</p>
+<div class="cell">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">disease_incidence</span><span class="op">)</span></span>
+<span><span class="co">## # A tibble: 6 × 43</span></span>
+<span><span class="co">##   WHO_REGION ISO_code Cname    Disease `2018` `2017` `2016` `2015` `2014` `2013`</span></span>
+<span><span class="co">##   &lt;chr&gt;      &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;    &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;</span></span>
+<span><span class="co">## 1 EMR        AFG      Afghani… CRS         NA     NA     NA      0      0      0</span></span>
+<span><span class="co">## 2 EUR        ALB      Albania  CRS          0      0     NA     NA     NA      0</span></span>
+<span><span class="co">## 3 AFR        DZA      Algeria  CRS         NA     NA      0      0     NA     NA</span></span>
+<span><span class="co">## 4 EUR        AND      Andorra  CRS          0      0      0     NA     NA      0</span></span>
+<span><span class="co">## 5 AFR        AGO      Angola   CRS         NA     NA     NA     NA     NA     NA</span></span>
+<span><span class="co">## 6 AMR        ATG      Antigua… CRS          0      0      0      0      0      0</span></span>
+<span><span class="co">## # ℹ 33 more variables: `2012` &lt;dbl&gt;, `2011` &lt;dbl&gt;, `2010` &lt;dbl&gt;, `2009` &lt;dbl&gt;,</span></span>
+<span><span class="co">## #   `2008` &lt;dbl&gt;, `2007` &lt;dbl&gt;, `2006` &lt;dbl&gt;, `2005` &lt;dbl&gt;, `2004` &lt;dbl&gt;,</span></span>
+<span><span class="co">## #   `2003` &lt;dbl&gt;, `2002` &lt;dbl&gt;, `2001` &lt;dbl&gt;, `2000` &lt;dbl&gt;, `1999` &lt;dbl&gt;,</span></span>
+<span><span class="co">## #   `1998` &lt;dbl&gt;, `1997` &lt;dbl&gt;, `1996` &lt;dbl&gt;, `1995` &lt;dbl&gt;, `1994` &lt;dbl&gt;,</span></span>
+<span><span class="co">## #   `1993` &lt;dbl&gt;, `1992` &lt;dbl&gt;, `1991` &lt;dbl&gt;, `1990` &lt;dbl&gt;, `1989` &lt;dbl&gt;,</span></span>
+<span><span class="co">## #   `1988` &lt;dbl&gt;, `1987` &lt;dbl&gt;, `1986` &lt;dbl&gt;, `1985` &lt;dbl&gt;, `1984` &lt;dbl&gt;,</span></span>
+<span><span class="co">## #   `1983` &lt;dbl&gt;, `1982` &lt;dbl&gt;, `1981` &lt;dbl&gt;, `1980` &lt;dbl&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-5-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-3-tab">
+<div class="cell">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://readr.tidyverse.org">readr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org">tidyr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://stringr.tidyverse.org">stringr</a></span><span class="op">)</span></span>
+<span><span class="va">who_disease</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://readr.tidyverse.org/reference/read_delim.html">read_csv</a></span><span class="op">(</span><span class="st">"../data/2020_who_disease_incidence.csv"</span>, na <span class="op">=</span> <span class="st">"."</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">who_disease_long</span> <span class="op">&lt;-</span> <span class="va">who_disease</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html">pivot_longer</a></span><span class="op">(</span><span class="fu"><a href="https://tidyselect.r-lib.org/reference/starts_with.html">matches</a></span><span class="op">(</span><span class="st">"\\d{4}"</span><span class="op">)</span>, names_to <span class="op">=</span> <span class="st">"year"</span>, values_to <span class="op">=</span> <span class="st">"cases"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html">rename</a></span><span class="op">(</span>Country <span class="op">=</span> <span class="va">Cname</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>Disease <span class="op">=</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_replace.html">str_replace</a></span><span class="op">(</span><span class="va">Disease</span>, <span class="st">"CRS"</span>, <span class="st">"Congenital Rubella"</span><span class="op">)</span>,</span>
+<span>         year <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="va">year</span><span class="op">)</span>,</span>
+<span>         cases <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="va">cases</span><span class="op">)</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">who_disease_long</span>, <span class="va">Country</span> <span class="op">==</span> <span class="st">"Bangladesh"</span>, <span class="va">Disease</span> <span class="op">==</span> <span class="st">"measles"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">year</span>, y <span class="op">=</span> <span class="va">cases</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure"><p><img src="05-data-reshape_files/figure-html/tryitout-surveillance-cleaning-1.png" class="img-fluid figure-img" width="2100"></p>
+</figure>
+</div>
+</div>
+</div>
+</div>
+<div id="tabset-5-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-4-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnine <span class="im">import</span> <span class="op">*</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>who_disease <span class="op">=</span> pd.read_csv(<span class="st">"../data/2020_who_disease_incidence.csv"</span>, na_values <span class="op">=</span> [<span class="st">'NA'</span>, <span class="st">'NaN'</span>])</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>who_disease_long <span class="op">=</span> pd.melt(who_disease, id_vars <span class="op">=</span> [<span class="st">'WHO_REGION'</span>, <span class="st">'ISO_code'</span>, <span class="st">'Cname'</span>, <span class="st">'Disease'</span>], var_name <span class="op">=</span> <span class="st">'year'</span>, value_name <span class="op">=</span> <span class="st">'cases'</span>)</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Rename cname to country</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>who_disease_long <span class="op">=</span> who_disease_long.rename(columns<span class="op">=</span>{<span class="st">"Cname"</span>: <span class="st">"Country"</span>})</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>who_disease_long.replace(<span class="st">"CRS"</span>, <span class="st">"Congenital Rubella"</span>)</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>who_disease_long[<span class="st">'year'</span>] <span class="op">=</span> pd.to_numeric(who_disease_long[<span class="st">'year'</span>])</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>tmp <span class="op">=</span> who_disease_long.query(<span class="st">"Country=='Bangladesh' &amp; Disease == 'measles'"</span>)</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>ggplot(tmp, aes(x <span class="op">=</span> <span class="st">"year"</span>, y <span class="op">=</span> <span class="st">"cases"</span>)) <span class="op">+</span> geom_line()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section></section><section id="sec-gas-price-ex" class="level2" data-number="24.5"><h2 data-number="24.5" class="anchored" data-anchor-id="sec-gas-price-ex">
+<span class="header-section-number">24.5</span> Example: Gas Prices Data</h2>
+<p>The US Energy Information Administration tracks gasoline prices, with data available on a weekly level since late 1994. You can go to <a href="https://www.eia.gov/dnav/pet/hist/LeafHandler.ashx?n=pet&amp;s=emm_epm0u_pte_nus_dpg&amp;f=w">this site</a> to see a nice graph of gas prices, along with a corresponding table. <!-- (or you can look at the screenshot below, as I don't really trust that the site design will stay the same...) --></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="../images/wrangling/06_gas_prices_screenshot.png" class="img-fluid figure-img"></p>
+<figcaption>Gas prices at US EIA site</figcaption></figure>
+</div>
+<p>The data in the table is structured in a fairly easy to read form: each row is a month; each week in the month is a set of two columns: one for the date, one for the average gas price. While this data is definitely not tidy, it is readable.</p>
+<p>But looking at the chart at the top of the page, it’s not clear how we might get that chart from the data in the format it’s presented here: to get a chart like that, we would need a table where each row was a single date, and there were columns for date and price. That would be tidy form data, and so we have to get from the wide, human-readable form into the long, tidier form that we can graph.</p>
+<section id="setup-gas-price-data-cleaning" class="level3 callout-demo" data-number="24.5.1"><h3 data-number="24.5.1" class="anchored" data-anchor-id="setup-gas-price-data-cleaning">
+<span class="header-section-number">24.5.1</span> Setup: Gas Price Data Cleaning</h3>
+<p>For the next example, we’ll read the data in from the HTML table online and work to make it something we could e.g.&nbsp;plot. Before we can start cleaning, we have to read in the data:</p>
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist">
+<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-6-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-1" role="tab" aria-controls="tabset-6-1" aria-selected="true">R</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-2" role="tab" aria-controls="tabset-6-2" aria-selected="false">Python</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-6-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-6-1-tab">
+<div class="cell">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://rvest.tidyverse.org/">rvest</a></span><span class="op">)</span> <span class="co"># scrape data from the web</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://xml2.r-lib.org/">xml2</a></span><span class="op">)</span> <span class="co"># parse xml data</span></span>
+<span><span class="va">url</span> <span class="op">&lt;-</span> <span class="st">"https://www.eia.gov/dnav/pet/hist/LeafHandler.ashx?n=pet&amp;s=emm_epm0u_pte_nus_dpg&amp;f=w"</span></span>
+<span></span>
+<span><span class="va">htmldoc</span> <span class="op">&lt;-</span> <span class="fu"><a href="http://xml2.r-lib.org/reference/read_xml.html">read_html</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span></span>
+<span><span class="va">gas_prices_html</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rvest.tidyverse.org/reference/html_table.html">html_table</a></span><span class="op">(</span><span class="va">htmldoc</span>, fill <span class="op">=</span> <span class="cn">T</span>, trim <span class="op">=</span> <span class="cn">T</span><span class="op">)</span><span class="op">[[</span><span class="fl">5</span><span class="op">]</span><span class="op">]</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">11</span><span class="op">]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>First 6 rows of gas prices data as read into R</caption>
+<colgroup>
+<col style="width: 12%">
+<col style="width: 9%">
+<col style="width: 7%">
+<col style="width: 9%">
+<col style="width: 7%">
+<col style="width: 9%">
+<col style="width: 7%">
+<col style="width: 9%">
+<col style="width: 7%">
+<col style="width: 9%">
+<col style="width: 7%">
+</colgroup>
+<thead><tr class="header">
+<th style="text-align: left;">Year-Month</th>
+<th style="text-align: left;">Week 1</th>
+<th style="text-align: left;">Week 1</th>
+<th style="text-align: left;">Week 2</th>
+<th style="text-align: left;">Week 2</th>
+<th style="text-align: left;">Week 3</th>
+<th style="text-align: left;">Week 3</th>
+<th style="text-align: left;">Week 4</th>
+<th style="text-align: left;">Week 4</th>
+<th style="text-align: left;">Week 5</th>
+<th style="text-align: left;">Week 5</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Year-Month</td>
+<td style="text-align: left;">End Date</td>
+<td style="text-align: left;">Value</td>
+<td style="text-align: left;">End Date</td>
+<td style="text-align: left;">Value</td>
+<td style="text-align: left;">End Date</td>
+<td style="text-align: left;">Value</td>
+<td style="text-align: left;">End Date</td>
+<td style="text-align: left;">Value</td>
+<td style="text-align: left;">End Date</td>
+<td style="text-align: left;">Value</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">1994-Nov</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">11/28</td>
+<td style="text-align: left;">1.175</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">1994-Dec</td>
+<td style="text-align: left;">12/05</td>
+<td style="text-align: left;">1.143</td>
+<td style="text-align: left;">12/12</td>
+<td style="text-align: left;">1.118</td>
+<td style="text-align: left;">12/19</td>
+<td style="text-align: left;">1.099</td>
+<td style="text-align: left;">12/26</td>
+<td style="text-align: left;">1.088</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">1995-Jan</td>
+<td style="text-align: left;">01/02</td>
+<td style="text-align: left;">1.104</td>
+<td style="text-align: left;">01/09</td>
+<td style="text-align: left;">1.111</td>
+<td style="text-align: left;">01/16</td>
+<td style="text-align: left;">1.102</td>
+<td style="text-align: left;">01/23</td>
+<td style="text-align: left;">1.110</td>
+<td style="text-align: left;">01/30</td>
+<td style="text-align: left;">1.109</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">1995-Feb</td>
+<td style="text-align: left;">02/06</td>
+<td style="text-align: left;">1.103</td>
+<td style="text-align: left;">02/13</td>
+<td style="text-align: left;">1.099</td>
+<td style="text-align: left;">02/20</td>
+<td style="text-align: left;">1.093</td>
+<td style="text-align: left;">02/27</td>
+<td style="text-align: left;">1.101</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div id="tabset-6-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-2-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>gas_prices_html <span class="op">=</span> pd.read_html(<span class="st">"https://www.eia.gov/dnav/pet/hist/LeafHandler.ashx?n=pet&amp;s=emm_epm0u_pte_nus_dpg&amp;f=w"</span>)[<span class="dv">4</span>]</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="co">## ImportError: Missing optional dependency 'lxml'.  Use pip or conda to install lxml.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>NameError: name ‘gas_prices_html’ is not defined</p>
+</div>
+</div>
+</div>
+</section><div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Try it out: Manual Formatting in Excel
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist">
+<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-7-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-1" role="tab" aria-controls="tabset-7-1" aria-selected="true">Problem</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-2" role="tab" aria-controls="tabset-7-2" aria-selected="false">Solution</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-3" role="tab" aria-controls="tabset-7-3" aria-selected="false">Video</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-7-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-7-1-tab">
+<p>An excel spreadsheet of the data as downloaded in January 2023 is available <a href="https://github.com/srvanderplas/datasets/raw/main/raw/gas_prices_updated.xlsx">here</a>. Can you manually format the data (or even just the first year or two of data) into a long, skinny format?</p>
+<p>What steps are involved?</p>
+</div>
+<div id="tabset-7-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-2-tab">
+<ol type="1">
+<li><p>Copy the year-month column, creating one vertical copy for every set of columns</p></li>
+<li><p>Move each block of two columns down to the corresponding vertical copy</p></li>
+<li><p>Delete empty rows</p></li>
+<li><p>Format dates</p></li>
+<li><p>Delete empty columns</p></li>
+</ol>
+</div>
+<div id="tabset-7-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-3-tab">
+<div id="fig-excel-demo-video" class="quarto-float quarto-figure quarto-figure-center anchored">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-excel-demo-video-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<iframe class="youtube-video-container" width="736" height="414" src="https://www.youtube.com/embed/n70eAKJmzRo" title="06 Tidying Gas Price Data (in Excel)" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen="">
+</iframe>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-excel-demo-video-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;24.5: Here is a video of me doing most of the cleaning steps - I skipped out on cleaning up the dates because Excel is miserable for working with dates.
+</figcaption></figure>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Try it out: Formatting with Pivot Operations
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<div class="tabset-margin-container"></div><div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist">
+<li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-8-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-1" role="tab" aria-controls="tabset-8-1" aria-selected="true">Problem</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-8-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-2" role="tab" aria-controls="tabset-8-2" aria-selected="false">Sketch</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-8-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-3" role="tab" aria-controls="tabset-8-3" aria-selected="false">R solution</a></li>
+<li class="nav-item" role="presentation"><a class="nav-link" id="tabset-8-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-8-4" role="tab" aria-controls="tabset-8-4" aria-selected="false">Python solution</a></li>
+</ul>
+<div class="tab-content">
+<div id="tabset-8-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-8-1-tab">
+<p>Can you format the data in a long-skinny format for plotting using pivot operations without any database merges?</p>
+<p>Write out a list of steps, and for each step, sketch out what the data frame should look like.</p>
+<p>How do your steps compare to the steps you used for the manual approach?</p>
+</div>
+<div id="tabset-8-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-8-2-tab">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="../images/wrangling/gas-prices-steps.png" class="img-fluid figure-img" alt="Step 1: set row names to be more descriptive and remove header row. Step 2: Remove empty columns and pivot to long form, with dates and values in the same column and a description column that indicates what type of data is in the value column. Step 3: separate the week and variable information into different columns, discarding the week label. Step 4: pivot wider, so that date and value information are each in a single column. Step 5: remove rows with no values and create a yyyy-mm-dd format date. Step 6: Convert date and value into appropriate types (date, numeric)."></p>
+<figcaption>Steps to work through the gas prices data cleaning process</figcaption></figure>
+</div>
+</div>
+<div id="tabset-8-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-8-3-tab">
+<div class="cell">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://magrittr.tidyverse.org">magrittr</a></span><span class="op">)</span> <span class="co"># pipe friendly operations</span></span>
+<span></span>
+<span><span class="co"># Function to clean up column names</span></span>
+<span><span class="co"># Written as an extra function because it makes the code a lot cleaner</span></span>
+<span><span class="va">fix_gas_names</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="co"># Add extra header row information</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="va">x</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">""</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Date"</span>, <span class="st">"Value"</span><span class="op">)</span>, times <span class="op">=</span> <span class="fl">5</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="co"># trim leading/trailing spaces</span></span>
+<span>    <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_trim.html">str_trim</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>    <span class="co"># replace characters in names that aren't ok for variables in R</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/make.names.html">make.names</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="co"># Clean up the table a bit</span></span>
+<span><span class="va">gas_prices_raw</span> <span class="op">&lt;-</span> <span class="va">gas_prices_html</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://magrittr.tidyverse.org/reference/aliases.html">set_names</a></span><span class="op">(</span><span class="fu">fix_gas_names</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">.</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="co"># remove first row that is really an extra header row</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">Year.Month</span> <span class="op">!=</span> <span class="st">"Year-Month"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="co"># get rid of empty rows</span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">Year.Month</span> <span class="op">!=</span> <span class="st">""</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">gas_prices_raw</span><span class="op">)</span></span>
+<span><span class="co">## # A tibble: 6 × 11</span></span>
+<span><span class="co">##   Year.Month Week.1.Date Week.1.Value Week.2.Date Week.2.Value Week.3.Date</span></span>
+<span><span class="co">##   &lt;chr&gt;      &lt;chr&gt;       &lt;chr&gt;        &lt;chr&gt;       &lt;chr&gt;        &lt;chr&gt;      </span></span>
+<span><span class="co">## 1 1994-Nov   ""          ""           ""          ""           ""         </span></span>
+<span><span class="co">## 2 1994-Dec   "12/05"     "1.143"      "12/12"     "1.118"      "12/19"    </span></span>
+<span><span class="co">## 3 1995-Jan   "01/02"     "1.104"      "01/09"     "1.111"      "01/16"    </span></span>
+<span><span class="co">## 4 1995-Feb   "02/06"     "1.103"      "02/13"     "1.099"      "02/20"    </span></span>
+<span><span class="co">## 5 1995-Mar   "03/06"     "1.103"      "03/13"     "1.096"      "03/20"    </span></span>
+<span><span class="co">## 6 1995-Apr   "04/03"     "1.116"      "04/10"     "1.134"      "04/17"    </span></span>
+<span><span class="co">## # ℹ 5 more variables: Week.3.Value &lt;chr&gt;, Week.4.Date &lt;chr&gt;,</span></span>
+<span><span class="co">## #   Week.4.Value &lt;chr&gt;, Week.5.Date &lt;chr&gt;, Week.5.Value &lt;chr&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="co"># gas_prices_raw &lt;- select(gas_prices_raw, -c(X, Date))</span></span>
+<span><span class="va">gas_prices_long</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html">pivot_longer</a></span><span class="op">(</span><span class="va">gas_prices_raw</span>, <span class="op">-</span><span class="va">Year.Month</span>,</span>
+<span>                                names_to <span class="op">=</span> <span class="st">"variable"</span>, values_to <span class="op">=</span> <span class="st">"value"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">gas_prices_long</span><span class="op">)</span></span>
+<span><span class="co">## # A tibble: 6 × 3</span></span>
+<span><span class="co">##   Year.Month variable     value</span></span>
+<span><span class="co">##   &lt;chr&gt;      &lt;chr&gt;        &lt;chr&gt;</span></span>
+<span><span class="co">## 1 1994-Nov   Week.1.Date  ""   </span></span>
+<span><span class="co">## 2 1994-Nov   Week.1.Value ""   </span></span>
+<span><span class="co">## 3 1994-Nov   Week.2.Date  ""   </span></span>
+<span><span class="co">## 4 1994-Nov   Week.2.Value ""   </span></span>
+<span><span class="co">## 5 1994-Nov   Week.3.Date  ""   </span></span>
+<span><span class="co">## 6 1994-Nov   Week.3.Value ""</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">gas_prices_sep</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tidyr.tidyverse.org/reference/separate.html">separate</a></span><span class="op">(</span><span class="va">gas_prices_long</span>, <span class="va">variable</span>, into <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"extra"</span>, <span class="st">"week"</span>, <span class="st">"variable"</span><span class="op">)</span>, sep <span class="op">=</span> <span class="st">"\\."</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="op">-</span><span class="va">extra</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">gas_prices_sep</span><span class="op">)</span></span>
+<span><span class="co">## # A tibble: 6 × 4</span></span>
+<span><span class="co">##   Year.Month week  variable value</span></span>
+<span><span class="co">##   &lt;chr&gt;      &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;</span></span>
+<span><span class="co">## 1 1994-Nov   1     Date     ""   </span></span>
+<span><span class="co">## 2 1994-Nov   1     Value    ""   </span></span>
+<span><span class="co">## 3 1994-Nov   2     Date     ""   </span></span>
+<span><span class="co">## 4 1994-Nov   2     Value    ""   </span></span>
+<span><span class="co">## 5 1994-Nov   3     Date     ""   </span></span>
+<span><span class="co">## 6 1994-Nov   3     Value    ""</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">gas_prices_wide</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_wider.html">pivot_wider</a></span><span class="op">(</span><span class="va">gas_prices_sep</span>, id_cols <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Year.Month"</span>, <span class="st">"week"</span><span class="op">)</span>, names_from <span class="op">=</span> <span class="va">variable</span>, values_from <span class="op">=</span> <span class="va">value</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">gas_prices_wide</span><span class="op">)</span></span>
+<span><span class="co">## # A tibble: 6 × 4</span></span>
+<span><span class="co">##   Year.Month week  Date    Value  </span></span>
+<span><span class="co">##   &lt;chr&gt;      &lt;chr&gt; &lt;chr&gt;   &lt;chr&gt;  </span></span>
+<span><span class="co">## 1 1994-Nov   1     ""      ""     </span></span>
+<span><span class="co">## 2 1994-Nov   2     ""      ""     </span></span>
+<span><span class="co">## 3 1994-Nov   3     ""      ""     </span></span>
+<span><span class="co">## 4 1994-Nov   4     "11/28" "1.175"</span></span>
+<span><span class="co">## 5 1994-Nov   5     ""      ""     </span></span>
+<span><span class="co">## 6 1994-Dec   1     "12/05" "1.143"</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">gas_prices_date</span> <span class="op">&lt;-</span> <span class="va">gas_prices_wide</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nchar.html">nchar</a></span><span class="op">(</span><span class="va">Value</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/separate.html">separate</a></span><span class="op">(</span><span class="va">Year.Month</span>, into <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Year"</span>, <span class="st">"Month"</span><span class="op">)</span>, sep <span class="op">=</span> <span class="st">"-"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>Date <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="va">Year</span>, <span class="va">Date</span>, sep <span class="op">=</span> <span class="st">"/"</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
+<span>  </span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">gas_prices_date</span><span class="op">)</span></span>
+<span><span class="co">## # A tibble: 6 × 2</span></span>
+<span><span class="co">##   Date       Value</span></span>
+<span><span class="co">##   &lt;chr&gt;      &lt;chr&gt;</span></span>
+<span><span class="co">## 1 1994/11/28 1.175</span></span>
+<span><span class="co">## 2 1994/12/05 1.143</span></span>
+<span><span class="co">## 3 1994/12/12 1.118</span></span>
+<span><span class="co">## 4 1994/12/19 1.099</span></span>
+<span><span class="co">## 5 1994/12/26 1.088</span></span>
+<span><span class="co">## 6 1995/01/02 1.104</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://lubridate.tidyverse.org">lubridate</a></span><span class="op">)</span></span>
+<span><span class="va">gas_prices</span> <span class="op">&lt;-</span> <span class="va">gas_prices_date</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>Date <span class="op">=</span> <span class="fu"><a href="https://lubridate.tidyverse.org/reference/ymd.html">ymd</a></span><span class="op">(</span><span class="va">Date</span><span class="op">)</span>,</span>
+<span>         Price.per.gallon <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html">as.numeric</a></span><span class="op">(</span><span class="va">Value</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="op">-</span><span class="va">Value</span><span class="op">)</span></span>
+<span>  </span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">gas_prices</span><span class="op">)</span></span>
+<span><span class="co">## # A tibble: 6 × 2</span></span>
+<span><span class="co">##   Date       Price.per.gallon</span></span>
+<span><span class="co">##   &lt;date&gt;                &lt;dbl&gt;</span></span>
+<span><span class="co">## 1 1994-11-28             1.18</span></span>
+<span><span class="co">## 2 1994-12-05             1.14</span></span>
+<span><span class="co">## 3 1994-12-12             1.12</span></span>
+<span><span class="co">## 4 1994-12-19             1.10</span></span>
+<span><span class="co">## 5 1994-12-26             1.09</span></span>
+<span><span class="co">## 6 1995-01-02             1.10</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+<div id="tabset-8-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-8-4-tab">
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> fix_gas_names(x):</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  xx <span class="op">=</span> pd.Series(x)</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>  <span class="co"># add extra stuff to x</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>  y <span class="op">=</span> [<span class="st">"Date"</span>, <span class="st">"Value"</span>]<span class="op">*</span><span class="dv">5</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>  y <span class="op">=</span> [<span class="st">""</span>, <span class="op">*</span>y, <span class="st">""</span>, <span class="st">""</span>]</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>  names <span class="op">=</span> xx <span class="op">+</span> <span class="st">' '</span> <span class="op">+</span> y</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>  names <span class="op">=</span> names.<span class="bu">str</span>.strip()</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>  names <span class="op">=</span> names.<span class="bu">str</span>.replace(<span class="st">" "</span>, <span class="st">"."</span>)</span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> <span class="bu">list</span>(names)</span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>gas_prices_raw <span class="op">=</span> gas_prices_html.copy()</span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'gas_prices_html' is not defined</span></span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a><span class="co"># What do column names look like?</span></span>
+<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a>gas_prices_raw.columns <span class="co"># Multi-Index </span></span>
+<span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'gas_prices_raw' is not defined</span></span>
+<span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a><span class="co"># (https://stackoverflow.com/questions/25189575/pandas-dataframe-select-columns-in-multiindex)</span></span>
+<span id="cb20-21"><a href="#cb20-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-22"><a href="#cb20-22" aria-hidden="true" tabindex="-1"></a>colnames <span class="op">=</span> fix_gas_names(gas_prices_raw.columns.get_level_values(<span class="dv">0</span>))</span>
+<span id="cb20-23"><a href="#cb20-23" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'gas_prices_raw' is not defined</span></span>
+<span id="cb20-24"><a href="#cb20-24" aria-hidden="true" tabindex="-1"></a>colnames</span>
+<span id="cb20-25"><a href="#cb20-25" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'colnames' is not defined</span></span>
+<span id="cb20-26"><a href="#cb20-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-27"><a href="#cb20-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Set new column names</span></span>
+<span id="cb20-28"><a href="#cb20-28" aria-hidden="true" tabindex="-1"></a>gas_prices_raw.columns <span class="op">=</span> colnames</span>
+<span id="cb20-29"><a href="#cb20-29" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'colnames' is not defined</span></span>
+<span id="cb20-30"><a href="#cb20-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-31"><a href="#cb20-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Drop any rows with NaN in Year-Month</span></span>
+<span id="cb20-32"><a href="#cb20-32" aria-hidden="true" tabindex="-1"></a>gas_prices_raw <span class="op">=</span> gas_prices_raw.dropna(axis <span class="op">=</span> <span class="dv">0</span>, subset <span class="op">=</span> [<span class="st">'Year-Month'</span>])</span>
+<span id="cb20-33"><a href="#cb20-33" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'gas_prices_raw' is not defined</span></span>
+<span id="cb20-34"><a href="#cb20-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-35"><a href="#cb20-35" aria-hidden="true" tabindex="-1"></a><span class="co"># Drop extra columns on the end</span></span>
+<span id="cb20-36"><a href="#cb20-36" aria-hidden="true" tabindex="-1"></a>gas_prices_raw <span class="op">=</span> gas_prices_raw.iloc[:,<span class="dv">0</span>:<span class="dv">11</span>]</span>
+<span id="cb20-37"><a href="#cb20-37" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'gas_prices_raw' is not defined</span></span>
+<span id="cb20-38"><a href="#cb20-38" aria-hidden="true" tabindex="-1"></a>gas_prices_raw.head()</span>
+<span id="cb20-39"><a href="#cb20-39" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'gas_prices_raw' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>gas_prices_long <span class="op">=</span> pd.melt(gas_prices_raw, id_vars <span class="op">=</span> <span class="st">'Year-Month'</span>, var_name <span class="op">=</span> <span class="st">'variable'</span>)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'gas_prices_raw' is not defined</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>gas_prices_long.head()</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'gas_prices_long' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>gas_prices_sep <span class="op">=</span> gas_prices_long</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'gas_prices_long' is not defined</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>gas_prices_sep[[<span class="st">"extra"</span>, <span class="st">"week"</span>, <span class="st">"variable"</span>]] <span class="op">=</span> gas_prices_sep.variable.<span class="bu">str</span>.split(<span class="vs">r'\.'</span>, expand <span class="op">=</span> <span class="va">True</span>)</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'gas_prices_sep' is not defined</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>gas_prices_sep <span class="op">=</span> gas_prices_sep.drop(<span class="st">'extra'</span>, axis <span class="op">=</span> <span class="dv">1</span>)</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'gas_prices_sep' is not defined</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>gas_prices_sep.head()</span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'gas_prices_sep' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>gas_prices_wide <span class="op">=</span> pd.pivot(gas_prices_sep, index<span class="op">=</span>[<span class="st">'Year-Month'</span>, <span class="st">'week'</span>], columns <span class="op">=</span> <span class="st">'variable'</span>, values <span class="op">=</span> <span class="st">'value'</span>)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'gas_prices_sep' is not defined</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>gas_prices_wide.head()</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'gas_prices_wide' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>gas_prices_date <span class="op">=</span> gas_prices_wide.dropna(axis <span class="op">=</span> <span class="dv">0</span>, subset <span class="op">=</span> [<span class="st">'Date'</span>, <span class="st">'Value'</span>]).reset_index()</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'gas_prices_wide' is not defined</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>gas_prices_date[[<span class="st">'Year'</span>, <span class="st">'Month'</span>]] <span class="op">=</span> gas_prices_date[<span class="st">'Year-Month'</span>].<span class="bu">str</span>.split(<span class="vs">r'-'</span>, expand <span class="op">=</span> <span class="va">True</span>)</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'gas_prices_date' is not defined</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>gas_prices_date[<span class="st">'Date'</span>] <span class="op">=</span> gas_prices_date.Year <span class="op">+</span> <span class="st">'/'</span> <span class="op">+</span> gas_prices_date.Date</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'gas_prices_date' is not defined</span></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>gas_prices_date[<span class="st">'Date'</span>] <span class="op">=</span> pd.to_datetime(gas_prices_date.Date)</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'gas_prices_date' is not defined</span></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>gas_prices_date.head()</span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'gas_prices_date' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>gas_prices <span class="op">=</span> gas_prices_date.drop([<span class="st">"Year-Month"</span>, <span class="st">"Year"</span>, <span class="st">"Month"</span>, <span class="st">"week"</span>], axis <span class="op">=</span> <span class="dv">1</span>)</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'gas_prices_date' is not defined</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>gas_prices[<span class="st">'Price_per_gallon'</span>] <span class="op">=</span> gas_prices.Value</span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'gas_prices' is not defined</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>gas_prices <span class="op">=</span> gas_prices.drop(<span class="st">"Value"</span>, axis <span class="op">=</span> <span class="dv">1</span>)</span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'gas_prices' is not defined</span></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>gas_prices.head()</span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'gas_prices' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p>We’ll return to this example in <a href="#sec-gas-price-ex2" class="quarto-xref"><span class="quarto-unresolved-ref">sec-gas-price-ex2</span></a> to demonstrate how you can use pivot operations and database merges together to complete this operation in a slightly different way.</p>
+</section><section id="other-resources" class="level2 callout-learnmore" data-number="24.6"><h2 data-number="24.6" class="anchored" data-anchor-id="other-resources">
+<span class="header-section-number">24.6</span> Other resources</h2>
+<p><span class="citation" data-cites="doughertyCleanMessyData2021"><a href="#ref-doughertyCleanMessyData2021" role="doc-biblioref">[5]</a></span> - very nice task-oriented chapter that’s below the level addressed in this course but still useful</p>
+</section><section id="references" class="level2" data-number="24.7"><h2 data-number="24.7" class="anchored" data-anchor-id="references">
+<span class="header-section-number">24.7</span> References</h2>
+
+
+<div id="refs" class="references csl-bib-body" data-entry-spacing="0" role="list">
+<div id="ref-mccallumBadDataHandbook2013" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[1] </div>
+<div class="csl-right-inline">Q. E. McCallum, <em>Bad data handbook: Mapping the world of data problems</em>, 1. ed. Beijing, Köln: O’Reilly, 2013. </div>
+</div>
+<div id="ref-lowndesTidyDataEfficiency2020" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[2] </div>
+<div class="csl-right-inline">J. Lowndes and A. Horst, <span>“Tidy data for efficiency, reproducibility, and collaboration,”</span> <em>Openscapes</em>. Oct. 2020 [Online]. Available: <a href="https://www.openscapes.org/blog/2020/10/12/tidy-data//">https://www.openscapes.org/blog/2020/10/12/tidy-data//</a>. [Accessed: Jul. 21, 2022]</div>
+</div>
+<div id="ref-internationalbusinessmachinesRisksUsingSpreadsheets2018" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[3] </div>
+<div class="csl-right-inline">International Business Machines, <span>“The risks of using spreadsheets for statistical analysis,”</span> <em>The risks of using spreadsheets for statistical analysis</em>. Nov. 2018 [Online]. Available: <a href="https://web.archive.org/web/20240415181938/https://www.statwks.com/wp-content/uploads/2018/11/ytw03240-usen-03%5C_YTW03240USEN.pdf">https://web.archive.org/web/20240415181938/https://www.statwks.com/wp-content/uploads/2018/11/ytw03240-usen-03\_YTW03240USEN.pdf</a>. [Accessed: Nov. 03, 2024]</div>
+</div>
+<div id="ref-obeirneHorrorStories2020" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[4] </div>
+<div class="csl-right-inline">P. O’Beirne, F. Hermans, T. Cheng, and M. P. Campbell, <span>“Horror <span>Stories</span>,”</span> <em>European Spreadsheet Risks Interest Group Horror Stories</em>. Oct. 2020 [Online]. Available: <a href="https://eusprig.org/research-info/horror-stories/">https://eusprig.org/research-info/horror-stories/</a>. [Accessed: Nov. 03, 2024]</div>
+</div>
+<div id="ref-doughertyCleanMessyData2021" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[5] </div>
+<div class="csl-right-inline">J. Dougherty and I. Ilyankou, <span>“Clean <span>Up</span> <span>Messy</span> <span>Data</span>,”</span> in <em>Hands-<span>On</span> <span>Data</span> <span>Visualization</span></em>, 1st ed., O’Reilly Media, 2021, p. 480 [Online]. Available: <a href="https://handsondataviz.org/">https://handsondataviz.org/</a>. [Accessed: Nov. 03, 2024]</div>
+</div>
+</div>
+</section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+    const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+    const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+    let newTheme = '';
+    if(darkModeDefault) {
+      newTheme = isAlternate ? baseTheme : alternateTheme;
+    } else {
+      newTheme = isAlternate ? alternateTheme : baseTheme;
+    }
+    const changeGiscusTheme = () => {
+      // From: https://github.com/giscus/giscus/issues/336
+      const sendMessage = (message) => {
+        const iframe = document.querySelector('iframe.giscus-frame');
+        if (!iframe) return;
+        iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+      }
+      sendMessage({
+        setConfig: {
+          theme: newTheme
+        }
+      });
+    }
+    const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+    if (isGiscussLoaded) {
+      changeGiscusTheme();
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  const darkModeDefault = false;
+  let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+    toggleGiscusIfUsed(toAlternate, darkModeDefault);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/srvanderplas\.github\.io\/stat-computing-r-python\/");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script><input type="hidden" id="giscus-base-theme" value="light"><input type="hidden" id="giscus-alt-theme" value="dark"><script>
+function loadGiscusWhenReady() {
+  // Function to get the theme based on body class
+  const getTheme = () => {
+    const baseTheme = document.getElementById('giscus-base-theme').value;
+    const altTheme = document.getElementById('giscus-alt-theme').value;
+    return document.body.classList.contains('quarto-dark') ? altTheme : baseTheme;
+  };
+  // Create the Giscus script and add it to the desired location
+  const loadGiscus = () => {
+    const script = document.createElement("script");
+    script.src = "https://giscus.app/client.js";
+    script.async = true;
+    script.dataset.repo = "srvanderplas/stat-computing-r-python";
+    script.dataset.repoId = "R_kgDOIvwd2g";
+    script.dataset.category = "General";
+    script.dataset.categoryId = "DIC_kwDOIvwd2s4CTksR";
+    script.dataset.mapping = "pathname";
+    script.dataset.reactionsEnabled = "1";
+    script.dataset.emitMetadata = "0";
+    script.dataset.inputPosition = "top";
+    script.dataset.theme = getTheme();
+    script.dataset.lang = "en";
+    script.crossOrigin = "anonymous";
+    // Append the script to the desired div instead of at the end of the body
+    document.getElementById("quarto-content").appendChild(script);
+  };
+  // MutationObserver to detect when the 'quarto-light' or 'quarto-dark' class is added to the body
+  const observer = new MutationObserver((mutations) => {
+    for (const mutation of mutations) {
+      if (mutation.type === "attributes" && mutation.attributeName === "class") {
+        if (document.body.classList.contains('quarto-light') || document.body.classList.contains('quarto-dark')) {
+          loadGiscus();
+          observer.disconnect(); // Stop observing once Giscus is loaded
+          break;
+        }
+      }
+    }
+  });
+  // Start observing the body for class attribute changes
+  observer.observe(document.body, {
+    attributes: true,
+    attributeFilter: ["class"],
+  });
+}
+loadGiscusWhenReady();
+</script><nav class="page-navigation column-body"><div class="nav-page nav-page-previous">
+      <a href="../part-wrangling/04-strings.html" class="pagination-link" aria-label="Working with Strings">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Working with Strings</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../part-wrangling/06-data-join.html" class="pagination-link" aria-label="Joining Data">
+        <span class="nav-page-text"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Joining Data</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+<footer class="footer"><div class="nav-footer">
+    <div class="nav-footer-left">
+<p>Copyright 2025, Susan Vanderplas</p>
+</div>   
+    <div class="nav-footer-center">
+      &nbsp;
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/srvanderplas/stat-computing-r-python/edit/main/part-wrangling/05-data-reshape.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li></ul></div></div>
+    <div class="nav-footer-right">
+      <ul class="footer-items list-unstyled">
+<li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/srvanderplas">
+      <i class="bi bi-github" role="img" aria-label="GitHub">
+</i> 
+    </a>
+  </li>  
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://datavis.social/%40srvanderplas">
+      <i class="bi bi-mastodon" role="img" aria-label="Mastodon">
+</i> 
+    </a>
+  </li>  
+    <li class="nav-item compact">
+    <a class="nav-link" href="https://%40srvanderplas.bsky.social">
+      <i class="bi bi-bluesky" role="img" aria-label="Bluesky">
+</i> 
+    </a>
+  </li>  
+</ul>
+</div>
+  </div>
+</footer>
+
+
+</body></html>

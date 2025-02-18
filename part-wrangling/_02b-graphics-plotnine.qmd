@@ -1,0 +1,211 @@
+---
+title: "plotnine examples"
+---
+
+### Initial plots
+
+#### Py - plotnine
+
+
+```{python}
+from plotnine import ggplot,aes,geom_point
+ggplot(data = penguins, 
+       mapping = aes(x = "body_mass_g", y = "bill_length_mm")) +\
+  geom_point()
+```
+
+Here, we start with a basic plot of bill length (mm) against body mass (g). 
+We can see that there is an overall positive relationship between the two - penguins with higher body mass tend to have longer bills as well. 
+However, it is also clear that there is considerable variation that is not explained by this relationship: there is a group of penguins who seem to have lower body mass and longer bills in the top left quadrant of the plot. 
+
+With `ggplot2`/`plotnine`, you begin to construct a plot by identifying the primary relationship of interest: you define what variables go on each axis (body mass on x, bill length on y) and then create a layer that shows the actual data (`geom_point`). 
+Note that the mapping argument must be explicitly labeled in python because of some differences in requirements for function arguments between R and python. 
+In addition, when in python, the variable names must be passed in as strings.
+
+We can extend this process a bit by adding in additional information from the dataset and mapping that information to an additional variable - for instance, we can color the points by the species of penguin.
+
+```{python}
+ggplot(data = penguins, 
+       mapping = aes(x = "body_mass_g", y = "bill_length_mm", color = "species")) +\
+  geom_point()
+```
+
+Adding in this additional information allows us to see that chinstrap penguins are the cluster we noticed in the previous plot. 
+Adelie and gentoo penguins have a similar relationship between body mass and bill length, but chinstrap penguins tend to have longer bills and lower body mass.
+
+Each variable in `ggplot2`/`plotnine` is **mapped** to a plot feature using the `aes()` (aesthetic) function. 
+This function automatically constructs a scale that e.g. converts between body mass and the x axis of the plot, which is measured on a (0,1) scale for plotting.
+Similarly, when we add a categorical variable and color the points of the plot by that variable, the mapping function automatically decides that Adelie penguins will be plotted in red, Chinstrap in green, and Gentoo in blue.
+Notice that the shades are slightly different, as `plotnine` uses `matplotlib` as a base plotting library, and the default colors are part of that library.
+
+That is, `ggplot2`/`plotnine` allows the programmer to focus on the relationship between the data and the plot, without having to get into the specifics of how that mapping occurs.
+This allows the programmer to consider these relationships when constructing the plot, choosing the relationships which are most important for the audience and mapping those variables to important dimensions of the plot, such as the x and y axis.
+
+
+### Example: Generations of Pokemon
+
+#### Plotnine {-}
+
+As of January 2023, pie charts are [still not supported in plotnine](https://github.com/has2k1/plotnine/issues/10). So this demo will fall a bit flat. 
+
+```{python gg-bar-py}
+from plotnine import *
+plt.cla() # clear out matplotlib buffer
+
+ggplot(poke, aes(x = "1", fill = "generation")) + geom_bar(position = "stack")
+```
+
+
+### plotnine {.unnumbered}
+
+```{python  txhousing-p9-intro, warning = F}
+from plotnine import *
+from plotnine.data import txhousing
+
+ggplot(txhousing, aes(x = "date", y = "median")) + geom_point(alpha = .1)
+```
+
+
+#### plotnine {.unnumbered}
+
+```{python, warning = F}
+ggplot(txhousing, aes(x = "date", y = "median")) +\
+geom_point() +\
+xlab("Date") + ylab("Median Home Price") +\
+ggtitle("Texas Housing Prices")
+```
+
+
+#### plotnine {.unnumbered}
+
+```{python, warning = F}
+ggplot(txhousing, aes(x = "date", y = "median")) + geom_point() +\
+geom_smooth(method = "lm", color = "blue") +\
+xlab("Date") + ylab("Median Home Price") +\
+ggtitle("Texas Housing Prices")
+# By default, geom_smooth in plotnine has a black line you can't see well
+```
+
+We can also use a loess (locally weighted) smooth:
+
+```{python}
+ggplot(txhousing, aes(x = "date", y = "median")) + geom_point() +\
+geom_smooth(method = "loess", color = "blue") +\
+xlab("Date") + ylab("Median Home Price") +\
+ggtitle("Texas Housing Prices")
+```
+
+
+#### plotnine {.unnumbered}
+
+```{python, warning = F}
+ggplot(txhousing, aes(x = "date", y = "median", color = "city")) +\
+geom_point() +\
+geom_smooth(method = "loess") +\
+xlab("Date") + ylab("Median Home Price") +\
+ggtitle("Texas Housing Prices")
+```
+
+That's a really crowded graph! It's slightly easier if we just take the points away and only show the statistics, but there are still way too many cities to be able to tell what shade matches which city.
+
+```{python, warning = F}
+ggplot(txhousing, aes(x = "date", y = "median", color = "city")) +\
+geom_smooth(method = "loess") +\
+theme(subplots_adjust={'right': 0.5}) +\
+xlab("Date") + ylab("Median Home Price") +\
+ggtitle("Texas Housing Prices")
+```
+
+
+
+#### plotnine {.unnumbered}
+
+```{python, warning = F}
+citylist = ["Houston", "Austin", "Dallas", "Fort Worth", "San Antonio"]
+housingsub = txhousing[txhousing['city'].isin(citylist)]
+
+ggplot(housingsub, aes(x = "date", y = "median", color = "city")) +\
+geom_point() +\
+geom_smooth(method = "loess") +\
+theme(subplots_adjust={'right': 0.75}) +\
+xlab("Date") + ylab("Median Home Price") +\
+ggtitle("Texas Housing Prices")
+```
+
+Here's the facetted version of the chart:
+
+```{python, warning = F}
+ggplot(housingsub, aes(x = "date", y = "median")) +\
+geom_point() +\
+geom_smooth(method = "loess", color = "blue") +\
+facet_wrap("city") +\
+xlab("Date") + ylab("Median Home Price") +\
+ggtitle("Texas Housing Prices")
+```
+
+#### plotnine {.unnumbered}
+
+```{python, warning = F}
+citylist = ["Houston", "Austin", "Dallas", "Fort Worth", "San Antonio"]
+housingsub = txhousing[txhousing['city'].isin(citylist)]
+
+( # This is used to group lines together in python
+ggplot(housingsub, aes(x = "date", y = "median", size = "sales"))
++ geom_point(alpha = .15) # Make points transparent
++ geom_smooth(method = "loess")
++ facet_wrap("city")
++ guides(size = guide_legend(title = 'Number of Sales'))
++ xlab("Date") + ylab("Median Home Price")
++ ggtitle("Texas Housing Prices")
+)
+```
+
+Not all of the features we used in R are available in plotnine in Python (in part because of limitations of the underlying graphics interface that plotnine uses). This does somewhat limit the customization we can do with python, but for the most part we can still get the same basic information back out.
+
+
+#### plotnine {.unnumbered}
+
+```{python, warning = F}
+houston = txhousing[txhousing.city=="Houston"]
+
+(
+  ggplot(houston, aes(x = "date", y = "inventory", size = "sales"))
+  + geom_point(shape = 'o', fill = 'none')
+  + xlab("Date") + ylab("Median Home Price")
+  + guides(size = guide_legend(title = "Number of Sales"))
+  + ggtitle("Houston Housing Data")
+)
+```
+
+In plotnine, we have to use [matplotlib marker syntax](https://matplotlib.org/stable/api/markers_api.html).
+
+```{python, warning = F}
+
+(
+  ggplot(houston, aes(x = "date", y = "inventory", color = "sales"))
+  + geom_point()
+  + xlab("Date") + ylab("Median Home Price")
+  + guides(size = guide_legend(title = "Number of Sales"))
+  + ggtitle("Houston Housing Data")
+)
+```
+
+Plotnine also defaults to different color schemes than ggplot2 -- just something to know if you want the plot to be exactly the same. Personally, I prefer the viridis color scheme (what plotnine uses) to the ggplot2 defaults.
+
+What happens if we move the variables around and map date to the point color?
+
+```{python, warning = F}
+(
+ggplot(houston, aes(x = "sales", y = "inventory", color = "date"))
+  + geom_point()
+  + xlab("Number of Sales") + ylab("Months of Inventory")
+  + guides(size = guide_colorbar(title = "Date"))
+  + ggtitle("Houston Housing Data")
+  + theme(subplots_adjust={'right': 0.75})
+)
+```
+
+Is that easier or harder to read?
+:::
+
+-   [Plotnine documentation](https://plotnine.readthedocs.io/en/stable/)

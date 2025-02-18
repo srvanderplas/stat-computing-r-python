@@ -1,0 +1,141 @@
+---
+title: "plotnine-eda"
+---
+
+
+
+###### Python: plotnine {.unnumbered}
+
+Plotnine is a ggplot2 clone for python, and for the most part, the code
+looks almost exactly the same, minus a few python-specific tweaks to
+account for different syntax conventions in each language.
+
+We generate a bar chart using `geom_bar`. It helps to tell R that
+generation (despite appearances) is categorical by declaring it a factor
+variable. This ensures that we get a break on the x-axis at each
+generation.
+
+```{python poke-dist-plots-plotnine}
+from plotnine import *
+
+(ggplot(mapping = aes(x = "factor(generation)"), data = poke) +
+  geom_bar() +
+  xlab("Generation") + ylab("# Pokemon"))
+```
+
+
+##### Python: plotnine
+
+```{python poke-ggplot2-cts-py}
+#| collapse: true
+#| fig-align: center
+#| fig-cap:  Histogram and density plots of height and log10 height of different pokemon. The untransformed data are highly skewed, the transformed data are significantly less skewed.
+#| fig-subcap: 
+#|   - Histogram of Pokemon Height (m)
+#|   - Histogram of Pokemon Height (m, log 10)
+#|   - Density of Pokemon Height (m)
+#|   - Density of Pokemon Height (m, log 10)
+#| fig-show: hold
+#| fig-width: 3
+#| fig-height: 3
+#| layout-ncol: 2
+
+ggplot(poke, aes(x = 'height_m')) + geom_histogram(bins = 30)
+
+(ggplot(poke, aes(x = 'height_m')) +
+  geom_histogram(bins = 30) +
+  scale_x_log10())
+
+(ggplot(poke, aes(x = 'height_m')) +
+  geom_density())
+
+(ggplot(poke, aes(x = 'height_m')) +
+  geom_density() +
+  scale_x_log10())
+
+```
+
+Notice that in ggplot2/plotnine, we transform the axes instead of the
+data. This means that the units on the axis are true to the original,
+unlike in base R and matplotlib.
+
+
+##### Python: plotnine {-}
+We can generate a mosaic plot (the equivalent of a 2-dimensional
+cross-tabular view) using `geom_bar` with `position = 'fill'`, which
+scales each bar so that it ends at 1. I've flipped the axes using
+`coord_flip` so that you can read the labels more easily.
+
+```{python poke-dist-plots-plotnine-mosaic}
+# Convert everything to categorical/factor variable ahead of time
+# this stops an error: TypeError: '<' not supported between instances of 'float' and 'str'
+poke['type_1'] = pd.Categorical(poke['type_1'].astype(str))
+poke['type_2'] = pd.Categorical(poke['type_2'].astype(str))
+
+( ggplot(mapping = aes(x = 'type_1', fill = 'type_2'), data = poke) +
+  geom_bar(color = "black", position = "fill") +
+  xlab("Type 1") + ylab("Proportion of Pokemon w/ Type 2") +
+  coord_flip() +
+  # This says 85% of the plot is for the main plot and 15% is for the legend.
+  theme(subplots_adjust={'right':0.85})
+  )
+```
+
+Another way to look at this data is to bin it in x and y and shade the
+resulting bins by the number of data points in each bin. We can even add
+in labels so that this is at least as clear as the tabular view!
+
+```{python poke-dist-plots-plotnine-tile}
+(ggplot(mapping = aes(x = 'type_1', y = 'type_2'), data = poke) +
+  # Shade tiles according to the number of things in the bin
+  stat_bin2d(aes(fill = after_stat('count')), geom = 'tile'))
+```
+
+
+##### Python: plotnine {.unnumbered}
+```{python boxplot-plotnine-py}
+ggplot(mapping = aes(x = "type_1", y = "height_m"), data = poke) +\
+geom_boxplot()
+
+ggplot(mapping = aes(x = "generation", y = "total"), data = poke) +\
+geom_boxplot()
+```
+
+##### Python: plotnine {.unnumbered}
+
+
+```{python plotnine-scatter-quantized}
+#| out-width: "50%"
+#| fig-width: 4
+#| fig-height: 4
+from plotnine import *
+
+ggplot(poke, aes(x = "attack", y = "sp_attack")) + geom_point()
+# jitter in plotnine seems to use width and height jointly instead of 
+# marginally
+ggplot(poke, aes(x = "attack", y = "sp_attack")) + geom_jitter(alpha = 0.5, height = 5)
+```
+
+
+While plotnine doesn't have scatterplot matrices by default, you can create them using some [clever code](https://github.com/has2k1/plotnine/issues/16#issuecomment-851938860). This is obviously not as fancy as `ggpairs` but it works well enough.
+
+```{python plotnine-scatter-matrix}
+from plotnine import *
+import itertools
+
+def plot_matrix(df, columns):
+  pdf = []
+  for a1, b1 in itertools.combinations(columns, 2):
+    for (a,b) in ((a1, b1), (b1, a1)):
+      sub = df[[a, b]].rename(columns={a: "x", b: "y"}).assign(a=a, b=b)
+      pdf.append(sub)
+  
+  g = ggplot(pd.concat(pdf))
+  g += geom_point(aes('x','y'))
+  g += facet_grid('b~a', scales='free')
+  return g
+
+
+plot_matrix(poke, poke.columns[7:11])
+
+```

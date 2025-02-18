@@ -42,10 +42,9 @@ a bunch of different "how to plot" tutorials on YouTube I found helpful
 
 ### Package Installation 
 
-This chapter will cover the following graphics libraries:
+This chapter will cover the following graphics libraries^[This chapter used to contain examples of plotnine [@kibirigeGrammarGraphicsPython2022], which is a python ggplot2 clone, but it  has not been updated in a while, so it has been removed to ensure compatibility with up-to-date python packages.]:
 
 - `ggplot2` in R [@ggplot2]
-- `plotnine` in python [@kibirigeGrammarGraphicsPython2022], which is a clone of `ggplot2`
 - `seaborn` in python [@waskomIntroductionSeaborn2022], with some information about its next-generation interface that is much closer to a grammar-of-graphics implementation [@waskomNextgenerationSeabornInterface2022]
 
 To a lesser degree, we will also cover some details of more basic plotting libraries:
@@ -58,13 +57,13 @@ To a lesser degree, we will also cover some details of more basic plotting libra
 install.packages("ggplot2")
 ```
 
-To install plotnine, pick one of the following methods (you can read more about them and decide which is appropriate for you in @sec-py-pkg-install)
+To install python graphics packages, pick one of the following methods (you can read more about them and decide which is appropriate for you in @sec-py-pkg-install). 
 
 ::: panel-tabset
 #### System Terminal
 
 ```{bash, eval = F}
-pip3 install plotnine matplotlib seaborn
+pip3 install matplotlib seaborn
 ```
 
 #### R Terminal
@@ -72,7 +71,7 @@ pip3 install plotnine matplotlib seaborn
 This package installation method requires that you have a virtual environment set up (that is, if you are on Windows, don't try to install packages this way).
 
 ```{r, eval = F}
-reticulate::py_install(c("plotnine", "matplotlib", "seaborn"))
+reticulate::py_install(c("matplotlib", "seaborn"))
 ```
 
 #### Python Terminal
@@ -80,7 +79,7 @@ reticulate::py_install(c("plotnine", "matplotlib", "seaborn"))
 In a python chunk (or the python terminal), you can run the following command. This depends on something called "IPython magic" commands, so if it doesn't work for you, try the System Terminal method instead.
 
 ```{python, eval = F}
-%pip install plotnine matplotlib seaborn
+%pip install matplotlib seaborn
 ```
 
 Once you have run this command, please comment it out so that you don't reinstall the same packages every time.
@@ -225,43 +224,6 @@ Similarly, when we add a categorical variable and color the points of the plot b
 That is, ggplot2 allows the programmer to focus on the relationship between the data and the plot, without having to get into the specifics of how that mapping occurs.
 This allows the programmer to consider these relationships when constructing the plot, choosing the relationships which are most important for the audience and mapping those variables to important dimensions of the plot, such as the x and y axis.
 
-#### Py - plotnine
-
-
-```{python}
-from plotnine import ggplot,aes,geom_point
-ggplot(data = penguins, 
-       mapping = aes(x = "body_mass_g", y = "bill_length_mm")) +\
-  geom_point()
-```
-
-Here, we start with a basic plot of bill length (mm) against body mass (g). 
-We can see that there is an overall positive relationship between the two - penguins with higher body mass tend to have longer bills as well. 
-However, it is also clear that there is considerable variation that is not explained by this relationship: there is a group of penguins who seem to have lower body mass and longer bills in the top left quadrant of the plot. 
-
-With `ggplot2`/`plotnine`, you begin to construct a plot by identifying the primary relationship of interest: you define what variables go on each axis (body mass on x, bill length on y) and then create a layer that shows the actual data (`geom_point`). 
-Note that the mapping argument must be explicitly labeled in python because of some differences in requirements for function arguments between R and python. 
-In addition, when in python, the variable names must be passed in as strings.
-
-We can extend this process a bit by adding in additional information from the dataset and mapping that information to an additional variable - for instance, we can color the points by the species of penguin.
-
-```{python}
-ggplot(data = penguins, 
-       mapping = aes(x = "body_mass_g", y = "bill_length_mm", color = "species")) +\
-  geom_point()
-```
-
-Adding in this additional information allows us to see that chinstrap penguins are the cluster we noticed in the previous plot. 
-Adelie and gentoo penguins have a similar relationship between body mass and bill length, but chinstrap penguins tend to have longer bills and lower body mass.
-
-Each variable in `ggplot2`/`plotnine` is **mapped** to a plot feature using the `aes()` (aesthetic) function. 
-This function automatically constructs a scale that e.g. converts between body mass and the x axis of the plot, which is measured on a (0,1) scale for plotting.
-Similarly, when we add a categorical variable and color the points of the plot by that variable, the mapping function automatically decides that Adelie penguins will be plotted in red, Chinstrap in green, and Gentoo in blue.
-Notice that the shades are slightly different, as `plotnine` uses `matplotlib` as a base plotting library, and the default colors are part of that library.
-
-That is, `ggplot2`/`plotnine` allows the programmer to focus on the relationship between the data and the plot, without having to get into the specifics of how that mapping occurs.
-This allows the programmer to consider these relationships when constructing the plot, choosing the relationships which are most important for the audience and mapping those variables to important dimensions of the plot, such as the x and y axis.
-
 #### Py - Seaborn
 
 ```{python}
@@ -303,7 +265,7 @@ Each variable in a `seaborn` relational plot is mapped to a plot feature.
 This function automatically constructs a scale that e.g. converts between body mass and the x axis of the plot, which is measured on a (0,1) scale for plotting.
 Similarly, when we add a categorical variable and color the points of the plot by that variable, the mapping function automatically decides that Adelie penguins will be plotted in blue, Chinstrap in green, and Gentoo in red.
 
-As with `ggplot2` and `plotnine`, `seaborn` allows the programmer to focus on the relationship between the data and the plot, without having to get into the specifics of how that mapping occurs.
+As with `ggplot2`, `seaborn` allows the programmer to focus on the relationship between the data and the plot, without having to get into the specifics of how that mapping occurs.
 This allows the programmer to consider these relationships when constructing the plot, choosing the relationships which are most important for the audience and mapping those variables to important dimensions of the plot, such as the x and y axis.
 
 
@@ -432,10 +394,10 @@ In this section, I'll show you basic templates for charts where such templates e
 
 
 ::: panel-tabset
-#### ggplot2/plotnine
+#### ggplot2
 
 The `gg` in `ggplot2` stands for the grammar of graphics. 
-In `ggplot2`/`plotnine`, we can describe any plot using a template that looks like this:
+In `ggplot2`, we can describe any plot using a template that looks like this:
 
 ```
 ggplot(data = <DATA>) + 
@@ -451,9 +413,9 @@ Geoms are geometric objects, like points (`geom_point`), lines (`geom_line`), an
 Mappings are relationships between plot characteristics and variables in the dataset - setting `x`, `y`, `color`, `fill`, `size`, `shape`, `linetype`, and more.
 Critically, when a visual characteristic, such as color, fill, shape, or size, is a constant, it is set outside of an `aes()` statement; when it is mapped to a variable, it must be provided inside the `aes()` statement. [Read more about aesthetics](https://r4ds.had.co.nz/data-visualisation.html#aesthetic-mappings)
 
-In `ggplot2`/`plotnine`, [statistics](https://r4ds.had.co.nz/data-visualisation.html#statistical-transformations) can be used within geoms to summarize data. 
+In `ggplot2`, [statistics](https://r4ds.had.co.nz/data-visualisation.html#statistical-transformations) can be used within geoms to summarize data. 
 Additional modifications of plots in `ggplot2` include changing the [coordinate system](https://r4ds.had.co.nz/data-visualisation.html#coordinate-systems), adjusting [positions](https://r4ds.had.co.nz/data-visualisation.html#position-adjustments), and adding subplots using [facets](https://r4ds.had.co.nz/data-visualisation.html#facets). 
-Not all of these are fully implemented in `plotnine`, but most features are available in both systems.
+<!-- Not all of these are fully implemented in `plotnine`, but most features are available in both systems. -->
 
 
 #### Seaborn
@@ -513,7 +475,8 @@ Useful commands: `plot()` for scatterplots, lines (type = 'l'), scatterplot matr
 
 #### Matplotlib
 
-I'm not even going to try to create a grammar summary for matplotlib... there just isn't one. It wasn't designed with the grammar of graphics in mind, and was built by computer scientists [@koehrsenNextLevelData2019], not statisticians. 
+I'm not even going to try to create a grammar summary for matplotlib... there just isn't one. 
+It wasn't designed with the grammar of graphics in mind, and was built by computer scientists [@koehrsenNextLevelData2019], not statisticians. 
 As a result, even retrofitting some sort of "grammar" interpretation doesn't work so well.
 
 For a primer on matplotlib, I recommend [@mckinneyPythonDataAnalysis2022, Ch 9]. 
@@ -526,19 +489,19 @@ For a primer on matplotlib, I recommend [@mckinneyPythonDataAnalysis2022, Ch 9].
 There are two general approaches to generating statistical graphics computationally: 
   
 1. Manually specify the plot that you want, possibly doing the preprocessing and summarizing before you create the plot.    
-Base R, matplotlib, old-style SAS graphics
+Base R, matplotlib, SAS graphics
 
 2. Describe the relationship between the plot and the data, using sensible defaults that can be customized for common operations.    
-ggplot2, plotnine, seaborn (sort of), seaborn objects
+ggplot2, seaborn (sort of), seaborn objects
 
 
 ::: column-margin
-There is a difference between *low-level* plotting libraries (base R, matplotlib) and *high-level* plotting libraries (ggplot2, plotnine, seaborn). 
+There is a difference between *low-level* plotting libraries (base R, matplotlib) and *high-level* plotting libraries (ggplot2, seaborn). 
 Grammar of graphics libraries are usually high level, but it is entirely possible to have a high level library that does not follow the grammar of graphics. 
 In general, if you have to manually add a legend, it's probably a low level library.
 :::
 
-In the introduction to The Grammar of Graphics [@wilkinsonGrammarGraphics1999], Leland Wilkinson suggests that the first approach is what we would call "charts" - pie charts, line charts, bar charts - objects that are "instances of much more general objects". 
+In the introduction to the Grammar of Graphics [@wilkinsonGrammarGraphics1999], Leland Wilkinson suggests that the first approach is what we would call "charts" - pie charts, line charts, bar charts - objects that are "instances of much more general objects". 
 His argument is that elegant graphical design means we have to think about an underlying theory of graphics, rather than how to create specific charts. 
 The 2nd approach is called the "grammar of graphics". 
 
@@ -550,7 +513,7 @@ I don't recommend you try to become proficient in all of them.
 
 Before we delve into the grammar of graphics, let's motivate the philosophy using a simple task.
 Suppose we want to create a pie chart using some data. 
-Pie charts are terrible, and we've known it for 100 years[@croxtonBarChartsCircle1927a], so in the interests of showing that we know that pie charts are awful, we'll also create a stacked bar chart, which is the most commonly promoted alternative to a pie chart. 
+Pie charts are terrible, and we've known it for 100 years [@croxtonBarChartsCircle1927a], so in the interests of showing that we know that pie charts are awful, we'll also create a stacked bar chart, which is the most commonly promoted alternative to a pie chart. 
 We'll talk about what makes pie charts terrible at the end of this module in [Creating Good charts](@sec-good-graphics).
 
 
@@ -704,16 +667,6 @@ ax.legend()
 
 plt.show()
 ```
-#### Plotnine {-}
-
-As of January 2023, pie charts are [still not supported in plotnine](https://github.com/has2k1/plotnine/issues/10). So this demo will fall a bit flat. 
-
-```{python gg-bar-py}
-from plotnine import *
-plt.cla() # clear out matplotlib buffer
-
-ggplot(poke, aes(x = "1", fill = "generation")) + geom_bar(position = "stack")
-```
 
 #### Seaborn {-}
 
@@ -810,16 +763,6 @@ ggplot(data = txhousing, aes(x = date, y = median)) +
   geom_point(alpha = .2)
 ```
 
-### plotnine {.unnumbered}
-
-```{python  txhousing-p9-intro, warning = F}
-from plotnine import *
-from plotnine.data import txhousing
-
-ggplot(txhousing, aes(x = "date", y = "median")) + geom_point(alpha = .1)
-```
-
-
 ### Seaborn {.unnumbered}
 
 ```{python txhousing-so-intro, warning = F}
@@ -880,14 +823,6 @@ ggplot(data = txhousing, aes(x = date, y = median)) +
   ggtitle("Texas Housing Prices")
 ```
 
-#### plotnine {.unnumbered}
-
-```{python, warning = F}
-ggplot(txhousing, aes(x = "date", y = "median")) +\
-geom_point() +\
-xlab("Date") + ylab("Median Home Price") +\
-ggtitle("Texas Housing Prices")
-```
 
 #### Seaborn
 ```{python}
@@ -929,25 +864,6 @@ ggplot(data = txhousing, aes(x = date, y = median)) +
   geom_smooth(method = "loess") +
   xlab("Date") + ylab("Median Home Price") +
   ggtitle("Texas Housing Prices")
-```
-
-#### plotnine {.unnumbered}
-
-```{python, warning = F}
-ggplot(txhousing, aes(x = "date", y = "median")) + geom_point() +\
-geom_smooth(method = "lm", color = "blue") +\
-xlab("Date") + ylab("Median Home Price") +\
-ggtitle("Texas Housing Prices")
-# By default, geom_smooth in plotnine has a black line you can't see well
-```
-
-We can also use a loess (locally weighted) smooth:
-
-```{python}
-ggplot(txhousing, aes(x = "date", y = "median")) + geom_point() +\
-geom_smooth(method = "loess", color = "blue") +\
-xlab("Date") + ylab("Median Home Price") +\
-ggtitle("Texas Housing Prices")
 ```
 
 #### Seaborn
@@ -1001,28 +917,6 @@ ggplot(data = txhousing, aes(x = date, y = median, color = city)) +
 
 ```
 
-#### plotnine {.unnumbered}
-
-```{python, warning = F}
-ggplot(txhousing, aes(x = "date", y = "median", color = "city")) +\
-geom_point() +\
-geom_smooth(method = "loess") +\
-xlab("Date") + ylab("Median Home Price") +\
-ggtitle("Texas Housing Prices")
-```
-
-That's a really crowded graph! It's slightly easier if we just take the points away and only show the statistics, but there are still way too many cities to be able to tell what shade matches which city.
-
-```{python, warning = F}
-ggplot(txhousing, aes(x = "date", y = "median", color = "city")) +\
-geom_smooth(method = "loess") +\
-theme(subplots_adjust={'right': 0.5}) +\
-xlab("Date") + ylab("Median Home Price") +\
-ggtitle("Texas Housing Prices")
-```
-
-This is one of the first places we see differences in Python and R's graphs - python doesn't allocate sufficient space for the legend by default. In Python, you have to manually adjust the theme to show the legend (or plot the legend separately).
-
 #### Seaborn
 
 ```{python}
@@ -1034,6 +928,9 @@ This is one of the first places we see differences in Python and R's graphs - py
 )
 
 ```
+
+This is one of the first places we see differences in Python and R's graphs - python doesn't allocate sufficient space for the legend by default. In Python, you have to manually adjust the theme to show the legend (or plot the legend separately).
+
 :::
 
 ### Data Reduction Strategies
@@ -1070,31 +967,6 @@ ggplot(data = housingsub, aes(x = date, y = median)) +
 ```
 
 Notice I've removed the aesthetic mapping to color as it's redundant now that each city is split out in its own plot.
-
-#### plotnine {.unnumbered}
-
-```{python, warning = F}
-citylist = ["Houston", "Austin", "Dallas", "Fort Worth", "San Antonio"]
-housingsub = txhousing[txhousing['city'].isin(citylist)]
-
-ggplot(housingsub, aes(x = "date", y = "median", color = "city")) +\
-geom_point() +\
-geom_smooth(method = "loess") +\
-theme(subplots_adjust={'right': 0.75}) +\
-xlab("Date") + ylab("Median Home Price") +\
-ggtitle("Texas Housing Prices")
-```
-
-Here's the facetted version of the chart:
-
-```{python, warning = F}
-ggplot(housingsub, aes(x = "date", y = "median")) +\
-geom_point() +\
-geom_smooth(method = "loess", color = "blue") +\
-facet_wrap("city") +\
-xlab("Date") + ylab("Median Home Price") +\
-ggtitle("Texas Housing Prices")
-```
 
 #### Seaborn
 
@@ -1157,26 +1029,6 @@ ggplot(data = housingsub, aes(x = date, y = median, size = sales)) +
 ```
 
 Notice I've removed the aesthetic mapping to color as it's redundant now that each city is split out in its own plot.
-
-#### plotnine {.unnumbered}
-
-```{python, warning = F}
-citylist = ["Houston", "Austin", "Dallas", "Fort Worth", "San Antonio"]
-housingsub = txhousing[txhousing['city'].isin(citylist)]
-
-( # This is used to group lines together in python
-ggplot(housingsub, aes(x = "date", y = "median", size = "sales"))
-+ geom_point(alpha = .15) # Make points transparent
-+ geom_smooth(method = "loess")
-+ facet_wrap("city")
-+ guides(size = guide_legend(title = 'Number of Sales'))
-+ xlab("Date") + ylab("Median Home Price")
-+ ggtitle("Texas Housing Prices")
-)
-```
-
-Not all of the features we used in R are available in plotnine in Python (in part because of limitations of the underlying graphics interface that plotnine uses). This does somewhat limit the customization we can do with python, but for the most part we can still get the same basic information back out.
-
 
 #### Seaborn {.unnumbered}
 
@@ -1267,51 +1119,6 @@ ggplot(data = houston, aes(x = sales, y = inventory, color = date)) +
 
 Is that easier or harder to read?
 
-#### plotnine {.unnumbered}
-
-```{python, warning = F}
-houston = txhousing[txhousing.city=="Houston"]
-
-(
-  ggplot(houston, aes(x = "date", y = "inventory", size = "sales"))
-  + geom_point(shape = 'o', fill = 'none')
-  + xlab("Date") + ylab("Median Home Price")
-  + guides(size = guide_legend(title = "Number of Sales"))
-  + ggtitle("Houston Housing Data")
-)
-```
-
-In plotnine, we have to use [matplotlib marker syntax](https://matplotlib.org/stable/api/markers_api.html).
-
-```{python, warning = F}
-
-(
-  ggplot(houston, aes(x = "date", y = "inventory", color = "sales"))
-  + geom_point()
-  + xlab("Date") + ylab("Median Home Price")
-  + guides(size = guide_legend(title = "Number of Sales"))
-  + ggtitle("Houston Housing Data")
-)
-```
-
-Plotnine also defaults to different color schemes than ggplot2 -- just something to know if you want the plot to be exactly the same. Personally, I prefer the viridis color scheme (what plotnine uses) to the ggplot2 defaults.
-
-What happens if we move the variables around and map date to the point color?
-
-```{python, warning = F}
-(
-ggplot(houston, aes(x = "sales", y = "inventory", color = "date"))
-  + geom_point()
-  + xlab("Number of Sales") + ylab("Months of Inventory")
-  + guides(size = guide_colorbar(title = "Date"))
-  + ggtitle("Houston Housing Data")
-  + theme(subplots_adjust={'right': 0.75})
-)
-```
-
-Is that easier or harder to read?
-:::
-
 
 [^10-graphics-1]: This isn't necessarily a good thing, but you should know how to do it. The jury is still very much out on whether log transformations make data easier to read and understand
 
@@ -1352,7 +1159,6 @@ Once you've thought through this, take a look through catalogs like the [R Graph
 
 ### Python graphics {.unnumbered}
 
--   [Plotnine documentation](https://plotnine.readthedocs.io/en/stable/)
 -   [Matplotlib documentation](https://matplotlib.org/) - Matplotlib is the base that plotnine uses to replicate ggplot2 functionality
     -   [Visualization with Matplotlib](https://www.oreilly.com/library/view/python-data-science/9781491912126/ch04.html) chapter of Python Data Science
 -   [Scientific Visualization with Python](https://github.com/rougier/scientific-visualization-book/blob/master/pdf/book.pdf)
