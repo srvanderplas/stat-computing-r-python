@@ -445,7 +445,9 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
 </header><section id="objectives" class="level2" data-number="21.1"><h2 data-number="21.1" class="anchored" data-anchor-id="objectives">
 <span class="header-section-number">21.1</span> <i class="fa-solid fa-bullseye" aria-label="bullseye"></i> Objectives</h2>
 <ul>
-<li>Evaluate existing charts and develop new versions that improve accessibility and readability</li>
+<li>Understand what features make graphics effective</li>
+<li>Evaluate existing charts for accessibility and readability</li>
+<li>Make improvements to charts to increase comprehension and accessibility</li>
 </ul>
 <p>A chart is good if it allows the user to draw useful conclusions that are supported by data. Obviously, this definition depends on the purpose of the chart - a simple EDA chart is going to have a different purpose than a chart showing e.g.&nbsp;the predicted path of a hurricane, which people will use to make decisions about whether or not to evacuate.</p>
 <p>Unfortunately, while our visual system is <em>amazing</em>, it is not always as accurate as the computers we use to render graphics. We have physical limits in the number of colors we can perceive, our short term memory, attention, and our ability to accurately read information off of charts in different forms.</p>
@@ -602,10 +604,21 @@ Figure&nbsp;21.4: The color constancy illusion. The squares marked A and B are a
 </li>
 <li>Be conscious of what certain colors “mean”
 <ul>
-<li>Leveraging common associations can make it easier to read a color scale and remember what it stands for (e.g.&nbsp;blue for cold, orange/red for hot is a natural scale, red = Republican and blue = Democrat in the US, white -&gt; blue gradients for showing rainfall totals)</li>
+<li>Leveraging common associations can make it easier to read a color scale and remember what it stands for
+<ul>
+<li>blue for cold, orange/red for hot is a natural scale</li>
+<li>red = Republican and blue = Democrat in the US (since ~1980)</li>
+<li>white -&gt; blue gradients for showing rainfall totals</li>
+</ul>
+</li>
 <li>Some colors can can provoke emotional responses that may not be desirable.<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>
 </li>
-<li>It is also important to be conscious of the social baggage that certain color schemes may have - the pink/blue color scheme often used to denote gender can be unnecessarily polarizing, and it may be easier to use a colder color (blue or purple) for men and a warmer color (yellow, orange, lighter green) for women<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>.</li>
+<li>Consider the social baggage that certain color schemes may have
+<ul>
+<li>pink/blue color scheme often used for gender may be polarizing</li>
+<li>Consider using a cooler color (blue or purple) for men and a warmer color (yellow, orange, lighter green) for women<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>.</li>
+</ul>
+</li>
 </ul>
 </li>
 <li>There are packages such as <code>RColorBrewer</code> and <code>dichromat</code> that have color palettes which are aesthetically pleasing, and, in many cases, colorblind friendly (<code>dichromat</code> is better for that than <code>RColorBrewer</code>). You can also take a look at other <a href="https://lisacharlotterost.de/2016/04/22/Colors-for-DataVis/">ways to find nice color palettes</a>.</li>
@@ -735,23 +748,26 @@ Caution
 <div class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># %pip install gapminder</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> gapminder <span class="im">import</span> gapminder</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn.objects <span class="im">as</span> so</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>my_gap_82_07 <span class="op">=</span> my_gap[my_gap.year.isin([<span class="dv">1982</span>,<span class="dv">2007</span>])]</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'my_gap' is not defined</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>subdata <span class="op">=</span> my_gap_82_07[my_gap_82_07.country.<span class="op">\</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    isin([<span class="st">"Korea, Rep."</span>, <span class="st">"China"</span>, <span class="st">"Afghanistan"</span>, <span class="st">"India"</span>])]</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'my_gap_82_07' is not defined</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>subdata <span class="op">=</span> subdata.assign(yearFactor<span class="op">=</span>pd.Categorical(subdata.year))</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'subdata' is not defined</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>plot <span class="op">=</span> so.Plot(subdata, x <span class="op">=</span> <span class="st">"country"</span>, y <span class="op">=</span> <span class="st">"lifeExp"</span>, color <span class="op">=</span> <span class="st">"yearFactor"</span>).<span class="op">\</span></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  add(so.Bar(), so.Dodge()).<span class="op">\</span></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  label(y <span class="op">=</span> <span class="st">"Life Expectancy"</span>)</span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'subdata' is not defined</span></span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>plot.show()</span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'plot' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">## ModuleNotFoundError: No module named 'gapminder'</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="co">## ModuleNotFoundError: No module named 'pandas'</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn.objects <span class="im">as</span> so</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="co">## ModuleNotFoundError: No module named 'seaborn'</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>my_gap_82_07 <span class="op">=</span> my_gap[my_gap.year.isin([<span class="dv">1982</span>,<span class="dv">2007</span>])]</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'my_gap' is not defined</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>subdata <span class="op">=</span> my_gap_82_07[my_gap_82_07.country.<span class="op">\</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    isin([<span class="st">"Korea, Rep."</span>, <span class="st">"China"</span>, <span class="st">"Afghanistan"</span>, <span class="st">"India"</span>])]</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'my_gap_82_07' is not defined</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>subdata <span class="op">=</span> subdata.assign(yearFactor<span class="op">=</span>pd.Categorical(subdata.year))</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'subdata' is not defined</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>plot <span class="op">=</span> so.Plot(subdata, x <span class="op">=</span> <span class="st">"country"</span>, y <span class="op">=</span> <span class="st">"lifeExp"</span>, color <span class="op">=</span> <span class="st">"yearFactor"</span>).<span class="op">\</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  add(so.Bar(), so.Dodge()).<span class="op">\</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  label(y <span class="op">=</span> <span class="st">"Life Expectancy"</span>)</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'so' is not defined</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>plot.show()</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'plot' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
@@ -773,7 +789,7 @@ Caution
 <span>  <span class="fu">ylab</span><span class="op">(</span><span class="st">"Life Expectancy"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
-<figure class="figure"><p><img src="02c-good-graphics_files/figure-html/chart-emphasis-line-r-3.png" class="img-fluid figure-img" width="1800"></p>
+<figure class="figure"><p><img src="02c-good-graphics_files/figure-html/chart-emphasis-line-r-1.png" class="img-fluid figure-img" width="1800"></p>
 </figure>
 </div>
 </div>
@@ -788,7 +804,7 @@ Caution
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>plot <span class="op">=</span> so.Plot(subdata, x <span class="op">=</span> <span class="st">"year"</span>, y <span class="op">=</span> <span class="st">"lifeExp"</span>, color <span class="op">=</span> <span class="st">"country"</span>).<span class="op">\</span></span>
 <span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  add(so.Lines()).<span class="op">\</span></span>
 <span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  label(y <span class="op">=</span> <span class="st">"Life Expectancy"</span>)</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'subdata' is not defined</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'so' is not defined</span></span>
 <span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>plot.show()</span>
 <span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'plot' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -811,7 +827,7 @@ Caution
 <span>  <span class="fu">ylab</span><span class="op">(</span><span class="st">"Life Expectancy"</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
-<figure class="figure"><p><img src="02c-good-graphics_files/figure-html/chart-emphasis-boxplot-r-3.png" class="img-fluid figure-img" width="1800"></p>
+<figure class="figure"><p><img src="02c-good-graphics_files/figure-html/chart-emphasis-boxplot-r-1.png" class="img-fluid figure-img" width="1800"></p>
 </figure>
 </div>
 </div>
@@ -820,19 +836,15 @@ Caution
 <div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
 <div class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>subdata3 <span class="op">=</span> my_gap_82_07.assign(yearFactor<span class="op">=</span>pd.Categorical(my_gap_82_07.year))</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'my_gap_82_07' is not defined</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>sns.boxplot(data <span class="op">=</span> subdata3, x <span class="op">=</span> <span class="st">"year"</span>, y <span class="op">=</span> <span class="st">"lifeExp"</span>)</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'subdata3' is not defined</span></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div>
-<figure class="figure"><p><img src="02c-good-graphics_files/figure-html/chart-emphasis-boxplot-py-1.png" class="img-fluid figure-img" width="576"></p>
-</figure>
-</div>
-</div>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co">## ModuleNotFoundError: No module named 'seaborn'</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>subdata3 <span class="op">=</span> my_gap_82_07.assign(yearFactor<span class="op">=</span>pd.Categorical(my_gap_82_07.year))</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'my_gap_82_07' is not defined</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>sns.boxplot(data <span class="op">=</span> subdata3, x <span class="op">=</span> <span class="st">"year"</span>, y <span class="op">=</span> <span class="st">"lifeExp"</span>)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'sns' is not defined</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>plt.show()</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="co">## NameError: name 'plt' is not defined</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 </div>
@@ -855,7 +867,7 @@ Caution
 <div class="cell">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
-<figure class="figure"><p><img src="02c-good-graphics_files/figure-html/accuracy-guidelines-5.png" class="img-fluid figure-img" style="width:75.0%" alt="A chart with two panels. The left panel is labeled 'Aligned scale' and features three lines of different lengths which all start at the bottom of the chart. The right panel is labeled 'Unaligned scale' and features three lines of different lengths which start at different locations.  It is easier to compare the lengths of the lines in the left panel, since they all start in the same place."></p>
+<figure class="figure"><p><img src="02c-good-graphics_files/figure-html/accuracy-guidelines-1.png" class="img-fluid figure-img" style="width:75.0%" alt="A chart with two panels. The left panel is labeled 'Aligned scale' and features three lines of different lengths which all start at the bottom of the chart. The right panel is labeled 'Unaligned scale' and features three lines of different lengths which start at different locations.  It is easier to compare the lengths of the lines in the left panel, since they all start in the same place."></p>
 <figcaption>Which of the lines is the longest? Shortest? It is much easier to determine the relative length of the line when the ends are aligned. The three lines have the same length in both panels, but the operation is much more difficult when the lines do not start or end at the same place.</figcaption></figure>
 </div>
 </div>
