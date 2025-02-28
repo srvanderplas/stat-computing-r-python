@@ -72,18 +72,24 @@ That is, when examining a set of mathematical operations, we evaluate parenthese
 ### R {.unnumbered}
 
 ```{r}
-(1+1)^(5-2) 
-1 + 2^3 * 4 
-3*1^3 
+(1+1)^(5-2) # <1>
+1 + 2^3 * 4 # <2>
+3*1^3 # <3>
 ```
+1. The items in parentheses are evaluated first, so the expression becomes (2)^(3). Then, exponentiation is performed, yielding 8.
+2. Exponentiation is performed first (PEMDAS), so the expression becomes 1 + 8*4. Then multiplication is performed, yielding 1 + 32. Addition is the final step, so we get 33.
+3. Exponentiation is performed first, so this becomes 3*1. Then multiplication is performed, producing a final result of 3. 
 
 ### Python {.unnumbered}
 
 ```{python}
-(1+1)**(5-2)
-1 + 2**3*4
-3*1**3
+(1+1)**(5-2) # <1>
+1 + 2**3*4 # <2>
+3*1**3 # <3>
 ```
+1. The items in parentheses are evaluated first, so the expression becomes (2)^(3). Then, exponentiation is performed, yielding 8.
+2. Exponentiation is performed first (PEMDAS), so the expression becomes 1 + 8*4. Then multiplication is performed, yielding 1 + 32. Addition is the final step, so we get 33.
+3. Exponentiation is performed first, so this becomes 3*1. Then multiplication is performed, producing a final result of 3. 
 
 :::
 
@@ -94,9 +100,11 @@ In R, you will have to use functions to perform these operations, as R does not 
 
 ::: callout-demo
 
+### String Operations in R and Python
+
 ::: panel-tabset
 
-### Python {.unnumbered}
+#### Python {.unnumbered}
 
 In Python, `+` will **concatenate** (stick together) two strings.
 Multiplying a string by an integer will repeat the string the specified number of times.
@@ -106,12 +114,12 @@ Multiplying a string by an integer will repeat the string the specified number o
 "hello " * 3
 ```
 
-### R {.unnumbered}
+#### R {.unnumbered}
 
 In R, to concatenate things, we need to use functions: `paste` or `paste0`:
 
 ```{r}
-paste("first", "second", sep = " ")
+paste("first", "second", sep = " ") # <1>
 paste("first", "second", collapse = " ")
 paste(c("first", "second"), sep = " ") # sep only works w/ 2 objects passed in
 paste(c("first", "second"), collapse = " ") # collapse works on vectors
@@ -131,6 +139,7 @@ You don't need to understand the details of this code at this point in the class
 
 :::
 
+
 ## Logical Operators {#sec-logical-ops}
 
 Logical variables can be combined through the use of logical operators in much the same way that numerical variables are combined through mathematical operators.
@@ -139,13 +148,16 @@ There are specific **logical operators** which are used to aggregate and combine
 
 [^xor]: A fourth commonly used logical operator is **exclusive or** (`xor`). `xor` is True if only one of the two conditions is True, but False if both are True. `xor` is not a basic boolean operator, as it can be written as a combination of other operators: `A xor B = (A or B) and not(A and B)`.
 
-In pseudocode, which is human-readable logic structured like computer code but without the syntax, we usually write these out in all caps. 
+In **pseudocode**, which is human-readable logic structured like computer code but without the syntax, we usually write these out in all caps. 
 
 - (X AND Y) requires that both X and Y are true.
 - (X OR Y) requires that one of X or Y is true.
 - (NOT X) is true if X is false, and false if X is true. Sometimes called **negation**.
 - (X XOR Y) requires that one (and only one) of X or Y is true. Sometimes called **exclusive or**.
 
+::: {.callout-tip collapse=true}
+
+### Truth Tables: Useful Tools for Understanding Logical Expressions
 
 When constructing a logical expression that combines Boolean variables, it can be helpful to build a **truth table** that lists all possible inputs on the left and the output of the operator on the right. 
 A truth table demonstrating the logical operators `and`, `or`, `not` and `xor` is provided in @tbl-truth-general.
@@ -160,6 +172,8 @@ F | F | F | F | T | T | F
 
 : Truth table for each of the common logical operators. {#tbl-truth-general}
 
+:::
+
 Operation | R | Python
 --- | --- | ---
 and | `&` | `&` or `and`
@@ -167,23 +181,26 @@ or | `|` | `|` or `or`
 not | `!` | `not`
 xor | `xor()` | `^`
 
-: Logical operators in R and Python. These operators are intended for single values; evaluation of vectors may require different operators. {#tbl-log-operators}
+: Logical operators in R and Python. These operators are intended for single values; evaluation of vectors may require different operators. Note the use of `^` for `xor` in Python! {#tbl-log-operators}
 
 
 When writing code, we use the logical operators in R and Python shown in @tbl-log-operators.
 
 
-::: callout-warning
+:::: {.callout-warning collapse=true}
 
-### Generating Truth Tables
+### Exploring Logical Operators with R and Python
 
-We can thus generate each entry in the truth table using the relevant logical operators in R and python. 
+We can generate each entry in the truth table using the relevant logical operators in R and python. 
 
 ::: panel-tabset
 
 #### AND
+
 In R, `and` comparisons use `&` as the operator.
+
 ```{r}
+
 TRUE & TRUE
 TRUE & FALSE
 FALSE & TRUE
@@ -191,6 +208,7 @@ FALSE & FALSE
 ```
 
 In Python, `and` expressions use `&` as the operator.
+
 ```{python}
 True & True
 True & False
@@ -199,12 +217,14 @@ False & False
 ```
 
 Alternately, in Python, you can also spell out the whole word and use `and` explicitly. 
+
 ```{python}
 True and True
 True and False
 False and True
 False and False
 ```
+
 
 #### OR
 
@@ -218,6 +238,7 @@ FALSE | FALSE
 ```
 
 In Python, `or` expressions use `|` as the operator.
+
 ```{python}
 True | True
 True | False
@@ -226,6 +247,7 @@ False | False
 ```
 
 Alternately, in Python, you can also spell out the whole word and use `or` explicitly. 
+
 ```{python}
 True or True
 True or False
@@ -233,15 +255,18 @@ False or True
 False or False
 ```
 
+
 #### NOT
 
 In R, negation occurs using the `!` operator.
+
 ```{r}
 !TRUE
 !FALSE
 ```
 
 In Python, negation occurs using the `not` operator.
+
 ```{python}
 not True
 not False
@@ -267,13 +292,27 @@ False ^ True
 False ^ False
 ```
 
-:::
+Note that this is why the exponentiation operator in Python is `**` instead of `^`. 
+Using `^` may produce errors (TypeError: unsupported operand type(s)) or may produce unexpected results with no warning at all, as in the following example. 
+
+```{python}
+3^4
+```
 
 :::
+
+::::
 
 ### Order of Operations
 
-Just as with mathematical operators, there is an order of operations to logical operators, where NOT takes precedence over AND, which takes precedence over OR. 
+Just as with mathematical operators, there is an order of operations to logical operators. 
+
+Precedence order: (top is evaluated first)
+
+- NOT 
+- AND
+- OR
+
 
 ::: panel-tabset
 
@@ -285,18 +324,19 @@ b1 <- FALSE
 c1 <- FALSE
 
 a1 | b1 & c1 # AND takes precedence
-a1 | (b1 & c1) # same as above, with parens
+a1 | (b1 & c1) # same as above, with parentheses
 (a1 | b1) & c1 # force OR to be first using parentheses
 ```
 
 #### Python
+
 ```{python}
 a1 = True
 b1 = False
 c1 = False
 
 a1 or b1 and c1 # AND takes precedence
-a1 or (b1 and c1) # same as above, with parens
+a1 or (b1 and c1) # same as above, with parentheses
 (a1 or b1) and c1 # force OR to be first using parentheses
 ```
 
@@ -310,24 +350,24 @@ a1 or (b1 and c1) # same as above, with parens
 -   NOT(A or B) is equivalent to NOT(A) and NOT(B)
 -   NOT(A and B) is equivalent to NOT(A) or NOT(B)
 
-::: panel-tabset
+::: {.callout-tip collapse=true}
 
-We can also represent them with Venn Diagrams.
+#### Visual Representation of DeMorgan's Laws
 
-#### Definitions
+We can also represent De Morgan's Laws visually using Venn Diagrams.
 
 ![Venn Diagram of Set A and Set B](../images/other/SetA and SetB.png)
 
-Suppose that we set the convention that ![Shaded regions are TRUE, unshaded regions are FALSE](../images/other/TrueFalse.png).
+We will use the convention that ![Shaded regions are TRUE, unshaded regions are FALSE](../images/other/TrueFalse.png).
 
-
-
-#### DeMorgan's First Law
+::: {.callout collapse=true}
+##### DeMorgan's First Law
 
 ![A venn diagram illustration of De Morgan's laws showing that the region that is outside of the union of A OR B (aka NOT (A OR B)) is the same as the region that is outside of (NOT A) and (NOT B)](../images/other/DeMorgan1.png)
 
 ::: panel-tabset
-#### R
+
+###### R
 
 ```{r}
 !(TRUE | TRUE)
@@ -341,7 +381,8 @@ Suppose that we set the convention that ![Shaded regions are TRUE, unshaded regi
 !FALSE & !FALSE
 ```
 
-#### Python
+###### Python
+
 ```{python}
 not(True or True)
 not(True or False)
@@ -356,13 +397,18 @@ not(False) and not(False)
 
 :::
 
-#### DeMorgan's Second Law
+:::
+
+
+::: {.callout collapse=true}
+
+##### DeMorgan's Second Law
 
 ![A venn diagram illustration of De Morgan's laws showing that the region that is outside of the union of A AND B (aka NOT (A AND B)) is the same as the region that is outside of (NOT A) OR (NOT B)](../images/other/DeMorgan2.png)
 
 ::: panel-tabset
 
-#### R
+###### R
 
 ```{r}
 !(TRUE & TRUE)
@@ -376,7 +422,7 @@ not(False) and not(False)
 !FALSE | !FALSE
 ```
 
-#### Python
+###### Python
 ```{python}
 not(True and True)
 not(True and False)
@@ -393,12 +439,29 @@ not(False) or not(False)
 
 :::
 
+:::
+
 ## Using Functions
 
 **Functions** are sets of instructions that take **arguments** and **return** values.
-Strictly speaking, mathematical operators (like those above) are a special type of functions -- but we aren't going to get into that now.
+Strictly speaking, mathematical operators (like those above) are a special type of functions.
 
-::: callout-info
+We're not going to talk about how to create our own functions just yet.
+Instead, in this chapter, let's figure out how to *use* functions.
+
+::: callout-warning
+
+### Cheat Sheets!
+
+It may be helpful at this point to print out the [R reference card](../files/Short-refcard.pdf)[^02-prog-functions-1] and the [Python reference card.](../files/Python3_reference_cheat_sheet.pdf)[^02-prog-functions-2] 
+These cheat sheets contain useful functions for a variety of tasks in each language.
+:::
+
+[^02-prog-functions-1]: From https://cran.r-project.org/doc/contrib/Short-refcard.pdf
+
+[^02-prog-functions-2]: From http://sixthresearcher.com/wp-content/uploads/2016/12/Python3_reference_cheat_sheet.pdf
+
+
 ### Function Vocabulary
 
 Suppose I have a function called `add(x, y)` which takes two numbers and adds them together.
@@ -413,6 +476,9 @@ This is pretty technical and a bit nit-picky, but it's good to see information m
 The **function call** would be `add(x = 3, y = 2)`, where 3 and 2 are the arguments.
 The function call would be evaluated and would **return** 5 as the answer (assuming that `add` does what it says it does). 
 
+::: {.callout-note collapse=true}
+
+### Function Vocabulary in Help Files
 
 Let's see these words in a more concrete setting. 
 
@@ -428,20 +494,6 @@ When I type `which.max(x = c(2:10))` into the R console and hit Enter,
 
 :::
 
-We're also not going to talk about how to create our own functions just yet.
-Instead, in this chapter, let's figure out how to *use* functions.
-
-::: callout-warning
-### Cheat Sheets!
-
-It may be helpful at this point to print out the [R reference card](../files/Short-refcard.pdf)[^02-prog-functions-1] and the [Python reference card](../files/Python3_reference_cheat_sheet.pdf)[^02-prog-functions-2]
-. These cheat sheets contain useful functions for a variety of tasks in each language
-.
-:::
-
-[^02-prog-functions-1]: From https://cran.r-project.org/doc/contrib/Short-refcard.pdf
-
-[^02-prog-functions-2]: From http://sixthresearcher.com/wp-content/uploads/2016/12/Python3_reference_cheat_sheet.pdf
 
 **Methods** are a special type of function that operate on a specific data type.
 In Python, methods are applied using the syntax `variable.method_name()`.
@@ -503,7 +555,7 @@ x = ("test", )*3 # String multiplication
 
 :::
 
-## Overpowered Calculators
+## Using R and Python as Overpowered Calculators
 
 Now that you're familiar with how to use functions, if not how to define them, you are capable of using R or python as a very fancy calculator.
 Obviously, both languages can do many more interesting things, which we'll get to, but let's see if we can make R and Python do some very basic stuff that hopefully isn't too foreign to you.
@@ -516,7 +568,7 @@ Obviously, both languages can do many more interesting things, which we'll get t
 
 Consider this triangle.
 I've measured the sides in an image editor and determined that $a = 212$ pixels, $b = 345$ pixels, and $c = 406$ pixels.
-I suspect, however, that my measurements aren't quite right - for one thing, I tried to measure in the center of the line, but it wasn't easy on the diagonal.
+I suspect, however, that my measurements aren't quite right - for one thing, I tried to measure in the center of the line, but it wasn't as easy to do that well on the diagonal.
 
 Let's assume that my measurements for $a$ and $b$ are accurate and calculate how far off my estimate was for side $c$.
 
@@ -562,6 +614,7 @@ pct_error
 Interesting, I wasn't as inaccurate as I thought!
 
 :::
+
 
 ::: callout-tip
 
@@ -618,19 +671,42 @@ I measured the length of side $c$ as 407 pixels.
 :::
 
 
-Congratulations, if you used a TI-83 in high school to do this sort of stuff, you're now just about as proficient with R and python as you were with that!
+Congratulations, if you used a TI-84 in high school to do this sort of stuff, you're now just about as proficient with `R` and `python` as you were with that!
 
 ## Libraries
 
 Both R and python have a very robust system for extending the language with user-written **packages**.
 These packages will give you access to features that aren't present in the base language, including new statistical methods, all sorts of plotting and visualization libraries, ways of interacting with data that are **way** more convenient than the default base language methods, and more.
 
-There are tons of considerations to think about when using a new library, like how well it's maintained, how many dependencies it has, and whether the developers of the package prioritize backwards-compatibility.
-For the moment, we're going to ignore most of those considerations in favor of learning how to install packages and how to use functions from packages in our code.
+::: {.callout-note collapse=true}
+### Do you need to use a new package?
+
+There are tons of considerations to think about when using a new package, like how well it's maintained, how many dependencies it has, and whether the developers of the package prioritize backwards-compatibility.
+
+With each package you add, your project becomes more complex. 
+On the other hand, with each package you add, you should be able to do more things, and hopefully, you'll be able to leverage code from other developers to accomplish more complex tasks.
+
+There's a critical balance between complexity and trying not to reinvent the wheel. 
+As you go through this book, you may want to consider different packages in light of this complexity cost/benefit analysis.
+
+:::
+
+
+Before we talk about how to install packages, we need to step back and think a little bit about the pros and cons of different ways of managing packages, because the most common R and python setups use very different approaches.
 
 ### Environment management
 
-Before we talk about how to install packages, though, we need to step back and think a little bit about the pros and cons of different ways of managing packages, if only because the most common R and python setups use very different approaches.
+A computing environment is a collection of packages (and corresponding functions) that are available to be used. 
+
+R and python use very different environment management strategies.
+In R, packages are stored in a central folder on your computer - by default, all projects will use the same set of packages.
+In Python, packages should be stored in project-specific environments. There are many different ways to manage python environments.
+
+Your task is to choose one. 
+
+::: {.callout-note collapse=true}
+
+#### Why environments?
 
 Imagine that you're an accomplished programmer, and you are juggling multiple different projects.
 Each project uses some of the same packages, but some different packages as well.
@@ -649,43 +725,44 @@ Typically, Python programmers prefer the first approach (project-specific **virt
 This is one of the things that can make starting to learn python so difficult - it can be hard to make sure you're using the right environment.
 It doesn't help that there are several different environment management systems in python - `virtualenv`, `pipenv`, and `conda` are the main options.
 
+:::
+
+
+
 #### Python environments
 
-`conda` and `virtualenv` (`venv`) are both virtual environment management systems. `conda` is sometimes preferred for scientific computing because it handles the complex dependencies that arise from large packages like `numpy` and `scipi` and `pandas` a bit better than `pip` does alone.
+::: {.callout-tip}
 
-This guide assumes you have `conda` set up already.
+##### Python Environments for the Decision Fatigued
+
+If you don't care about the nuances of which python environment management option you should use, I recommend following the `venv` instructions for Python below. 
+
+:::
+
+::: {.callout-note collapse=true}
+
+##### Deciding on an Environment
+
+`conda` and `virtualenv` (`venv`) are both virtual environment management systems. 
+`conda` is sometimes preferred for scientific computing because it handles the complex dependencies that arise from large packages like `numpy` and `scipi` and `pandas` a bit better than `pip` does alone.
+
 By default, @sec-setting-up just installs python at the system level.
 If you want to use [anaconda](https://www.anaconda.com/products/distribution) or [miniconda](https://docs.conda.io/en/latest/miniconda.html) you should go read the documentation for those installers and follow those steps first.
 Alternately, you can install and load the `reticulate` R package and then run `install_miniconda()` - this will install `miniconda` somewhere that RStudio can find it, but it may make using `miniconda` outside of RStudio difficult.
 
-::: {.callout-caution collapse=true}
-###### Consistency is critical
+###### Consistency is critical {-}
 
 I *highly* recommend that you pick one of these options and use that consistently, rather than trying the advantages and disadvantages of each option in different projects.
 Here is a webcomic to serve as a cautionary tale if you do not heed this warning.
 
-[![Python Environment, by Randall Munroe of \[xkcd\](https://xkcd.com/1987/). CC-By-NC-2.5The Python environmental protection agency wants to seal it in a cement chamber, with pictorial messages to future civilizations warning them about the danger of using sudo to install random Python packages.](../images/gen-prog/python_environment.png){fig-alt="The Python environmental protection agency wants to seal it in a cement chamber, with pictorial messages to future civilizations warning them about the danger of using sudo to install random Python packages."}](https://xkcd.com/1987/)
-:::
-
+[![Python Environment, by Randall Munroe of [xkcd](https://xkcd.com/1987/). CC-By-NC-2.5The Python environmental protection agency wants to seal it in a cement chamber, with pictorial messages to future civilizations warning them about the danger of using sudo to install random Python packages.](../images/gen-prog/python_environment.png){fig-alt="The Python environmental protection agency wants to seal it in a cement chamber, with pictorial messages to future civilizations warning them about the danger of using sudo to install random Python packages."}](https://xkcd.com/1987/)
 
 ::: panel-tabset
-
-###### System
-
-You can absolutely install all python packages at the user/system level using `pip`.
-This has the previously mentioned disadvantages, but has the major advantage of being very simple.
-
-To install a python package `<package name>` using pip, run this command
-```{bash, eval = F}
-pip3 install <package name>
-```
-
-Some computers may prefer that you use `pip` instead of `pip3` - figure out which one your computer requires and use that.
 
 ###### venv (System console)
 
 In your system terminal, navigate to your project directory.
-Items within `< >` are intended to be replaced with values specific to your situation.
+Items within `< >` (as well as the <> characters) are intended to be replaced with values specific to your situation.
 
 ```{bash, eval = F}
 cd <project-directory>
@@ -744,7 +821,8 @@ Restart your R session before you start trying to work in python.
 
 ###### conda (System console)
 
-These steps constructed from @blackwoodHowUsePython2021.
+These steps constructed from @blackwoodHowUsePython2021. 
+You must have conda installed for these instructions to work!
 
 ```{bash, eval = F}
 cd <project-directory>
@@ -796,9 +874,26 @@ grep(pattern = "<pkg1>|<pkg2>|<pkg3>",
 
 Restart your R session before you start trying to work in python.
 
+###### System
+
+You can install all python packages at the user/system level using `pip`.
+This has the previously mentioned disadvantages, but has the major advantage of being very simple.
+To install a python package `<package name>` using pip, run this command
+
+```{bash, eval = F}
+pip3 install <package name>
+```
+
+Some computers may prefer that you use `pip` instead of `pip3` - figure out which one your computer requires and use that.
+
+Some operating systems (Linux) restrict the ability to install packages system-wide - I recommend creating a virtual environment or conda environment instead if you are using Linux to prevent constantly having to override warnings that exist for a reason. 
+
+:::
 :::
 
-#### R environments
+::: {.callout-note collapse=true}
+
+#### R environments (advanced)
 
 Some R programmers have adopted the python philosophy of project-specific package management, using an R package called `renv` [@usheyIntroductionRenv2023].
 
@@ -820,10 +915,14 @@ renv::install(c("pkg1", "pkg2", "githubuser/pkg3"))
 
 I use `renv` for this textbook, because if a package update breaks things, I need to systematically check *all* the code chunks in the textbook to make sure they all work. I don't want to do that every time someone fixes a minor bug, so I don't update the packages the textbook uses more than once a semester (normally). 
 
+:::
+
 ### Package repositories
 
 Both R and Python have package systems, though generally, R is a bit more straightforward to deal with than python (in my opinion). 
-Python has more package and environment management systems and I don't fully understand them all, where all R packages seem to go through the same basic installation process and are just hosted in different places.
+Python's extra environment management systems sometimes come with additional package repositories, and it can be hard to identify the differences between them. 
+By contrast, all R packages seem to go through the same basic installation process and are just hosted in different places.
+This is largely a result of the difference between R and Python's environment management strategies. 
 
 
 |        | Formally Published                                                                 | Informally Published/Beta                                                                                                     |
@@ -837,9 +936,6 @@ Python has more package and environment management systems and I don't fully und
 
 Many of the instructions here are modified from @makarovUsePythonRstudio2022.
 
-
-You can manage your python packages at the system level (e.g. when you update one package, everything gets updated for every project -- this can break things!), with `venv`, or with `conda`. 
-
 Whichever method (system, venv, conda) you use to manage your Python environment, when you go to install a new package, you have a few different options for how to do so. 
 
 ::: panel-tabset
@@ -848,9 +944,9 @@ Whichever method (system, venv, conda) you use to manage your Python environment
 
 In python, you will typically want to install packages using a system terminal.
 
-1. Make sure your virtual environment/conda environment is activated (if applicable)
+1. Make sure your virtual environment/conda environment is activated 
 2. Installation commands:
-    - If you are using system or venv, `pip3 install <package name>` should install your package. 
+    - If you are using venv, `pip3 install <package name>` should install your package. 
     - If you are using conda, `conda install <package name>` is preferable, and if that doesn't work, then try using `pip3 install <package name>`.
 
 ```{bash, eval = F}
@@ -865,12 +961,12 @@ conda install <pkg1>
 
 ##### RStudio
 
-Note: This does NOT work for system package installation.
+Note: This does NOT work to install python packages system-wide.
 
 1. Make sure R is using the correct python installation
 2. In the R terminal, run `reticulate::py_install("package name")`
 
-##### Python Chunk Magic
+##### IPython Magic
 
 This is less elegant, but nearly foolproof as long as RStudio knows where to find python.
 
@@ -957,21 +1053,43 @@ ggplot(pkg_fns, aes(x = pkg, y = after_stat(count), fill = pkg)) +
 
 ##### Python
 
+In python, there are built-in functions (`builtins`); I have then loaded the packages I typically use for plotting (`seaborn`, `seaborn.objects`, `matplotlib`), manipulating data (`pandas`, `numpy`), and standard `math` and `statistics` libraries. 
+
 ```{python}
-from plotnine import *
+import seaborn as sns
+import seaborn.objects as so
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import math
+import statistics
+from inspect import getmembers, isfunction
 
-# I have no clue how to get all callable objects in python 
-# classes and methods for those classes make this a lot harder... ugh
+pkgs = pd.DataFrame({"name": [
+  "builtins", 
+  "math", "statistics", 
+  "seaborn", "seaborn", "matplotlib", 
+  "pandas", "numpy"
+  ], 
+  "abbrev": [
+    "builtins", 
+    "math", "statistics",
+    sns, so, plt, 
+    pd, np]
+    })
 
-pkg_fns = r.pkg_fns # This is just the same data from R
+pkgs["functions"] = pkgs['abbrev'].apply(lambda x: dir(x), by_row="compat")
 
-(
-  ggplot(pkg_fns, aes(x = "pkg", fill = "pkg")) + 
-  geom_bar(aes(y = after_stat("count"))) + 
-  theme(legend_position = "none") + 
-  ylab("# Functions") + xlab("Package")
-)
+pkgs = pkgs.explode('functions')
 
+# Filter out functions that start with __
+pkgs = pkgs[~pkgs.functions.str.contains("__")]
+
+plot = sns.countplot(pkgs, x = "name", hue = "name")
+plot.set_title("Number of Functions in Common Python Packages")
+plot.set_xlabel("Package")
+plot.set_ylabel("# Functions")
+plt.show()
 ```
 
 :::
