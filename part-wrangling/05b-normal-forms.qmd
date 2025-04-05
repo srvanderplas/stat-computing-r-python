@@ -1,0 +1,342 @@
+# Normal Forms of Data {#sec-data-nf}
+
+## {{< fa bullseye >}} Objectives 
+
+This chapter provides a bit of an 'under-the-hood' view of reshaping data and links it to some concepts in database design and data organization from the computer science view point.
+
+What you should get out of this material is 
+
+- a better understanding of the origin of some of the (parameter) names:  for example, the parameters `key` and `value` in  python `pandas` function `melt`, or why is the  long form called `tidy`?
+
+- to be able to determine what the *key variable(s)* are in a dataset.
+
+```{r include=FALSE}
+library(tidyverse)
+```
+
+
+## Normalforms of data
+
+Normal forms were developed in the 1970s by [E.F. Codd](https://en.wikipedia.org/wiki/Edgar_F._Codd) as a theoretical framework to describe data structures in (relational) data bases. For the purpose of the considerations here, you can think of a data base as a bundle of data sets that are loosely connected  - e.g.  the data sets describe (different) aspects of the same objects, or they share some aspects (such as the same time or the same geography).
+
+What we mean by a dataset here, is a spread-sheet style (rectangular) representation, with rows representing observations and columns representing variables. We will assume that the first row in the spread sheet contains the names of the variables. Siilarly, we will assume there are no row names - any existing row names can be made a column/variable in the dataset. 
+
+For the purpose of assessing the normal form of a data set. we distinguish between two types of variables: **keys** and **non-key variables**.
+
+
+::: callout-important
+#### Definition: Key and Non-Key Variables {.unnumbered}
+The *key* of a data frame is defined as the (set of) variable(s) that uniquely identifies each row.
+
+Similarly, any variable that is not part of the key, is a *non-key variable*.
+:::
+
+There are various ways of recognizing key variables in a dataset: the easiest might be by their name; oftentimes a key variable is called an 'identifier', so watch out for variables with the letters `ID` in their name. Generally, the idea of a designed study and key variables are related: in a designed study, the combination of all design variables form a key. Any variables with values that are observed during the experiment, or collected after the study design is determined, are non-key variables. 
+
+In order to determine, whether a set of variables forms a key, we will need to determine that there are no duplications in their combined values. 
+
+::: callout-caution
+#### Example: is it a key? {.unnumbered}
+
+Let us assume, that we have the following dataset on measuring (repeatedly) different aspects and body parts of [Wallabies](http://www.statsci.org/data/oz/wallaby.html). This data is part of the Australian data and story library [OzDASL](https://gksmyth.github.io/ozdasl/). See the [help page](http://www.statsci.org/data/oz/wallaby.html) for more information about this data set and each of its variables:
+
+```{r}
+wallaby <- read.csv("../data/wallaby.csv") 
+head(wallaby) %>% knitr::kable(caption="First few lines of the wallaby data.")
+```
+When determining whether this data set has a key, we might at first consider the variable `Anim` (animal number). However, the first couple of rows already show us that this variable is not uniquely describing a row/observation in the data. What about the combination of `Anim` and `Age`?
+In order for these two variables to be a key, their combination needs to be unique, i.e. for each animal, we can only have one set of measurements at any age. 
+We can check whether that condition is fulfilled by tallying up the combination:
+
+::: panel-tabset
+#### Check: is Anim the key? {.unnumbered}
+
+```{r}
+wallaby %>% 
+  count(Anim, sort = TRUE) %>% head() %>% knitr::kable(caption="Anim by itself is not uniquely identifying rows in the data.")
+```
+
+Anim by itself is not a key variable, because for some animal ids we have multiple sets of measurements. 
+
+#### Check: is the combination of Anim and Age the key? {.unnumbered}
+
+
+```{r}
+wallaby %>% 
+  count(Anim, Age, sort = TRUE) %>% head() %>% knitr::kable(caption="All combinations of animal ID and an animal's age only refer to one set of measurements.")
+```
+
+The combination of `Anim` and `Age` uniquely describes each observation, and is therefore a key for the data set.
+:::
+:::
+
+
+#### Benefits of Normal forms
+
+Normalforms are used to describe the state that a particular data set is in -- lower normal forms can always be transformed into higher forms. This process is called *normalization* of data. Normalizing data has various benefits:
+
+Normalization 
+
+- avoids data redundancies,
+- reveals inconsistencies, 
+- simplifies the data design,
+- increases lookup speeds (in data bases),
+- and makes sets of data easier to maintain.
+
+
+Most often we are only interested in the first three normal forms. For memorization you can think of these forms as going along with 
+
+:::: {.columns}
+
+::: {.column width="30%"}
+
+1. The key
+2. The whole key
+3.  and nothing but the key
+
+:::
+
+::: {.column width="10%"}
+<!-- empty column to create gap -->
+:::
+
+::: {.column width="60%"}
+
+![Image of two keys as a memorization help for the three normal forms of data.](../images/wrangling/the-key.jpeg)
+
+:::
+
+::::
+
+::: callout-important 
+#### First Normal Form {.unnumbered}
+
+A table is in *first normal form* if 
+
+1. every entry in the table is a single value, and
+2. the table has a key.
+:::
+
+
+:::: callout-caution
+#### Back to the wallabies {.unnumbered}
+Below is a snapshot of a reshaped version of the previous example, where all measurements for each animal are captured in the list variable `measurements`. While `Anim` now should be a key variable (presumably it uniquely identifies each animal),  the data set is still not in first normal form, because the entries in the variable `measurements` are data sets by themselves, not just single values.
+```{r}
+wallaby2 <- wallaby %>% 
+  nest(.by = c("Anim", "Sex", "Loca"), .key="measurements") 
+wallaby2 %>% head() 
+```
+Is `Anim` the key variable of `wallaby2`? For that we check whether the `Anim` variable is unique - and find out that it is not unique! 
+
+```{r}
+wallaby2 %>% count(Anim, sort=TRUE) %>% head() %>%
+  knitr::kable(caption="We see in the frequency breakdown of `Anim`, that the animal ID for 125 is used twice, i.e. 125 seems to describe two different animals. This would indicate that animal numbers do not refer to an individual animal as the data description suggests.")
+```
+This finding is a sign of an inconsistency in the data set - and just a first example for why we care about normal forms. Here, we identify the first entry in the results below as a completely different animal - it is male and lives in a different location. Most likely, this is a wrongly identified animal.
+
+```{r}
+wallaby %>% filter(Anim == 125) %>% head() %>% knitr::kable(caption="Based on the listing for the values of animal 125, the very first entry does not fit in well with the other values.")
+```
+
+<details>
+
+<summary>
+
+Some detective work shows us that the additional entry for animal 125 is probably a missing entry for animal 126.
+
+</summary>
+
+
+
+With a bit of detective work, we can identify animal 126 as the most likely candidate for the set of measurements wrongly attributed to animal 125 (see @fig-wallaby125). The orange point corresponds to the entry wrongly assigned to animal 125. Its timing (`Age`) and value (`Weight`) make it the best fit for animal 126.
+
+```{r, echo = FALSE, warning = FALSE}
+#| label: fig-wallaby125
+#| fig-cap: Scatterplots of Weight by Age, facetted by animal number. Only male specimen in location Ha are considered. The orange point shows the measurements of the entry wrongly assigned to animal 125 (which is female and lives in a different location).
+wallaby %>% filter(Loca == "Ha", Anim!=125, Sex == 1, !is.na(Weight)) %>% mutate(Anim=factor(Anim)) %>%  ggplot(aes(x = Age, y = Weight)) + geom_point(size = 4, alpha = 0.5) + facet_wrap(~Anim) + geom_point(data = filter(wallaby, Anim==125, Sex==1) %>% select(-Anim), colour = "darkorange", size = 4, alpha = 0.8) + xlim(c(50,200)) + theme_bw() + ylim(c(0,5000)) + 
+  ggtitle("Weight measurements of male wallabies in location Ha")
+```
+In @fig-wallaby126 all measurements for wallaby 126 are shown by age (in days) when they were taken. The additional measurement wrongly assigned to animal 125 is shown in orange. All of the values are sensible within the grow curves of animal 126.
+
+```{r echo = FALSE}
+#| label: fig-wallaby126
+#| fig-cap: Growth curves of animal 126 for all the measurements taken between days 50 and 200. In orange, the additional entry for animal 125 is shown. The values are consistent with animal 126's growth.
+wallaby_long <- wallaby %>% pivot_longer(c("Weight", "Head":"Tail"), values_to = "Measurement", names_to="Trait") %>% filter(Trait!="Leng")
+wallaby_long %>% 
+  filter(Anim==126, between(Age, 50, 200)) %>% 
+  ggplot(aes(x = Age, y = Measurement)) + 
+  geom_point(size = 4, alpha = 0.5) + 
+  facet_wrap(~Trait, scales="free_y") +
+  geom_point(data = wallaby_long %>%
+               filter(Anim==125, Sex==1) %>% 
+                 select(-Anim), 
+             colour = "darkorange", size = 4, alpha = 0.8)  +
+  theme_bw() +
+  ggtitle("Measurements for Animal 126 with hypothesized additional entry")
+```
+</details>
+::::
+
+::: callout-tip
+#### Cleaning the Wallaby data {.unnumbered}
+As a direct result of the normalization step, we make a change (!!!) to the orignial data.
+```{r}
+# Cleaning Step 1
+wallaby_cleaner <- wallaby %>% 
+  mutate(
+    Anim = ifelse(Anim==125 & Sex==1, 126, Anim)
+  )
+```
+Making any changes to a dataset should never be done light-heartedly,  always be well argued and well-documented. For the present example, we will keep the above investigation as argument, and the code to show the exact nature of the cleaning step.
+:::
+
+::: callout-important
+#### Second Normal Form {.unnumbered}
+
+A data set is in *second normal form*, if 
+
+1. it is in first normal form, and
+2. all non-key variables depend on all parts of the key (no split key).
+
+Note, that tables in 1st normal form with a single key variable are automatically in 2nd normal form.
+:::
+
+Regarding the example of the `wallaby` dataset, we see the dataset in its basic form is not in 2nd normal form, because the two non-key variables `Sex` (biological sex of the animal) and the animal's location (`Loca`) only depend on the animal number `Anim`, and not on the `Age` variable.
+
+```{r}
+wallaby2 %>% group_by(Anim) 
+```
+
+
+#### Normalization step: 1st NF to 2nd NF
+
+We can bring any data set that is in 1st normal form into second normal form by splitting the data set into two parts: all non-key elements that only depend on a part of the key are moved into a second data set, together with a copy of the part of the key that those elements rely on. All duplicate rows in the second dataset then need to be removed. 
+
+This construction results in two tables that are in 2nd normal form. 
+
+::: callout-caution
+#### Example: Getting the `wallaby` data into 2nd normal form {.unnumbered}
+
+In the example of the `wallaby` data, we have identified the non-key variables `Sex` and `Loca` to only depend on the animal's number - i.e. the values of these variables are animal-specific demographics, that do not change over the course of their lifetime. 
+
+We separate those variables into the data set `wallaby_demographics` and reduce the number of rows by finding a tally of the number of rows we summarize. 
+
+```{r}
+wallaby_demographics <- wallaby_cleaner %>% select(Anim, Sex, Loca) %>%
+  count(Anim, Sex, Loca) 
+# Don't need the total number
+```
+Once we have verified that `Anim` is a key for `wallaby_demographics`, we know that this table is in 2nd normal form. 
+```{r}
+wallaby_demographics %>% count(Anim, sort=TRUE) %>% head()
+```
+With the key-splitting variables `Sex` and `Loca` being taken care of in the second dataset, we can safely remove those variables from the original data. To preserve the original, we actually create a separate copy called `wallaby_measurements`:
+
+```{r}
+wallaby_measurements <- wallaby_cleaner %>% select(-Sex, -Loca) 
+wallaby_measurements %>%
+  head()
+```
+
+The `wallaby_measurements` dataset has the combination of `Anim` and `Age` as a key, and all of the variables are measurement that depend on both the animal and its age. This dataset is therefore also in second normal form.
+:::
+
+In the normalization process we spotted one inconsistency (animal 125), which we resolved earlier, and we reduced the overall size of the data has been reduced from `r ncol(wallaby)` x `r nrow(wallaby)` = `r prettyNum(prod(dim(wallaby)), big.mark=",")` to the sum of `r ncol(wallaby_demographics)` x `r nrow(wallaby_demographics)` = `r prod(dim(wallaby_demographics))` and `r ncol(wallaby_measurements)` x `r nrow(wallaby_measurements)` = `r prettyNum(prod(dim(wallaby_measurements)), big.mark=",")` for the   `wallaby_demographics` and the `wallaby_measurements` data, respectively. 
+
+::: callout-important
+#### Third Normal Form {.unnumbered}
+
+A table is in *third normal form*, if 
+
+- the table is in 2nd normal form, and
+- no non-key variable determines the values of another non-key variable.
+:::
+
+Being able to determine whether any (combination of) non-key variables determine(s) the values of other non-key variables, is a hard task. We would need to be the data experts in a lot of areas, and even then, we might miss some dependencies and declare a table to be in third normal form when, in fact, it is not. 
+
+Rather than this form of the third normal form, we often employ a stricter normal form, to only allow a single non-key variable to ensure that there are no dependencies left between non-key variables. This form is also called  *key-value pairs* 
+
+::: callout-important
+#### Key-Value Pairs (KVP) {.unnumbered}
+
+A table is in *key-value representation*, if
+
+- the table is in 2nd form, and
+- there is only a single non-key column. 
+:::
+
+Now we are finally at the point that we are connecting to the previous section on reshaping data. The way to bring data into key-value representation, is a transformation from a wide data form to a long form as described in @sec-pivot-operations on Pivot Operations. 
+
+:::: callout-caution
+#### The wallaby data in key-value-pair form {.unnumbered}
+In the previous section, we have separated the original `wallaby` data into two parts: the `wallaby_demographics` and `wallaby_measurements` data sets. 
+
+We demonstrate two different ways of bringing datasets into key-value pairs, using these two different datasets 
+
+1. Splitting into parts
+
+For the `wallaby_demographics`, we will split the data into two parts: `wallaby_sex` and `wallaby_location`: 
+
+
+```{r}
+wallaby_sex <- wallaby_demographics %>% select(Anim, Sex)
+wallaby_Location <- wallaby_demographics %>% select(Anim, Loca)
+```
+
+2. Pivoting
+
+Another approach to bringing a dataset into key-value pairs is to summarize the values of a set of variables by introducing a new key for the variable names:
+
+::: panel-tabset
+##### in R {.unnumbered}
+
+```{r}
+wallaby_measurements_long <- wallaby_measurements %>% 
+  pivot_longer(cols = 'Leng':'Weight', names_to="Traits", values_to="Measurements", 
+               values_drop_na = TRUE)
+
+dim(wallaby_measurements_long)
+head(wallaby_measurements_long)
+```
+By specifying `values_drop_na` as `TRUE` we exclude all measurements that could not be taken, such as `Weight` for about the first 50 days of age, and `Leng` for the animal until the joey is ready to leave the safety of the pouch. Note, that while this normalization step might save space, the structural nature of missing values might be further hidden.
+
+##### in python {.unnumbered}
+
+```{python}
+import pandas as pd
+
+wallaby_measurements_long = pd.melt(r.wallaby_measurements, 
+  id_vars=['Anim', 'Age'], 
+  var_name = 'Traits',
+  value_name = 'Measurements')
+  
+wallaby_measurements_long = wallaby_measurements_long[
+    wallaby_measurements_long['Measurements'] >= 0
+  ]
+
+wallaby_measurements_long  
+```
+
+Missing values in the R data set are interpreted as the value -2147483648 in python.
+We need to ensure that we remove all of these values (or convert them to `NaN`)
+
+:::
+
+::::
+
+
+## Next steps
+
+Units of measurements
+
+Investigation of missing values: missing at random?
+
+
+::: callout-learnmore
+## Other resources
+
+From Decomplexify's Youtube channel: [Learn Database Normalization - 1NF, 2NF, 3NF, 4NF, 5NF](https://www.youtube.com/watch?v=GFQaEYEc8_8)
+
+:::
+
+## References
