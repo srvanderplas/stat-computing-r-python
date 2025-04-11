@@ -177,11 +177,13 @@ head(penguins)
 #### Python
 
 In your system console:
+
 ```{bash, eval = F}
 pip3 install palmerpenguins
 ```
 
 In Python:
+
 ```{python}
 import palmerpenguins
 penguins = palmerpenguins.load_penguins()
@@ -506,9 +508,11 @@ His argument is that elegant graphical design means we have to think about an un
 The 2nd approach is called the "grammar of graphics". 
 
 ::: column-margin
+
 There are other graphics systems (namely, `lattice` in R, `seaborn` in Python, and some web-based rendering engines like `Observable` or `d3`) that you could explore, but it's far more important that you know how to functionally create plots in R and/or Python. 
 I don't recommend you try to become proficient in all of them. 
 **Pick one (two at most) and get familiar with those libraries, then google for the rest.**
+
 :::
 
 Before we delve into the grammar of graphics, let's motivate the philosophy using a simple task.
@@ -518,10 +522,13 @@ We'll talk about what makes pie charts terrible in @sec-good-graphics.
 
 
 ::: {.callout-caution collapse=true}
+
 ### Example: Generations of Pokemon
 
 ::: column-margin
+
 [![Nintendo, Creatures, Game Freak, The Pokémon Company, Public domain, via Wikimedia Commons](../images/wrangling/International_Pokemon_logo.png){fig-alt="Pokemon logo"}](https://upload.wikimedia.org/wikipedia/commons/9/98/International_Pok%C3%A9mon_logo.svg")
+
 :::
 
 Suppose we want to explore Pokemon. There's not just the original 150 (gotta catch 'em all!) - now there are over 1000! 
@@ -548,6 +555,7 @@ import pandas as pd
 poke = pd.read_csv("https://raw.githubusercontent.com/srvanderplas/datasets/main/clean/pokemon_gen_1-9.csv")
 poke['generation'] = pd.Categorical(poke.gen)
 ```
+
 :::
 
 Once the data is read in, we can start plotting:
@@ -709,6 +717,7 @@ plt.cla() # clear out matplotlib buffer
 sns.catplot(data = poke, x = 'generation', kind = "count")
 plt.show()
 ```
+
 :::
 
 :::
@@ -749,6 +758,7 @@ When creating a grammar of graphics chart, we start with the data (this is consi
 (this list modified from @sarkarComprehensiveGuideGrammar2018).
 
 ::: panel-tabset
+
 ### Sketch
 
 ![A Sketch of the mapping between a data frame and a scatterplot, showing the geoms, aesthetics, transformations, scales, coordinate systems, and statistics that are created by default.](../images/wrangling/grammar-graphics-dataset-mapping.png)
@@ -775,6 +785,7 @@ import seaborn.objects as so
   .show()
 )
 ```
+
 :::
 
 
@@ -809,6 +820,7 @@ This example will give me an opportunity to show you how an exploratory data ana
 Before we start exploring, let's start with a basic scatterplot, and add a title and label our axes, so that we're creating good, informative charts.
 
 ::: panel-tabset
+
 #### Sketch
 
 ![A Sketch of the mapping between a data frame and a scatterplot, showing the geoms, aesthetics, transformations, scales, coordinate systems, and statistics that are created by default.](../images/wrangling/grammar-graphics-dataset-mapping.png)
@@ -842,6 +854,7 @@ First, we may want to show some sort of overall trend line.
 We can start with a linear regression, but it may be better to use a loess smooth ([loess regression](https://en.wikipedia.org/wiki/Local_regression) is a fancy weighted average and can create curves without too much additional effort on your part).
 
 ::: panel-tabset
+
 #### Sketch
 
 ![A Sketch of the mapping between a data frame and a scatterplot, showing the geoms, aesthetics, transformations, scales, coordinate systems, and statistics that are created by default. In this modification of the original image, we've added a summary smooth line which provides a linear trend on top of the original points.](../images/wrangling/grammar-graphics-dataset-mapping-smooth.png)
@@ -892,6 +905,7 @@ Let's see if we can figure out what those additional variables are...
 As it happens, the best viable option is City.
 
 ::: panel-tabset
+
 #### Sketch
 
 ![A Sketch of the mapping between a data frame and a scatterplot, showing the geoms, aesthetics, transformations, scales, coordinate systems, and statistics that are created by default. In this modification of the original image, we've added a summary smooth line which provides a linear trend on top of the original points.](../images/wrangling/grammar-graphics-dataset-mapping-color.png)
@@ -942,6 +956,7 @@ So let's work with a smaller set of data: Houston, Dallas, Fort worth, Austin, a
 Another way to show this data is to plot each city as its own subplot. In ggplot2 lingo, these subplots are called "facets". In visualization terms, we call this type of plot "small multiples" - we have many small charts, each showing the trend for a subset of the data.
 
 ::: panel-tabset
+
 #### ggplot2 {.unnumbered}
 
 ```{r}
@@ -1009,6 +1024,7 @@ housingsub = txhousing[txhousing['city'].isin(citylist)]
 Now that we've simplified our charts a bit, we can explore a couple of the other quantitative variables by mapping them to additional aesthetics:
 
 ::: panel-tabset
+
 #### ggplot2 {.unnumbered}
 
 ```{r}
@@ -1033,6 +1049,7 @@ Notice I've removed the aesthetic mapping to color as it's redundant now that ea
 #### Seaborn {.unnumbered}
 
 Coming soon!
+
 :::
 
 ### Exploring Other Variables and Relationships
@@ -1040,6 +1057,7 @@ Coming soon!
 Up to this point, we've used the same position information - date for the y axis, median sale price for the y axis. Let's switch that up a bit so that we can play with some transformations on the x and y axis and add variable mappings to a continuous variable.
 
 ::: panel-tabset
+
 #### ggplot2 {.unnumbered}
 
 ```{r}
@@ -1077,6 +1095,7 @@ ggplot(housingsub, aes(x = "listings", y = "sales", color = "city"))
 ```
 
 Notice that the gridlines included in python by default are different than those in ggplot2 by default (personally, I vastly prefer the python version - it makes it obvious that we're using a log scale).
+
 :::
 
 
@@ -1085,6 +1104,7 @@ Notice that the gridlines included in python by default are different than those
 For the next demonstration, let's look at just Houston's data. We can examine the inventory's relationship to the number of sales by looking at the inventory-date relationship in x and y, and mapping the size or color of the point to number of sales.
 
 ::: panel-tabset
+
 #### ggplot2 {.unnumbered}
 
 ```{r}
@@ -1119,6 +1139,7 @@ ggplot(data = houston, aes(x = sales, y = inventory, color = date)) +
 
 Is that easier or harder to read?
 
+:::
 
 [^10-graphics-1]: This isn't necessarily a good thing, but you should know how to do it. The jury is still very much out on whether log transformations make data easier to read and understand
 

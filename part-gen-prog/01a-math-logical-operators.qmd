@@ -1,0 +1,441 @@
+# Mathematical and Logical Operators {#sec-calculator}
+
+
+## {{< fa bullseye >}} Objectives
+
+- Understand and use mathematical operators for mathematical computation
+- Understand and use logical operators to evaluate complex conditions
+- Understand and use basic string operations (repetition and concatenation)
+- Evaluate expressions using order of operations to predict how the computer will execute code
+- Translate mathematical concepts into a series of computational operations
+
+
+## Mathematical Operators
+
+Let's first start with a special class of functions that you're probably familiar with from your math classes - mathematical operators.
+
+Here are a few of the most important ones:
+
+| Operation        | R symbol | Python symbol |
+|------------------|----------|---------------|
+| Addition         | `+`      | `+`           |
+| Subtraction      | `-`      | `-`           |
+| Multiplication   | `*`      | `*`           |
+| Division         | `/`      | `/`           |
+| Integer Division | `%/%`    | `//`          |
+| Modular Division | `%%`     | `%`           |
+| Exponentiation   | `^`      | `**`          |
+
+: Mathematical operators in R and Python {#tbl-math-operators}
+
+These operands are all for scalar operations (operations on a single number) - vectorized versions, such as matrix multiplication, are somewhat more complicated (and different between R and python).
+
+::: callout-caution
+
+### Example: Integer and Modular Division
+
+Integer division is the whole number answer to A/B, and modular division is the fractional remainder when A/B.
+
+Let's demonstrate with the problem 14/3, which evaluates to `r 14/3` when division is used, but has integer part 4 and remainder 2.
+
+::: panel-tabset
+
+### R {.unnumbered}
+
+`14 %/% 3` in R would be 4, and `14 %% 3` in R would be 2.
+
+```{r}
+14 %/% 3
+14 %% 3
+```
+
+### Python {.unnumbered}
+
+```{python}
+14 // 3
+14 % 3
+```
+
+:::
+
+:::
+
+## Order of Operations
+
+Both R and Python operate under the same mathematical rules of precedence that you learned in school.
+You may have learned the acronym PEMDAS, which stands for Parentheses, Exponents, Multiplication/Division, and Addition/Subtraction.
+That is, when examining a set of mathematical operations, we evaluate parentheses first, then exponents, and then we do multiplication/division, and finally, we add and subtract.
+
+::: panel-tabset
+
+### R {.unnumbered}
+
+```{r}
+(1+1)^(5-2) # <1>
+1 + 2^3 * 4 # <2>
+3*1^3 # <3>
+```
+1. The items in parentheses are evaluated first, so the expression becomes (2)^(3). Then, exponentiation is performed, yielding 8.
+2. Exponentiation is performed first (PEMDAS), so the expression becomes 1 + 8*4. Then multiplication is performed, yielding 1 + 32. Addition is the final step, so we get 33.
+3. Exponentiation is performed first, so this becomes 3*1. Then multiplication is performed, producing a final result of 3. 
+
+### Python {.unnumbered}
+
+```{python}
+(1+1)**(5-2) # <1>
+1 + 2**3*4 # <2>
+3*1**3 # <3>
+```
+1. The items in parentheses are evaluated first, so the expression becomes (2)^(3). Then, exponentiation is performed, yielding 8.
+2. Exponentiation is performed first (PEMDAS), so the expression becomes 1 + 8*4. Then multiplication is performed, yielding 1 + 32. Addition is the final step, so we get 33.
+3. Exponentiation is performed first, so this becomes 3*1. Then multiplication is performed, producing a final result of 3. 
+
+:::
+
+## Simple String Operations
+
+Python has some additional operators that work on strings.
+In R, you will have to use functions to perform these operations, as R does not have string operators.
+
+::: callout-demo
+
+### String Operations in R and Python
+
+::: panel-tabset
+
+#### Python {.unnumbered}
+
+In Python, `+` will **concatenate** (stick together) two strings.
+Multiplying a string by an integer will repeat the string the specified number of times.
+
+```{python}
+"first " + "second"
+"hello " * 3
+```
+
+#### R {.unnumbered}
+
+In R, to concatenate things, we need to use functions: `paste` or `paste0`:
+
+```{r}
+paste("first", "second", sep = " ") # <1>
+paste("first", "second", collapse = " ")
+paste(c("first", "second"), sep = " ") # sep only works w/ 2 objects passed in
+paste(c("first", "second"), collapse = " ") # collapse works on vectors
+
+paste(c("a", "b", "c", "d"), 
+      c("first", "second", "third", "fourth"), 
+      sep = "-", collapse = " ")
+# sep is used to collapse parameters, then collapse is used to collapse vectors
+
+paste0(c("a", "b", "c"))
+paste0("a", "b", "c") # equivalent to paste(..., sep = "")
+```
+
+You don't need to understand the details of this code at this point in the class, but it is useful to know how to combine strings in both languages.
+
+:::
+
+:::
+
+
+## Logical Operators {#sec-logical-ops}
+
+Logical variables can be combined through the use of logical operators in much the same way that numerical variables are combined through mathematical operators.
+
+There are specific **logical operators** which are used to aggregate and combine multiple logical variables: the primary logical operators are `and`, `or`, and `not` [^xor].
+
+[^xor]: A fourth commonly used logical operator is **exclusive or** (`xor`). `xor` is True if only one of the two conditions is True, but False if both are True. `xor` is not a basic boolean operator, as it can be written as a combination of other operators: `A xor B = (A or B) and not(A and B)`.
+
+In **pseudocode**, which is human-readable logic structured like computer code but without the syntax, we usually write these out in all caps. 
+
+- (X AND Y) requires that both X and Y are true.
+- (X OR Y) requires that one of X or Y is true.
+- (NOT X) is true if X is false, and false if X is true. Sometimes called **negation**.
+- (X XOR Y) requires that one (and only one) of X or Y is true. Sometimes called **exclusive or**.
+
+::: {.callout-tip collapse=true}
+
+### Truth Tables: Useful Tools for Understanding Logical Expressions
+
+When constructing a logical expression that combines Boolean variables, it can be helpful to build a **truth table** that lists all possible inputs on the left and the output of the operator on the right. 
+A truth table demonstrating the logical operators `and`, `or`, `not` and `xor` is provided in @tbl-truth-general.
+
+
+a | b | a `and` b | a `or` b | `not` a | `not` b | a `xor` b
+-- | -- | -- | -- | -- | -- | --
+T | T | T | T | F | F | F
+T | F | F | T | F | T | T
+F | T | F | T | T | F | T 
+F | F | F | F | T | T | F
+
+: Truth table for each of the common logical operators. {#tbl-truth-general}
+
+:::
+
+Operation | R | Python
+--- | --- | ---
+and | `&` | `&` or `and`
+or | `|` | `|` or `or`
+not | `!` | `not`
+xor | `xor()` | `^`
+
+: Logical operators in R and Python. These operators are intended for single values; evaluation of vectors may require different operators. Note the use of `^` for `xor` in Python! {#tbl-log-operators}
+
+
+When writing code, we use the logical operators in R and Python shown in @tbl-log-operators.
+
+
+:::: {.callout-warning collapse=true}
+
+### Exploring Logical Operators with R and Python
+
+We can generate each entry in the truth table using the relevant logical operators in R and python. 
+
+::: panel-tabset
+
+#### AND
+
+In R, `and` comparisons use `&` as the operator.
+
+```{r}
+
+TRUE & TRUE
+TRUE & FALSE
+FALSE & TRUE
+FALSE & FALSE
+```
+
+In Python, `and` expressions use `&` as the operator.
+
+```{python}
+True & True
+True & False
+False & True
+False & False
+```
+
+Alternately, in Python, you can also spell out the whole word and use `and` explicitly. 
+
+```{python}
+True and True
+True and False
+False and True
+False and False
+```
+
+
+#### OR
+
+In R, `or` is denoted with `|` (the vertical bar, shift + the button above the enter key on most keyboards). 
+
+```{r}
+TRUE | TRUE
+TRUE | FALSE
+FALSE | TRUE
+FALSE | FALSE
+```
+
+In Python, `or` expressions use `|` as the operator.
+
+```{python}
+True | True
+True | False
+False | True
+False | False
+```
+
+Alternately, in Python, you can also spell out the whole word and use `or` explicitly. 
+
+```{python}
+True or True
+True or False
+False or True
+False or False
+```
+
+
+#### NOT
+
+In R, negation occurs using the `!` operator.
+
+```{r}
+!TRUE
+!FALSE
+```
+
+In Python, negation occurs using the `not` operator.
+
+```{python}
+not True
+not False
+```
+
+#### XOR
+
+In R, exclusive or uses the `xor()` function.
+
+```{r}
+xor(TRUE, TRUE)
+xor(TRUE, FALSE)
+xor(FALSE, TRUE)
+xor(FALSE, FALSE)
+```
+
+In Python, exclusive or uses the `^` operator.
+
+```{python}
+True ^ True
+True ^ False
+False ^ True
+False ^ False
+```
+
+Note that this is why the exponentiation operator in Python is `**` instead of `^`. 
+Using `^` may produce errors (TypeError: unsupported operand type(s)) or may produce unexpected results with no warning at all, as in the following example. 
+
+```{python}
+3^4
+```
+
+:::
+
+::::
+
+### Order of Operations
+
+Just as with mathematical operators, there is an order of operations to logical operators. 
+
+Precedence order: (top is evaluated first)
+
+- NOT 
+- AND
+- OR
+
+
+::: panel-tabset
+
+#### R
+
+```{r}
+a1 <- TRUE
+b1 <- FALSE
+c1 <- FALSE
+
+a1 | b1 & c1 # AND takes precedence
+a1 | (b1 & c1) # same as above, with parentheses
+(a1 | b1) & c1 # force OR to be first using parentheses
+```
+
+#### Python
+
+```{python}
+a1 = True
+b1 = False
+c1 = False
+
+a1 or b1 and c1 # AND takes precedence
+a1 or (b1 and c1) # same as above, with parentheses
+(a1 or b1) and c1 # force OR to be first using parentheses
+```
+
+:::
+
+
+### De Morgan's Laws
+
+[De Morgan's Laws](https://en.wikipedia.org/wiki/De_Morgan%27s_laws) are a set of rules for how to combine logical statements, similar to distributive laws in numerical operations. You can represent them in a number of ways:
+
+-   NOT(A or B) is equivalent to NOT(A) and NOT(B)
+-   NOT(A and B) is equivalent to NOT(A) or NOT(B)
+
+::: {.callout-tip collapse=true}
+
+#### Visual Representation of DeMorgan's Laws
+
+We can also represent De Morgan's Laws visually using Venn Diagrams.
+
+![Venn Diagram of Set A and Set B](../images/other/SetA and SetB.png)
+
+We will use the convention that ![Shaded regions are TRUE, unshaded regions are FALSE](../images/other/TrueFalse.png).
+
+::: {.callout collapse=true}
+##### DeMorgan's First Law
+
+![A venn diagram illustration of De Morgan's laws showing that the region that is outside of the union of A OR B (aka NOT (A OR B)) is the same as the region that is outside of (NOT A) and (NOT B)](../images/other/DeMorgan1.png)
+
+::: panel-tabset
+
+###### R
+
+```{r}
+!(TRUE | TRUE)
+!(TRUE | FALSE)
+!(FALSE | TRUE)
+!(FALSE | FALSE)
+
+!TRUE & !TRUE
+!TRUE & !FALSE
+!FALSE & !TRUE
+!FALSE & !FALSE
+```
+
+###### Python
+
+```{python}
+not(True or True)
+not(True or False)
+not(False or True)
+not(False or False)
+
+not(True) and not(True)
+not(True) and not(False)
+not(False) and not(True)
+not(False) and not(False)
+```
+
+:::
+
+:::
+
+
+::: {.callout collapse=true}
+
+##### DeMorgan's Second Law
+
+![A venn diagram illustration of De Morgan's laws showing that the region that is outside of the union of A AND B (aka NOT (A AND B)) is the same as the region that is outside of (NOT A) OR (NOT B)](../images/other/DeMorgan2.png)
+
+::: panel-tabset
+
+###### R
+
+```{r}
+!(TRUE & TRUE)
+!(TRUE & FALSE)
+!(FALSE & TRUE)
+!(FALSE & FALSE)
+
+!TRUE | !TRUE
+!TRUE | !FALSE
+!FALSE | !TRUE
+!FALSE | !FALSE
+```
+
+###### Python
+```{python}
+not(True and True)
+not(True and False)
+not(False and True)
+not(False and False)
+
+not(True) or not(True)
+not(True) or not(False)
+not(False) or not(True)
+not(False) or not(False)
+```
+
+:::
+
+:::
+
+:::
