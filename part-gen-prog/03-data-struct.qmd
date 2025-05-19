@@ -5,11 +5,12 @@
 
 This chapter introduces some of the most important structures for storing and working with data: vectors, matrices, lists, and data frames. 
 
-## {{< fa bullseye >}} Objectives
+## {{< fa bullseye >}} Objectives {.intro}
 
 - Understand the differences between lists, vectors, data frames, matrices, and arrays in R and python
 - Be able to use location-based indexing in R or python to pull out subsets of a complex data object
 
+::: {.callout-caution .intro}
 ## Python Package Installation 
 
 You will need the `numpy` and `pandas` packages for this section. Pick one of the following ways to install python packages:
@@ -39,8 +40,9 @@ In a python chunk (or the python terminal), you can run the following command. T
 
 :::
 
+:::
 
-## Data Structures Overview
+## Data Structures Overview {.intro}
 
 In @sec-basic-var-types, we discussed 4 different data types: strings/characters, numeric/double/floats, integers, and logical/booleans. As you might imagine, things are about to get more complicated.
 
@@ -53,114 +55,36 @@ Data **structures** are more complex arrangements of information, but they are s
 | N-D         | array         |               |
 
 ::: callout-warning
+### Opinionated Structures
+
 Those of you who have taken programming classes that were more computer science focused will realize that I am leaving out a lot of information about lower-level structures like pointers. 
 I'm making a deliberate choice to gloss over most of those details in this chapter, because it's already hard enough to learn 2 languages worth of data structures at a time.
 In addition, R doesn't have pointers [No Pointers in R, @matloffArtProgrammingTour2011], so leaving out this material in python streamlines teaching both two languages, at the cost of overly simplifying some python concepts. 
 If you want to read more about the Python concepts I'm leaving out, check out @frippAnswerPythonPandas2016.
+
 :::
 
+In any data structure, it's important to be able to pull smaller pieces of data out of the structure. 
+We do this via **indexing**. 
 
-## Lists
+There are three main approaches to accessing information using indexes:
 
-A **list** is a one-dimensional column of heterogeneous data - the things stored in a list can be of different types.
+1. Object Names    
+In some cases, components of a data structure are **named** and can be accessed using those names.
 
-![A lego list: the bricks are all different types and colors, but they are still part of the same data structure.](../images/gen-prog/lego-list.png)
+2. Location    
+Think of a location index as accessing the nth item in a list, or accessing cell A5 in an Excel spreadsheet - you have strict directions as to what row/column or item to get. 
 
-::: panel-tabset
-### R {.unnumbered}
- 
-```{r list-r}
-x <- list("a", 3, FALSE)
-x
-```
+3. Logical Indexing    
+In a logical index, you access all items in a structure for which a condition is TRUE. This would be like making a list of family members, and then assigning bedtimes using a statement like "all of the children go to bed at 8pm" - first you decide whether a person is a child, and then you can assign the appropriate bedtime if child is true.
 
-### Python {.unnumbered}
+In both R and Python, we will primarily use square brackets to index different data types. 
+When the data type is rectangular (has both rows and columns), we will use `[row, column]` syntax -- that is, `[1, 3]` says access the first row, third column. 
+When the data type is a vector, we will use `[item]` indexing.
 
-```{python list-py}
-x = ["a", 3, False]
-x
-```
-:::
+Another important difference to keep in mind is that in R, items are 1-indexed -- that is, the first item in a list `x` is `x[1]`. 
+In Python, on the other hand, items are 0-indexed -- the first item in a list `y` is `y[0]`. 
 
-The most important thing to know about lists, for the moment, is how to pull things out of the list. We call that process **indexing**.
-
-### Indexing
-
-Every element in a list has an **index** (a location, indicated by an integer position)[^05-vectors-1].
-
-[^05-vectors-1]: Throughout this section (and other sections), lego pictures are rendered using https://www.mecabricks.com/en/workshop. It's a pretty nice tool for building stuff online!
-
-::: panel-tabset
-#### R concept {.unnumbered}
-
-In R, we count from 1.
-
-![An R-indexed lego list, counting from 1 to 5](../images/gen-prog/list-indexing-r.png)
-
-#### R code {.unnumbered}
-
-```{r, error = T}
-x <- list("a", 3, FALSE)
-
-x[1] # This returns a list
-x[1:2] # This returns multiple elements in the list
-
-x[[1]] # This returns the item
-x[[1:2]] # This doesn't work - you can only use [[]] with a single index
-```
-
-In R, list indexing with `[]` will return a list with the specified elements.
-
-To actually retrieve the item in the list, use `[[]]`. The only downside to `[[]]` is that you can only access one thing at a time.
-
-#### Python concept {.unnumbered}
-
-In Python, we count from 0.
-
-![A python-indexed lego list, counting from 0 to 4](../images/gen-prog/list-indexing-py.png)
-
-#### Python code {.unnumbered}
-
-```{python}
-x = ["a", 3, False]
-
-x[0]
-x[1]
-x[0:2]
-```
-
-In Python, we can use single brackets to get an object or a list back out, but we have to know how **slices** work. Essentially, in Python, `0:2` indicates that we want objects 0 and 1, but want to stop at 2 (not including 2). If you use a slice, Python will return a list; if you use a single index, python just returns the value in that location in the list.
-:::
-
-We'll talk more about indexing as it relates to vectors, but indexing is a general concept that applies to just about any multi-value object.
-
-### Concatenation
-
-Another important thing to know about lists is how to combine them. 
-If I have rosters for two classes and I want to make a list of all of my students, I need to somehow merge the two lists together.
-
-::: panel-tabset
-#### R
-```{r}
-class1 <- c("Benjamin Sisko", "Odo", "Julian Bashir", "Jadzia Dax", "Miles O'Brien", "Quark", "Kira Nerys", "Elim Garak")
-class2 <- c("Jean-Luc Picard", "William Riker", "Geordi La Forge", "Worf", "Miles O'Brien", "Beverly Crusher", "Deanna Troi", "Data")
-
-students <- c(class1, class2)
-students
-
-unique(students) # get only unique names
-```
-
-#### Python
-```{python}
-class1 = ["Benjamin Sisko", "Odo", "Julian Bashir", "Jadzia Dax", "Miles O'Brien", "Quark", "Kira Nerys", "Elim Garak"]
-class2 = ["Jean-Luc Picard", "William Riker", "Geordi La Forge", "Worf", "Miles O'Brien", "Beverly Crusher", "Deanna Troi", "Data"]
-
-students = class1 + class2
-students
-list(dict.fromkeys(students)) # get only unique names
-```
-:::
 
 ## Vectors
 
@@ -242,6 +166,7 @@ A **Series** is a one-dimensional array-like object containing a sequence of val
 
 ```{python series-pandas-1, error = F}
 import pandas as pd
+
 digits_pi = pd.Series([3,1,4,1,5,9,2,6,5,3,5])
 
 # Access individual entries
@@ -368,7 +293,7 @@ weekdays[school_days] # print out all school days
 #### Python {.unnumbered}
 
 ```{python logical-vector-indexing-python}
-import numpy as np;
+import numpy as np
 
 animals = np.array(["Cat", "Dog", "Snake", "Lizard", "Tarantula", "Hamster", "Gerbil", "Otter"])
 
@@ -384,7 +309,31 @@ animals[~good_pets] # equivalent to using bad_pets
 ```
 :::
 
-### Math with Vectors
+
+#### Logical Operations on Vectors {.intermediate .advanced}
+
+Indexing with logical vectors is an extremely powerful technique -- so much so that it is worthwhile to quickly review how logical operations can be combined.
+In both R and Python, we can operate on logical vectors with standard operators -- AND, OR, and NOT. 
+
+::: panel-tabset
+
+##### R
+
+```{R}
+# This set of code converts pi to a character, 
+# splits the string into single-character pieces,
+# converts it back to numbers, 
+# and removes the NA resulting from converting '.' to a number.
+x <- na.omit(as.numeric(strsplit(as.character(pi), "")[[1]]))
+```
+
+##### Python
+
+
+:::
+
+
+### Math with Vectors {.intermediate .advanced}
 
 In order to talk about mathematical operations on (numerical) vectors, we first need to consider different ways we could combine vectors. 
 If the vectors are the same length, we could perform mathematical operations on the elements (and if they're not the same length we could come up with some convention to coerce them to be the same length). 
@@ -422,6 +371,7 @@ When using numeric vectors, the element-wise operations are the same for vectors
 : Element-wise mathematical operators in R and Python {#tbl-math-operators2}
 
 ::: panel-tabset
+
 ##### R
 ```{r}
 a <- c(1:5)
@@ -454,7 +404,10 @@ a ** b
 
 :::
 
+
+
 #### Vector-to-Scalar Operations
+
 Let's cover a few built-in or commonly-used vector summary operations here, focusing on those which are most useful for statistics. 
 
 Function | R | Python
@@ -584,9 +537,6 @@ pd.DataFrame(list(itertools.product(A, B))) # data frame
 
 ::: 
 
-### Logical Operations on Vectors
-
-XXX TODO XXX
 
 ### Reviewing Types
 
@@ -678,6 +628,110 @@ x2xor3 = x2 ^ x3
 x[x2xor3]
 ```
 :::
+
+
+## Lists
+
+A **list** is a one-dimensional column of heterogeneous data - the things stored in a list can be of different types.
+
+![A lego list: the bricks are all different types and colors, but they are still part of the same data structure.](../images/gen-prog/lego-list.png)
+
+::: panel-tabset
+### R {.unnumbered}
+ 
+```{r list-r}
+x <- list("a", 3, FALSE)
+x
+```
+
+### Python {.unnumbered}
+
+```{python list-py}
+x = ["a", 3, False]
+x
+```
+:::
+
+The most important thing to know about lists, for the moment, is how to pull things out of the list. We call that process **indexing**.
+
+### Indexing
+
+Every element in a list has an **index** (a location, indicated by an integer position)[^05-vectors-1].
+
+[^05-vectors-1]: Throughout this section (and other sections), lego pictures are rendered using https://www.mecabricks.com/en/workshop. It's a pretty nice tool for building stuff online!
+
+::: panel-tabset
+#### R concept {.unnumbered}
+
+In R, we count from 1.
+
+![An R-indexed lego list, counting from 1 to 5](../images/gen-prog/list-indexing-r.png){fig-alt="A set of 5 bricks on a virtual lego board. The first brick is a blue 1x1 labeled with a 1. The second brick is a green 1x2, labeled with a 2. The third brick is a pink 1x4 labeled with a 3. The fourth brick is a yellow 1x2, labeled with a 4. The fifth brick is a pink 2x2 labeled with a 5. This represents a list, as the blocks are of different types (sizes)."}
+
+#### R code {.unnumbered}
+
+```{r, error = T}
+x <- list("a", 3, FALSE)
+
+x[1] # This returns a list
+x[1:2] # This returns multiple elements in the list
+
+x[[1]] # This returns the item
+x[[1:2]] # This doesn't work - you can only use [[]] with a single index
+```
+
+In R, list indexing with `[]` will return a list with the specified elements.
+
+To actually retrieve the item in the list, use `[[]]`. The only downside to `[[]]` is that you can only access one thing at a time.
+
+#### Python concept {.unnumbered}
+
+In Python, we count from 0.
+
+![A python-indexed lego list, counting from 0 to 4](../images/gen-prog/list-indexing-py.png){fig-alt="A set of 5 bricks on a virtual lego board. The first brick is a blue 1x1 labeled with a 0. The second brick is a green 1x2, labeled with a 1. The third brick is a pink 1x4 labeled with a 2. The fourth brick is a yellow 1x2, labeled with a 3. The fifth brick is a pink 2x2 labeled with a 4. This represents a list, as the blocks are of different types (sizes)."}
+
+#### Python code {.unnumbered}
+
+```{python}
+x = ["a", 3, False]
+
+x[0]
+x[1]
+x[0:2]
+```
+
+In Python, we can use single brackets to get an object or a list back out, but we have to know how **slices** work. Essentially, in Python, `0:2` indicates that we want objects 0 and 1, but want to stop at 2 (not including 2). If you use a slice, Python will return a list; if you use a single index, python just returns the value in that location in the list.
+:::
+
+We'll talk more about indexing as it relates to vectors, but indexing is a general concept that applies to just about any multi-value object.
+
+### Concatenation
+
+Another important thing to know about lists is how to combine them. 
+If I have rosters for two classes and I want to make a list of all of my students, I need to somehow merge the two lists together.
+
+::: panel-tabset
+#### R
+```{r}
+class1 <- c("Benjamin Sisko", "Odo", "Julian Bashir", "Jadzia Dax", "Miles O'Brien", "Quark", "Kira Nerys", "Elim Garak")
+class2 <- c("Jean-Luc Picard", "William Riker", "Geordi La Forge", "Worf", "Miles O'Brien", "Beverly Crusher", "Deanna Troi", "Data")
+
+students <- c(class1, class2)
+students
+
+unique(students) # get only unique names
+```
+
+#### Python
+```{python}
+class1 = ["Benjamin Sisko", "Odo", "Julian Bashir", "Jadzia Dax", "Miles O'Brien", "Quark", "Kira Nerys", "Elim Garak"]
+class2 = ["Jean-Luc Picard", "William Riker", "Geordi La Forge", "Worf", "Miles O'Brien", "Beverly Crusher", "Deanna Troi", "Data"]
+
+students = class1 + class2
+students
+list(dict.fromkeys(students)) # get only unique names
+```
+:::
+
 
 ## Matrices
 
@@ -874,7 +928,7 @@ You can get everything from a data frame that you would get from a collection of
 ### Motivating Data Frames: Working with Multiple Vectors
 
 Consider for a moment https://worldpopulationreview.com/states, which lists the population of each state. 
-You can find this dataset in CSV form [here](https://raw.githubusercontent.com/srvanderplas/Stat151/main/data/population2022.csv).
+You can find this dataset in CSV form [here](https://raw.githubusercontent.com/srvanderplas/stat-computing-r-python/main/data/population2024.csv").
 
 In the previous sections, we learned how to make different vectors in R, numpy, and pandas.
 Let's see what happens when we work with the data above as a set of vectors/Series compared to what happens when we work with data frames.
@@ -887,7 +941,7 @@ Let's see what happens when we work with the data above as a set of vectors/Seri
 ```{python read-state-pops, cache = T}
 import pandas as pd
 
-data = pd.read_html("https://worldpopulationreview.com/states")[0]
+data = pd.read_csv("https://raw.githubusercontent.com/srvanderplas/stat-computing-r-python/main/data/population2024.csv")
 list(data.columns) # get names
 
 # Create a few population series
@@ -900,20 +954,21 @@ Suppose that we want to sort each population vector by the population in that ye
 
 ```{python vector-analysis-python, dependson = 'read-state-pops'}
 import pandas as pd
-data = pd.read_html("https://worldpopulationreview.com/states")[0]
+
+data = pd.read_csv("https://raw.githubusercontent.com/srvanderplas/stat-computing-r-python/main/data/population2024.csv")
 
 population2024 = pd.Series(data['2024 Population'].values, index = data['State'].values).sort_values()
 population2023 = pd.Series(data['2023 Population'].values, index = data['State'].values).sort_values()
-populationCensus = pd.Series(data['2020 Population'].values, index = data['State'].values).sort_values()
+population2020 = pd.Series(data['2020 Population'].values, index = data['State'].values).sort_values()
 
-population2024.head()
-population2023.head()
-populationCensus.head()
+population2024.head(10)
+population2023.head(10)
+population2020.head(10)
 ```
 
 The only problem is that by doing this, we've now lost the ordering that matched across all 3 vectors. 
-Pandas Series are great for this, because they use labels that allow us to reconstitute which value corresponds to which label, but in R or even in numpy arrays, vectors don't inherently come with labels. 
-In these situations, sorting by one value can actually destroy the connection between two vectors!
+Pandas Series are great for showing this problem, because they use labels that allow us to reconstitute which value corresponds to which label, but in R or even in numpy arrays, vectors don't inherently come with labels. 
+In these situations, sorting by one value can actually destroy the connection between two vectors, in a way that you don't even notice!
 
 #### R
 
