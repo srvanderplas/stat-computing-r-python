@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.5.57">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="dcterms.date" content="2025-04-30">
+<meta name="dcterms.date" content="2025-05-19">
 <title>30&nbsp; Simulation and Reproducibility – Statistical Computing using R and Python</title>
 <style>
 code{white-space: pre-wrap;}
@@ -444,11 +444,23 @@ window.Quarto = {
   <ul>
 <li><a href="#objectives" id="toc-objectives" class="nav-link active" data-scroll-target="#objectives"><span class="header-section-number">30.1</span> <i class="fa-solid fa-bullseye" aria-label="bullseye"></i> Objectives</a></li>
   <li><a href="#pseudorandom-number-generation" id="toc-pseudorandom-number-generation" class="nav-link" data-scroll-target="#pseudorandom-number-generation"><span class="header-section-number">30.2</span> Pseudorandom Number Generation</a></li>
-  <li><a href="#built-in-simulations-from-distributions" id="toc-built-in-simulations-from-distributions" class="nav-link" data-scroll-target="#built-in-simulations-from-distributions"><span class="header-section-number">30.3</span> Built-in simulations from distributions</a></li>
-  <li><a href="#simulation-to-test-model-assumptions" id="toc-simulation-to-test-model-assumptions" class="nav-link" data-scroll-target="#simulation-to-test-model-assumptions"><span class="header-section-number">30.4</span> Simulation to test model assumptions</a></li>
-  <li><a href="#monte-carlo-methods" id="toc-monte-carlo-methods" class="nav-link" data-scroll-target="#monte-carlo-methods"><span class="header-section-number">30.5</span> Monte Carlo methods</a></li>
-  <li><a href="#other-resources" id="toc-other-resources" class="nav-link" data-scroll-target="#other-resources"><span class="header-section-number">30.6</span> Other Resources</a></li>
-  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references"><span class="header-section-number">30.7</span> References</a></li>
+  <li>
+<a href="#simulating-from-probability-distributions" id="toc-simulating-from-probability-distributions" class="nav-link" data-scroll-target="#simulating-from-probability-distributions"><span class="header-section-number">30.3</span> Simulating from Probability Distributions</a>
+  <ul class="collapse">
+<li><a href="#using-built-in-simulation-functions" id="toc-using-built-in-simulation-functions" class="nav-link" data-scroll-target="#using-built-in-simulation-functions"><span class="header-section-number">30.3.1</span> Using Built-in Simulation Functions</a></li>
+  </ul>
+</li>
+  <li>
+<a href="#simulating-from-non-standard-distributions" id="toc-simulating-from-non-standard-distributions" class="nav-link" data-scroll-target="#simulating-from-non-standard-distributions"><span class="header-section-number">30.4</span> Simulating from Non-standard distributions</a>
+  <ul class="collapse">
+<li><a href="#inverse-probability-sampling" id="toc-inverse-probability-sampling" class="nav-link" data-scroll-target="#inverse-probability-sampling"><span class="header-section-number">30.4.1</span> Inverse Probability Sampling</a></li>
+  <li><a href="#rejection-sampling" id="toc-rejection-sampling" class="nav-link" data-scroll-target="#rejection-sampling"><span class="header-section-number">30.4.2</span> Rejection Sampling</a></li>
+  </ul>
+</li>
+  <li><a href="#simulation-to-test-model-assumptions" id="toc-simulation-to-test-model-assumptions" class="nav-link" data-scroll-target="#simulation-to-test-model-assumptions"><span class="header-section-number">30.5</span> Simulation to test model assumptions</a></li>
+  <li><a href="#monte-carlo-methods" id="toc-monte-carlo-methods" class="nav-link" data-scroll-target="#monte-carlo-methods"><span class="header-section-number">30.6</span> Monte Carlo methods</a></li>
+  <li><a href="#other-resources" id="toc-other-resources" class="nav-link" data-scroll-target="#other-resources"><span class="header-section-number">30.7</span> Other Resources</a></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references"><span class="header-section-number">30.8</span> References</a></li>
   </ul><div class="toc-actions"><ul><li><a href="https://github.com/srvanderplas/stat-computing-r-python/edit/main/part-advanced-topics/01-simulation.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li></ul></div></nav>
     </div>
 <!-- main -->
@@ -464,7 +476,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">April 30, 2025</p>
+      <p class="date">May 19, 2025</p>
     </div>
   </div>
   
@@ -477,7 +489,9 @@ window.Quarto = {
 <span class="header-section-number">30.1</span> <i class="fa-solid fa-bullseye" aria-label="bullseye"></i> Objectives</h2>
 <ul>
 <li>Understand the limitations of pseudorandom number generation</li>
-<li>Program a simulation for a specific task, process, or model</li>
+<li>Understand the connection between sampling methods such as inverse probability sampling and rejection sampling and theoretical statistics</li>
+<li>Implement sampling methods as required for distributions that do not have closed form approximations</li>
+<li>Use Monte Carlo methods for integration and other simulation tasks</li>
 <li>Determine the appropriate data structure to use for storing simulation task results</li>
 </ul>
 <p>Simulation is an extremely important part of computational statistics. Bayesian statistics, in particular, relies on Markov Chain Monte Carlo (MCMC) to get results from even the most basic of models. In this module, we’re going to touch on a few foundational pieces of simulation in computing. Hopefully, you will get more exposure to simulation in both theory and methods courses down the line.</p>
@@ -503,19 +517,21 @@ Warning
 <p>It is critically important to set your seed if you want the results to be reproducible and you are using an algorithm that depends on randomness.</p>
 </div>
 </div>
-<p>Once you set your seed, the remaining results will only be reproducible if you generate the same set of random numbers every time.</p>
+<p>Once you set your seed, the remaining results will only be reproducible if you generate the same amount of random numbers every time.</p>
 
 <div class="no-row-height column-margin column-container"><div class="">
 <p>I once helped a friend fit a model for their masters thesis using Simulated Annealing (which relies on random seeds). We got brilliant results, but couldn’t ever reproduce them, because I hadn’t set the seed first and we never could figure out what the original seed was. 😭</p>
 </div></div><div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
 Example: Setting Seeds for Reproducibility
 </div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
@@ -554,7 +570,7 @@ Example: Setting Seeds for Reproducibility
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate 500 std normal draws and take the mean</span></span>
 <span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>np.mean(rng.standard_normal(<span class="dv">500</span>))</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co">## -0.008197259441979758</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="co">## np.float64(-0.008197259441979758)</span></span>
 <span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Get 10 more numbers</span></span>
 <span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>rng.integers(low <span class="op">=</span> <span class="dv">1</span>, high <span class="op">=</span> <span class="dv">100</span>, size <span class="op">=</span> <span class="dv">10</span>)</span>
@@ -601,7 +617,7 @@ Example: Setting Seeds for Reproducibility
 <span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Generate 30 std normal draws and take the mean</span></span>
 <span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>np.mean(rng.standard_normal(<span class="dv">30</span>))</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co">## 0.3016849078747997</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co">## np.float64(0.3016849078747997)</span></span>
 <span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Get 10 more numbers</span></span>
 <span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>rng.integers(low <span class="op">=</span> <span class="dv">1</span>, high <span class="op">=</span> <span class="dv">100</span>, size <span class="op">=</span> <span class="dv">10</span>)</span>
@@ -613,17 +629,14 @@ Example: Setting Seeds for Reproducibility
 <p>Notice how the results have changed?</p>
 </div>
 </div>
-<p>To make my documents more reproducible, I will sometimes set a new seed at the start of an important chunk, even if I’ve already set the seed earlier. This introduces certain “fixed points” where results won’t change immediately after I’ve re-set the seed. This is particularly important when I’m generating bootstrap estimates, fitting models, or simulating data for graphics experiments.</p>
-
-<div class="no-row-height column-margin column-container"><div class="">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure"><p><img src="../images/gifs/fixed points.gif" class="img-fluid figure-img" alt="A gif of Dr. River Song from Dr. Who, in a spacesuit, saying 'Fixed points can be rewritten' while fluttering her eyelashes."></p>
-<figcaption>If you know, you know. If not, go watch some Dr.&nbsp;Who sometime. <a href="https://tenor.com/view/doctor-who-river-song-fixed-points-time-can-be-rewritten-fixed-points-can-be-rewritten-gif-22870014">Source</a></figcaption></figure>
 </div>
-</div></div><p>Pick your seed in any way you want. I tend to just randomly wiggle my fingers over the number keys, but I have also heard of people using the date in yyyymmdd format, favorite people’s birthdays, the current time in hhmmss format… basically, you can use anything.</p>
-</section><section id="built-in-simulations-from-distributions" class="level2" data-number="30.3"><h2 data-number="30.3" class="anchored" data-anchor-id="built-in-simulations-from-distributions">
-<span class="header-section-number">30.3</span> Built-in simulations from distributions</h2>
-<p>Often, we can get away with just simulating data from a known distribution. As both R and python are meant for statistical computing, this is extremely easy by design.</p>
+<p>To make my documents more reproducible, I will sometimes set a new seed at the start of an important chunk, even if I’ve already set the seed earlier. This introduces certain “fixed points” where results won’t change immediately after I’ve re-set the seed. This is particularly important when I’m generating bootstrap estimates, fitting models, or simulating data for graphics experiments.</p>
+<p>Pick your seed in any way you want. I tend to just randomly wiggle my fingers over the number keys, but I have also heard of people using the date in yyyymmdd format, favorite people’s birthdays, the current time in hhmmss format… basically, you can use anything, so long as it’s a valid integer.</p>
+</section><section id="simulating-from-probability-distributions" class="level2" data-number="30.3"><h2 data-number="30.3" class="anchored" data-anchor-id="simulating-from-probability-distributions">
+<span class="header-section-number">30.3</span> Simulating from Probability Distributions</h2>
+<section id="using-built-in-simulation-functions" class="level3" data-number="30.3.1"><h3 data-number="30.3.1" class="anchored" data-anchor-id="using-built-in-simulation-functions">
+<span class="header-section-number">30.3.1</span> Using Built-in Simulation Functions</h3>
+<p>Often, we can get away with simulating data from a known distribution. In these cases, there is absolutely no point in DIY – use the implementation that is available in R or Python, as it will be more numerically stable and much faster due to someone else having optimized the underlying C code.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
 <li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">R</a></li>
@@ -649,9 +662,13 @@ Example: Setting Seeds for Reproducibility
 <span>  <span class="fu"><a href="https://tidyr.tidyverse.org/reference/pivot_longer.html">pivot_longer</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span>, names_to <span class="op">=</span> <span class="st">"dist"</span>, values_to <span class="op">=</span> <span class="st">"value"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x <span class="op">=</span> <span class="va">value</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_density.html">geom_density</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">dist</span>, scales <span class="op">=</span> <span class="st">"free"</span>, nrow <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div>
-<figure class="figure"><p><img src="01-simulation_files/figure-html/unnamed-chunk-5-1.png" class="img-fluid figure-img" width="3000"></p>
-</figure>
+<div id="fig-built-in-sims-r" class="quarto-float quarto-figure quarto-figure-center anchored" alt="A plot with 5 panels, where each panel contains a density curve created from 500 simulated values. Chi-Sq(5), Exponential(1), Gamma(3, 1), Normal(0,1), and t(5) distributions are shown.">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-built-in-sims-r-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="01-simulation_files/figure-html/fig-built-in-sims-r-1.png" class="img-fluid figure-img" alt="A plot with 5 panels, where each panel contains a density curve created from 500 simulated values. Chi-Sq(5), Exponential(1), Gamma(3, 1), Normal(0,1), and t(5) distributions are shown." width="3000">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-built-in-sims-r-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;30.1: Density curves created from 500 samples from each of the Chi-Sq(5), Exponential(1), Gamma(3, 1), Normal(0,1), and t(5) distributions.
+</figcaption></figure>
 </div>
 </div>
 </div>
@@ -676,12 +693,16 @@ Example: Setting Seeds for Reproducibility
 <span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> plotnine <span class="im">import</span> <span class="op">*</span></span>
 <span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>(ggplot(long_df, aes(x <span class="op">=</span> <span class="st">"value"</span>)) <span class="op">+</span> geom_density() <span class="op">+</span> facet_wrap(<span class="st">"dist"</span>, scales<span class="op">=</span><span class="st">"free"</span>, nrow <span class="op">=</span> <span class="dv">1</span>))</span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a><span class="co">## &lt;Figure Size: (640 x 480)&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> (ggplot(long_df, aes(x <span class="op">=</span> <span class="st">"value"</span>)) <span class="op">+</span> geom_density() <span class="op">+</span> facet_wrap(<span class="st">"dist"</span>, scales<span class="op">=</span><span class="st">"free"</span>, nrow <span class="op">=</span> <span class="dv">1</span>) <span class="op">+</span> theme(figure_size<span class="op">=</span>(<span class="dv">10</span>,<span class="dv">2</span>)))</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>p.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div>
-<figure class="figure"><p><img src="01-simulation_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="614"></p>
-</figure>
+<div id="fig-built-in-sims-py" class="quarto-float quarto-figure quarto-figure-center anchored" alt="A plot with 5 panels, where each panel contains a density curve created from 500 simulated values. Chi-Sq(5), Exponential(1), Gamma(3, 1), Normal(0,1), and t(5) distributions are shown.">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-built-in-sims-py-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="01-simulation_files/figure-html/fig-built-in-sims-py-1.png" class="img-fluid figure-img" alt="A plot with 5 panels, where each panel contains a density curve created from 500 simulated values. Chi-Sq(5), Exponential(1), Gamma(3, 1), Normal(0,1), and t(5) distributions are shown." width="960">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-built-in-sims-py-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;30.2: Density curves created from 500 samples from each of the Chi-Sq(5), Exponential(1), Gamma(3, 1), Normal(0,1), and t(5) distributions.
+</figcaption></figure>
 </div>
 </div>
 </div>
@@ -689,14 +710,16 @@ Example: Setting Seeds for Reproducibility
 </div>
 </div>
 <div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
 Try it out
 </div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
@@ -776,16 +799,19 @@ Try it out
 </div>
 </div>
 </div>
+</div>
 <p>Simulation from different distributions can be used to determine which estimators are most appropriate for a given scenario, to determine how likely it is to observe a specific value in a sample of size <span class="math inline">\(n\)</span>, and for many other applications.</p>
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
 Example: Mean vs.&nbsp;Median
 </div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Suppose you want to determine which estimator is better - mean or median - for <span class="math inline">\(t\)</span>-distributions with different degrees of freedom and different numbers of observations.</p>
 <p>You consider degrees of freedom <span class="math inline">\(\nu = 2, 5, 10, 30\)</span> and samples of size <span class="math inline">\(n = 10, 20, 30, 50\)</span>. For each sample, you calculate the mean and median, <span class="math inline">\(\hat\theta\)</span>, and you repeat this process <span class="math inline">\(N=1000\)</span> times. You then calculate the bias of the sample estimator <span class="math inline">\(\hat\theta\)</span> (mean, median) and the MSE of that estimator. The <strong>bias</strong> is <span class="math inline">\(\text{Bias}(\hat\theta, \theta) = \text{Bias}_\theta\left[\hat\theta\right] = E_{x|\theta}\left[\hat\theta\right]- \theta = E_{x|\theta} \left[\hat\theta - \theta\right]\)</span>. The <strong>MSE</strong> (mean squared error) of <span class="math inline">\(\hat\theta\)</span> is <span class="math inline">\(\text{MSE}(\hat\theta) = E\left[(\hat\theta-\theta)^2\right]\)</span>. We know that the MSE is related to the bias and the variance of <span class="math inline">\(\hat\theta\)</span>: <span class="math inline">\(\text{MSE}(\hat\theta) = \left(\text{Bias}(\hat\theta,\theta)\right)^2+\text{Var}(\hat\theta)\)</span> (the Bias-Variance tradeoff).</p>
@@ -915,8 +941,89 @@ Example: Mean vs.&nbsp;Median
 <p>Considering the results we obtained, it seems clear that when we have a very low (<span class="math inline">\(\nu&lt;=5\)</span>) degrees of freedom, the median is a preferable estimator because it has lower variance; when we have a higher number of degrees of freedom, the mean is a preferable estimator on the basis of variance. Both estimators are asymptotically unbiased, and are unbiased even for small sample sizes when the distribution is symmetric.</p>
 </div>
 </div>
-</section><section id="simulation-to-test-model-assumptions" class="level2 page-columns page-full" data-number="30.4"><h2 data-number="30.4" class="anchored" data-anchor-id="simulation-to-test-model-assumptions">
-<span class="header-section-number">30.4</span> Simulation to test model assumptions</h2>
+</div>
+</section></section><section id="simulating-from-non-standard-distributions" class="level2" data-number="30.4"><h2 data-number="30.4" class="anchored" data-anchor-id="simulating-from-non-standard-distributions">
+<span class="header-section-number">30.4</span> Simulating from Non-standard distributions</h2>
+<p>In some cases, you may want to simulate from a probability distribution that isn’t already implemented in your software of choice. To decide how to do this efficiently requires that you first take stock of what you actually have describing your distribution.</p>
+<p>Do you have a:</p>
+<ul>
+<li>method for getting from a standard distribution to your distribution via e.g.&nbsp;censoring, combining variables, etc.?</li>
+<li>probability density/mass function?</li>
+<li>cumulative density function?</li>
+</ul>
+<p>If you have a PDF/PMF, can it be integrated to get a CDF, either analytically or computationally?</p>
+<p>If your PDF/PMF cannot be easily integrated, can you come up with a more standard distribution with a similar shape that you can use to get samples from your distribution?</p>
+<p>If you have a method of getting from a standard distribution via censoring or combinations of variables, this is often the most intuitive way of generating a random sample from a complex distribution. In addition, this can be a good mechanism for generating distributions that mimic real-world processes that are not always natural to translate into functional probability distributions.</p>
+<p>If you have a CDF, and the CDF can be easily inverted, it is often easiest to try inverse probability sampling first. In some cases, however, it is difficult to get an analytical form for the CDF (or the inverse CDF); in these cases, it may be preferable to work with the PDF/PMF instead. When working with a probability density or mass function, it is often natural to try rejection sampling before moving on to other methods.</p>
+<section id="inverse-probability-sampling" class="level3" data-number="30.4.1"><h3 data-number="30.4.1" class="anchored" data-anchor-id="inverse-probability-sampling">
+<span class="header-section-number">30.4.1</span> Inverse Probability Sampling</h3>
+<p>If you have a cumulative distribution function <span class="math inline">\(F\)</span> that is nondecreasing, you can use that <span class="math inline">\(F\)</span> to get samples from your distribution by generating uniform random variables <span class="math inline">\(u \sim U[0,1]\)</span> and computing <span class="math inline">\(x = F^{-1}(u)\)</span>. This method relies on the <a href="https://en.wikipedia.org/wiki/Probability_integral_transform">probability integral transform</a>.</p>
+<p>Let’s consider how this might work in the case of a distribution with the following CDF: <span class="math display">\[F(x\leq X) = x^2, \ \ 0 &lt; x &lt; 1.\]</span></p>
+<p>Steps:</p>
+<ol type="1">
+<li>Generate a random number <span class="math inline">\(u \sim U[0,1]\)</span>
+</li>
+<li>Find the inverse of the desired CDF, <span class="math inline">\(x^\ast = F^{-1}_X(u)\)</span>
+</li>
+</ol>
+<p>This procedure can often be done in a vectorized manner, if the CDF and inverse CDF (or quantile function) are written with vectorization in mind.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-inverse-prob-sketch" class="quarto-float quarto-figure quarto-figure-center anchored" alt="A three-panel figure showing the same CDF, which is 0 for x < 0, 1 for x > 1, and x^2 for 0 < x < 1. The first panel shows only the CDF and is titled 'Step 0: Cumulative Density Function'. The second panel shows a horizontal line drawn at a randomly generated value between 0 and 1 that extends from 0 to the CDF. The line is labeled 'Generated  u ~ U[0,1]', and the plot is labeled 'Step 1: Generate Uniform RV'. The third panel shows an additional vertical line drawn from the horizontal line's intersection with the CDF to the x-axis, and is labeled 'Generated X*=F^{-1}(u)'. The panel is titled 'Step 2: Invert to generate X*~F'.">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-inverse-prob-sketch-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="01-simulation_files/figure-html/fig-inverse-prob-sketch-3.png" class="img-fluid figure-img" alt="A three-panel figure showing the same CDF, which is 0 for x < 0, 1 for x > 1, and x^2 for 0 < x < 1. The first panel shows only the CDF and is titled 'Step 0: Cumulative Density Function'. The second panel shows a horizontal line drawn at a randomly generated value between 0 and 1 that extends from 0 to the CDF. The line is labeled 'Generated  u ~ U[0,1]', and the plot is labeled 'Step 1: Generate Uniform RV'. The third panel shows an additional vertical line drawn from the horizontal line's intersection with the CDF to the x-axis, and is labeled 'Generated X*=F^{-1}(u)'. The panel is titled 'Step 2: Invert to generate X*~F'." width="2400">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-inverse-prob-sketch-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;30.3: Steps in Inverse Probability Sampling. First, we consider the CDF, which has a range of [0,1] over the domain of <span class="math inline">\(x\)</span>. A uniform[0,1] random variable can be used to select a random position along the CDF’s range, corresponding to the first step of the inverse probability sampling algorithm. Inverting the CDF produces a value <span class="math inline">\(X^st\)</span>, which is a random sample from the distribution specified by the CDF <span class="math inline">\(F(x)\)</span>.
+</figcaption></figure>
+</div>
+</div>
+</div>
+</section><section id="rejection-sampling" class="level3" data-number="30.4.2"><h3 data-number="30.4.2" class="anchored" data-anchor-id="rejection-sampling">
+<span class="header-section-number">30.4.2</span> Rejection Sampling</h3>
+<p>In some cases, you have a PDF but not an easily obtainable or invert-able CDF. You could numerically integrate your PDF and use inverse probability sampling, but it may also be easier to use rejection sampling.</p>
+<p>Rejection sampling, which is also sometimes called ‘acceptance-rejection’ sampling works for any distribution with a density function. Rejection sampling operates by generating random samples from a proposal distribution, and accepting those proposals with a certain probability determined by the relationship between the proposal and target distribution at that point.</p>
+<p>It is easiest to illustrate how this works by showing a probability distribution with a defined domain (say, <span class="math inline">\([0,10]\)</span>). In this case, I’ve created a nonstandard probability distribution by sketching a bimodal distribution on the interval and converting it to a polynomial.</p>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-rejection-crude-sketch" class="quarto-float quarto-figure quarto-figure-center anchored" alt="A three-panel figure showing the same bimodal PDF with unspecified form over 0 < x < 10. The first panel shows only the PDF. The second panel shows 2000 dots scattered over the rectangle, with points above $f(x)$ as red circles and points below $f(x)$ as blue triangles. The third panel shows a blue histogram with the black PDF overlaid; the histogram is formed from the x coordinates of the points below $f(x)$ in the previous panel.">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-rejection-crude-sketch-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="01-simulation_files/figure-html/fig-rejection-crude-sketch-1.png" class="img-fluid figure-img" alt="A three-panel figure showing the same bimodal PDF with unspecified form over 0 < x < 10. The first panel shows only the PDF. The second panel shows 2000 dots scattered over the rectangle, with points above $f(x)$ as red circles and points below $f(x)$ as blue triangles. The third panel shows a blue histogram with the black PDF overlaid; the histogram is formed from the x coordinates of the points below $f(x)$ in the previous panel." width="2400">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-rejection-crude-sketch-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;30.4: Intuition for Rejection Sampling. First, we consider the density function. If we sample points from the rectangle enclosing the density function, we can keep only points below the density, and those points would have <span class="math inline">\(x\)</span> values corresponding to the probability distribution <span class="math inline">\(f(x)\)</span>.
+</figcaption></figure>
+</div>
+</div>
+</div>
+<p>Think about throwing darts at this PDF (who hasn’t wanted to do that?). Any darts that land below the line describing <span class="math inline">\(f(x)\)</span> would be distributed uniformly within the area under the curve, and their <span class="math inline">\(x\)</span> values would be a random sample from <span class="math inline">\(f(x)\)</span>. Rejection sampling is essentially a formalization of this idea.</p>
+<p>In the crudest case, rejection sampling is essentially a Monte Carlo sampling method – we generate random proposals from <span class="math inline">\(\mathbb{R}^n\)</span> and reject anything outside of our probability density. But, we can usually improve over generating over the full <span class="math inline">\(\mathbb{R}^n\)</span> – in most cases, we can find a better proposal space. In <a href="#fig-rejection-crude-sketch" class="quarto-xref">Figure&nbsp;<span>30.4</span></a>, we generated 2000 points and rejected 1034 of those points, for an acceptance rate of 48.3%.</p>
+<p>But, what if we were a bit smarter about how we proposed points? Bimodal distributions are irritating, because there’s always that space in the middle between the modes, but, what if we could at least not “throw darts” at the top corners?</p>
+<p>The idea here is to get an “envelope distribution” - a function that is greater than or equal to <span class="math inline">\(f(x)\)</span> at every point where <span class="math inline">\(f(x) &gt; 0\)</span>, and use that function to generate a proposal value. Then, we can accept or reject that proposal value based on the relationship between our envelope distribution and <span class="math inline">\(f(x)\)</span>. This is essentially the same thing that we did before, but our “envelope” was very rectangular.</p>
+<p>What is interesting is that we can generate an “envelope distribution” from a distribution that isn’t, strictly speaking, greater than <span class="math inline">\(f(x)\)</span>, by using some fancy scaling.</p>
+<p>An envelope distribution <span class="math inline">\(g(x)\)</span> can be used for rejection sampling if <span class="math inline">\(\displaystyle \frac{f(x)}{g(x)} \leq M\)</span> for some constant <span class="math inline">\(M&lt;\infty\)</span>.</p>
+<p>Steps:</p>
+<ol type="1">
+<li>Generate <span class="math inline">\(u\sim U[0,1]\)</span>
+</li>
+<li>Generate <span class="math inline">\(x\sim g(x)\)</span>, a proposal value</li>
+<li>Accept <span class="math inline">\(x\)</span> if <span class="math inline">\(u &lt; \displaystyle\frac{f(x)}{M g(x)}\)</span>; otherwise, start over.</li>
+</ol>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-rejection-better-sketch" class="quarto-float quarto-figure quarto-figure-center anchored" alt="A three-panel figure showing the same bimodal PDF with unspecified form over 0 < x < 10. The first panel shows only the PDF and a proposal density that has a similar shape to the original. The second panel shows the ratio between the proposal and the original density, with the maximum value shown as a horizontal line indicating the value of the constant $M$. The third panel shows dots under M g(x), with those which are also under f(x) shown as blue triangles, where those above f(x) are shown as red circles. The blue triangles represent a sample from $f(x)$">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-rejection-better-sketch-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="01-simulation_files/figure-html/fig-rejection-better-sketch-1.png" class="img-fluid figure-img" alt="A three-panel figure showing the same bimodal PDF with unspecified form over 0 < x < 10. The first panel shows only the PDF and a proposal density that has a similar shape to the original. The second panel shows the ratio between the proposal and the original density, with the maximum value shown as a horizontal line indicating the value of the constant $M$. The third panel shows dots under M g(x), with those which are also under f(x) shown as blue triangles, where those above f(x) are shown as red circles. The blue triangles represent a sample from $f(x)$" width="2400">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-rejection-better-sketch-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;30.5: Rejection Sampling with a Better Envelope. First, we consider the density function f(x) and an envelope function g(x) such that M g(x) &gt; f(x) for a constant M &lt; infinity. We can determine <span class="math inline">\(M\)</span> by the maximum of the ratio between f(x) and g(x) on the full domain <span class="math inline">\(x\)</span>. Then, if we sample points from g(x) and accept those points when a uniform(0,1) RV u &lt; f(x)/(M g(x)), this gives us a sample from f(x). Essentially, we keep the sample g(x) with probability scaled by the likelihood ratio between f and g at x. This is more adaptive than the rectangular proposal envelope but functionally works the same way.
+</figcaption></figure>
+</div>
+</div>
+</div>
+<p>In <a href="#fig-rejection-better-sketch" class="quarto-xref">Figure&nbsp;<span>30.5</span></a>, where the proposal density is a mixture of two truncated normal densities, we generated 2000 points and rejected 390 of those points, for an acceptance rate of 80.5%. I’m entirely sure I could get the proposal density much closer to <span class="math inline">\(f(x)\)</span> if necessary, but it’s better to be able to illustrate how the process works. It is possible to use any given <span class="math inline">\(M\)</span> for the proposal density, so long as the <span class="math inline">\(M\)</span> you use meets the condition of <span class="math inline">\(M \geq \frac{f(x)}{g(x)}\)</span> for all <span class="math inline">\(x\)</span> with <span class="math inline">\(P(x) &gt; 0\)</span>. Using a larger <span class="math inline">\(M\)</span> will simply decrease the acceptance probability, which will be less efficient but will still produce a valid sample.</p>
+</section></section><section id="simulation-to-test-model-assumptions" class="level2 page-columns page-full" data-number="30.5"><h2 data-number="30.5" class="anchored" data-anchor-id="simulation-to-test-model-assumptions">
+<span class="header-section-number">30.5</span> Simulation to test model assumptions</h2>
 <p>One of the more powerful ways to use simulation in practice is to use it to test the assumptions of your model. Suppose, for instance, that your data are highly skewed, but you want to use a method that assumes normally distributed errors. How bad will your results be? Where can you trust the results, and where should you be cautious?</p>
 
 <div class="no-row-height column-margin column-container"><div class="">
@@ -924,14 +1031,16 @@ Example: Mean vs.&nbsp;Median
 <p><code><a href="https://purrr.tidyverse.org/reference/map.html">purrr::map</a></code> takes an argument and for each “group” calls the compute_interval function, storing the results in <code>res</code>. So each row in <code>res</code> is a 1x2 tibble with columns lb and ub.</p>
 <p>This pattern is very useful in all sorts of applications. You can read more about purrr in <a href="../part-wrangling/08-functional-prog.html" class="quarto-xref"><span>Chapter 28</span></a>.</p>
 </div></div><div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
 Example: Confidence Interval coverage rates
 </div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
@@ -1059,7 +1168,7 @@ Example: Confidence Interval coverage rates
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html">facet_wrap</a></span><span class="op">(</span><span class="op">~</span><span class="va">scenario</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
-<figure class="figure"><p><img src="01-simulation_files/figure-html/unnamed-chunk-13-1.png" class="img-fluid figure-img" width="2100"></p>
+<figure class="figure"><p><img src="01-simulation_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid figure-img" width="2100"></p>
 </figure>
 </div>
 </div>
@@ -1070,32 +1179,38 @@ Example: Confidence Interval coverage rates
 <p>From this, we can see that working with the log-transformed, normally distributed results has better coverage probability than working with the raw data and computing the population mean: the estimates in the latter procedure have lower coverage probability, and many of the intervals are much wider than necessary; in some cases, the interval actually lies outside of the domain.</p>
 </div>
 </div>
+</div>
 
 <div class="no-row-height column-margin column-container"><div class="">
 <p><a href="https://blogs.sas.com/content/iml/2016/09/08/coverage-probability-confidence-intervals.html">Here is a similar example worked through in SAS with IML</a>. Note the use of BY-group processing to analyze each group at once - this is very similar to the use of <code><a href="https://purrr.tidyverse.org/reference/map.html">purrr::map()</a></code> in the R code.</p>
 </div></div><div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
 Example: Multilevel Regression and Post Stratification simulation
 </div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p><a href="https://tellingstorieswithdata.com/15-mrp.html#simulation">Multilevel regression and post-stratification simulation with toddler bedtimes</a> <span class="citation" data-cites="alexanderTellingStoriesData2023"><a href="#ref-alexanderTellingStoriesData2023" role="doc-biblioref">[3]</a></span></p>
 <p>This example talks about how to take a biased sample and then recover the original unbiased estimates – which is something you have to test using simulation to be sure it works, because you never actually know what the true population features are when you are working with real world data. When reading this example, you may not be all that interested with the specific model - but focus on the <strong>process of simulating data for your analysis</strong> so that you understand how and why you would want to simulate data in order to test a computational method.</p>
 </div>
 </div>
+</div>
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
 Example: Regression and high-leverage points
 </div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>What happens if we have one high-leverage point (e.g.&nbsp;a point which is an outlier in both x and y)? How pathological do our regression coefficient estimates get?</p>
 <p>The challenging part here is to design a data generating mechanism.</p>
@@ -1152,7 +1267,7 @@ Example: Regression and high-leverage points
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html">facet_grid</a></span><span class="op">(</span><span class="va">id</span> <span class="op">~</span> <span class="va">outliers</span>, labeller <span class="op">=</span> <span class="va">label_both</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
-<figure class="figure"><p><img src="01-simulation_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid figure-img" width="2100"></p>
+<figure class="figure"><p><img src="01-simulation_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid figure-img" width="2100"></p>
 </figure>
 </div>
 </div>
@@ -1183,7 +1298,7 @@ Example: Regression and high-leverage points
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_density.html">geom_density</a></span><span class="op">(</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
-<figure class="figure"><p><img src="01-simulation_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid figure-img" width="2100"></p>
+<figure class="figure"><p><img src="01-simulation_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid figure-img" width="2100"></p>
 </figure>
 </div>
 </div>
@@ -1194,15 +1309,18 @@ Example: Regression and high-leverage points
 <p>Obviously, you should experiment with different methods of generating a high-leverage point (maybe use a different distribution?) but this generating mechanism is simple enough for our purposes and shows that the addition of high leverage points biases the true values (slope = 1, intercept = 0).</p>
 </div>
 </div>
+</div>
 <div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
 Try it out
 </div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
@@ -1252,7 +1370,7 @@ Try it out
 <span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>dogtemp[<span class="st">'read'</span>] <span class="op">=</span> np.minimum(dogtemp.actual, <span class="dv">102</span>)</span>
 <span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>np.diff(dogtemp.mean())</span>
-<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a><span class="co">## array([-0.04985633])</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a><span class="co">## array([-0.0500533])</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The effect of the thermometer’s censoring is around 0.06 degrees F for animals that are not ill.</p>
 </div>
@@ -1260,8 +1378,9 @@ Try it out
 </div>
 </div>
 </div>
-</section><section id="monte-carlo-methods" class="level2" data-number="30.5"><h2 data-number="30.5" class="anchored" data-anchor-id="monte-carlo-methods">
-<span class="header-section-number">30.5</span> Monte Carlo methods</h2>
+</div>
+</section><section id="monte-carlo-methods" class="level2" data-number="30.6"><h2 data-number="30.6" class="anchored" data-anchor-id="monte-carlo-methods">
+<span class="header-section-number">30.6</span> Monte Carlo methods</h2>
 <p><a href="https://en.wikipedia.org/wiki/Monte_Carlo_method">Monte carlo methods</a> <span class="citation" data-cites="MonteCarloMethod2022"><a href="#ref-MonteCarloMethod2022" role="doc-biblioref">[4]</a></span> are methods which rely on repeated random sampling in order to solve numerical problems. Often, the types of problems approached with MC methods are extremely difficult or impossible to solve analytically.</p>
 <p>In general, a MC problem involves these steps:</p>
 <ol type="1">
@@ -1340,7 +1459,7 @@ Example: Sum of Uniform Random Variables
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html">geom_line</a></span><span class="op">(</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
-<figure class="figure"><p><img src="01-simulation_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid figure-img" width="2100"></p>
+<figure class="figure"><p><img src="01-simulation_files/figure-html/unnamed-chunk-23-1.png" class="img-fluid figure-img" width="2100"></p>
 </figure>
 </div>
 </div>
@@ -1383,7 +1502,7 @@ Example: Sum of Uniform Random Variables
 <span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
-<figure class="figure"><p><img src="01-simulation_files/figure-html/unnamed-chunk-24-1.png" class="img-fluid figure-img" width="672"></p>
+<figure class="figure"><p><img src="01-simulation_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1400,14 +1519,16 @@ Example: Sum of Uniform Random Variables
 </div>
 <p>Monte Carlo methods are often used to approximate the value of integrals which do not have a closed-form (in particular, these integrals tend to pop up frequently in Bayesian methods).</p>
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
 Example: Integration
 </div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
+<div id="callout-10" class="callout-10-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
@@ -1422,7 +1543,7 @@ Example: Integration
 <div class="cell">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
-<figure class="figure"><p><img src="01-simulation_files/figure-html/unnamed-chunk-25-1.png" class="img-fluid figure-img" style="width:50.0%" alt="A function that oscillates around 0 very rapidly from 0 to 0.12 and then reaches a minimum at approximately x = 0.25 before increasing at an approximately linear rate through x = 1.0."></p>
+<figure class="figure"><p><img src="01-simulation_files/figure-html/unnamed-chunk-26-1.png" class="img-fluid figure-img" style="width:50.0%" alt="A function that oscillates around 0 very rapidly from 0 to 0.12 and then reaches a minimum at approximately x = 0.25 before increasing at an approximately linear rate through x = 1.0."></p>
 <figcaption>f(x) over the interval [0,1].</figcaption></figure>
 </div>
 </div>
@@ -1453,7 +1574,7 @@ Example: Integration
 <span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>sim_data[<span class="st">'y'</span>] <span class="op">=</span> fn(sim_data.x)</span>
 <span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>sim_data.y.mean()</span>
-<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a><span class="co">## 0.2872329317146997</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a><span class="co">## np.float64(0.2852756214805639)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div id="tabset-10-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-10-4-tab">
@@ -1470,15 +1591,18 @@ Example: Integration
 </div>
 </div>
 </div>
+</div>
 <div class="callout callout-style-default callout-caution callout-titled">
-<div class="callout-header d-flex align-content-center">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
 Example: Integration in 2d
 </div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
+<div id="callout-11" class="callout-11-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
@@ -1493,7 +1617,7 @@ Example: Integration in 2d
 <div class="cell">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
-<figure class="figure"><p><img src="01-simulation_files/figure-html/unnamed-chunk-29-1.png" class="img-fluid figure-img" style="width:50.0%" alt="A circle centered in (0,0) with radius 1."></p>
+<figure class="figure"><p><img src="01-simulation_files/figure-html/unnamed-chunk-30-1.png" class="img-fluid figure-img" style="width:50.0%" alt="A circle centered in (0,0) with radius 1."></p>
 <figcaption>The unit circle.</figcaption></figure>
 </div>
 </div>
@@ -1504,7 +1628,7 @@ Example: Integration in 2d
 <div class="cell">
 <div class="cell-output-display">
 <div class="quarto-figure quarto-figure-center">
-<figure class="figure"><p><img src="01-simulation_files/figure-html/unnamed-chunk-30-1.png" class="img-fluid figure-img" style="width:50.0%" alt="A circle centered in (0,0) with radius 1 overlaid with randomly generated points. The points inside the circle are drawn in a different color from the ones outside the circle."></p>
+<figure class="figure"><p><img src="01-simulation_files/figure-html/unnamed-chunk-31-1.png" class="img-fluid figure-img" style="width:50.0%" alt="A circle centered in (0,0) with radius 1 overlaid with randomly generated points. The points inside the circle are drawn in a different color from the ones outside the circle."></p>
 <figcaption>The unit circle is encapsulated by a square and overlaid with uniform points from U[-1,1] x U[-1,1].</figcaption></figure>
 </div>
 </div>
@@ -1563,27 +1687,28 @@ Example: Integration in 2d
 <span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Quite a bit of variability with just 100 values</span></span>
 <span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>calculate_pi(<span class="dv">100</span>)</span>
-<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a><span class="co">## 3.24</span></span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a><span class="co">## np.float64(3.12)</span></span>
 <span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a>calculate_pi(<span class="dv">100</span>)</span>
-<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a><span class="co">## 3.04</span></span>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a><span class="co">## np.float64(3.04)</span></span>
 <span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a>calculate_pi(<span class="dv">100</span>)</span>
-<span id="cb31-17"><a href="#cb31-17" aria-hidden="true" tabindex="-1"></a><span class="co">## 3.04</span></span>
+<span id="cb31-17"><a href="#cb31-17" aria-hidden="true" tabindex="-1"></a><span class="co">## np.float64(2.96)</span></span>
 <span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a><span class="co"># Better with 10,000</span></span>
 <span id="cb31-20"><a href="#cb31-20" aria-hidden="true" tabindex="-1"></a>calculate_pi(<span class="dv">10000</span>)</span>
-<span id="cb31-21"><a href="#cb31-21" aria-hidden="true" tabindex="-1"></a><span class="co">## 3.1272</span></span>
+<span id="cb31-21"><a href="#cb31-21" aria-hidden="true" tabindex="-1"></a><span class="co">## np.float64(3.1624)</span></span>
 <span id="cb31-22"><a href="#cb31-22" aria-hidden="true" tabindex="-1"></a>calculate_pi(<span class="dv">10000</span>)</span>
-<span id="cb31-23"><a href="#cb31-23" aria-hidden="true" tabindex="-1"></a><span class="co">## 3.1728</span></span>
+<span id="cb31-23"><a href="#cb31-23" aria-hidden="true" tabindex="-1"></a><span class="co">## np.float64(3.1424)</span></span>
 <span id="cb31-24"><a href="#cb31-24" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb31-25"><a href="#cb31-25" aria-hidden="true" tabindex="-1"></a><span class="co"># Better, but still only good for about 2-3 digits</span></span>
 <span id="cb31-26"><a href="#cb31-26" aria-hidden="true" tabindex="-1"></a>calculate_pi(<span class="dv">1000000</span>) </span>
-<span id="cb31-27"><a href="#cb31-27" aria-hidden="true" tabindex="-1"></a><span class="co">## 3.1429</span></span>
+<span id="cb31-27"><a href="#cb31-27" aria-hidden="true" tabindex="-1"></a><span class="co">## np.float64(3.139492)</span></span>
 <span id="cb31-28"><a href="#cb31-28" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb31-29"><a href="#cb31-29" aria-hidden="true" tabindex="-1"></a>np.pi</span>
 <span id="cb31-30"><a href="#cb31-30" aria-hidden="true" tabindex="-1"></a><span class="co">## 3.141592653589793</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </div>
 <div id="tabset-11-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-11-4-tab">
+<p>We can compare our results to the results we would get using a more typical numerical integration function, such as <code>integrate</code> in R.</p>
 <div class="cell">
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">20491720</span><span class="op">)</span></span>
 <span><span class="va">fn</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span>  <span class="fl">2</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="fl">1</span><span class="op">-</span><span class="va">x</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span></span>
@@ -1599,15 +1724,18 @@ Example: Integration in 2d
 </div>
 </div>
 </div>
+</div>
 <div class="callout callout-style-default callout-tip callout-titled">
-<div class="callout-header d-flex align-content-center">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-12-contents" aria-controls="callout-12" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
 Try it out
 </div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
+<div id="callout-12" class="callout-12-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <div class="tabset-margin-container"></div><div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist">
@@ -1656,7 +1784,7 @@ Try it out
 <span><span class="co">## $plot</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
-<figure class="figure"><p><img src="01-simulation_files/figure-html/unnamed-chunk-34-1.png" class="img-fluid figure-img" width="2100"></p>
+<figure class="figure"><p><img src="01-simulation_files/figure-html/unnamed-chunk-35-1.png" class="img-fluid figure-img" width="2100"></p>
 </figure>
 </div>
 </div>
@@ -1668,7 +1796,7 @@ Try it out
 <span><span class="co">## $plot</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
-<figure class="figure"><p><img src="01-simulation_files/figure-html/unnamed-chunk-34-2.png" class="img-fluid figure-img" width="2100"></p>
+<figure class="figure"><p><img src="01-simulation_files/figure-html/unnamed-chunk-35-2.png" class="img-fluid figure-img" width="2100"></p>
 </figure>
 </div>
 </div>
@@ -1680,7 +1808,7 @@ Try it out
 <span><span class="co">## $plot</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
-<figure class="figure"><p><img src="01-simulation_files/figure-html/unnamed-chunk-34-3.png" class="img-fluid figure-img" width="2100"></p>
+<figure class="figure"><p><img src="01-simulation_files/figure-html/unnamed-chunk-35-3.png" class="img-fluid figure-img" width="2100"></p>
 </figure>
 </div>
 </div>
@@ -1692,7 +1820,7 @@ Try it out
 <span><span class="co">## $plot</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
-<figure class="figure"><p><img src="01-simulation_files/figure-html/unnamed-chunk-34-4.png" class="img-fluid figure-img" width="2100"></p>
+<figure class="figure"><p><img src="01-simulation_files/figure-html/unnamed-chunk-35-4.png" class="img-fluid figure-img" width="2100"></p>
 </figure>
 </div>
 </div>
@@ -1727,7 +1855,7 @@ Try it out
 <span id="cb37-25"><a href="#cb37-25" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
-<figure class="figure"><p><img src="01-simulation_files/figure-html/unnamed-chunk-35-1.png" class="img-fluid figure-img" width="672"></p>
+<figure class="figure"><p><img src="01-simulation_files/figure-html/unnamed-chunk-36-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
@@ -1737,8 +1865,9 @@ Try it out
 </div>
 </div>
 </div>
-</section><section id="other-resources" class="level2" data-number="30.6"><h2 data-number="30.6" class="anchored" data-anchor-id="other-resources">
-<span class="header-section-number">30.6</span> Other Resources</h2>
+</div>
+</section><section id="other-resources" class="level2" data-number="30.7"><h2 data-number="30.7" class="anchored" data-anchor-id="other-resources">
+<span class="header-section-number">30.7</span> Other Resources</h2>
 <ul>
 <li><p><a href="https://bookdown.org/rdpeng/rprogdatascience/simulation.html">Simulation</a> (R programming for Data Science chapter)</p></li>
 <li><p><a href="http://rstudio-pubs-static.s3.amazonaws.com/302783_75485bd9eb4646698f534a4833a026e5.html#_simulation_">Simulation</a> - R Studio lesson</p></li>
@@ -1747,8 +1876,8 @@ Try it out
 <li><p><a href="https://blogs.sas.com/content/iml/2015/08/12/2d-drunkards-walk.html">Simulating a Drunkard’s Walk in 2D in SAS</a></p></li>
 <li><p><a href="https://blogs.sas.com/content/iml/2015/07/22/sim-triangular-distrib.html">Simulation from a triangle distribution (SAS)</a></p></li>
 <li><p><a href="https://blogs.sas.com/content/iml/2015/04/01/monty-hall.html">Simulating the Monty Hall problem (SAS)</a></p></li>
-</ul></section><section id="references" class="level2" data-number="30.7"><h2 data-number="30.7" class="anchored" data-anchor-id="references">
-<span class="header-section-number">30.7</span> References</h2>
+</ul></section><section id="references" class="level2" data-number="30.8"><h2 data-number="30.8" class="anchored" data-anchor-id="references">
+<span class="header-section-number">30.8</span> References</h2>
 
 
 <div id="refs" class="references csl-bib-body" data-entry-spacing="0" role="list">
