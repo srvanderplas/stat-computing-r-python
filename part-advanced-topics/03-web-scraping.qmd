@@ -1,2 +1,102 @@
 # Web Scraping {#sec-data-web}
 
+## {{< fa bullseye >}} Objectives {.nonumber}
+
+- Understand the structure of XML and HTML files
+- Use developer tools to locate nodes of interest and CSS or XPATH to precisely identify those nodes
+- Identify web pages that cannot be scraped using simple methods because of content injection
+- Scrape data from web pages 
+    - by reading in HTML tables directly using R or Python
+    - by writing custom functions to pull data from individual fields
+
+
+## HTML and XML in a Nutshell
+
+Let's start at the beginning. 
+**eXtensible Markup Language (XML)** was developed in the late 1990s to provide a flexible specification for documents, data files, and various other documents. 
+You've (likely) been using XML-based documents for most of your life, either in Microsoft Office (.docx, .xlsx, .pptx - the x is for XML) or in web pages. 
+**HyperText Markup Language (HTML)** is a specific flavor of XML [@wikimediacontributorsXML2025] that uses a defined set of fields to specify the composition of a web page. 
+If you right click in your browser on this page, and "Inspect Source", you can see the HTML code that generates this book. 
+
+### XML
+
+XML documents are composed of a series of tags that look like this:
+
+```
+<tag-type attribute="value">Tag contents</tag-type>
+```
+
+Each tag name, `tag`, is enclosed in angle brackets, `<tag>`, and has a closing tag that starts with a slash but has the same name, `</tag>`. 
+Tags can include additional information that is typically encoded in `key="value"` pairs - above, there is an `attribute` field that has value `value`. 
+
+
+The XML 1.0 (5th edition) specification requires that
+
+- The document contains only one element, called the **root** or document element, at the top level. No part of the root element appears in the content of any other element. 
+
+- Any other elements 
+    - are defined by start and end tags, and
+    - nest properly within each other (are well formed)
+
+- An element contains **text**, a sequence of characters. Legal characters are tab, carriage return, line feed, and the legal characters of [Unicode](https://home.unicode.org/) and [ISO/IEC 10646 (PDF warning)](https://unicode.org/L2/L2010/10038-fcd10646-main.pdf)^[This is a real rabbit hole if you are curious about the very technical details of what makes up a character in text.].  
+
+- Comments start with `<!--` and end with `-->`. The `--` string cannot be present within the text of a comment. Comments may NOT end with `--->` - the specification requires exactly two dashes.
+
+A valid XML document also contains some additional metadata at the start of the file. 
+First, there should be an **XML declaration** that specifies the version of XML being used: `<?xml version="1.0"?>` (Note the `?` immediately before and after the angle brackets).
+
+In addition, valid XML documents contain a **Document Type Definition (DTD)** that provides some information about valid tags used within the document. 
+
+```
+<!DOCTYPE Name (ExternalID)? '[' intSubset ']' >
+```
+Document Type Definition requirements:
+
+- `Name` in the DTD has the same value as the root node tag name
+- An Internal or External Subset of valid entity names (tag names) is provided. It is also possible to specify valid tag attributes, types, and other information within these listings. 
+
+```{xml external-dtd}
+<?xml version="1.0"?> <!-- <1> -->
+<!DOCTYPE greeting SYSTEM "hello.dtd"> <!-- <2> -->
+<greeting>Hello, world!</greeting>  <!-- <3> -->
+```
+1. XML version declaration
+2. Document Type Definition.
+    - `greeting` is the name, and the root node matches that name
+    - `hello.dtd` is the system identifier and provides an address leading to an external document type declaration file
+3. Root node
+    - `greeting` is the tag name
+    - `Hello, world!` is the tag value
+    - the tag is closed with a valid, matching end tag.
+
+
+```{xml internal-dtd}
+<?xml version="1.0" encoding="UTF-8" ?> <!-- <1> -->
+<!DOCTYPE greeting [ <!-- <2> -->
+  <!ELEMENT greeting (#PCDATA)>
+]>
+<greeting>Hello, world!</greeting>  <!-- <3> -->
+```
+1. XML version declaration, specifying the document's text encoding
+2. An internally defined DTD that specifies valid elements (tags) (the only valid element is `greeting`). Additional tags could be specified within the `[` `]` space, if desired.
+3. The root node with value `Hello, world!`
+
+
+
+::: callout-caution
+### Exploring an XML file
+
+::: 
+The National Center for Education Statistics' (NCES) Education Demographic and Geographic Estimates (EDGE) program develops annually updated point locations (latitude and longitude) for public elementary and secondary schools included in the NCES Common Core of Data (CCD). 
+The CCD program annually collects administrative and fiscal data about all public schools, school districts, and state education agencies in the United States. 
+The data are supplied by state education agency officials and include basic directory and contact information for schools and school districts, as well as characteristics about student demographics, number of teachers, school grade span, and various other administrative conditions. 
+
+[Data.gov page for NCES Public School Characteristics, 2022-2023](https://catalog.data.gov/dataset/public-school-characteristics-2022-23-451db)
+
+For more information about NCES school point data, see: https://nces.ed.gov/programs/edge/Geographic/SchoolLocations. 
+For more information about these CCD attributes, as well as additional attributes not included, see: https://nces.ed.gov/ccd/files.asp.
+
+
+
+https://data-nces.opendata.arcgis.com/api/download/v1/items/6a4fa1b0434e4688b5d60c2e5c1dcaaa/kml?layers=0
+::: panel-tabset
