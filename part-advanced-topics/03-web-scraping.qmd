@@ -10,7 +10,7 @@
     - by writing custom functions to pull data from individual fields
 
 
-## HTML and XML in a Nutshell
+## HTML and XML Language Specification
 
 Let's start at the beginning. 
 **eXtensible Markup Language (XML)** was developed in the late 1990s to provide a flexible specification for documents, data files, and various other documents. 
@@ -42,6 +42,10 @@ The XML 1.0 (5th edition) specification requires that
 
 - Comments start with `<!--` and end with `-->`. The `--` string cannot be present within the text of a comment. Comments may NOT end with `--->` - the specification requires exactly two dashes.
 
+
+::: advanced 
+#### Advanced: Additional XML metadata {-}
+
 A valid XML document also contains some additional metadata at the start of the file. 
 First, there should be an **XML declaration** that specifies the version of XML being used: `<?xml version="1.0"?>` (Note the `?` immediately before and after the angle brackets).
 
@@ -55,48 +59,86 @@ Document Type Definition requirements:
 - `Name` in the DTD has the same value as the root node tag name
 - An Internal or External Subset of valid entity names (tag names) is provided. It is also possible to specify valid tag attributes, types, and other information within these listings. 
 
-```{xml external-dtd}
-<?xml version="1.0"?> <!-- <1> -->
-<!DOCTYPE greeting SYSTEM "hello.dtd"> <!-- <2> -->
-<greeting>Hello, world!</greeting>  <!-- <3> -->
 ```
+<?xml version="1.0"?> # <1> 
+<!DOCTYPE greeting SYSTEM "hello.dtd"> # <2>
+<greeting>Hello, world!</greeting>  # <3>
+```
+
 1. XML version declaration
-2. Document Type Definition.
-    - `greeting` is the name, and the root node matches that name
-    - `hello.dtd` is the system identifier and provides an address leading to an external document type declaration file
-3. Root node
-    - `greeting` is the tag name
-    - `Hello, world!` is the tag value
-    - the tag is closed with a valid, matching end tag.
+2. Document Type Definition. `greeting` is the name, and the root node matches that name. `hello.dtd` is the system identifier and provides an address leading to an external document type declaration file
+3. Root node. `greeting` is the tag name. `Hello, world!` is the tag value. The tag is closed with a valid, matching end tag.
 
 
-```{xml internal-dtd}
-<?xml version="1.0" encoding="UTF-8" ?> <!-- <1> -->
-<!DOCTYPE greeting [ <!-- <2> -->
+```
+<?xml version="1.0" encoding="UTF-8" ?> # <1> 
+<!DOCTYPE greeting [ # <2> 
   <!ELEMENT greeting (#PCDATA)>
 ]>
-<greeting>Hello, world!</greeting>  <!-- <3> -->
+<greeting>Hello, world!</greeting>  # <3> 
 ```
+
 1. XML version declaration, specifying the document's text encoding
 2. An internally defined DTD that specifies valid elements (tags) (the only valid element is `greeting`). Additional tags could be specified within the `[` `]` space, if desired.
 3. The root node with value `Hello, world!`
 
+:::
+
+::: demo
+
+### Demo: Exploring an XML file
+
+The District of Columbia (Washington, DC) local government provides a [dataset of grocery store locations throughout the district](https://catalog.data.gov/dataset/grocery-store-locations) using a definition of full service grocery store that requires:
+
+- Sales of six of the following categories of food:
+    - Fresh fruits and vegetables
+    - Fresh and uncooked meats, poultry and seafood
+    - Dairy products
+    - Canned foods
+    - Frozen foods
+    - Dry groceries and baked goods
+    - Non-alcoholic beverages
+- Either 50% of the store's total square footage, or 6000 square feet must be dedicated to selling the food products above.
+- At least 5% of the selling area must be dedicated to each food category. 
+
+The city then included some small grocery stores that are very close to meeting the full-service grocery store definition based on [Appendix D of a city-wide food system assessment](https://dcfoodpolicy.org/wp-content/uploads/2019/06/2018-food-system-assessment-final-6.13.pdf) (PDF warning).
+
+We can [download the KML file](https://opendata.dc.gov/api/download/v1/items/1d7c9d0e3aac49c1aa88d377a3bae430/kml?layers=4) and change the extension to XML so that the file opens in a standard web browser, or we can directly download the KML file as an XML file as in the code chunk below. 
+```{r, include = F}
+options(width = 120)
+```
+
+```{r get-dc-grocery-data, error = T}
+url <- "https://opendata.dc.gov/api/download/v1/items/1d7c9d0e3aac49c1aa88d377a3bae430/kml?layers=4"
+filename <- "../data/DC_Grocery_Stores_2025.xml"
+
+if(!file.exists(filename)) {
+  download.file(url, destfile = filename, mode = "wb")
+}
+
+xml_text <- readLines(filename)
+xml_tbl <- data.frame(line = 1:length(xml_text), 
+                      xml = htmltools::htmlEscape(xml_text))
+# Escaping the XML allows printing it out nicely in the book
+
+knitr::kable(xml_tbl[c(1:10, 35:64, 3145:3151),], row.names = F)
+```
+```{r, include = F}
+options(width = 80)
+```
+
+- The first line contains the document type definition and encoding.
+- The second line contains a link to the [KML specification](https://schemas.opengis.net/kml/2.2.0/ogckml22.xsd), which is itself another XML document. Note that it is also a valid tag, so at the end of the file, we should find </kml>. 
+- The third line is another tag that indicates that this is the start of the document.
+- Lines 4-40 contain the dataset schema -- a list of all of the fields present for each store, along with their data type. 
+- Line 41 defines a folder, which contains Placemarks (Line 42), which contain ExtendedData (Line 43). The `\t` characters are a text representation of tabs and indicate some indentation. 
+- Each grocery store appears to be described by a Placemark node that contains ExtendedData nodes containing variables, along with a Point node that contains two coordinates (latitude and longitude). 
 
 
-::: callout-caution
-### Exploring an XML file
+:::
 
-::: 
-The National Center for Education Statistics' (NCES) Education Demographic and Geographic Estimates (EDGE) program develops annually updated point locations (latitude and longitude) for public elementary and secondary schools included in the NCES Common Core of Data (CCD). 
-The CCD program annually collects administrative and fiscal data about all public schools, school districts, and state education agencies in the United States. 
-The data are supplied by state education agency officials and include basic directory and contact information for schools and school districts, as well as characteristics about student demographics, number of teachers, school grade span, and various other administrative conditions. 
+::: column-margin
+![Screenshot of DC_Grocery_Stores_2025.xml showing the nodes corresponding to the Schema definition and to one individual grocery store.](../images/advanced/DC_Grocery_Stores_2025_xml_screenshot_annotated.png){fig-alt='XML document with schema definition and store data for grocery store locations. The top section, labeled "Schema Definition," is enclosed in a blue border and contains XML schema elements describing various data fields related to grocery store locations. The fields include store name, address, zip code, phone number, and other identifiers. Each field is defined by a SimpleField tag with a name and type attribute. The bottom section, labeled "Individual Grocery Store Data," is enclosed in an orange border and provides detailed data about a specific grocery store location using XML tags. This includes the store’s name, address, phone number, GIS coordinates, and several other identifiers. The text "Schema Definition" and "Individual Grocery Store Data" are prominently displayed in larger font sizes within their respective sections.'}
+:::
 
-[Data.gov page for NCES Public School Characteristics, 2022-2023](https://catalog.data.gov/dataset/public-school-characteristics-2022-23-451db)
-
-For more information about NCES school point data, see: https://nces.ed.gov/programs/edge/Geographic/SchoolLocations. 
-For more information about these CCD attributes, as well as additional attributes not included, see: https://nces.ed.gov/ccd/files.asp.
-
-
-
-https://data-nces.opendata.arcgis.com/api/download/v1/items/6a4fa1b0434e4688b5d60c2e5c1dcaaa/kml?layers=0
-::: panel-tabset
+## References {#sec-webscraping-refs}
