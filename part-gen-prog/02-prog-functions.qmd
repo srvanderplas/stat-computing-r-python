@@ -20,12 +20,14 @@ For now, you will pick one Python environment management option and  stick with 
 
 ::: callout-warning
 
-## TLDR
-- Functions are nicknames for blocks of code that execute a sequence of steps.
+## TLDR {-}
+
+- **Functions** are discrete blocks of code that execute a sequence of steps.
 - Functions take **arguments** as **parameters** and **return** values
-- Packages contain functions that are connected by a common goal or task sequence.
+- **Packages** contain functions that are connected by a common goal or task sequence.
 - Packages must be installed and loaded in order for the functions in the package to be used.
-- Environments manage the available packages and functions that can be loaded and used.
+- **Environments** manage the available packages and functions that can be loaded and used.
+- In R, a **pipe** `|>` can be used to chain functions together in a more readable way.
 
 :::
  
@@ -37,9 +39,9 @@ Strictly speaking, mathematical operators (like those above) are a special type 
 We're not going to talk about how to create our own functions just yet.
 Instead, in this chapter, let's figure out how to *use* functions.
 
-::: callout-warning
+::: callout-note
 
-### Cheat Sheets!
+### Cheat Sheets! {-}
 
 It may be helpful at this point to print out the [R reference card](../files/Short-refcard.pdf)[^02-prog-functions-1] and the [Python reference card.](../files/Python3_reference_cheat_sheet.pdf)[^02-prog-functions-2] 
 These cheat sheets contain useful functions for a variety of tasks in each language.
@@ -58,16 +60,17 @@ Suppose I have a function called `add(x, y)` which takes two numbers and adds th
 In this example, `add` is the function name, and `x` and `y` are **parameters**: placeholder names for information to be passed into the function.
 Not all functions have named parameters, but it is common for named parameters to provide some indication of what information is supposed to go in that spot.
 
-When I call the function -- that is, I use it to add two numbers together, I have to pass in **arguments**.
-Arguments are values which are assigned to parameters in the function and affect the result. 
-This is pretty technical and a bit nit-picky, but it's good to see information multiple times - we'll revisit functions in @sec-functions. 
+When I call the function -- that is, I use it to add two numbers together, I have to pass in arguments.
+**Arguments** are values which are assigned to parameters in the function and affect the result.
 
-The **function call** would be `add(x = 3, y = 2)`, where 3 and 2 are the arguments.
-The function call would be evaluated and would **return** 5 as the answer (assuming that `add` does what it says it does). 
+This is technical and a bit nit-picky, but it's good to see information multiple times. We'll revisit functions in @sec-functions, when we discuss how to write our own functions. 
 
-::: {.callout-note collapse=true}
+The **function call** is `add(x = 3, y = 2)`, where 3 and 2 are the arguments.
+The function call is evaluated and **return**s 5 as the answer (assuming that `add` does what it says it does). 
 
-### Function Vocabulary in Help Files
+::: demo
+
+### Function Vocabulary in Help Files {-}
 
 Let's see these words in a more concrete setting. 
 
@@ -77,6 +80,7 @@ Let's see these words in a more concrete setting.
 - `x` is the parameter
 
 When I type `which.max(x = c(2:10))` into the R console and hit Enter, 
+
 - `c(2:10) = c(2, 3, 4, 5, 6, 7, 8, 9, 10)` is the argument
 - inside `which.max`, this argument has the name `x` (mostly helpful for debugging)
 - `which.max` will return 9, which is the index of `x` with the largest value (10)
@@ -93,9 +97,9 @@ In R, you would get the length of a string variable using `length(my_string)`.
 
 Right now, it is not really necessary to know too much more about functions than this: you can invoke a function by passing in arguments, and the function will do a task and return the value.
 
-::: callout-tip
+:::: example
 
-### Your Turn {.unnumbered .tryitout}
+### Your Turn: Cheat Sheet Exploration and Using Functions  {-}
 
 ::: panel-tabset
 
@@ -143,16 +147,16 @@ x = ("test", )*3 # String multiplication
 
 :::
 
-:::
+::::
 
 ### Using R and Python as Overpowered Calculators
 
 Now that you're familiar with how to use functions, if not how to define them, you are capable of using R or python as a very fancy calculator.
 Obviously, both languages can do many more interesting things, which we'll get to, but let's see if we can make R and Python do some very basic stuff that hopefully isn't too foreign to you.
 
-::: callout-caution
+:::: demo
 
-#### Example: Triangle Side Length
+#### Demonstration: Triangle Side Length {-}
 
 ![A right triangle with sides a, b, and hypotenuse c labeled.](../images/gen-prog/right-triangle.png)
 
@@ -169,48 +173,48 @@ In Python we need to run `import math` first to load the math library before we 
 ##### R
 
 ```{r}
-# Define variables for the 3 sides of the triangle
-a <- 212
-b <- 345
-c_meas <- 406
-c_actual <- sqrt(a^2 + b^2)
+a <- 212 # <1>
+b <- 345 # <1>
+c_meas <- 406 # <1>
 
-# Calculate difference between measured and actual
-# relative to actual 
-# and make it a percentage
-pct_error <- (c_meas - c_actual)/c_actual * 100
+c_actual <- sqrt(a^2 + b^2) # <2>
+
+pct_error <- (c_meas - c_actual)/c_actual * 100 # <3>
 pct_error
 ```
+1. Define variables for the 3 sides of the triangle
+2. Calculate what side $c$ should be, according to the Pythagorean Theorem
+3. Calculate the percent error between the measured and actual value
 
 ##### Python
 
 ```{python}
-# To get the sqrt function, we have to import the math package
-import math
+import math # <1>
 
-# Define variables for the 3 sides of the triangle
-a = 212
-b = 345
-c_meas = 406
-c_actual = math.sqrt(a**2 + b**2)
+a = 212 # <2>
+b = 345 # <2>
+c_meas = 406 # <2>
 
-# Calculate difference between measured and actual
-# relative to actual 
-# and make it a percentage
-pct_error = (c_meas - c_actual)/c_actual * 100
+c_actual = math.sqrt(a**2 + b**2) # <3>
+
+pct_error = (c_meas - c_actual)/c_actual * 100 # <4>
 pct_error
 ```
+1. Import the `math` package to make the `sqrt` function available
+2. Define variables for the 3 sides of the triangle
+3. Calculate what side $c$ should be, according to the Pythagorean Theorem
+4. Calculate the percent error between the measured and actual value
 
 :::
 
 Interesting, I wasn't as inaccurate as I thought!
 
-:::
+::::
 
 
-::: callout-tip
+:::: example
 
-#### Your Turn
+#### Your Turn: Defining Variables and Using Functions {-}
 
 Of course, if you remember trigonometry, we don't have to work with right triangles.
 Let's see if we can use trigonometric functions to do the same task with an oblique triangle.
@@ -260,7 +264,7 @@ I measured the length of side $c$ as 407 pixels.
 
 :::
 
-:::
+::::
 
 
 Congratulations, if you used a TI-84 in high school to do this sort of stuff, you're now just about as proficient with `R` and `python` as you were with that!
@@ -274,9 +278,9 @@ In Python, this working space is called the [**object space**](https://doc.pypy.
 The terminology here differs between R and Python (which is confusing), but conceptually, it's important to distinguish between the set of things that are available to use when you are writing a program and the set of things that are available to load.
 
 
-::: {.callout-note collapse=true}
+::: {.advanced}
 
-### Why environments?
+### Advanced: Why environments?
 
 Imagine that you're an accomplished programmer, and you are juggling multiple different projects.
 Each project uses some of the same packages, but some different packages as well.
@@ -294,59 +298,65 @@ Python programmers prefer the project-specific approach, while R programmers def
 
 :::
 
-::: {.callout-info collapse=false}
-
 ### Vocabulary by Analogy: Functions, Packages, Environments, and Repositories
 
 Think of a package as a book, with each page of the book containing a specific function. 
+
 The package repository (CRAN, PyPi, etc.) is a set of packages, roughly corresponding to a physical library or a bookstore - you can access the packages and install them (take them home). Unlike a physical library, though, usually you don't have to return the packages you've checked out!
+
 The set of packages you have installed corresponds to the books you have at home. 
 You can use any of the functions (pages of those books) when you want to program (or access information). 
 
-
 ::: {#fig-environment layout-ncol=4}
 
-![Package Repository. <br/>[Image Source](https://images.rawpixel.com/image_social_landscape/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTA1L3NrMTk4Ni1pbWFnZS1rd3Z4YXZiaC5qcGc.jpg)](../images/gen-prog/dublin-college-library.jpg){fig-alt="Image of Dublin College Library, containing two full stories of bookshelves, row by row, with a beautiful arched ceiling connecting the two aisles of books."}
+![Package Repository. <br/>[Image Source](https://images.rawpixel.com/image_social_landscape/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIyLTA1L3NrMTk4Ni1pbWFnZS1rd3Z4YXZiaC5qcGc.jpg)](../images/gen-prog/dublin-college-library.jpg){fig-alt="Image of Dublin College Library, containing two full stories of bookshelves, row by row, with a beautiful arched ceiling connecting the two aisles of books." height="150px"}
 
-![Locally Installed Packages (my bookshelf)](../images/gen-prog/my_bookshelf.jpg)
+![Locally Installed Packages (my bookshelf)](../images/gen-prog/my_bookshelf.jpg){fig-alt="A single row of books stacked horizontally and vertically on a shelf."  height="150px"}
 
-![One Package with many functions (pages)](../images/gen-prog/single-book.jpg){fig-alt="A single book (R Packages by Hadley Wickham)."}
+![One Package with many functions (pages)](../images/gen-prog/single-book.jpg){fig-alt="A single book (R Packages by Hadley Wickham)." height="150px"}
 
-![One function (single page) from a package.](../images/gen-prog/book-page.jpg)
+![One function (single page) from a package.](../images/gen-prog/book-page.jpg){fig-alt="A single page from the book R Packages by Hadley Wickham." height="150px"}
 
 A package repository, like PyPi or CRAN, contains a set of possible packages to install (but, of course, there are packages that you can install from other places, as well). Once you have installed a package, you have a local library, like the books I keep near my computer. Each book has (usually) a coherent topic, and each page has a different set of information, corresponding in this analogy to a different function. 
 
 :::
 
-How the packages are organized can reasonably differ based on how you prefer your house to be arranged, just as package organization differs significantly in R and Python. 
+How the packages are **organized** can reasonably differ based on how you prefer your house to be arranged, just as package organization differs significantly in R and Python. 
 
-I have a collection of books in multiple rooms of my house that are sorted by task and audience -- the programming books are by my desk, the fiction books are near the couch, and the childrens' books are in my kids' bedroom. This roughly corresponds to Python-style virtual environments - the packages I need for each project are in the project location, rather than stored centrally. 
+- Python virtual environments arrange packages by project location, so that the package versions needed for each project are stored together, and other projects may have different versions.    
+Analogy: Books in my house are sorted by task and audience (programming books at my desk, fiction books near the couch, kid books in their bedrooms). 
 
-Some people, on the other hand, prefer to keep all of the books that they're not actively using on a centrally located set of bookshelves. This would correspond more closely to R package management - packages are installed in one place for the whole system to use. 
+- R packages, by default, are installed in user libraries or system wide, and the same package version is used for all projects.     
+Analogy: All books in the house are kept in a single wall-to-wall set of bookshelves in the living room.
 
-Regardless of how packages are managed (virtual environments or centrally), to access the package's functions, I have to go get the book and open it. 
-This step corresponds most closely to loading a package into your global environment/object environment. 
+
 The **global environment** (R) or **object space** (Python) is the collection of objects (functions, variables, etc.) that are immediately available to the user. 
 
-Again, R and Python prefer to manage this step differently.
-In R, functions from all loaded packages are available to the user directly using the function name.
-When multiple packages with lots of functions are loaded, this can be ... messy, as in @fig-env-mgmt-R. 
-In Python, the recommended way to load packages is to import the package and possibly give it a shorter alias; the functions must still be referenced as `pkg.functionName` or `alias.functionName` instead of just `functionName`. This more closely matches @fig-env-mgmt-py, where pages are still contained in notebooks, and thus require an extra step to access. 
+Regardless of how packages are managed (virtual environments or centrally), to access the package's functions, I have to go get the book and open it. 
+This step corresponds most closely to **loading a package** into your global environment/object environment. 
 
+Again, R and Python prefer to manage this step differently.
+
+- In R, functions from all loaded packages are available to the user directly using the function name.
+When multiple packages with lots of functions are loaded, this can be ... messy, as in @fig-env-mgmt-R. 
+
+- In Python, the recommended way to load packages is to import the package and possibly give it a shorter alias; the functions must still be referenced as `pkg.functionName` or `alias.functionName` instead of just `functionName`. This more closely matches @fig-env-mgmt-py, where pages are still contained in notebooks, and thus require an extra step to access. 
 
 ::: {#fig-env-mgmt layout-ncol=2}
 
-![R environment mangement <br/>[Image source](https://southblueprint.com/28045/opinions/my-backpack-looks-like-a-mess-and-i-am-okay-with-it/)](../images/gen-prog/messy-backpack.jpg){#fig-env-mgmt-R fig-alt="A backpack full of looseleaf papers in a jumble"}
+![R environment mangement <br/>[Image source](https://southblueprint.com/28045/opinions/my-backpack-looks-like-a-mess-and-i-am-okay-with-it/)](../images/gen-prog/messy-backpack.jpg){#fig-env-mgmt-R fig-alt="A backpack full of looseleaf papers in a jumble" width="30%"}
 
-![Python environment management <br/>[Image source](https://images.rawpixel.com/image_800/cHJpdmF0ZS9zdGF0aWMvaW1hZ2Uvd2Vic2l0ZS8yMDIyLTA0L2xyL3B4NTM2Njc2LWltYWdlLWt3dnZlcm44LmpwZw.jpg)](../images/gen-prog/notebooks.jpg){#fig-env-mgmt-py fig-alt="A stack of spiral notebooks"}
+![Python environment management <br/>[Image source](https://images.rawpixel.com/image_800/cHJpdmF0ZS9zdGF0aWMvaW1hZ2Uvd2Vic2l0ZS8yMDIyLTA0L2xyL3B4NTM2Njc2LWltYWdlLWt3dnZlcm44LmpwZw.jpg)](../images/gen-prog/notebooks.jpg){#fig-env-mgmt-py fig-alt="A stack of spiral notebooks" width="30%"}
 
 R and python conventions for environments are different -- in R, all package functions are loaded into the environment as single objects, which can get messy if there are a lot of functions and/or a lot of loaded packages. In Python, package functions are typically loaded within their packages, so the chaos is more contained, but you have an additional step of having to find the function within the specific package containing that function. This is more verbose, but also ensures that you don't have conflicts between two functions in different packages with the same name. 
 
 :::
 
-::: {.callout-note collapse=true}
+<!-- End vocabulary by analogy section -->
 
-### Python-like R environments (Advanced)
+::: {.advanced}
+
+### Advanced: Python-like R environments {-}
 
 Some R programmers have adopted the python philosophy of project-specific package management, using an R package called `renv` [@usheyIntroductionRenv2023].
 
@@ -382,33 +392,34 @@ By default, @sec-setting-up just installs python at the system level.
 
 ::: {.callout-tip}
 
-#### Decision Fatigued?
+#### Decision Fatigued?  {-}
 
 If you don't care about the nuances of which python environment management option you should use, follow the `venv` instructions for Python below using the R console. 
 `venv` is relatively simple and straightforward and has less overhead. 
 
 :::
 
-::: {.callout-warning collapse=true}
+::: {.callout-warning}
 
 #### Consistency is critical {-}
 
-I *highly* recommend that you pick one of these options and use that consistently, rather than trying the advantages and disadvantages of each option in different projects.
+I *highly* recommend that you **pick one of these options and use it consistently**, rather than trying the advantages and disadvantages of each option in different projects.
 If you switch around between virtualenv and conda, you can very quickly reach the point where you have 15 different python environments on your computer and you don't have any idea which one you should be using. 
-That is... not optimal, and one of the hardest things to deal with as a beginner Python programmer. 
+Python environment management is one of the hardest things to deal with as a beginner Python programmer. 
 
-[![A Cautionary Tale of Python Environments... <br/>Python Environment, by Randall Munroe of [xkcd](https://xkcd.com/1987/). CC-By-NC-2.5. <br/>The Python environmental protection agency wants to seal it in a cement chamber, with pictorial messages to future civilizations warning them about the danger of using sudo to install random Python packages.](../images/gen-prog/python_environment.png){fig-alt="The Python environmental protection agency wants to seal it in a cement chamber, with pictorial messages to future civilizations warning them about the danger of using sudo to install random Python packages."}](https://xkcd.com/1987/)
+[![Python Environment, by Randall Munroe. CC-By-NC-2.5. <br/>The Python environmental protection agency wants to seal it in a cement chamber, with pictorial messages to future civilizations warning them about the danger of using sudo to install random Python packages.](../images/gen-prog/python_environment.png){fig-alt="A chaotic diagram illustrating a complex and confusing Python environment. The image is a complex web of hand-drawn lines and labels, depicting a humorous and chaotic representation of a Python environment on a computer. Various Python installations and paths are illustrated as text bubbles connected by arrows, indicating relationships and path hierarchies. Key elements include “PIP,” “OS Python,” “Homebrew Python (2.7),” “Homebrew Python (3.6),” “Anaconda Python,” and “Python.org Binary (2.6).” These elements are connected with lines labeled with terms like $PATH, EASY_INSTALL, and MISC FOLDERS (OWNED BY ROOT). There are several question marks scattered around, suggesting confusion. The bottom part of the diagram lists various directory paths in a chaotic manner. Below the diagram, there's a caption that reads: “MY PYTHON ENVIRONMENT HAS BECOME SO DEGRADED THAT MY LAPTOP HAS BEEN DECLARED A SUPERFUND SITE.”"}](https://xkcd.com/1987/)
+
 :::
 
-#### venv
+#### venv (Virtual Environments)
 
 `virtualenv` (`venv`) can be installed using either RStudio or the system terminal. 
 
 Items within `< >` (as well as the <> characters) are intended to be replaced with values specific to your situation.
 
-:::: {.callout collapse=true}
+:::: {.setup collapse=true}
 
-##### venv setup
+##### venv setup {-}
 
 ::: panel-tabset
 
@@ -486,9 +497,9 @@ These steps have been generally constructed from @blackwoodHowUsePython2021.
 
 Items within `< >` (as well as the <> characters) are intended to be replaced with values specific to your situation.
 
-:::: {.callout collapse=true}
+:::: {.setup collapse=true}
 
-##### Conda installation
+##### Conda setup  {-}
 
 ::: panel-tabset
 
@@ -572,7 +583,7 @@ This is largely a result of the difference between R and Python's environment ma
 
 ::: {.callout-note collapse=true}
 
-### Do you NEED to use a new package? (Advanced)
+### Do you NEED to use a new package? (Advanced) {-}
 
 There are tons of considerations to think about when using a new package, like how well it's maintained, how many dependencies it has, and whether the developers of the package prioritize backwards-compatibility.
 
@@ -664,6 +675,54 @@ install.packages("<pkg1>")
 remotes::install_github("username/reponame")
 ```
 
+
+:::: demo
+
+#### Demo: Package Installation
+
+Suppose you want to install the `lme4` package in R and the corresponding `pymer4` package in  python. 
+
+::: panel-tabset
+
+##### R
+
+```{r, eval = F}
+install.packages("lme4") # <1>
+
+remotes::install_github("lme4/lme4", dependencies=TRUE) # <2>
+```
+
+1. Install the package from CRAN (best choice if you don't know you need the development version).
+2. Install the development version of the package from the [GitHub repository](https://github.com/lme4/lme4). 
+
+You should only run one of these lines of code, and if you don't know which one to run, then stick with the first line.
+
+##### Python (System console)
+
+```{bash, eval = F}
+pip install pymer4 # venv
+
+conda install pymer4 # conda
+```
+
+##### Python (RStudio)
+
+In the R terminal (yes, that's weird), run this command: 
+
+```{r}
+reticulate::py_install("pymer4")
+```
+
+##### Python (Ipython magic)
+
+```{python, eval=F}
+%pip install pymer4
+```
+
+:::
+
+::::
+
 ### Loading Packages
 
 Once you have the package installed, you need to load the package into memory so that you can use the functions and data contained within.
@@ -675,11 +734,14 @@ Again, R and python differ slightly in how programmers conventionally handle thi
 Now, both R and python can load packages in either way, so this isn't an either/or thing - it's about knowing what the conventions of the language are, and then deciding whether or not it is appropriate to follow those conventions in your project.
 @fig-env-mgmt contains a visual analogy for the differences between these two approaches. 
 
-::: callout-demo
 
-#### Import the whole package and all functions
+#### R's Package Strategy: Import the whole package and all functions
+
+:::: demo
 
 To demonstrate this approach, let's create a simple plot with a plotting library (`ggplot2` in R, `seaborn` in Python).
+We'll first load the library (R) or libraries (Python), and then we can look at how many functions are available to the user. 
+We can plot the number of functions loaded from each package using a bar plot. 
 
 ::: panel-tabset
 
@@ -688,6 +750,8 @@ To demonstrate this approach, let's create a simple plot with a plotting library
 All of the other packages except for `ggplot2` in this plot are present by default in any new R environment.
 
 ```{r}
+#| out-width: "50%"
+#| fig-alt: "Plot of number of functions loaded with each package in a new R environment. Includes base (1270), ggplot2 (434), graphics (87), grDevices (119), methods (203), stats (452), and utils (225). "
 library(ggplot2)
 
 pkgs <- search() # <1>
@@ -711,28 +775,31 @@ ggplot(pkg_fns, aes(x = pkg, y = after_stat(count), fill = pkg)) + # <6>
 6. Create the plot
 
 
+<!-- ##### Python (Seaborn) -->
+
+<!-- I haven't been able to figure out how to trace functions back to packages once they're imported in Python, but we can create the same type of plot we did in R using the data frame of R functions in each R package.  -->
+<!-- In python, if you want to import all functions from a package and use them with bare function names, you'd use `from <pkgname> import *`.  -->
+
+<!-- ```{python} -->
+<!-- from seaborn import * -->
+<!-- import matplotlib.pyplot as plt -->
+
+<!-- plot = countplot(r.pkg_fns, x = "pkg", hue = "pkg") -->
+<!-- plot.set_title("Number of Functions in Common R Packages") -->
+<!-- plot.set_xlabel("Package") -->
+<!-- plot.set_ylabel("# Functions") -->
+<!-- plt.show() -->
+
+<!-- ``` -->
+
 ##### Python
 
-I haven't been able to figure out how to trace functions back to packages once they're imported in Python, but we can create the same type of plot we did in R using the data frame of R functions in each R package. 
-In python, if you want to import all functions from a package and use them with bare function names, you'd use `from <pkgname> import *`. 
+In python, there are built-in functions (`builtins`).
+I have then loaded the packages I typically use for plotting (`seaborn`, `seaborn.objects`, `matplotlib`), manipulating data (`pandas`, `numpy`), and standard `math` and `statistics` libraries to roughly attempt to match the functionality available in base R + ggplot2. 
 
 ```{python}
-from seaborn import *
-import matplotlib.pyplot as plt
-
-plot = countplot(r.pkg_fns, x = "pkg", hue = "pkg")
-plot.set_title("Number of Functions in Common R Packages")
-plot.set_xlabel("Package")
-plot.set_ylabel("# Functions")
-plt.show()
-
-```
-
-##### Python
-
-In python, there are built-in functions (`builtins`); I have then loaded the packages I typically use for plotting (`seaborn`, `seaborn.objects`, `matplotlib`), manipulating data (`pandas`, `numpy`), and standard `math` and `statistics` libraries to roughly attempt to match the functionality available in base R + ggplot2. 
-
-```{python}
+#| out-width: "50%"
+#| fig-alt: "Plot of number of functions loaded with each package in a new R environment. Includes builtins (47), math (60), matplotlib (263), numpy (515), pandas (128), seaborn (125), and statistics (58). "
 import seaborn as sns
 import seaborn.objects as so
 import pandas as pd
@@ -741,30 +808,28 @@ import matplotlib.pyplot as plt
 import math
 import statistics
 
-pkgs = pd.DataFrame({"name": [ # <1>
-  "builtins", 
-  "math", "statistics", 
-  "seaborn", "seaborn", "matplotlib", 
-  "pandas", "numpy"
-  ], 
-  "abbrev": [
-    "builtins", 
-    "math", "statistics",
-    sns, so, plt, 
-    pd, np]
-    })
-
-pkgs["functions"] = pkgs['abbrev'].apply(lambda x: dir(x), by_row="compat") # <2>
+pkgs = pd.DataFrame({
+  "name": [ # <1>
+    "builtins",        "math",          "statistics", 
+    "seaborn",         "seaborn",       "matplotlib", 
+    "pandas",          "numpy"                           ], 
+  "functions": [  # <2>
+    dir("builtins"),   dir(math),        dir(statistics),
+    dir(sns),          dir(so),          dir(plt),
+    dir(pd),           dir(np)                           ]
+  })
 
 pkgs = pkgs.explode('functions') # <3>
 
 pkgs = pkgs[~pkgs.functions.str.contains("__")] # <4>
 
+plt.clf()
 plot = sns.countplot(pkgs, x = "name", hue = "name") # <5> 
 plot.set_title("Number of Functions in Common Python Packages")
 plot.set_xlabel("Package")
 plot.set_ylabel("# Functions")
 plt.show()
+
 ```
 
 1. Create a data frame with all of the packages roughly corresponding to objects available in R after ggplot2 is loaded.
@@ -775,51 +840,9 @@ plt.show()
 
 :::
 
-:::
+::::
 
-::: callout-demo
-
-#### Use functions from the package without loading everything
-
-::: panel-tabset
-
-##### R
-
-```{r}
-# This code lists all the functions available to be called
-pkgs <- search()
-pkgs <- pkgs[grep("package:",pkgs)]
-# get all the functions in each package that is loaded
-all_fns <- lapply(pkgs, function(x) as.character(lsf.str(x)))
-# create a data frame
-pkg_fns <- data.frame(pkg = rep(pkgs, sapply(all_fns, length)), 
-                      fn = unlist(all_fns))
-pkg_fns$pkg <- gsub("package:", "", pkg_fns$pkg)
-
-ggplot2::ggplot(pkg_fns, ggplot2::aes(x = pkg, fill = pkg)) + 
-  ggplot2::geom_bar(y = ggplot2::after_stat(count)) + 
-  ggplot2::theme(legend.position = "none") + 
-  ggplot2::xlab("Package") + ggplot2::ylab("# Functions")
-
-```
-
-##### Python
-
-```{python}
-import plotnine as p9
-pkg_fns = r.pkg_fns
-
-(
-  p9.ggplot(pkg_fns, p9.aes(x = "pkg", fill = "pkg")) + 
-  p9.geom_bar(y = p9.after_stat("count")) + 
-  p9.theme(legend_position = "none") + 
-  p9.xlab("Package") + p9.ylab("# Functions")
-)
-```
-
-:::
-
-:::
+#### Python's Package Strategy: Use functions from the package without loading everything
 
 In python, you can use `import package as nickname`, or you can just use `import package` and reference the package name directly.
 There are some packages which have typical aliases, and it's best to use those so that you can look things up and not get too confused.
@@ -833,6 +856,60 @@ There are some packages which have typical aliases, and it's best to use those s
 | BeautifulSoup (bs4) | bs           | BeautifulSoup is a reference to Alice in Wonderland. The package name in PyPi is actually bs4. |
 
 : Common Python package aliases
+
+
+:::: demo
+
+Let's see what our R environment looks like if we start fresh and do it the python way.
+
+::: panel-tabset
+
+##### R
+
+```{r}
+#| out-width: "50%"
+#| fig-alt: "Plot of number of functions loaded with each package in a new R environment. Includes base (1270), graphics (87), grDevices (119), methods (203), stats (452), and utils (225). "
+try(detach(package:ggplot2))
+
+# This code lists all the functions available to be called
+pkgs <- search()
+pkgs <- pkgs[grep("package:",pkgs)]
+# get all the functions in each package that is loaded
+all_fns <- lapply(pkgs, function(x) as.character(lsf.str(x)))
+# create a data frame
+pkg_fns <- data.frame(pkg = rep(pkgs, sapply(all_fns, length)), 
+                      fn = unlist(all_fns))
+pkg_fns$pkg <- gsub("package:", "", pkg_fns$pkg)
+
+ggplot2::ggplot(pkg_fns, ggplot2::aes(x = pkg, fill = pkg)) +
+  ggplot2::geom_bar() + 
+  ggplot2::theme(legend.position = "none") + 
+  ggplot2::xlab("Package") + ggplot2::ylab("# Functions")
+
+```
+
+`ggplot2` does not appear in the chart because it is not loaded. However, we can still access its functions by using `package::function` to tell R where to find the function. 
+
+##### Python
+
+Here, we'll plot the functions as loaded in R, for simplicity. 
+
+```{python}
+#| out-width: "50%"
+#| fig-alt: "Plot of number of functions loaded with each package in a new R environment. Includes base (1270), graphics (87), grDevices (119), methods (203), stats (452), and utils (225). "
+pkg_fns = r.pkg_fns
+
+plt.clf()
+plot = sns.countplot(pkg_fns, x = "pkg", hue = "pkg") # <5> 
+plot.set_title("Number of Functions in Common R Packages")
+plot.set_xlabel("Package")
+plot.set_ylabel("# Functions")
+plt.show()
+```
+
+:::
+
+::::
 
 ## Pipes
 
@@ -850,9 +927,9 @@ In Python, there is a `pipe` function in the Pandas library that works using `.p
 From what I've seen reading code online, however, pipes are less commonly used in Python code than they are in R code.
 That's ok - languages have different conventions, and it is usually best to adopt the convention of the language you're working in so that your code can be read, run, and maintained by others more easily.
 
-::: callout-tip
+:::: example
 
-### Try it out
+### Try it out: Pipes  {-}
 
 ::: panel-tabset
 
@@ -907,6 +984,6 @@ Methods are functions that are attached to a data type (technically, a class) an
 
 :::
 
-:::
+::::
 
-<!-- ## References  {#sec-using-functions-refs} -->
+## References  {#sec-using-functions-refs}
