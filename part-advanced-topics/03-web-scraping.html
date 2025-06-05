@@ -1,13 +1,10 @@
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
-
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.5.57">
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-
-<meta name="dcterms.date" content="2025-05-28">
-
+<meta name="dcterms.date" content="2025-06-05">
 <title>33&nbsp; Web Scraping – Statistical Computing using R and Python</title>
 <style>
 code{white-space: pre-wrap;}
@@ -21,8 +18,61 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
-</style>
-
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
 
 <script src="../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../site_libs/quarto-nav/headroom.min.js"></script>
@@ -45,7 +95,8 @@ ul.task-list li input[type="checkbox"] {
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
 <link href="../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<script id="quarto-search-options" type="application/json">{
+<link href="../site_libs/quarto-contrib/fontawesome6-0.1.0/all.css" rel="stylesheet">
+<link href="../site_libs/quarto-contrib/fontawesome6-0.1.0/latex-fontsize.css" rel="stylesheet"><script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
   "collapse-after": 3,
@@ -71,28 +122,85 @@ ul.task-list li input[type="checkbox"] {
     "search-submit-button-title": "Submit",
     "search-label": "Search"
   }
-}</script>
-<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-4ZFBDKXJXP"></script>
-
-<script type="text/javascript">
+}</script><script async="" src="https://www.googletagmanager.com/gtag/js?id=G-4ZFBDKXJXP"></script><script type="text/javascript">
 
 window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
-</script>
-<script src="https://kit.fontawesome.com/baac5f0610.js" crossorigin="anonymous"></script>
-
-
+</script><script src="https://kit.fontawesome.com/baac5f0610.js" crossorigin="anonymous"></script><style>
+div.callout-example.callout {
+  border-left-color: #f39c12;
+}
+div.callout-example.callout-style-default > .callout-header {
+  background-color: rgba(243, 156, 18, 0.13);
+}
+div.callout-example .callout-toggle::before {  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgb(33, 37, 41)" class="bi bi-chevron-down" viewbox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"></path></svg>');}
+div.callout-example.callout-style-default .callout-icon::before, div.callout-example.callout-titled .callout-icon::before {
+  font-family: 'Font Awesome 6 Free', FontAwesome;
+  font-style: normal;
+  content: '\f206' !important;
+  background-image: none;
+}
+div.callout-setup.callout {
+  border-left-color: #f3e969;
+}
+div.callout-setup.callout-style-default > .callout-header {
+  background-color: rgba(243, 233, 105, 0.13);
+}
+div.callout-setup .callout-toggle::before {  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgb(33, 37, 41)" class="bi bi-chevron-down" viewbox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"></path></svg>');}
+div.callout-setup.callout-style-default .callout-icon::before, div.callout-setup.callout-titled .callout-icon::before {
+  font-family: 'Font Awesome 6 Free', FontAwesome;
+  font-style: normal;
+  content: '\f6e3' !important;
+  background-image: none;
+}
+div.callout-demo.callout {
+  border-left-color: #91d5d4;
+}
+div.callout-demo.callout-style-default > .callout-header {
+  background-color: rgba(145, 213, 212, 0.13);
+}
+div.callout-demo .callout-toggle::before {  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgb(33, 37, 41)" class="bi bi-chevron-down" viewbox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"></path></svg>');}
+div.callout-demo.callout-style-default .callout-icon::before, div.callout-demo.callout-titled .callout-icon::before {
+  font-family: 'Font Awesome 6 Free', FontAwesome;
+  font-style: normal;
+  content: '\f12e' !important;
+  background-image: none;
+}
+div.callout-advanced.callout {
+  border-left-color: #cbbaf9;
+}
+div.callout-advanced.callout-style-default > .callout-header {
+  background-color: rgba(203, 186, 249, 0.13);
+}
+div.callout-advanced .callout-toggle::before {  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgb(33, 37, 41)" class="bi bi-chevron-down" viewbox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"></path></svg>');}
+div.callout-advanced.callout-style-default .callout-icon::before, div.callout-advanced.callout-titled .callout-icon::before {
+  font-family: 'Font Awesome 6 Free', FontAwesome;
+  font-style: normal;
+  content: '\f5dc' !important;
+  background-image: none;
+}
+div.callout-learnmore.callout {
+  border-left-color: #f09bb6;
+}
+div.callout-learnmore.callout-style-default > .callout-header {
+  background-color: rgba(240, 155, 182, 0.13);
+}
+div.callout-learnmore .callout-toggle::before {  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgb(33, 37, 41)" class="bi bi-chevron-down" viewbox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"></path></svg>');}
+div.callout-learnmore.callout-style-default .callout-icon::before, div.callout-learnmore.callout-titled .callout-icon::before {
+  font-family: 'Font Awesome 6 Free', FontAwesome;
+  font-style: normal;
+  content: '\f02d' !important;
+  background-image: none;
+}
+</style>
 <link rel="stylesheet" href="../build_deps/style.css">
 </head>
-
-<body class="nav-sidebar floating">
+<body class="nav-sidebar floating slimcontent">
 
 <div id="quarto-search-results"></div>
-  <header id="quarto-header" class="headroom fixed-top">
-  <nav class="quarto-secondary-nav">
-    <div class="container-fluid d-flex">
+  <header id="quarto-header" class="headroom fixed-top"><nav class="quarto-secondary-nav"><div class="container-fluid d-flex">
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Toggle sidebar navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
@@ -103,13 +211,9 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
         <i class="bi bi-search"></i>
       </button>
     </div>
-  </nav>
-</header>
-<!-- content -->
-<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
+  </nav></header><!-- content --><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
-    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto"><div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="../">Statistical Computing using R and Python</a> 
         <div class="sidebar-tools-main tools-wide">
@@ -130,7 +234,7 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
         </div>
     <div class="sidebar-menu-container"> 
     <ul class="list-unstyled mt-1">
-        <li class="sidebar-item">
+<li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../index.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text">Preface</span></a>
@@ -144,8 +248,8 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item">
+      <ul id="quarto-sidebar-section-1" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../part-tools/01-computer-basics.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Computer Basics</span></span></a>
@@ -182,7 +286,7 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
   </div>
 </li>
       </ul>
-  </li>
+</li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="../part-gen-prog/00-gen-prog.html" class="sidebar-item-text sidebar-link">
@@ -191,8 +295,8 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item">
+      <ul id="quarto-sidebar-section-2" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../part-gen-prog/00-intro.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Introduction to Programming</span></span></a>
@@ -259,7 +363,7 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
   </div>
 </li>
       </ul>
-  </li>
+</li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="../part-wrangling/00-wrangling.html" class="sidebar-item-text sidebar-link">
@@ -268,8 +372,8 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item">
+      <ul id="quarto-sidebar-section-3" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../part-wrangling/01-data-input.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Data Input</span></span></a>
@@ -348,7 +452,7 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
   </div>
 </li>
       </ul>
-  </li>
+</li>
         <li class="sidebar-item sidebar-item-section">
       <div class="sidebar-item-container"> 
             <a href="../part-advanced-topics/00-advanced.html" class="sidebar-item-text sidebar-link">
@@ -357,8 +461,8 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
             <i class="bi bi-chevron-right ms-2"></i>
           </a> 
       </div>
-      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">  
-          <li class="sidebar-item">
+      <ul id="quarto-sidebar-section-4" class="collapse list-unstyled sidebar-section depth1 show">
+<li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../part-advanced-topics/01-simulation.html" class="sidebar-item-text sidebar-link">
  <span class="menu-text"><span class="chapter-number">31</span>&nbsp; <span class="chapter-title">Simulation and Reproducibility</span></span></a>
@@ -431,7 +535,7 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
   </div>
 </li>
       </ul>
-  </li>
+</li>
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../graveyard.html" class="sidebar-item-text sidebar-link">
@@ -439,30 +543,37 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
   </div>
 </li>
     </ul>
-    </div>
-</nav>
-<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+</div>
+</nav><div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active"><h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+<li><a href="#objectives" id="toc-objectives" class="nav-link active" data-scroll-target="#objectives"><span class="header-section-number">33.1</span> <i class="fa-solid fa-bullseye" aria-label="bullseye"></i> Objectives</a></li>
+  <li>
+<a href="#html-and-xml-language-specification" id="toc-html-and-xml-language-specification" class="nav-link" data-scroll-target="#html-and-xml-language-specification"><span class="header-section-number">33.2</span> HTML and XML Language Specification</a>
+  <ul class="collapse">
+<li><a href="#xml" id="toc-xml" class="nav-link" data-scroll-target="#xml"><span class="header-section-number">33.2.1</span> XML</a></li>
+  </ul>
+</li>
+  <li><a href="#sec-webscraping-refs" id="toc-sec-webscraping-refs" class="nav-link" data-scroll-target="#sec-webscraping-refs"><span class="header-section-number">33.3</span> References</a></li>
+  </ul><div class="toc-actions"><ul><li><a href="https://github.com/srvanderplas/stat-computing-r-python/edit/main/part-advanced-topics/03-web-scraping.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content column-page-right" id="quarto-document-content">
-
-<header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../part-advanced-topics/00-advanced.html">Part IV: Advanced Topics</a></li><li class="breadcrumb-item"><a href="../part-advanced-topics/03-web-scraping.html"><span class="chapter-number">33</span>&nbsp; <span class="chapter-title">Web Scraping</span></a></li></ol></nav>
-<div class="quarto-title">
+<main class="content page-columns page-full column-body" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../part-advanced-topics/00-advanced.html">Part IV: Advanced Topics</a></li><li class="breadcrumb-item"><a href="../part-advanced-topics/03-web-scraping.html"><span class="chapter-number">33</span>&nbsp; <span class="chapter-title">Web Scraping</span></a></li></ol></nav><div class="quarto-title">
 <h1 class="title"><span id="sec-data-web" class="quarto-section-identifier"><span class="chapter-number">33</span>&nbsp; <span class="chapter-title">Web Scraping</span></span></h1>
 </div>
 
 
 
-<div class="quarto-title-meta column-page-right">
+<div class="quarto-title-meta column-body">
 
     
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">May 28, 2025</p>
+      <p class="date">June 5, 2025</p>
     </div>
   </div>
   
@@ -471,14 +582,374 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
   
 
 
-</header>
+</header><section id="objectives" class="level2 nonumber" data-number="33.1"><h2 class="nonumber anchored" data-number="33.1" data-anchor-id="objectives">
+<span class="header-section-number">33.1</span> <i class="fa-solid fa-bullseye" aria-label="bullseye"></i> Objectives</h2>
+<ul>
+<li>Understand the structure of XML and HTML files</li>
+<li>Use developer tools to locate nodes of interest and CSS or XPATH to precisely identify those nodes</li>
+<li>Identify web pages that cannot be scraped using simple methods because of content injection</li>
+<li>Scrape data from web pages
+<ul>
+<li>by reading in HTML tables directly using R or Python</li>
+<li>by writing custom functions to pull data from individual fields</li>
+</ul>
+</li>
+</ul></section><section id="html-and-xml-language-specification" class="level2 page-columns page-full" data-number="33.2"><h2 data-number="33.2" class="anchored" data-anchor-id="html-and-xml-language-specification">
+<span class="header-section-number">33.2</span> HTML and XML Language Specification</h2>
+<p>Let’s start at the beginning. <strong>eXtensible Markup Language (XML)</strong> was developed in the late 1990s to provide a flexible specification for documents, data files, and various other documents. You’ve (likely) been using XML-based documents for most of your life, either in Microsoft Office (.docx, .xlsx, .pptx - the x is for XML) or in web pages. <strong>HyperText Markup Language (HTML)</strong> is a specific flavor of XML <span class="citation" data-cites="wikimediacontributorsXML2025"><a href="#ref-wikimediacontributorsXML2025" role="doc-biblioref">[1]</a></span> that uses a defined set of fields to specify the composition of a web page. If you right click in your browser on this page, and “Inspect Source”, you can see the HTML code that generates this book.</p>
+<section id="xml" class="level3 page-columns page-full" data-number="33.2.1"><h3 data-number="33.2.1" class="anchored" data-anchor-id="xml">
+<span class="header-section-number">33.2.1</span> XML</h3>
+<p>XML documents are composed of a series of tags that look like this:</p>
+<pre><code>&lt;tag-type attribute="value"&gt;Tag contents&lt;/tag-type&gt;</code></pre>
+<p>Each tag name, <code>tag</code>, is enclosed in angle brackets, <code>&lt;tag&gt;</code>, and has a closing tag that starts with a slash but has the same name, <code>&lt;/tag&gt;</code>. Tags can include additional information that is typically encoded in <code>key="value"</code> pairs - above, there is an <code>attribute</code> field that has value <code>value</code>.</p>
+<p>The XML 1.0 (5th edition) specification requires that</p>
+<ul>
+<li><p>The document contains only one element, called the <strong>root</strong> or document element, at the top level. No part of the root element appears in the content of any other element.</p></li>
+<li>
+<p>Any other elements</p>
+<ul>
+<li>are defined by start and end tags, and</li>
+<li>nest properly within each other (are well formed)</li>
+</ul>
+</li>
+<li><p>An element contains <strong>text</strong>, a sequence of characters. Legal characters are tab, carriage return, line feed, and the legal characters of <a href="https://home.unicode.org/">Unicode</a> and <a href="https://unicode.org/L2/L2010/10038-fcd10646-main.pdf">ISO/IEC 10646 (PDF warning)</a><a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>.</p></li>
+<li><p>Comments start with <code>&lt;!--</code> and end with <code>--&gt;</code>. The <code>--</code> string cannot be present within the text of a comment. Comments may NOT end with <code>---&gt;</code> - the specification requires exactly two dashes.</p></li>
+</ul>
+<div class="callout callout-style-default callout-advanced callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Advanced: Additional XML metadata
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>A valid XML document also contains some additional metadata at the start of the file. First, there should be an <strong>XML declaration</strong> that specifies the version of XML being used: <code>&lt;?xml version="1.0"?&gt;</code> (Note the <code>?</code> immediately before and after the angle brackets).</p>
+<p>In addition, valid XML documents contain a <strong>Document Type Definition (DTD)</strong> that provides some information about valid tags used within the document.</p>
+<pre><code>&lt;!DOCTYPE Name (ExternalID)? '[' intSubset ']' &gt;</code></pre>
+<p>Document Type Definition requirements:</p>
+<ul>
+<li>
+<code>Name</code> in the DTD has the same value as the root node tag name</li>
+<li>An Internal or External Subset of valid entity names (tag names) is provided. It is also possible to specify valid tag attributes, types, and other information within these listings.</li>
+</ul>
+<pre id="annotated-cell-3" class="code-annotation-code"><code>&lt;?xml version="1.0"?&gt;
+&lt;!DOCTYPE greeting SYSTEM "hello.dtd"&gt;
+&lt;greeting&gt;Hello, world!&lt;/greeting&gt;</code></pre>
+<dl>
+<dt data-target-cell="annotated-cell-3" data-target-annotation="1">1</dt>
+<dd>
+<span data-code-cell="annotated-cell-3" data-code-lines="1" data-code-annotation="1">XML version declaration</span>
+</dd>
+<dt data-target-cell="annotated-cell-3" data-target-annotation="2">2</dt>
+<dd>
+<span data-code-cell="annotated-cell-3" data-code-lines="2" data-code-annotation="2">Document Type Definition. <code>greeting</code> is the name, and the root node matches that name. <code>hello.dtd</code> is the system identifier and provides an address leading to an external document type declaration file</span>
+</dd>
+<dt data-target-cell="annotated-cell-3" data-target-annotation="3">3</dt>
+<dd>
+<span data-code-cell="annotated-cell-3" data-code-lines="3" data-code-annotation="3">Root node. <code>greeting</code> is the tag name. <code>Hello, world!</code> is the tag value. The tag is closed with a valid, matching end tag.</span>
+</dd>
+</dl>
+<pre id="annotated-cell-4" class="code-annotation-code"><code>&lt;?xml version="1.0" encoding="UTF-8" ?&gt;
+&lt;!DOCTYPE greeting [
+  &lt;!ELEMENT greeting (#PCDATA)&gt;
+]&gt;
+&lt;greeting&gt;Hello, world!&lt;/greeting&gt;</code></pre>
+<dl>
+<dt data-target-cell="annotated-cell-4" data-target-annotation="1">1</dt>
+<dd>
+<span data-code-cell="annotated-cell-4" data-code-lines="1" data-code-annotation="1">XML version declaration, specifying the document’s text encoding</span>
+</dd>
+<dt data-target-cell="annotated-cell-4" data-target-annotation="2">2</dt>
+<dd>
+<span data-code-cell="annotated-cell-4" data-code-lines="2" data-code-annotation="2">An internally defined DTD that specifies valid elements (tags) (the only valid element is <code>greeting</code>). Additional tags could be specified within the <code>[</code> <code>]</code> space, if desired.</span>
+</dd>
+<dt data-target-cell="annotated-cell-4" data-target-annotation="3">3</dt>
+<dd>
+<span data-code-cell="annotated-cell-4" data-code-lines="5" data-code-annotation="3">The root node with value <code>Hello, world!</code></span>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-demo callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="header-section-number">33.2.2</span> Demo: Exploring an XML file
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The District of Columbia (Washington, DC) local government provides a <a href="https://catalog.data.gov/dataset/grocery-store-locations">dataset of grocery store locations throughout the district</a> using a definition of full service grocery store that requires:</p>
+<ul>
+<li>Sales of six of the following categories of food:
+<ul>
+<li>Fresh fruits and vegetables</li>
+<li>Fresh and uncooked meats, poultry and seafood</li>
+<li>Dairy products</li>
+<li>Canned foods</li>
+<li>Frozen foods</li>
+<li>Dry groceries and baked goods</li>
+<li>Non-alcoholic beverages</li>
+</ul>
+</li>
+<li>Either 50% of the store’s total square footage, or 6000 square feet must be dedicated to selling the food products above.</li>
+<li>At least 5% of the selling area must be dedicated to each food category.</li>
+</ul>
+<p>The city then included some small grocery stores that are very close to meeting the full-service grocery store definition based on <a href="https://dcfoodpolicy.org/wp-content/uploads/2019/06/2018-food-system-assessment-final-6.13.pdf">Appendix D of a city-wide food system assessment</a> (PDF warning).</p>
+<p>We can <a href="https://opendata.dc.gov/api/download/v1/items/1d7c9d0e3aac49c1aa88d377a3bae430/kml?layers=4">download the KML file</a> and change the extension to XML so that the file opens in a standard web browser, or we can directly download the KML file as an XML file as in the code chunk below.</p>
+<div class="cell">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">url</span> <span class="op">&lt;-</span> <span class="st">"https://opendata.dc.gov/api/download/v1/items/1d7c9d0e3aac49c1aa88d377a3bae430/kml?layers=4"</span></span>
+<span><span class="va">filename</span> <span class="op">&lt;-</span> <span class="st">"../data/DC_Grocery_Stores_2025.xml"</span></span>
+<span></span>
+<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/files.html">file.exists</a></span><span class="op">(</span><span class="va">filename</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/utils/download.file.html">download.file</a></span><span class="op">(</span><span class="va">url</span>, destfile <span class="op">=</span> <span class="va">filename</span>, mode <span class="op">=</span> <span class="st">"wb"</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span></span>
+<span><span class="va">xml_text</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readLines.html">readLines</a></span><span class="op">(</span><span class="va">filename</span><span class="op">)</span></span>
+<span><span class="va">xml_tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>line <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/length.html">length</a></span><span class="op">(</span><span class="va">xml_text</span><span class="op">)</span>, </span>
+<span>                      xml <span class="op">=</span> <span class="fu">htmltools</span><span class="fu">::</span><span class="fu"><a href="https://rstudio.github.io/htmltools/reference/htmlEscape.html">htmlEscape</a></span><span class="op">(</span><span class="va">xml_text</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co"># Escaping the XML allows printing it out nicely in the book</span></span>
+<span></span>
+<span><span class="fu">knitr</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/knitr/man/kable.html">kable</a></span><span class="op">(</span><span class="va">xml_tbl</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="fl">35</span><span class="op">:</span><span class="fl">64</span>, <span class="fl">3145</span><span class="op">:</span><span class="fl">3151</span><span class="op">)</span>,<span class="op">]</span>, row.names <span class="op">=</span> <span class="cn">F</span><span class="op">)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<colgroup>
+<col style="width: 4%">
+<col style="width: 95%">
+</colgroup>
+<thead><tr class="header">
+<th style="text-align: right;">line</th>
+<th style="text-align: left;">xml</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: left;">&lt;?xml version=“1.0” encoding=“utf-8” ?&gt;</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: left;">&lt;kml xmlns=“http://www.opengis.net/kml/2.2”&gt;</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3</td>
+<td style="text-align: left;">&lt;Document id=“root_doc”&gt;</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4</td>
+<td style="text-align: left;">&lt;Schema name=“Grocery_Store_Locations” id=“Grocery_Store_Locations”&gt;</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">5</td>
+<td style="text-align: left;">&lt;SimpleField name=“STORENAME” type=“string”&gt;&lt;/SimpleField&gt;</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">6</td>
+<td style="text-align: left;">&lt;SimpleField name=“ADDRESS” type=“string”&gt;&lt;/SimpleField&gt;</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">7</td>
+<td style="text-align: left;">&lt;SimpleField name=“ZIPCODE” type=“int”&gt;&lt;/SimpleField&gt;</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">8</td>
+<td style="text-align: left;">&lt;SimpleField name=“PHONE” type=“float”&gt;&lt;/SimpleField&gt;</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">9</td>
+<td style="text-align: left;">&lt;SimpleField name=“WARD” type=“string”&gt;&lt;/SimpleField&gt;</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">10</td>
+<td style="text-align: left;">&lt;SimpleField name=“SSL” type=“string”&gt;&lt;/SimpleField&gt;</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">35</td>
+<td style="text-align: left;">&lt;SimpleField name=“SE_ANNO_CAD_DATA” type=“string”&gt;&lt;/SimpleField&gt;</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">36</td>
+<td style="text-align: left;">&lt;SimpleField name=“GLOBALID” type=“string”&gt;&lt;/SimpleField&gt;</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">37</td>
+<td style="text-align: left;">&lt;SimpleField name=“CREATED” type=“string”&gt;&lt;/SimpleField&gt;</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">38</td>
+<td style="text-align: left;">&lt;SimpleField name=“EDITED” type=“string”&gt;&lt;/SimpleField&gt;</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">39</td>
+<td style="text-align: left;">&lt;SimpleField name=“OBJECTID” type=“int”&gt;&lt;/SimpleField&gt;</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">40</td>
+<td style="text-align: left;">&lt;/Schema&gt;</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">41</td>
+<td style="text-align: left;">&lt;Folder&gt;&lt;name&gt;Grocery_Store_Locations&lt;/name&gt;</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">42</td>
+<td style="text-align: left;">&lt;Placemark&gt;</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">43</td>
+<td style="text-align: left;">&lt;ExtendedData&gt;&lt;SchemaData schemaUrl=“#Grocery_Store_Locations”&gt;</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">44</td>
+<td style="text-align: left;">&lt;SimpleData name=“STORENAME”&gt;Target &lt;/SimpleData&gt;</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">45</td>
+<td style="text-align: left;">&lt;SimpleData name=“ADDRESS”&gt;7828 GEORGIA AVENUE NW&lt;/SimpleData&gt;</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">46</td>
+<td style="text-align: left;">&lt;SimpleData name=“ZIPCODE”&gt;20012&lt;/SimpleData&gt;</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">47</td>
+<td style="text-align: left;">&lt;SimpleData name=“PHONE”&gt;2028923822&lt;/SimpleData&gt;</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">48</td>
+<td style="text-align: left;">&lt;SimpleData name=“WARD”&gt;Ward 4&lt;/SimpleData&gt;</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">49</td>
+<td style="text-align: left;">&lt;SimpleData name=“SSL”&gt;2960 0017&lt;/SimpleData&gt;</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">50</td>
+<td style="text-align: left;">&lt;SimpleData name=“PRESENT22”&gt;Yes&lt;/SimpleData&gt;</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">51</td>
+<td style="text-align: left;">&lt;SimpleData name=“PRESENT23”&gt;Yes&lt;/SimpleData&gt;</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">52</td>
+<td style="text-align: left;">&lt;SimpleData name=“PRESENT24”&gt;Yes&lt;/SimpleData&gt;</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">53</td>
+<td style="text-align: left;">&lt;SimpleData name=“PRESENT25”&gt;Yes&lt;/SimpleData&gt;</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">54</td>
+<td style="text-align: left;">&lt;SimpleData name=“GIS_ID”&gt;GroceryStorePt_1&lt;/SimpleData&gt;</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">55</td>
+<td style="text-align: left;">&lt;SimpleData name=“XCOORD”&gt;397662.57&lt;/SimpleData&gt;</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">56</td>
+<td style="text-align: left;">&lt;SimpleData name=“YCOORD”&gt;146280.07&lt;/SimpleData&gt;</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">57</td>
+<td style="text-align: left;">&lt;SimpleData name=“MAR_ID”&gt;300512&lt;/SimpleData&gt;</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">58</td>
+<td style="text-align: left;">&lt;SimpleData name=“GLOBALID”&gt;{CE302122-4E8D-4DC7-845B-06563B993F66}&lt;/SimpleData&gt;</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">59</td>
+<td style="text-align: left;">&lt;SimpleData name=“CREATED”&gt;2022/09/28 22:04:54+00&lt;/SimpleData&gt;</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">60</td>
+<td style="text-align: left;">&lt;SimpleData name=“EDITED”&gt;2025/01/14 19:33:19+00&lt;/SimpleData&gt;</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">61</td>
+<td style="text-align: left;">&lt;SimpleData name=“OBJECTID”&gt;641&lt;/SimpleData&gt;</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">62</td>
+<td style="text-align: left;">&lt;/SchemaData&gt;&lt;/ExtendedData&gt;</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">63</td>
+<td style="text-align: left;">&lt;Point&gt;&lt;coordinates&gt;-77.0269805790129,38.9844552988866&lt;/coordinates&gt;&lt;/Point&gt;</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">64</td>
+<td style="text-align: left;">&lt;/Placemark&gt;</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3145</td>
+<td style="text-align: left;">&lt;SimpleData name=“EDITED”&gt;2025/01/14 19:33:19+00&lt;/SimpleData&gt;</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3146</td>
+<td style="text-align: left;">&lt;SimpleData name=“OBJECTID”&gt;1921&lt;/SimpleData&gt;</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3147</td>
+<td style="text-align: left;">&lt;/SchemaData&gt;&lt;/ExtendedData&gt;</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3148</td>
+<td style="text-align: left;">&lt;Point&gt;&lt;coordinates&gt;-76.9997257446131,38.9545357353458&lt;/coordinates&gt;&lt;/Point&gt;</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3149</td>
+<td style="text-align: left;">&lt;/Placemark&gt;</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">3150</td>
+<td style="text-align: left;">&lt;/Folder&gt;</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3151</td>
+<td style="text-align: left;">&lt;/Document&gt;&lt;/kml&gt;</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<ul>
+<li>The first line contains the document type definition and encoding.</li>
+<li>The second line contains a link to the <a href="https://schemas.opengis.net/kml/2.2.0/ogckml22.xsd">KML specification</a>, which is itself another XML document. Note that it is also a valid tag, so at the end of the file, we should find .</li>
+<li>The third line is another tag that indicates that this is the start of the document.</li>
+<li>Lines 4-40 contain the dataset schema – a list of all of the fields present for each store, along with their data type.</li>
+<li>Line 41 defines a folder, which contains Placemarks (Line 42), which contain ExtendedData (Line 43). The <code>\t</code> characters are a text representation of tabs and indicate some indentation.</li>
+<li>Each grocery store appears to be described by a Placemark node that contains ExtendedData nodes containing variables, along with a Point node that contains two coordinates (latitude and longitude).</li>
+</ul>
+</div>
+</div>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="../images/advanced/DC_Grocery_Stores_2025_xml_screenshot_annotated.png" class="img-fluid figure-img" alt="XML document with schema definition and store data for grocery store locations. The top section, labeled &quot;Schema Definition,&quot; is enclosed in a blue border and contains XML schema elements describing various data fields related to grocery store locations. The fields include store name, address, zip code, phone number, and other identifiers. Each field is defined by a SimpleField tag with a name and type attribute. The bottom section, labeled &quot;Individual Grocery Store Data,&quot; is enclosed in an orange border and provides detailed data about a specific grocery store location using XML tags. This includes the store’s name, address, phone number, GIS coordinates, and several other identifiers. The text &quot;Schema Definition&quot; and &quot;Individual Grocery Store Data&quot; are prominently displayed in larger font sizes within their respective sections."></p>
+<figcaption>Screenshot of DC_Grocery_Stores_2025.xml showing the nodes corresponding to the Schema definition and to one individual grocery store.</figcaption></figure>
+</div>
+</div></div></section></section><section id="sec-webscraping-refs" class="level2" data-number="33.3"><h2 data-number="33.3" class="anchored" data-anchor-id="sec-webscraping-refs">
+<span class="header-section-number">33.3</span> References</h2>
 
 
-
-
-
-</main> <!-- /main -->
-<script id="quarto-html-after-body" type="application/javascript">
+<div id="refs" class="references csl-bib-body" data-entry-spacing="0" role="list">
+<div id="ref-wikimediacontributorsXML2025" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[1] </div>
+<div class="csl-right-inline">Wikimedia contributors, <span>“<span>XML</span>,”</span> <em>Wikipedia</em>. Wikimedia Foundation, Jun. 03, 2025 [Online]. Available: <a href="https://en.wikipedia.org/w/index.php?title=XML&amp;oldid=1293665596">https://en.wikipedia.org/w/index.php?title=XML&amp;oldid=1293665596</a>. [Accessed: Jun. 04, 2025]</div>
+</div>
+</div>
+</section><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><hr>
+<ol>
+<li id="fn1"><p>This is a real rabbit hole if you are curious about the very technical details of what makes up a character in text.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol></section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
     const mode = bsSheetEl.getAttribute("data-mode");
@@ -983,66 +1454,25 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         }
       };
     }
-      const annoteTargets = window.document.querySelectorAll('.code-annotation-anchor');
-      for (let i=0; i<annoteTargets.length; i++) {
-        const annoteTarget = annoteTargets[i];
-        const targetCell = annoteTarget.getAttribute("data-target-cell");
-        const targetAnnotation = annoteTarget.getAttribute("data-target-annotation");
-        const contentFn = () => {
-          const content = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
-          if (content) {
-            const tipContent = content.cloneNode(true);
-            tipContent.classList.add("code-annotation-tip-content");
-            return tipContent.outerHTML;
-          }
-        }
-        const config = {
-          allowHTML: true,
-          content: contentFn,
-          onShow: (instance) => {
-            selectCodeLines(instance.reference);
-            instance.reference.classList.add('code-annotation-active');
-            window.tippy.hideAll();
-          },
-          onHide: (instance) => {
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
             unselectCodeLines();
-            instance.reference.classList.remove('code-annotation-active');
-          },
-          maxWidth: 300,
-          delay: [50, 0],
-          duration: [200, 0],
-          offset: [5, 10],
-          arrow: true,
-          trigger: 'click',
-          appendTo: function(el) {
-            return el.parentElement.parentElement.parentElement;
-          },
-          interactive: true,
-          interactiveBorder: 10,
-          theme: 'quarto',
-          placement: 'right',
-          positionFixed: true,
-          popperOptions: {
-            modifiers: [
-            {
-              name: 'flip',
-              options: {
-                flipVariations: false, // true by default
-                allowedAutoPlacements: ['right'],
-                fallbackPlacements: ['right', 'top', 'top-start', 'top-end', 'bottom', 'bottom-start', 'bottom-end', 'left'],
-              },
-            },
-            {
-              name: 'preventOverflow',
-              options: {
-                mainAxis: false,
-                altAxis: false
-              }
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
             }
-            ]        
-          }      
-        };
-        window.tippy(annoteTarget, config); 
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
       }
   const findCites = (el) => {
     const parentEl = el.parentElement;
@@ -1082,13 +1512,8 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     }
   }
 });
-</script>
-<script src="https://giscus.app/client.js" data-repo="srvanderplas/stat-computing-r-python" data-repo-id="R_kgDOIvwd2g" data-category="General" data-category-id="DIC_kwDOIvwd2s4CTksR" data-mapping="pathname" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="light" data-lang="en" crossorigin="anonymous" async="">
-</script>
-<input type="hidden" id="giscus-base-theme" value="light">
-<input type="hidden" id="giscus-alt-theme" value="dark">
-<nav class="page-navigation column-page-right">
-  <div class="nav-page nav-page-previous">
+</script><script src="https://giscus.app/client.js" data-repo="srvanderplas/stat-computing-r-python" data-repo-id="R_kgDOIvwd2g" data-category="General" data-category-id="DIC_kwDOIvwd2s4CTksR" data-mapping="pathname" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="light" data-lang="en" crossorigin="anonymous" async="">
+</script><input type="hidden" id="giscus-base-theme" value="light"><input type="hidden" id="giscus-alt-theme" value="dark"><nav class="page-navigation column-body"><div class="nav-page nav-page-previous">
       <a href="../part-advanced-topics/02-data-doc.html" class="pagination-link" aria-label="Data Documentation: Codebooks, Reproducibility, and more">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">32</span>&nbsp; <span class="chapter-title">Data Documentation: Codebooks, Reproducibility, and more</span></span>
       </a>          
@@ -1100,28 +1525,25 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   </div>
 </nav>
 </div> <!-- /content -->
-<footer class="footer">
-  <div class="nav-footer">
+<footer class="footer"><div class="nav-footer">
     <div class="nav-footer-left">
 <p>Copyright 2025, Susan Vanderplas</p>
 </div>   
     <div class="nav-footer-center">
       &nbsp;
-    <div class="toc-actions"><ul><li><a href="https://github.com/srvanderplas/stat-computing-r-python/edit/main/part-advanced-topics/03-web-scraping.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li></ul></div></div>
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/srvanderplas/stat-computing-r-python/edit/main/part-advanced-topics/03-web-scraping.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li></ul></div></div>
     <div class="nav-footer-right">
       <ul class="footer-items list-unstyled">
-    <li class="nav-item compact">
+<li class="nav-item compact">
     <a class="nav-link" href="https://github.com/srvanderplas">
       <i class="bi bi-github" role="img" aria-label="GitHub">
 </i> 
     </a>
   </li>  
 </ul>
-    </div>
+</div>
   </div>
 </footer>
-
-
 
 
 </body></html>
