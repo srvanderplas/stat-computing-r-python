@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="generator" content="quarto-1.5.57">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-<meta name="dcterms.date" content="2025-06-05">
+<meta name="dcterms.date" content="2025-06-09">
 <title>33&nbsp; Web Scraping – Statistical Computing using R and Python</title>
 <style>
 code{white-space: pre-wrap;}
@@ -96,7 +96,10 @@ div.csl-indent {
 <link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
 <link href="../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <link href="../site_libs/quarto-contrib/fontawesome6-0.1.0/all.css" rel="stylesheet">
-<link href="../site_libs/quarto-contrib/fontawesome6-0.1.0/latex-fontsize.css" rel="stylesheet"><script id="quarto-search-options" type="application/json">{
+<link href="../site_libs/quarto-contrib/fontawesome6-0.1.0/latex-fontsize.css" rel="stylesheet">
+<script src="../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet"><script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
   "collapse-after": 3,
@@ -155,6 +158,19 @@ div.callout-advanced.callout-style-default .callout-icon::before, div.callout-ad
   content: '\f5dc' !important;
   background-image: none;
 }
+div.callout-example.callout {
+  border-left-color: #f39c12;
+}
+div.callout-example.callout-style-default > .callout-header {
+  background-color: rgba(243, 156, 18, 0.13);
+}
+div.callout-example .callout-toggle::before {  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgb(33, 37, 41)" class="bi bi-chevron-down" viewbox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"></path></svg>');}
+div.callout-example.callout-style-default .callout-icon::before, div.callout-example.callout-titled .callout-icon::before {
+  font-family: 'Font Awesome 6 Free', FontAwesome;
+  font-style: normal;
+  content: '\f206' !important;
+  background-image: none;
+}
 div.callout-learnmore.callout {
   border-left-color: #f09bb6;
 }
@@ -181,21 +197,33 @@ div.callout-setup.callout-style-default .callout-icon::before, div.callout-setup
   content: '\f6e3' !important;
   background-image: none;
 }
-div.callout-example.callout {
-  border-left-color: #f39c12;
-}
-div.callout-example.callout-style-default > .callout-header {
-  background-color: rgba(243, 156, 18, 0.13);
-}
-div.callout-example .callout-toggle::before {  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgb(33, 37, 41)" class="bi bi-chevron-down" viewbox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"></path></svg>');}
-div.callout-example.callout-style-default .callout-icon::before, div.callout-example.callout-titled .callout-icon::before {
-  font-family: 'Font Awesome 6 Free', FontAwesome;
-  font-style: normal;
-  content: '\f206' !important;
-  background-image: none;
-}
 </style>
-<link rel="stylesheet" href="../build_deps/style.css">
+<script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script><script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script><script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script><link rel="stylesheet" href="../build_deps/style.css">
 </head>
 <body class="nav-sidebar floating slimcontent">
 
@@ -555,9 +583,18 @@ div.callout-example.callout-style-default .callout-icon::before, div.callout-exa
 <a href="#html-and-xml-language-specification" id="toc-html-and-xml-language-specification" class="nav-link" data-scroll-target="#html-and-xml-language-specification"><span class="header-section-number">33.2</span> HTML and XML Language Specification</a>
   <ul class="collapse">
 <li><a href="#xml" id="toc-xml" class="nav-link" data-scroll-target="#xml"><span class="header-section-number">33.2.1</span> XML</a></li>
+  <li><a href="#html" id="toc-html" class="nav-link" data-scroll-target="#html"><span class="header-section-number">33.2.2</span> HTML</a></li>
   </ul>
 </li>
-  <li><a href="#sec-webscraping-refs" id="toc-sec-webscraping-refs" class="nav-link" data-scroll-target="#sec-webscraping-refs"><span class="header-section-number">33.3</span> References</a></li>
+  <li>
+<a href="#filtering-data-from-htmlxml-css-and-xpath-selectors" id="toc-filtering-data-from-htmlxml-css-and-xpath-selectors" class="nav-link" data-scroll-target="#filtering-data-from-htmlxml-css-and-xpath-selectors"><span class="header-section-number">33.3</span> Filtering Data from HTML/XML: CSS and XPath Selectors</a>
+  <ul class="collapse">
+<li><a href="#selecting-by-element-type" id="toc-selecting-by-element-type" class="nav-link" data-scroll-target="#selecting-by-element-type"><span class="header-section-number">33.3.1</span> Selecting by element type</a></li>
+  <li><a href="#selecting-by-element-idclass" id="toc-selecting-by-element-idclass" class="nav-link" data-scroll-target="#selecting-by-element-idclass"><span class="header-section-number">33.3.2</span> Selecting by element ID/Class</a></li>
+  <li><a href="#selecting-by-element-attributevalue" id="toc-selecting-by-element-attributevalue" class="nav-link" data-scroll-target="#selecting-by-element-attributevalue"><span class="header-section-number">33.3.3</span> Selecting by element attribute/value</a></li>
+  </ul>
+</li>
+  <li><a href="#sec-webscraping-refs" id="toc-sec-webscraping-refs" class="nav-link" data-scroll-target="#sec-webscraping-refs"><span class="header-section-number">33.4</span> References</a></li>
   </ul><div class="toc-actions"><ul><li><a href="https://github.com/srvanderplas/stat-computing-r-python/edit/main/part-advanced-topics/03-web-scraping.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li></ul></div></nav>
     </div>
 <!-- main -->
@@ -573,7 +610,7 @@ div.callout-example.callout-style-default .callout-icon::before, div.callout-exa
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">June 5, 2025</p>
+      <p class="date">June 9, 2025</p>
     </div>
   </div>
   
@@ -596,12 +633,34 @@ div.callout-example.callout-style-default .callout-icon::before, div.callout-exa
 </li>
 </ul></section><section id="html-and-xml-language-specification" class="level2 page-columns page-full" data-number="33.2"><h2 data-number="33.2" class="anchored" data-anchor-id="html-and-xml-language-specification">
 <span class="header-section-number">33.2</span> HTML and XML Language Specification</h2>
-<p>Let’s start at the beginning. <strong>eXtensible Markup Language (XML)</strong> was developed in the late 1990s to provide a flexible specification for documents, data files, and various other documents. You’ve (likely) been using XML-based documents for most of your life, either in Microsoft Office (.docx, .xlsx, .pptx - the x is for XML) or in web pages. <strong>HyperText Markup Language (HTML)</strong> is a specific flavor of XML <span class="citation" data-cites="wikimediacontributorsXML2025"><a href="#ref-wikimediacontributorsXML2025" role="doc-biblioref">[1]</a></span> that uses a defined set of fields to specify the composition of a web page. If you right click in your browser on this page, and “Inspect Source”, you can see the HTML code that generates this book.</p>
+<p>Let’s start at the beginning. <strong>eXtensible Markup Language (XML)</strong> was developed in the late 1990s to provide a flexible specification for documents, data files, and various other documents. You’ve (likely) been using XML-based documents for most of your life, either in Microsoft Office (.docx, .xlsx, .pptx - the x is for XML) or in web pages. <strong>HyperText Markup Language (HTML)</strong> is a specific flavor of XML <span class="citation" data-cites="wikimediacontributorsXML2025"><a href="#ref-wikimediacontributorsXML2025" role="doc-biblioref">[1]</a></span> that uses a defined set of fields to specify the composition of a web page<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>.</p>
+<p>If you right click in your browser on this page, and “Inspect Source”, you can see the HTML code that generates this book.</p>
+<div id="fig-browser-inspect" class="quarto-layout-panel">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-browser-inspect-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<div class="quarto-layout-row">
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="../images/advanced/chromium-inspect-source.png" class="img-fluid figure-img" alt="A screenshot of https://duckduckgo.com in chromium, where the user has right-clicked on the page. The options 'View Page Source' and 'Inspect' are located at the bottom of the pop-up menu and are highlighted."></p>
+<figcaption>Chromium right click menu</figcaption></figure>
+</div>
+</div>
+<div class="quarto-layout-cell" style="flex-basis: 50.0%;justify-content: flex-start;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure"><p><img src="../images/advanced/firefox-inspect-source.png" class="img-fluid figure-img" alt="A screenshot of https://duckduckgo.com in Firefox, where the user has right-clicked on the page. The options 'View Page Source' and 'Inspect' are located towards the bottom of the pop-up menu and are highlighted."></p>
+<figcaption>Firefox right click menu</figcaption></figure>
+</div>
+</div>
+</div>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-browser-inspect-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;33.1: Right click menu options that allow the user to see the HTML code for a webpage.
+</figcaption></figure>
+</div>
 <section id="xml" class="level3 page-columns page-full" data-number="33.2.1"><h3 data-number="33.2.1" class="anchored" data-anchor-id="xml">
 <span class="header-section-number">33.2.1</span> XML</h3>
 <p>XML documents are composed of a series of tags that look like this:</p>
 <pre><code>&lt;tag-type attribute="value"&gt;Tag contents&lt;/tag-type&gt;</code></pre>
-<p>Each tag name, <code>tag</code>, is enclosed in angle brackets, <code>&lt;tag&gt;</code>, and has a closing tag that starts with a slash but has the same name, <code>&lt;/tag&gt;</code>. Tags can include additional information that is typically encoded in <code>key="value"</code> pairs - above, there is an <code>attribute</code> field that has value <code>value</code>.</p>
+<p>Each tag name, <code>tag</code>, is enclosed in angle brackets, <code>&lt;tag&gt;</code>, and has a closing tag that starts with a slash but has the same name, <code>&lt;/tag&gt;</code>. Tags can include additional information that is typically encoded in <code>key="value"</code> pairs - above, there is an <strong>attribute</strong> field (the part before the <code>=</code>) that has <strong>value</strong> <code>"value"</code> (the part after the <code>=</code>). A set of matching tags is called an <strong>element</strong>, and the information within the start and end tags is called the <strong>content</strong>.</p>
 <p>The XML 1.0 (5th edition) specification requires that</p>
 <ul>
 <li><p>The document contains only one element, called the <strong>root</strong> or document element, at the top level. No part of the root element appears in the content of any other element.</p></li>
@@ -612,9 +671,60 @@ div.callout-example.callout-style-default .callout-icon::before, div.callout-exa
 <li>nest properly within each other (are well formed)</li>
 </ul>
 </li>
-<li><p>An element contains <strong>text</strong>, a sequence of characters. Legal characters are tab, carriage return, line feed, and the legal characters of <a href="https://home.unicode.org/">Unicode</a> and <a href="https://unicode.org/L2/L2010/10038-fcd10646-main.pdf">ISO/IEC 10646 (PDF warning)</a><a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>.</p></li>
+<li><p>An element contains <strong>text</strong>, a sequence of characters. Legal characters are tab, carriage return, line feed, and the legal characters of <a href="https://home.unicode.org/">Unicode</a> and <a href="https://unicode.org/L2/L2010/10038-fcd10646-main.pdf">ISO/IEC 10646 (PDF warning)</a><a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>.</p></li>
 <li><p>Comments start with <code>&lt;!--</code> and end with <code>--&gt;</code>. The <code>--</code> string cannot be present within the text of a comment. Comments may NOT end with <code>---&gt;</code> - the specification requires exactly two dashes.</p></li>
 </ul>
+<p>Elements are typically nested in an XML document. Consider the following set of elements that describe the main characters in the children’s TV show <a href="https://www.youtube.com/channel/UCVzLLZkDuFGAE2BGdBuBNBg">Bluey</a>:</p>
+<pre><code>&lt;family&gt;
+  &lt;adults&gt;
+    &lt;person sex="M" coat="blue"&gt;Bandit Heeler&lt;/person&gt;
+    &lt;person sex="F" coat="orange"&gt;Chili Heeler&lt;/person&gt;
+  &lt;/adults&gt;
+  &lt;kids&gt;
+    &lt;person sex="F" coat="blue"&gt;Bluey Heeler&lt;/person&gt;
+    &lt;person sex="F" coat="orange"&gt;Bingo Heeler&lt;/person&gt;
+  &lt;/kids&gt;
+&lt;/family&gt;</code></pre>
+<ul>
+<li>family contains two <strong>child nodes</strong> - ‘adults’, and ‘kids’. Collectively, family has two direct <strong>children</strong>.</li>
+<li>‘adults’ contains two <strong>child nodes</strong> - persons - that describe the adults in the family, Chili and Bandit Heeler</li>
+<li>‘kids’ contains two <strong>child nodes</strong> - persons - that describe the kids in the family, Bluey and Bingo Heeler.</li>
+<li>The <strong>parent</strong> of the element describing Bingo Heeler is ‘kids’</li>
+<li>The <strong>parent</strong> of the ‘kids’ element is ‘family’</li>
+<li>‘adults’ and ‘kids’ are <strong>sibling</strong> elements</li>
+</ul>
+<p>Note that the same information about the family could be described in a number of different hierarchical ways.</p>
+<pre><code>&lt;family&gt;
+    &lt;person status="adult" sex="M" coat="blue"   &gt; Bandit Heeler  &lt;/person&gt;
+    &lt;person status="adult" sex="F" coat="orange" &gt; Chili  Heeler  &lt;/person&gt;
+    &lt;person status="kid"   sex="F" coat="blue"   &gt; Bluey  Heeler  &lt;/person&gt;
+    &lt;person status="kid"   sex="F" coat="orange" &gt; Bingo  Heeler  &lt;/person&gt;
+&lt;/family&gt;</code></pre>
+<pre><code>&lt;family&gt;
+    &lt;person status="adult" sex="M" coat="blue"   &gt; &lt;name&gt;&lt;first&gt;Bandit&lt;/first&gt; &lt;last&gt;Heeler&lt;/last&gt;&lt;/name&gt; &lt;/person&gt;
+    &lt;person status="adult" sex="F" coat="orange" &gt; &lt;name&gt;&lt;first&gt;Chili &lt;/first&gt; &lt;last&gt;Heeler&lt;/last&gt;&lt;/name&gt; &lt;/person&gt;
+    &lt;person status="kid"   sex="F" coat="blue"   &gt; &lt;name&gt;&lt;first&gt;Bluey &lt;/first&gt; &lt;last&gt;Heeler&lt;/last&gt;&lt;/name&gt; &lt;/person&gt;
+    &lt;person status="kid"   sex="F" coat="orange" &gt; &lt;name&gt;&lt;first&gt;Bingo &lt;/first&gt; &lt;last&gt;Heeler&lt;/last&gt;&lt;/name&gt; &lt;/person&gt;
+&lt;/family&gt;</code></pre>
+<pre><code>&lt;family&gt;
+    &lt;person&gt;
+      &lt;name&gt;&lt;first&gt;Bandit&lt;/first&gt; &lt;last&gt;Heeler&lt;/last&gt;&lt;/name&gt; 
+      &lt;status&gt;adult&lt;/status&gt; &lt;sex&gt;male&lt;/sex&gt;   &lt;coat&gt;blue&lt;/coat&gt;
+    &lt;/person&gt;
+    &lt;person&gt;
+      &lt;name&gt;&lt;first&gt;Chili &lt;/first&gt; &lt;last&gt;Heeler&lt;/last&gt;&lt;/name&gt; 
+      &lt;status&gt;adult&lt;/status&gt; &lt;sex&gt;female&lt;/sex&gt; &lt;coat&gt;orange&lt;/coat&gt;
+    &lt;/person&gt;
+    &lt;person&gt;
+      &lt;name&gt;&lt;first&gt;Bluey &lt;/first&gt; &lt;last&gt;Heeler&lt;/last&gt;&lt;/name&gt; 
+      &lt;status&gt;child&lt;/status&gt; &lt;sex&gt;female&lt;/sex&gt; &lt;coat&gt;blue&lt;/coat&gt;
+    &lt;/person&gt;
+    &lt;person&gt;
+      &lt;name&gt;&lt;first&gt;Bingo &lt;/first&gt; &lt;last&gt;Heeler&lt;/last&gt;&lt;/name&gt; 
+      &lt;status&gt;child&lt;/status&gt; &lt;sex&gt;female&lt;/sex&gt; &lt;coat&gt;orange&lt;/coat&gt;
+    &lt;/person&gt;
+&lt;/family&gt;</code></pre>
+<p>When working with XML (and HTML), it is important to understand how the data are represented structurally, so that you can get the components of the data back out of this hierarchical format.</p>
 <div class="callout callout-style-default callout-advanced callout-titled">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -636,40 +746,40 @@ Advanced: Additional XML metadata
 <code>Name</code> in the DTD has the same value as the root node tag name</li>
 <li>An Internal or External Subset of valid entity names (tag names) is provided. It is also possible to specify valid tag attributes, types, and other information within these listings.</li>
 </ul>
-<pre id="annotated-cell-3" class="code-annotation-code"><code>&lt;?xml version="1.0"?&gt;
+<pre id="annotated-cell-7" class="code-annotation-code"><code>&lt;?xml version="1.0"?&gt;
 &lt;!DOCTYPE greeting SYSTEM "hello.dtd"&gt;
 &lt;greeting&gt;Hello, world!&lt;/greeting&gt;</code></pre>
 <dl>
-<dt data-target-cell="annotated-cell-3" data-target-annotation="1">1</dt>
+<dt data-target-cell="annotated-cell-7" data-target-annotation="1">1</dt>
 <dd>
-<span data-code-cell="annotated-cell-3" data-code-lines="1" data-code-annotation="1">XML version declaration</span>
+<span data-code-cell="annotated-cell-7" data-code-lines="1" data-code-annotation="1">XML version declaration</span>
 </dd>
-<dt data-target-cell="annotated-cell-3" data-target-annotation="2">2</dt>
+<dt data-target-cell="annotated-cell-7" data-target-annotation="2">2</dt>
 <dd>
-<span data-code-cell="annotated-cell-3" data-code-lines="2" data-code-annotation="2">Document Type Definition. <code>greeting</code> is the name, and the root node matches that name. <code>hello.dtd</code> is the system identifier and provides an address leading to an external document type declaration file</span>
+<span data-code-cell="annotated-cell-7" data-code-lines="2" data-code-annotation="2">Document Type Definition. <code>greeting</code> is the name, and the root node matches that name. <code>hello.dtd</code> is the system identifier and provides an address leading to an external document type declaration file</span>
 </dd>
-<dt data-target-cell="annotated-cell-3" data-target-annotation="3">3</dt>
+<dt data-target-cell="annotated-cell-7" data-target-annotation="3">3</dt>
 <dd>
-<span data-code-cell="annotated-cell-3" data-code-lines="3" data-code-annotation="3">Root node. <code>greeting</code> is the tag name. <code>Hello, world!</code> is the tag value. The tag is closed with a valid, matching end tag.</span>
+<span data-code-cell="annotated-cell-7" data-code-lines="3" data-code-annotation="3">Root node. <code>greeting</code> is the tag name. <code>Hello, world!</code> is the tag value. The tag is closed with a valid, matching end tag.</span>
 </dd>
 </dl>
-<pre id="annotated-cell-4" class="code-annotation-code"><code>&lt;?xml version="1.0" encoding="UTF-8" ?&gt;
+<pre id="annotated-cell-8" class="code-annotation-code"><code>&lt;?xml version="1.0" encoding="UTF-8" ?&gt;
 &lt;!DOCTYPE greeting [
   &lt;!ELEMENT greeting (#PCDATA)&gt;
 ]&gt;
 &lt;greeting&gt;Hello, world!&lt;/greeting&gt;</code></pre>
 <dl>
-<dt data-target-cell="annotated-cell-4" data-target-annotation="1">1</dt>
+<dt data-target-cell="annotated-cell-8" data-target-annotation="1">1</dt>
 <dd>
-<span data-code-cell="annotated-cell-4" data-code-lines="1" data-code-annotation="1">XML version declaration, specifying the document’s text encoding</span>
+<span data-code-cell="annotated-cell-8" data-code-lines="1" data-code-annotation="1">XML version declaration, specifying the document’s text encoding</span>
 </dd>
-<dt data-target-cell="annotated-cell-4" data-target-annotation="2">2</dt>
+<dt data-target-cell="annotated-cell-8" data-target-annotation="2">2</dt>
 <dd>
-<span data-code-cell="annotated-cell-4" data-code-lines="2" data-code-annotation="2">An internally defined DTD that specifies valid elements (tags) (the only valid element is <code>greeting</code>). Additional tags could be specified within the <code>[</code> <code>]</code> space, if desired.</span>
+<span data-code-cell="annotated-cell-8" data-code-lines="2" data-code-annotation="2">An internally defined DTD that specifies valid elements (tags) (the only valid element is <code>greeting</code>). Additional tags could be specified within the <code>[</code> <code>]</code> space, if desired.</span>
 </dd>
-<dt data-target-cell="annotated-cell-4" data-target-annotation="3">3</dt>
+<dt data-target-cell="annotated-cell-8" data-target-annotation="3">3</dt>
 <dd>
-<span data-code-cell="annotated-cell-4" data-code-lines="5" data-code-annotation="3">The root node with value <code>Hello, world!</code></span>
+<span data-code-cell="annotated-cell-8" data-code-lines="5" data-code-annotation="3">The root node with value <code>Hello, world!</code></span>
 </dd>
 </dl>
 </div>
@@ -681,7 +791,7 @@ Advanced: Additional XML metadata
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="header-section-number">33.2.2</span> Demo: Exploring an XML file
+Demo: Exploring an XML file
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -704,7 +814,7 @@ Advanced: Additional XML metadata
 <p>The city then included some small grocery stores that are very close to meeting the full-service grocery store definition based on <a href="https://dcfoodpolicy.org/wp-content/uploads/2019/06/2018-food-system-assessment-final-6.13.pdf">Appendix D of a city-wide food system assessment</a> (PDF warning).</p>
 <p>We can <a href="https://opendata.dc.gov/api/download/v1/items/1d7c9d0e3aac49c1aa88d377a3bae430/kml?layers=4">download the KML file</a> and change the extension to XML so that the file opens in a standard web browser, or we can directly download the KML file as an XML file as in the code chunk below.</p>
 <div class="cell">
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">url</span> <span class="op">&lt;-</span> <span class="st">"https://opendata.dc.gov/api/download/v1/items/1d7c9d0e3aac49c1aa88d377a3bae430/kml?layers=4"</span></span>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r code-with-copy"><code class="sourceCode R"><span><span class="va">url</span> <span class="op">&lt;-</span> <span class="st">"https://opendata.dc.gov/api/download/v1/items/1d7c9d0e3aac49c1aa88d377a3bae430/kml?layers=4"</span></span>
 <span><span class="va">filename</span> <span class="op">&lt;-</span> <span class="st">"../data/DC_Grocery_Stores_2025.xml"</span></span>
 <span></span>
 <span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/files.html">file.exists</a></span><span class="op">(</span><span class="va">filename</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
@@ -933,11 +1043,327 @@ Advanced: Additional XML metadata
 
 <div class="no-row-height column-margin column-container"><div class="">
 <div class="quarto-figure quarto-figure-center">
-<figure class="figure"><p><img src="../images/advanced/DC_Grocery_Stores_2025_xml_screenshot_annotated.png" class="img-fluid figure-img" alt="XML document with schema definition and store data for grocery store locations. The top section, labeled &quot;Schema Definition,&quot; is enclosed in a blue border and contains XML schema elements describing various data fields related to grocery store locations. The fields include store name, address, zip code, phone number, and other identifiers. Each field is defined by a SimpleField tag with a name and type attribute. The bottom section, labeled &quot;Individual Grocery Store Data,&quot; is enclosed in an orange border and provides detailed data about a specific grocery store location using XML tags. This includes the store’s name, address, phone number, GIS coordinates, and several other identifiers. The text &quot;Schema Definition&quot; and &quot;Individual Grocery Store Data&quot; are prominently displayed in larger font sizes within their respective sections."></p>
-<figcaption>Screenshot of DC_Grocery_Stores_2025.xml showing the nodes corresponding to the Schema definition and to one individual grocery store.</figcaption></figure>
+<figure class="figure"><p><a href="../images/advanced/DC_Grocery_Stores_2025_xml_screenshot_annotated.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="(Click to Enlarge) Screenshot of DC_Grocery_Stores_2025.xml showing the nodes corresponding to the Schema definition and to one individual grocery store."><img src="../images/advanced/DC_Grocery_Stores_2025_xml_screenshot_annotated.png" class="img-fluid figure-img" alt="XML document with schema definition and store data for grocery store locations. The top section, labeled &quot;Schema Definition,&quot; is enclosed in a blue border and contains XML schema elements describing various data fields related to grocery store locations. The fields include store name, address, zip code, phone number, and other identifiers. Each field is defined by a SimpleField tag with a name and type attribute. The bottom section, labeled &quot;Individual Grocery Store Data,&quot; is enclosed in an orange border and provides detailed data about a specific grocery store location using XML tags. This includes the store’s name, address, phone number, GIS coordinates, and several other identifiers. The text &quot;Schema Definition&quot; and &quot;Individual Grocery Store Data&quot; are prominently displayed in larger font sizes within their respective sections."></a></p>
+<figcaption>(Click to Enlarge) Screenshot of DC_Grocery_Stores_2025.xml showing the nodes corresponding to the Schema definition and to one individual grocery store.</figcaption></figure>
 </div>
-</div></div></section></section><section id="sec-webscraping-refs" class="level2" data-number="33.3"><h2 data-number="33.3" class="anchored" data-anchor-id="sec-webscraping-refs">
-<span class="header-section-number">33.3</span> References</h2>
+</div></div></section><section id="html" class="level3 page-columns page-full" data-number="33.2.2"><h3 data-number="33.2.2" class="anchored" data-anchor-id="html">
+<span class="header-section-number">33.2.2</span> HTML</h3>
+<p>HTML is a markup language that appears very similar to XML. Technically, HTML predates XML by a few years (1993 vs 1996) <span class="citation" data-cites="HTMLVsXML2024"><a href="#ref-HTMLVsXML2024" role="doc-biblioref">[2]</a></span>, but they’ve been developed in parallel and there are obvious influences in both directions.</p>
+<p>Important differences between HTML and XML <span class="citation" data-cites="HTMLVsXML2024"><a href="#ref-HTMLVsXML2024" role="doc-biblioref">[2]</a></span>:</p>
+<ul>
+<li>HTML tags <strong>display</strong> information. XML tags <strong>describe</strong> information.</li>
+<li>HTML uses <strong>pre-defined</strong> tags instead of XML’s user-defined tags.</li>
+<li>HTML doesn’t always require closing tags, while XML does.</li>
+<li>HTML is more robust than XML, in that it will ignore small errors.</li>
+<li>HTML is not case sensitive, while XML is.</li>
+<li>HTML ignores white space, but XML doesn’t <em>necessarily</em> ignore white space.</li>
+</ul>
+<div class="callout callout-style-default callout-demo callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Demo: HTML Document Structure
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Like XML, HTML documents have a basic structure:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="annotated-cell-10"><pre class="sourceCode html code-annotation-code code-with-copy code-annotated"><code class="sourceCode html"><a class="code-annotation-anchor" data-target-cell="annotated-cell-10" data-target-annotation="1" onclick="event.preventDefault();">1</a><span id="annotated-cell-10-1" class="code-annotation-target"><a href="#annotated-cell-10-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;!DOCTYPE</span> html<span class="dt">&gt;</span></span>
+<a class="code-annotation-anchor" data-target-cell="annotated-cell-10" data-target-annotation="2" onclick="event.preventDefault();">2</a><span id="annotated-cell-10-2" class="code-annotation-target"><a href="#annotated-cell-10-2" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">html</span><span class="dt">&gt;</span></span>
+<a class="code-annotation-anchor" data-target-cell="annotated-cell-10" data-target-annotation="3" onclick="event.preventDefault();">3</a><span id="annotated-cell-10-3" class="code-annotation-target"><a href="#annotated-cell-10-3" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">head</span><span class="dt">&gt;</span></span>
+<a class="code-annotation-anchor" data-target-cell="annotated-cell-10" data-target-annotation="4" onclick="event.preventDefault();">4</a><span id="annotated-cell-10-4" class="code-annotation-target"><a href="#annotated-cell-10-4" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">title</span><span class="dt">&gt;</span>Page Title<span class="dt">&lt;/</span><span class="kw">title</span><span class="dt">&gt;</span></span>
+<span id="annotated-cell-10-5"><a href="#annotated-cell-10-5" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">head</span><span class="dt">&gt;</span></span>
+<span id="annotated-cell-10-6"><a href="#annotated-cell-10-6" aria-hidden="true" tabindex="-1"></a></span>
+<a class="code-annotation-anchor" data-target-cell="annotated-cell-10" data-target-annotation="5" onclick="event.preventDefault();">5</a><span id="annotated-cell-10-7" class="code-annotation-target"><a href="#annotated-cell-10-7" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">body</span><span class="dt">&gt;</span></span>
+<span id="annotated-cell-10-8"><a href="#annotated-cell-10-8" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">h1</span><span class="dt">&gt;</span>Level 1 Heading<span class="dt">&lt;/</span><span class="kw">h1</span><span class="dt">&gt;</span></span>
+<span id="annotated-cell-10-9"><a href="#annotated-cell-10-9" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">p</span><span class="dt">&gt;</span>This paragraph provides information about the topic in the L1 heading.<span class="dt">&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span></span>
+<span id="annotated-cell-10-10"><a href="#annotated-cell-10-10" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">h2</span><span class="dt">&gt;</span>Level 2 Heading<span class="dt">&lt;/</span><span class="kw">h2</span><span class="dt">&gt;</span></span>
+<span id="annotated-cell-10-11"><a href="#annotated-cell-10-11" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">p</span><span class="dt">&gt;</span>This paragraph provides even more information relating the L2 heading to L1.<span class="dt">&lt;/</span><span class="kw">p</span><span class="dt">&gt;</span></span>
+<a class="code-annotation-anchor" data-target-cell="annotated-cell-10" data-target-annotation="6" onclick="event.preventDefault();">6</a><span id="annotated-cell-10-12" class="code-annotation-target"><a href="#annotated-cell-10-12" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">br</span><span class="dt">&gt;</span></span>
+<span id="annotated-cell-10-13"><a href="#annotated-cell-10-13" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">body</span><span class="dt">&gt;</span></span>
+<span id="annotated-cell-10-14"><a href="#annotated-cell-10-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="annotated-cell-10-15"><a href="#annotated-cell-10-15" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">html</span><span class="dt">&gt;</span> </span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-annotation">
+<dl class="code-annotation-container-grid">
+<dt data-target-cell="annotated-cell-10" data-target-annotation="1">1</dt>
+<dd>
+<span data-code-cell="annotated-cell-10" data-code-lines="1" data-code-annotation="1">This indicates that the document is an HTML5 document</span>
+</dd>
+<dt data-target-cell="annotated-cell-10" data-target-annotation="2">2</dt>
+<dd>
+<span data-code-cell="annotated-cell-10" data-code-lines="2" data-code-annotation="2">The root element of an HTML page</span>
+</dd>
+<dt data-target-cell="annotated-cell-10" data-target-annotation="3">3</dt>
+<dd>
+<span data-code-cell="annotated-cell-10" data-code-lines="3" data-code-annotation="3">The head element contains meta information about the page. Most scripts and formatting information (CSS) are also loaded in this element.</span>
+</dd>
+<dt data-target-cell="annotated-cell-10" data-target-annotation="4">4</dt>
+<dd>
+<span data-code-cell="annotated-cell-10" data-code-lines="4" data-code-annotation="4">The page title is what will show up in the browser tab.</span>
+</dd>
+<dt data-target-cell="annotated-cell-10" data-target-annotation="5">5</dt>
+<dd>
+<span data-code-cell="annotated-cell-10" data-code-lines="7" data-code-annotation="5">The body element contains the actual information rendered on the page.</span>
+</dd>
+<dt data-target-cell="annotated-cell-10" data-target-annotation="6">6</dt>
+<dd>
+<span data-code-cell="annotated-cell-10" data-code-lines="12" data-code-annotation="6">This element creates a line break, but has no content. Empty elements (elements with no content) do not have to have a closing tag (but you can add one if it makes you happy).</span>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+</div>
+<p>You can easily see the HTML code that creates any website by right clicking on the web page in your browser and selecting some variant of “Inspect” or “Inspect Source” or “View Source”, as shown in <a href="#fig-browser-inspect" class="quarto-xref">Figure&nbsp;<span>33.1</span></a>. This is an incredibly helpful tool when you want to figure out how to pull data out of a webpage, getting only the parts you want without the rest of the clutter.</p>
+<p>The best way to think about a HTML page is that it consists of a series of elements that are best thought of as boxes. Elements like <code>&lt;h1&gt; &lt;/h1&gt;</code> define a box with specific contents. These boxes are then styled and arranged via the “magic” of <em>Cascading Style Sheets (CSS)</em>. When I first learned HTML (circa 2001?), there were a reasonable number of tags and CSS was not really a thing, so it was easier to understand how web pages were laid out, and we could spend our time decking out webpages <a href="https://www.cameronsworld.net/">with neon colors, animated images, and annoying music</a>.</p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<div id="fig-css-awesome" class="quarto-float quarto-figure quarto-figure-center anchored" alt="A mug that says 'CSS is Awesome' with a box around it, but the box cuts off the 'me' in awesome.">
+<figure class="quarto-float quarto-float-fig figure"><div aria-describedby="fig-css-awesome-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="../images/advanced/css-mug.jpg" class="img-fluid figure-img" alt="A mug that says 'CSS is Awesome' with a box around it, but the box cuts off the 'me' in awesome.">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-css-awesome-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;33.2: CSS is “magic” … finicky and annoying magic.
+</figcaption></figure>
+</div>
+</div></div><p>Now, there are too many valid HTML tags for to cover in an introduction, but first let’s review the anatomy of an XML or HTML element, and then we can look at some of the most important HTML tags.</p>
+<section id="html-element-anatomy" class="level4 unnumbered"><h4 class="unnumbered anchored" data-anchor-id="html-element-anatomy">HTML Element Anatomy</h4>
+<p><span class="math display">\[\overbrace{\overbrace{&lt; \text{p}\ \  \underbrace{\text{class}}_{\text{Attribute}}=\underbrace{\text{'important'}}_{\text{Value}} &gt;}^{\text{Start tag}} \underbrace{\text{This is a paragraph}}_{\text{Content}} \overbrace{&lt;/ \text{p} &gt;}^{\text{End tag}}}^{\text{Element}} \]</span></p>
+</section><section id="important-html-tags" class="level4 unnumbered"><h4 class="unnumbered anchored" data-anchor-id="important-html-tags">Important HTML Tags</h4>
+<ul>
+<li><p><code>&lt;h1&gt;</code>, <code>&lt;h2&gt;</code>, <code>&lt;h3&gt;</code>, <code>&lt;h4&gt;</code>, <code>&lt;h5&gt;</code>, <code>&lt;h6&gt;</code>: Headings.<br>
+Headings should be nested, so you should never have content in <code>&lt;h2&gt;This is wrong&lt;/h2&gt;</code> unless there is an <code>&lt;h1&gt; &lt;/h1&gt;</code> element above it in the same block of content.<br>
+Corresponds to <code>#</code>, …, <code>######</code> in markdown.</p></li>
+<li><p><code>&lt;p&gt;</code>: Paragraphs. All text that isn’t part of some other tag should be contained in paragraph tags.</p></li>
+<li><p><code>&lt;a&gt;</code>: links. <code>&lt;a href="https://google.com"&gt;This links to google&lt;/a&gt;</code><br><code>href</code> is a tag attribute, and <code>https://google.com</code> is the attribute’s value.</p></li>
+<li><p><code>&lt;img&gt;</code>: Images. <code>&lt;img src="path/to/picture.jpg" alt="Alt-text description of the picture"&gt;</code>. As with line breaks, you do not have to have a <code>&lt;/img&gt;</code> tag unless having unclosed tags bothers you.</p></li>
+<li><p><code>&lt;table&gt;</code>: Tables. In HTML, tables are constructed by row. Here is a minimal table that has a header:</p></li>
+</ul>
+<div class="columns">
+<div class="column">
+<p>HTML:</p>
+<pre><code>&lt;table&gt;
+  &lt;tr&gt;
+    &lt;th&gt;Heading Col 1&lt;/th&gt;
+    &lt;th&gt;Heading Col 2&lt;/th&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td&gt;Value 1&lt;/td&gt;
+    &lt;td&gt;Value 2&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;</code></pre>
+</div><div class="column">
+<p>Rendered:</p>
+<table class="caption-top table" data-quarto-postprocess="true"><tbody>
+<tr class="odd">
+<td data-quarto-table-cell-role="th">Heading Col 1</td>
+<td data-quarto-table-cell-role="th">Heading Col 2</td>
+</tr>
+<tr class="even">
+<td>Value 1</td>
+<td>Value 2</td>
+</tr>
+</tbody></table>
+</div>
+</div>
+<ul>
+<li><p><code>&lt;table&gt;&lt;/table&gt;</code> must contain the entire table specification, and indicates the start and end of table content.</p></li>
+<li><p><code>&lt;tr&gt; &lt;/tr&gt;</code> defines a table row (hence, tr) and contains any column information for that row.</p></li>
+<li><p><code>&lt;th&gt;Heading Col 1&lt;/th&gt;</code> defines a column heading with content ‘Heading Col 1’. Sometimes, <code>&lt;th&gt;</code> elements contain attributes that indicate column width relative to the rest of the table.</p></li>
+<li><p><code>&lt;td&gt;Value 1&lt;/td&gt;</code> defines a column that is not a heading. Its content is what is displayed in the column – in this case, ‘Value 1’.</p></li>
+<li><p><code>&lt;ul&gt;</code> and <code>&lt;ol&gt;</code>: Unordered (bulleted) and ordered lists. List elements are included as child elements and start/end with <code>&lt;li&gt;&lt;/li&gt;</code> (for both types of lists).</p></li>
+<li><p><code>&lt;span&gt;</code>: a container for inline content – that is, content that is part of another piece of text. Spans are often used to highlight specific text using color or other formatting attributes (font, boldness, size).</p></li>
+<li><p><code>&lt;div&gt;</code>: a container for other content. These containers are often used to help style and lay out content using CSS.</p></li>
+</ul></section><section id="common-html-attributes" class="level4 unnumbered"><h4 class="unnumbered anchored" data-anchor-id="common-html-attributes">Common HTML Attributes</h4>
+<p>Some attributes in HTML are special and are used across a number of different tag types.</p>
+<ul>
+<li>ID: A shorthand name for the element. For instance, the ID for this level 4 section heading is <code>common-html-attributes</code>
+</li>
+<li>Class: The category the element belongs to. Often, this is used to help style the element with appropriate CSS - for instance, to ensure that all level 4 headings have the same font size and color. There can be multiple values for the class attribute, separated by spaces. The class value for this level 4 section heading is <code>level4 unnumbered</code>, indicating both the heading level and that I’ve switched off numbering for this sub-sub-sub-sub-section.</li>
+<li>Style: Any CSS items which apply only to the specific element. For this section, only the link to this section added by quarto/pandoc has a style attribute specified (because it is applied automatically when the quarto document is compiled)</li>
+</ul>
+<div class="callout callout-style-default callout-demo callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Demo: HTML for the Common HTML Attributes subsection
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>I have added line-breaks and indentation for readability, but the rest of the code is copied from my browser.</p>
+<pre><code>&lt;section id="common-html-attributes" class="level4 unnumbered"&gt;
+  &lt;h4 class="unnumbered anchored" data-anchor-id="common-html-attributes"&gt;
+    Common HTML Attributes
+    &lt;a class="anchorjs-link " aria-label="Anchor" data-anchorjs-icon="" 
+       href="#common-html-attributes" 
+       style="font: 1em / 1 anchorjs-icons; margin-left: 0.1875em; 
+              padding-right: 0.1875em; padding-left: 0.1875em;"&gt;&lt;/a&gt;
+  &lt;/h4&gt;
+  &lt;p&gt;Some attributes in HTML are special and are used across a number of 
+     different tag types.&lt;/p&gt;
+  &lt;ul&gt;
+    &lt;li&gt;ID: A shorthand name for the element. 
+        For instance, the ID for this level 4 section heading is 
+        &lt;code&gt;common-html-attributes&lt;/code&gt;&lt;/li&gt;
+    &lt;li&gt;Class: The category the element belongs to. 
+        Often, this is used to help style the element with appropriate CSS - 
+        for instance, to ensure that all level 4 headings have the same font 
+        size and color. 
+        There can be multiple values for the class attribute, separated by spaces. 
+        The class value for this level 4 section heading is 
+        &lt;code&gt;level4 unnumbered&lt;/code&gt;, 
+        indicating both the heading level and that I’ve switched off numbering 
+        for this sub-sub-sub-sub-section.&lt;/li&gt;
+    &lt;li&gt;Style: Any CSS items which apply only to the specific element. 
+        For this section, only the link to this section added by quarto/pandoc 
+        has a style attribute specified (because it is applied automatically 
+        when the quarto document is compiled)&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/section&gt;</code></pre>
+</div>
+</div>
+</div>
+</section></section></section><section id="filtering-data-from-htmlxml-css-and-xpath-selectors" class="level2" data-number="33.3"><h2 data-number="33.3" class="anchored" data-anchor-id="filtering-data-from-htmlxml-css-and-xpath-selectors">
+<span class="header-section-number">33.3</span> Filtering Data from HTML/XML: CSS and XPath Selectors</h2>
+<p>Often, when pulling data from HTML or XML documents, it is useful to be able to navigate to one or more specific elements of the document and extract only those elements. There are two different “languages” for doing this - CSS selectors, which primarily are used with HTML documents, and XPath selectors, which can be used with both HTML and XML.</p>
+<div class="callout callout-style-default callout-learnmore callout-titled">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Learn More
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>You may find it helpful to reference these guides to XPath and CSS selectors directly:</p>
+<ul>
+<li><a href="https://www.w3schools.com/xml/xpath_syntax.asp">XPath syntax</a></li>
+<li><a href="https://www.w3schools.com/cssref/css_selectors.php">CSS selectors</a></li>
+</ul>
+</div>
+</div>
+</div>
+<section id="selecting-by-element-type" class="level3" data-number="33.3.1"><h3 data-number="33.3.1" class="anchored" data-anchor-id="selecting-by-element-type">
+<span class="header-section-number">33.3.1</span> Selecting by element type</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 85%">
+<col style="width: 7%">
+<col style="width: 6%">
+</colgroup>
+<thead><tr class="header">
+<th>Task</th>
+<th>CSS</th>
+<th>XPath</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>Select all <code>&lt;p&gt;</code> elements from the document</td>
+<td>p</td>
+<td>//p</td>
+</tr>
+<tr class="even">
+<td>Select all <code>&lt;p&gt;</code> elements that are direct descendants of an <code>&lt;h1&gt;</code> element</td>
+<td>h1 &gt; p</td>
+<td>h1/p</td>
+</tr>
+<tr class="odd">
+<td>Select all <code>&lt;p&gt;</code> elements that are descendants of an <code>&lt;h1&gt;</code> element, no matter where they are under <code>&lt;h1&gt;</code>
+</td>
+<td>h1 p</td>
+<td>h1//p</td>
+</tr>
+</tbody>
+</table>
+<p>CSS elements can be combined using <strong>combinators</strong> - <a href="https://www.w3schools.com/cssref/css_ref_combinators.php">specific combination operators</a>. There are also <a href="https://www.w3schools.com/xml/xpath_axes.asp">XPath axes</a> that provide some useful ways to combine selectors to get specific results.</p>
+</section><section id="selecting-by-element-idclass" class="level3" data-number="33.3.2"><h3 data-number="33.3.2" class="anchored" data-anchor-id="selecting-by-element-idclass">
+<span class="header-section-number">33.3.2</span> Selecting by element ID/Class</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead><tr class="header">
+<th>Task</th>
+<th>CSS</th>
+<th>XPath</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>Select the element with ID “objectives”</td>
+<td>#objectives</td>
+<td>//[@id=‘objectives’]</td>
+</tr>
+<tr class="even">
+<td>Select the <code>&lt;p&gt;</code> element with ID “objectives”</td>
+<td>p#objectives</td>
+<td>//p[@id=‘objectives’]</td>
+</tr>
+<tr class="odd">
+<td>Select the element with class ‘level2’</td>
+<td>.level2</td>
+<td>//[@class=‘level2’]</td>
+</tr>
+<tr class="even">
+<td>Select the <code>&lt;p&gt;</code> element with class ‘level2’</td>
+<td>p.level2</td>
+<td>//p[@class=‘level2’]</td>
+</tr>
+</tbody>
+</table>
+<p>Of course, you can chain these selectors together just as in the previous section.</p>
+</section><section id="selecting-by-element-attributevalue" class="level3" data-number="33.3.3"><h3 data-number="33.3.3" class="anchored" data-anchor-id="selecting-by-element-attributevalue">
+<span class="header-section-number">33.3.3</span> Selecting by element attribute/value</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead><tr class="header">
+<th>Task</th>
+<th>CSS</th>
+<th>XPath</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td>Select all elements with a “dataID” attribute</td>
+<td>[dataID]</td>
+<td>//@dataID</td>
+</tr>
+<tr class="even">
+<td>Select all <code>&lt;p&gt;</code> elements with any attribute</td>
+<td>not supported</td>
+<td>//p[@*]</td>
+</tr>
+<tr class="odd">
+<td>Select all <code>&lt;p&gt;</code> elements with a “dataID” attribute</td>
+<td>p[dataID]</td>
+<td>//p[@dataID]</td>
+</tr>
+<tr class="even">
+<td>Select all elements with a “dataID” attribute equal to “mydata”</td>
+<td>[dataID=‘mydata’]</td>
+<td>//*[<span class="citation" data-cites="dataID"><a href="#ref-dataID" role="doc-biblioref"><strong>dataID?</strong></a></span>=‘mydata’]</td>
+</tr>
+<tr class="odd">
+<td>Select all elements with a “dataID” attribute containing “my”</td>
+<td>[dataID~=‘my’] or [dataID*=‘my’]</td>
+<td>//*[contains(<span class="citation" data-cites="dataID"><a href="#ref-dataID" role="doc-biblioref"><strong>dataID?</strong></a></span>, ‘mydata’)]</td>
+</tr>
+</tbody>
+</table></section></section><section id="sec-webscraping-refs" class="level2" data-number="33.4"><h2 data-number="33.4" class="anchored" data-anchor-id="sec-webscraping-refs">
+<span class="header-section-number">33.4</span> References</h2>
 
 
 <div id="refs" class="references csl-bib-body" data-entry-spacing="0" role="list">
@@ -945,10 +1371,16 @@ Advanced: Additional XML metadata
 <div class="csl-left-margin">[1] </div>
 <div class="csl-right-inline">Wikimedia contributors, <span>“<span>XML</span>,”</span> <em>Wikipedia</em>. Wikimedia Foundation, Jun. 03, 2025 [Online]. Available: <a href="https://en.wikipedia.org/w/index.php?title=XML&amp;oldid=1293665596">https://en.wikipedia.org/w/index.php?title=XML&amp;oldid=1293665596</a>. [Accessed: Jun. 04, 2025]</div>
 </div>
+<div id="ref-HTMLVsXML2024" class="csl-entry" role="listitem">
+<div class="csl-left-margin">[2] </div>
+<div class="csl-right-inline">
+<span>“<span>HTML</span> vs <span>XML</span>. <span>GeeksforGeeks</span>,”</span> Jan. 2024. [Online]. Available: <a href="https://www.geeksforgeeks.org/html-vs-xml/">https://www.geeksforgeeks.org/html-vs-xml/</a>. [Accessed: Jun. 09, 2025]</div>
+</div>
 </div>
 </section><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><hr>
 <ol>
-<li id="fn1"><p>This is a real rabbit hole if you are curious about the very technical details of what makes up a character in text.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn1"><p>Technically, HTML was developed first, but it does have many of the same components as XML, and we use similar terminology to describe elements, content, attributes, and values, so it’s easiest (imo) to think of HTML as a subset of XML with additional rules and with certain rules relaxed.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>This is a real rabbit hole if you are curious about the very technical details of what makes up a character in text.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol></section></main><!-- /main --><script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
   const toggleBodyColorMode = (bsSheetEl) => {
@@ -1543,7 +1975,38 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </ul>
 </div>
   </div>
-</footer>
+</footer><script>var lightboxQuarto = GLightbox({"closeEffect":"zoom","loop":false,"openEffect":"zoom","descPosition":"bottom","selector":".lightbox"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
 
 
 </body></html>
