@@ -2,75 +2,157 @@
 
 ## {{< fa bullseye >}} Objectives {.nonumber}
 
-- Understand the structure of XML and HTML files
-- Use developer tools to locate nodes of interest and CSS or XPATH to precisely identify those nodes
-- Identify web pages that cannot be scraped using simple methods because of content injection
-- Scrape data from web pages 
-    - by reading in HTML tables directly using R or Python
-    - by writing custom functions to pull data from individual fields
-
+-   Understand the structure of XML and HTML files
+-   Use developer tools to locate nodes of interest and CSS or XPATH to precisely identify those nodes
+-   Identify web pages that cannot be scraped using simple methods because of content injection
+-   Scrape data from web pages
+    -   by reading in HTML tables directly using R or Python
+    -   by writing custom functions to pull data from individual fields
 
 ## HTML and XML Language Specification
 
-Let's start at the beginning. 
-**eXtensible Markup Language (XML)** was developed in the late 1990s to provide a flexible specification for documents, data files, and various other documents. 
-You've (likely) been using XML-based documents for most of your life, either in Microsoft Office (.docx, .xlsx, .pptx - the x is for XML) or in web pages. 
-**HyperText Markup Language (HTML)** is a specific flavor of XML [@wikimediacontributorsXML2025] that uses a defined set of fields to specify the composition of a web page. 
-If you right click in your browser on this page, and "Inspect Source", you can see the HTML code that generates this book. 
+Let's start at the beginning.
+**eXtensible Markup Language (XML)** was developed in the late 1990s to provide a flexible specification for documents, data files, and various other documents.
+You've (likely) been using XML-based documents for most of your life, either in Microsoft Office (.docx, .xlsx, .pptx - the x is for XML) or in web pages.
+**HyperText Markup Language (HTML)** is a specific flavor of XML [@wikimediacontributorsXML2025] that uses a defined set of fields to specify the composition of a web page[^03-web-scraping-1].
+
+[^03-web-scraping-1]: Technically, HTML was developed first, but it does have many of the same components as XML, and we use similar terminology to describe elements, content, attributes, and values, so it's easiest (imo) to think of HTML as a subset of XML with additional rules and with certain rules relaxed.
+
+If you right click in your browser on this page, and "Inspect Source", you can see the HTML code that generates this book.
+
+::: {#fig-browser-inspect layout-ncol="2"}
+![Chromium right click menu](../images/advanced/chromium-inspect-source.png){fig-alt="A screenshot of https://duckduckgo.com in chromium, where the user has right-clicked on the page. The options 'View Page Source' and 'Inspect' are located at the bottom of the pop-up menu and are highlighted."}
+
+![Firefox right click menu](../images/advanced/firefox-inspect-source.png){fig-alt="A screenshot of https://duckduckgo.com in Firefox, where the user has right-clicked on the page. The options 'View Page Source' and 'Inspect' are located towards the bottom of the pop-up menu and are highlighted."}
+
+Right click menu options that allow the user to see the HTML code for a webpage.
+:::
 
 ### XML
 
 XML documents are composed of a series of tags that look like this:
 
-```
+```         
 <tag-type attribute="value">Tag contents</tag-type>
 ```
 
-Each tag name, `tag`, is enclosed in angle brackets, `<tag>`, and has a closing tag that starts with a slash but has the same name, `</tag>`. 
-Tags can include additional information that is typically encoded in `key="value"` pairs - above, there is an `attribute` field that has value `value`. 
-
+Each tag name, `tag`, is enclosed in angle brackets, `<tag>`, and has a closing tag that starts with a slash but has the same name, `</tag>`.
+Tags can include additional information that is typically encoded in `key="value"` pairs - above, there is an **attribute** field (the part before the `=`) that has **value** `"value"` (the part after the `=`).
+A set of matching tags is called an **element**, and the information within the start and end tags is called the **content**.
 
 The XML 1.0 (5th edition) specification requires that
 
-- The document contains only one element, called the **root** or document element, at the top level. No part of the root element appears in the content of any other element. 
+-   The document contains only one element, called the **root** or document element, at the top level.
+    No part of the root element appears in the content of any other element.
 
-- Any other elements 
-    - are defined by start and end tags, and
-    - nest properly within each other (are well formed)
+-   Any other elements
 
-- An element contains **text**, a sequence of characters. Legal characters are tab, carriage return, line feed, and the legal characters of [Unicode](https://home.unicode.org/) and [ISO/IEC 10646 (PDF warning)](https://unicode.org/L2/L2010/10038-fcd10646-main.pdf)^[This is a real rabbit hole if you are curious about the very technical details of what makes up a character in text.].  
+    -   are defined by start and end tags, and
+    -   nest properly within each other (are well formed)
 
-- Comments start with `<!--` and end with `-->`. The `--` string cannot be present within the text of a comment. Comments may NOT end with `--->` - the specification requires exactly two dashes.
+-   An element contains **text**, a sequence of characters.
+    Legal characters are tab, carriage return, line feed, and the legal characters of [Unicode](https://home.unicode.org/) and [ISO/IEC 10646 (PDF warning)](https://unicode.org/L2/L2010/10038-fcd10646-main.pdf)[^03-web-scraping-2].
 
+-   Comments start with `<!--` and end with `-->`.
+    The `--` string cannot be present within the text of a comment.
+    Comments may NOT end with `--->` - the specification requires exactly two dashes.
 
-::: advanced 
-#### Advanced: Additional XML metadata {-}
+[^03-web-scraping-2]: This is a real rabbit hole if you are curious about the very technical details of what makes up a character in text.
 
-A valid XML document also contains some additional metadata at the start of the file. 
+Elements are typically nested in an XML document.
+Consider the following set of elements that describe the main characters in the children's TV show [Bluey](https://www.youtube.com/channel/UCVzLLZkDuFGAE2BGdBuBNBg):
+
+```         
+<family>
+  <adults>
+    <person sex="M" coat="blue">Bandit Heeler</person>
+    <person sex="F" coat="orange">Chili Heeler</person>
+  </adults>
+  <kids>
+    <person sex="F" coat="blue">Bluey Heeler</person>
+    <person sex="F" coat="orange">Bingo Heeler</person>
+  </kids>
+</family>
+```
+
+-   family contains two **child nodes** - 'adults', and 'kids'. Collectively, family has two direct **children**.
+-   'adults' contains two **child nodes** - persons - that describe the adults in the family, Chili and Bandit Heeler
+-   'kids' contains two **child nodes** - persons - that describe the kids in the family, Bluey and Bingo Heeler.
+-   The **parent** of the element describing Bingo Heeler is 'kids'
+-   The **parent** of the 'kids' element is 'family'
+-   'adults' and 'kids' are **sibling** elements
+
+Note that the same information about the family could be described in a number of different hierarchical ways.
+
+```         
+<family>
+    <person status="adult" sex="M" coat="blue"   > Bandit Heeler  </person>
+    <person status="adult" sex="F" coat="orange" > Chili  Heeler  </person>
+    <person status="kid"   sex="F" coat="blue"   > Bluey  Heeler  </person>
+    <person status="kid"   sex="F" coat="orange" > Bingo  Heeler  </person>
+</family>
+```
+
+```         
+<family>
+    <person status="adult" sex="M" coat="blue"   > <name><first>Bandit</first> <last>Heeler</last></name> </person>
+    <person status="adult" sex="F" coat="orange" > <name><first>Chili </first> <last>Heeler</last></name> </person>
+    <person status="kid"   sex="F" coat="blue"   > <name><first>Bluey </first> <last>Heeler</last></name> </person>
+    <person status="kid"   sex="F" coat="orange" > <name><first>Bingo </first> <last>Heeler</last></name> </person>
+</family>
+```
+
+```         
+<family>
+    <person>
+      <name><first>Bandit</first> <last>Heeler</last></name> 
+      <status>adult</status> <sex>male</sex>   <coat>blue</coat>
+    </person>
+    <person>
+      <name><first>Chili </first> <last>Heeler</last></name> 
+      <status>adult</status> <sex>female</sex> <coat>orange</coat>
+    </person>
+    <person>
+      <name><first>Bluey </first> <last>Heeler</last></name> 
+      <status>child</status> <sex>female</sex> <coat>blue</coat>
+    </person>
+    <person>
+      <name><first>Bingo </first> <last>Heeler</last></name> 
+      <status>child</status> <sex>female</sex> <coat>orange</coat>
+    </person>
+</family>
+```
+
+When working with XML (and HTML), it is important to understand how the data are represented structurally, so that you can get the components of the data back out of this hierarchical format.
+
+::: advanced
+#### Advanced: Additional XML metadata {.unnumbered}
+
+A valid XML document also contains some additional metadata at the start of the file.
 First, there should be an **XML declaration** that specifies the version of XML being used: `<?xml version="1.0"?>` (Note the `?` immediately before and after the angle brackets).
 
-In addition, valid XML documents contain a **Document Type Definition (DTD)** that provides some information about valid tags used within the document. 
+In addition, valid XML documents contain a **Document Type Definition (DTD)** that provides some information about valid tags used within the document.
 
-```
+```         
 <!DOCTYPE Name (ExternalID)? '[' intSubset ']' >
 ```
+
 Document Type Definition requirements:
 
-- `Name` in the DTD has the same value as the root node tag name
-- An Internal or External Subset of valid entity names (tag names) is provided. It is also possible to specify valid tag attributes, types, and other information within these listings. 
+-   `Name` in the DTD has the same value as the root node tag name
+-   An Internal or External Subset of valid entity names (tag names) is provided. It is also possible to specify valid tag attributes, types, and other information within these listings.
 
-```
+```         
 <?xml version="1.0"?> # <1> 
 <!DOCTYPE greeting SYSTEM "hello.dtd"> # <2>
 <greeting>Hello, world!</greeting>  # <3>
 ```
 
-1. XML version declaration
-2. Document Type Definition. `greeting` is the name, and the root node matches that name. `hello.dtd` is the system identifier and provides an address leading to an external document type declaration file
-3. Root node. `greeting` is the tag name. `Hello, world!` is the tag value. The tag is closed with a valid, matching end tag.
+1.  XML version declaration
+2.  Document Type Definition. `greeting` is the name, and the root node matches that name. `hello.dtd` is the system identifier and provides an address leading to an external document type declaration file
+3.  Root node. `greeting` is the tag name. `Hello, world!` is the tag value. The tag is closed with a valid, matching end tag.
 
-
-```
+```         
 <?xml version="1.0" encoding="UTF-8" ?> # <1> 
 <!DOCTYPE greeting [ # <2> 
   <!ELEMENT greeting (#PCDATA)>
@@ -78,32 +160,31 @@ Document Type Definition requirements:
 <greeting>Hello, world!</greeting>  # <3> 
 ```
 
-1. XML version declaration, specifying the document's text encoding
-2. An internally defined DTD that specifies valid elements (tags) (the only valid element is `greeting`). Additional tags could be specified within the `[` `]` space, if desired.
-3. The root node with value `Hello, world!`
-
+1.  XML version declaration, specifying the document's text encoding
+2.  An internally defined DTD that specifies valid elements (tags) (the only valid element is `greeting`). Additional tags could be specified within the `[` `]` space, if desired.
+3.  The root node with value `Hello, world!`
 :::
 
 ::: demo
-
-### Demo: Exploring an XML file
+#### Demo: Exploring an XML file {.unnumbered}
 
 The District of Columbia (Washington, DC) local government provides a [dataset of grocery store locations throughout the district](https://catalog.data.gov/dataset/grocery-store-locations) using a definition of full service grocery store that requires:
 
-- Sales of six of the following categories of food:
-    - Fresh fruits and vegetables
-    - Fresh and uncooked meats, poultry and seafood
-    - Dairy products
-    - Canned foods
-    - Frozen foods
-    - Dry groceries and baked goods
-    - Non-alcoholic beverages
-- Either 50% of the store's total square footage, or 6000 square feet must be dedicated to selling the food products above.
-- At least 5% of the selling area must be dedicated to each food category. 
+-   Sales of six of the following categories of food:
+    -   Fresh fruits and vegetables
+    -   Fresh and uncooked meats, poultry and seafood
+    -   Dairy products
+    -   Canned foods
+    -   Frozen foods
+    -   Dry groceries and baked goods
+    -   Non-alcoholic beverages
+-   Either 50% of the store's total square footage, or 6000 square feet must be dedicated to selling the food products above.
+-   At least 5% of the selling area must be dedicated to each food category.
 
 The city then included some small grocery stores that are very close to meeting the full-service grocery store definition based on [Appendix D of a city-wide food system assessment](https://dcfoodpolicy.org/wp-content/uploads/2019/06/2018-food-system-assessment-final-6.13.pdf) (PDF warning).
 
-We can [download the KML file](https://opendata.dc.gov/api/download/v1/items/1d7c9d0e3aac49c1aa88d377a3bae430/kml?layers=4) and change the extension to XML so that the file opens in a standard web browser, or we can directly download the KML file as an XML file as in the code chunk below. 
+We can [download the KML file](https://opendata.dc.gov/api/download/v1/items/1d7c9d0e3aac49c1aa88d377a3bae430/kml?layers=4) and change the extension to XML so that the file opens in a standard web browser, or we can directly download the KML file as an XML file as in the code chunk below.
+
 ```{r, include = F}
 options(width = 120)
 ```
@@ -123,22 +204,246 @@ xml_tbl <- data.frame(line = 1:length(xml_text),
 
 knitr::kable(xml_tbl[c(1:10, 35:64, 3145:3151),], row.names = F)
 ```
+
 ```{r, include = F}
 options(width = 80)
 ```
 
-- The first line contains the document type definition and encoding.
-- The second line contains a link to the [KML specification](https://schemas.opengis.net/kml/2.2.0/ogckml22.xsd), which is itself another XML document. Note that it is also a valid tag, so at the end of the file, we should find </kml>. 
-- The third line is another tag that indicates that this is the start of the document.
-- Lines 4-40 contain the dataset schema -- a list of all of the fields present for each store, along with their data type. 
-- Line 41 defines a folder, which contains Placemarks (Line 42), which contain ExtendedData (Line 43). The `\t` characters are a text representation of tabs and indicate some indentation. 
-- Each grocery store appears to be described by a Placemark node that contains ExtendedData nodes containing variables, along with a Point node that contains two coordinates (latitude and longitude). 
-
-
+-   The first line contains the document type definition and encoding.
+-   The second line contains a link to the [KML specification](https://schemas.opengis.net/kml/2.2.0/ogckml22.xsd), which is itself another XML document. Note that it is also a valid tag, so at the end of the file, we should find </kml>.
+-   The third line is another tag that indicates that this is the start of the document.
+-   Lines 4-40 contain the dataset schema -- a list of all of the fields present for each store, along with their data type.
+-   Line 41 defines a folder, which contains Placemarks (Line 42), which contain ExtendedData (Line 43). The `\t` characters are a text representation of tabs and indicate some indentation.
+-   Each grocery store appears to be described by a Placemark node that contains ExtendedData nodes containing variables, along with a Point node that contains two coordinates (latitude and longitude).
 :::
 
 ::: column-margin
-![Screenshot of DC_Grocery_Stores_2025.xml showing the nodes corresponding to the Schema definition and to one individual grocery store.](../images/advanced/DC_Grocery_Stores_2025_xml_screenshot_annotated.png){fig-alt='XML document with schema definition and store data for grocery store locations. The top section, labeled "Schema Definition," is enclosed in a blue border and contains XML schema elements describing various data fields related to grocery store locations. The fields include store name, address, zip code, phone number, and other identifiers. Each field is defined by a SimpleField tag with a name and type attribute. The bottom section, labeled "Individual Grocery Store Data," is enclosed in an orange border and provides detailed data about a specific grocery store location using XML tags. This includes the store’s name, address, phone number, GIS coordinates, and several other identifiers. The text "Schema Definition" and "Individual Grocery Store Data" are prominently displayed in larger font sizes within their respective sections.'}
+![(Click to Enlarge) Screenshot of DC_Grocery_Stores_2025.xml showing the nodes corresponding to the Schema definition and to one individual grocery store.](../images/advanced/DC_Grocery_Stores_2025_xml_screenshot_annotated.png){.lightbox fig-alt="XML document with schema definition and store data for grocery store locations. The top section, labeled \"Schema Definition,\" is enclosed in a blue border and contains XML schema elements describing various data fields related to grocery store locations. The fields include store name, address, zip code, phone number, and other identifiers. Each field is defined by a SimpleField tag with a name and type attribute. The bottom section, labeled \"Individual Grocery Store Data,\" is enclosed in an orange border and provides detailed data about a specific grocery store location using XML tags. This includes the store’s name, address, phone number, GIS coordinates, and several other identifiers. The text \"Schema Definition\" and \"Individual Grocery Store Data\" are prominently displayed in larger font sizes within their respective sections."}
 :::
+
+### HTML
+
+HTML is a markup language that appears very similar to XML.
+Technically, HTML predates XML by a few years (1993 vs 1996) [@HTMLVsXML2024], but they've been developed in parallel and there are obvious influences in both directions.
+
+Important differences between HTML and XML [@HTMLVsXML2024]:
+
+-   HTML tags **display** information. XML tags **describe** information.
+-   HTML uses **pre-defined** tags instead of XML's user-defined tags.
+-   HTML doesn't always require closing tags, while XML does.
+-   HTML is more robust than XML, in that it will ignore small errors.
+-   HTML is not case sensitive, while XML is.
+-   HTML ignores white space, but XML doesn't *necessarily* ignore white space.
+
+::: demo
+#### Demo: HTML Document Structure {.unnumbered}
+
+Like XML, HTML documents have a basic structure:
+
+```{html}
+<!DOCTYPE html> <!-- <1> -->
+<html> <!--  <2> -->
+<head> <!--  <3> -->
+<title>Page Title</title> <!--  <4> -->
+</head>
+
+<body> <!--  <5> -->
+<h1>Level 1 Heading</h1>
+<p>This paragraph provides information about the topic in the L1 heading.</p>
+<h2>Level 2 Heading</h2>
+<p>This paragraph provides even more information relating the L2 heading to L1.</p>
+<br> <!--  <6> -->
+</body>
+
+</html> 
+```
+
+1.  This indicates that the document is an HTML5 document
+2.  The root element of an HTML page
+3.  The head element contains meta information about the page. Most scripts and formatting information (CSS) are also loaded in this element.
+4.  The page title is what will show up in the browser tab.
+5.  The body element contains the actual information rendered on the page.
+6.  This element creates a line break, but has no content. Empty elements (elements with no content) do not have to have a closing tag (but you can add one if it makes you happy).
+:::
+
+You can easily see the HTML code that creates any website by right clicking on the web page in your browser and selecting some variant of "Inspect" or "Inspect Source" or "View Source", as shown in @fig-browser-inspect.
+This is an incredibly helpful tool when you want to figure out how to pull data out of a webpage, getting only the parts you want without the rest of the clutter.
+
+The best way to think about a HTML page is that it consists of a series of elements that are best thought of as boxes.
+Elements like `<h1> </h1>` define a box with specific contents.
+These boxes are then styled and arranged via the "magic" of *Cascading Style Sheets (CSS)*.
+When I first learned HTML (circa 2001?), there were a reasonable number of tags and CSS was not really a thing, so it was easier to understand how web pages were laid out, and we could spend our time decking out webpages [with neon colors, animated images, and annoying music](https://www.cameronsworld.net/).
+
+::: column-margin
+![CSS is "magic" ... finicky and annoying magic.](../images/advanced/css-mug.jpg){#fig-css-awesome fig-alt="A mug that says 'CSS is Awesome' with a box around it, but the box cuts off the 'me' in awesome."}
+:::
+
+Now, there are too many valid HTML tags for to cover in an introduction, but first let's review the anatomy of an XML or HTML element, and then we can look at some of the most important HTML tags.
+
+#### HTML Element Anatomy {.unnumbered}
+
+$$\overbrace{\overbrace{< \text{p}\ \  \underbrace{\text{class}}_{\text{Attribute}}=\underbrace{\text{'important'}}_{\text{Value}} >}^{\text{Start tag}} \underbrace{\text{This is a paragraph}}_{\text{Content}} \overbrace{</ \text{p} >}^{\text{End tag}}}^{\text{Element}} $$
+
+#### Important HTML Tags {.unnumbered}
+
+-   `<h1>`, `<h2>`, `<h3>`, `<h4>`, `<h5>`, `<h6>`: Headings.\
+    Headings should be nested, so you should never have content in `<h2>This is wrong</h2>` unless there is an `<h1> </h1>` element above it in the same block of content.\
+    Corresponds to `#`, ..., `######` in markdown.
+
+-   `<p>`: Paragraphs.
+    All text that isn't part of some other tag should be contained in paragraph tags.
+
+-   `<a>`: links.
+    `<a href="https://google.com">This links to google</a>`\
+    `href` is a tag attribute, and `https://google.com` is the attribute's value.
+
+-   `<img>`: Images.
+    `<img src="path/to/picture.jpg" alt="Alt-text description of the picture">`.
+    As with line breaks, you do not have to have a `</img>` tag unless having unclosed tags bothers you.
+
+-   `<table>`: Tables.
+    In HTML, tables are constructed by row.
+    Here is a minimal table that has a header:
+
+::::: columns
+::: column
+HTML:
+
+```         
+<table>
+  <tr>
+    <th>Heading Col 1</th>
+    <th>Heading Col 2</th>
+  </tr>
+  <tr>
+    <td>Value 1</td>
+    <td>Value 2</td>
+  </tr>
+</table>
+```
+:::
+
+::: column
+Rendered:
+
+```{=html}
+<table><tr><th>Heading Col 1</th><th>Heading Col 2</th></tr><tr><td>Value 1</td><td>Value 2</td></tr></table>
+```
+:::
+:::::
+
+-   `<table></table>` must contain the entire table specification, and indicates the start and end of table content.
+
+-   `<tr> </tr>` defines a table row (hence, tr) and contains any column information for that row.
+
+-   `<th>Heading Col 1</th>` defines a column heading with content 'Heading Col 1'.
+    Sometimes, `<th>` elements contain attributes that indicate column width relative to the rest of the table.
+
+-   `<td>Value 1</td>` defines a column that is not a heading.
+    Its content is what is displayed in the column -- in this case, 'Value 1'.
+
+-   `<ul>` and `<ol>`: Unordered (bulleted) and ordered lists.
+    List elements are included as child elements and start/end with `<li></li>` (for both types of lists).
+
+-   `<span>`: a container for inline content -- that is, content that is part of another piece of text.
+    Spans are often used to highlight specific text using color or other formatting attributes (font, boldness, size).
+
+-   `<div>`: a container for other content.
+    These containers are often used to help style and lay out content using CSS.
+
+#### Common HTML Attributes {.unnumbered}
+
+Some attributes in HTML are special and are used across a number of different tag types.
+
+-   ID: A shorthand name for the element. For instance, the ID for this level 4 section heading is `common-html-attributes`
+-   Class: The category the element belongs to. Often, this is used to help style the element with appropriate CSS - for instance, to ensure that all level 4 headings have the same font size and color. There can be multiple values for the class attribute, separated by spaces. The class value for this level 4 section heading is `level4 unnumbered`, indicating both the heading level and that I've switched off numbering for this sub-sub-sub-sub-section.
+-   Style: Any CSS items which apply only to the specific element. For this section, only the link to this section added by quarto/pandoc has a style attribute specified (because it is applied automatically when the quarto document is compiled)
+
+::: {.demo collapse="true"}
+##### Demo: HTML for the Common HTML Attributes subsection {.unnumbered}
+
+I have added line-breaks and indentation for readability, but the rest of the code is copied from my browser.
+
+```         
+<section id="common-html-attributes" class="level4 unnumbered">
+  <h4 class="unnumbered anchored" data-anchor-id="common-html-attributes">
+    Common HTML Attributes
+    <a class="anchorjs-link " aria-label="Anchor" data-anchorjs-icon="" 
+       href="#common-html-attributes" 
+       style="font: 1em / 1 anchorjs-icons; margin-left: 0.1875em; 
+              padding-right: 0.1875em; padding-left: 0.1875em;"></a>
+  </h4>
+  <p>Some attributes in HTML are special and are used across a number of 
+     different tag types.</p>
+  <ul>
+    <li>ID: A shorthand name for the element. 
+        For instance, the ID for this level 4 section heading is 
+        <code>common-html-attributes</code></li>
+    <li>Class: The category the element belongs to. 
+        Often, this is used to help style the element with appropriate CSS - 
+        for instance, to ensure that all level 4 headings have the same font 
+        size and color. 
+        There can be multiple values for the class attribute, separated by spaces. 
+        The class value for this level 4 section heading is 
+        <code>level4 unnumbered</code>, 
+        indicating both the heading level and that I’ve switched off numbering 
+        for this sub-sub-sub-sub-section.</li>
+    <li>Style: Any CSS items which apply only to the specific element. 
+        For this section, only the link to this section added by quarto/pandoc 
+        has a style attribute specified (because it is applied automatically 
+        when the quarto document is compiled)</li>
+  </ul>
+</section>
+```
+:::
+
+## Filtering Data from HTML/XML: CSS and XPath Selectors
+
+Often, when pulling data from HTML or XML documents, it is useful to be able to navigate to one or more specific elements of the document and extract only those elements.
+There are two different "languages" for doing this - CSS selectors, which primarily are used with HTML documents, and XPath selectors, which can be used with both HTML and XML.
+
+::: learnmore
+You may find it helpful to reference these guides to XPath and CSS selectors directly:
+
+-   [XPath syntax](https://www.w3schools.com/xml/xpath_syntax.asp)
+-   [CSS selectors](https://www.w3schools.com/cssref/css_selectors.php)
+:::
+
+### Selecting by element type
+
++------------------------------------------------------------------------------------------------------------+---------+-------+
+| Task                                                                                                       | CSS     | XPath |
++============================================================================================================+=========+=======+
+| Select all `<p>` elements from the document                                                                | p       | //p   |
++------------------------------------------------------------------------------------------------------------+---------+-------+
+| Select all `<p>` elements that are direct descendants of an `<h1>` element                                 | h1 \> p | h1/p  |
++------------------------------------------------------------------------------------------------------------+---------+-------+
+| Select all `<p>` elements that are descendants of an `<h1>` element, no matter where they are under `<h1>` | h1 p    | h1//p |
++------------------------------------------------------------------------------------------------------------+---------+-------+
+
+CSS elements can be combined using **combinators** - [specific combination operators](https://www.w3schools.com/cssref/css_ref_combinators.php). 
+There are also [XPath axes](https://www.w3schools.com/xml/xpath_axes.asp) that provide some useful ways to combine selectors to get specific results. 
+
+### Selecting by element ID/Class
+
+| Task | CSS | XPath | 
+|----|----|----|
+| Select the element with ID "objectives" | \#objectives | //\[\@id='objectives'\] |
+| Select the `<p>` element with ID "objectives" | p\#objectives | //p\[\@id='objectives'\] |
+| Select the element with class 'level2' | .level2 | //\[\@class='level2'\] |
+| Select the `<p>` element with class 'level2' | p.level2 | //p\[\@class='level2'\] |
+
+Of course, you can chain these selectors together just as in the previous section.
+
+### Selecting by element attribute/value
+
+| Task | CSS | XPath |
+|----|----|----|
+| Select all elements with a "dataID" attribute | \[dataID\] | //\@dataID |
+| Select all `<p>` elements with any attribute | not supported | //p\[\@\*\] | 
+| Select all `<p>` elements with a "dataID" attribute | p\[dataID\] | //p\[\@dataID\] |
+| Select all elements with a "dataID" attribute equal to "mydata" | \[dataID='mydata'\] | //\*\[@dataID='mydata'\]  |
+| Select all elements with a "dataID" attribute containing "my" | \[dataID~='my'\] or \[dataID\*='my'\] | //\*\[contains(@dataID, 'mydata')\] |
+
 
 ## References {#sec-webscraping-refs}
