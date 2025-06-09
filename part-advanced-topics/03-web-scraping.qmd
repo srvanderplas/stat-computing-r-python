@@ -1,6 +1,15 @@
 # Web Scraping {#sec-data-web}
 
-## {{< fa bullseye >}} Objectives {.nonumber}
+```{r, include=F}
+knitr::knit_engines$set(html = function(options) {
+  code <- paste(options$code, collapse = '\n')
+  out  <- NULL
+  knitr::engine_output(options, code, out)
+})
+```
+
+
+## Objectives {.nonumber}
 
 -   Understand the structure of XML and HTML files
 -   Use developer tools to locate nodes of interest and CSS or XPATH to precisely identify those nodes
@@ -199,11 +208,15 @@ if(!file.exists(filename)) {
 
 xml_text <- readLines(filename)
 xml_tbl <- data.frame(line = 1:length(xml_text), 
-                      xml = htmltools::htmlEscape(xml_text))
-# Escaping the XML allows printing it out nicely in the book
-
-knitr::kable(xml_tbl[c(1:10, 35:64, 3145:3151),], row.names = F)
+                      xml = xml_text)
 ```
+
+```{r echo=F}
+#| paged-print: true
+
+DT::datatable(xml_tbl[c(1:10, 35:64, 3145:3151),], rownames = F, escape = 2, editable = F, options = list(searching = F))
+```
+
 
 ```{r, include = F}
 options(width = 80)
@@ -275,7 +288,9 @@ These boxes are then styled and arranged via the "magic" of *Cascading Style She
 When I first learned HTML (circa 2001?), there were a reasonable number of tags and CSS was not really a thing, so it was easier to understand how web pages were laid out, and we could spend our time decking out webpages [with neon colors, animated images, and annoying music](https://www.cameronsworld.net/).
 
 ::: column-margin
+
 ![CSS is "magic" ... finicky and annoying magic.](../images/advanced/css-mug.jpg){#fig-css-awesome fig-alt="A mug that says 'CSS is Awesome' with a box around it, but the box cuts off the 'me' in awesome."}
+
 :::
 
 Now, there are too many valid HTML tags for to cover in an introduction, but first let's review the anatomy of an XML or HTML element, and then we can look at some of the most important HTML tags.
@@ -305,42 +320,43 @@ $$\overbrace{\overbrace{< \text{p}\ \  \underbrace{\text{class}}_{\text{Attribut
     In HTML, tables are constructed by row.
     Here is a minimal table that has a header:
 
-::::: columns
+:::: columns
+
 ::: column
+
 HTML:
 
-```         
-<table>
-  <tr>
-    <th>Heading Col 1</th>
+```{html}        
+<table>   <!--  <1> -->
+  <tr>   <!--  <2> -->
+    <th>Heading Col 1</th>   <!--  <3> -->
     <th>Heading Col 2</th>
   </tr>
   <tr>
-    <td>Value 1</td>
+    <td>Value 1</td>   <!--  <4> -->
     <td>Value 2</td>
   </tr>
 </table>
 ```
+
+1. The table element contains all table contents
+2. The tr element defines a new row of the table
+3. The th element defines a header cell
+4. The td element defines a normal (body) cell
+
 :::
 
 ::: column
+
 Rendered:
 
 ```{=html}
 <table><tr><th>Heading Col 1</th><th>Heading Col 2</th></tr><tr><td>Value 1</td><td>Value 2</td></tr></table>
 ```
+
 :::
-:::::
 
--   `<table></table>` must contain the entire table specification, and indicates the start and end of table content.
-
--   `<tr> </tr>` defines a table row (hence, tr) and contains any column information for that row.
-
--   `<th>Heading Col 1</th>` defines a column heading with content 'Heading Col 1'.
-    Sometimes, `<th>` elements contain attributes that indicate column width relative to the rest of the table.
-
--   `<td>Value 1</td>` defines a column that is not a heading.
-    Its content is what is displayed in the column -- in this case, 'Value 1'.
+::::
 
 -   `<ul>` and `<ol>`: Unordered (bulleted) and ordered lists.
     List elements are included as child elements and start/end with `<li></li>` (for both types of lists).
@@ -442,8 +458,22 @@ Of course, you can chain these selectors together just as in the previous sectio
 | Select all elements with a "dataID" attribute | \[dataID\] | //\@dataID |
 | Select all `<p>` elements with any attribute | not supported | //p\[\@\*\] | 
 | Select all `<p>` elements with a "dataID" attribute | p\[dataID\] | //p\[\@dataID\] |
-| Select all elements with a "dataID" attribute equal to "mydata" | \[dataID='mydata'\] | //\*\[@dataID='mydata'\]  |
-| Select all elements with a "dataID" attribute containing "my" | \[dataID~='my'\] or \[dataID\*='my'\] | //\*\[contains(@dataID, 'mydata')\] |
+| Select all elements with a "dataID" attribute equal to "mydata" | \[dataID='mydata'\] | //\*\[\@dataID='mydata'\]  |
+| Select all elements with a "dataID" attribute containing "my" | \[dataID~='my'\] or \[dataID\*='my'\] | //\*\[contains(\@dataID, 'mydata')\] |
 
+
+
+{{< include _scraping-olympics-example.qmd >}}
+
+
+
+::: column-margin
+
+![(Click to enlarge) Screenshot of the 2024 Paris Olympics Medal "Table"](../images/advanced/paris-2024-medal-table.png){.lightbox #fig-olympic-medal-page fig-alt="Screenshot of https://www.olympics.com/en/olympic-games/paris-2024/medals, showing gold, silver, and bronze medal counts for the first 7 countries listed alphabetically."}
+
+
+![(Click to enlarge) Screen recording: Using the Developer Console to map web page elements to HTML code in order to identify attributes and document structure that can be parsed.](../images/advanced/Paris-2024-HTML-explorer.gif){.lightbox #fig-olympic-html-gif fig-alt="Screen recording of https://www.olympics.com/en/olympic-games/paris-2024/medals, showing the HTML corresponding to the first row of the table. Each div element has an attribute that contains information on the row of the table, and that information can be used along with the rendered text on the HTML page to reconstruct the table quickly."}
+
+:::
 
 ## References {#sec-webscraping-refs}
