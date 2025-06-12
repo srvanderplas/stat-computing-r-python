@@ -517,7 +517,9 @@ A screenshot of the rendered page is available in @fig-olympic-medal-page.
 Though the page *appears* to have a table, in fact, the table does not make use of an HTML table element; instead, each row is a series of `div` elements
 
 ::: panel-tabset
-#### R 
+#### R  {-}
+
+If you're curious about why I'm reading the HTML from a saved version of the webpage, see the explanation in @sec-user-agents.
 
 ```{r olympic-data-setup-r}
 #| message: false
@@ -538,44 +540,34 @@ html_element(doc, "table") # <1>
 
 
 
-#### Python
+#### Python {-}
+
 
 ```{python}
 import pandas as pd
 import numpy as np
 from bs4 import BeautifulSoup, SoupStrainer # <1>
-import urllib.request # <2>
-import html2text # <3>
 
-req = urllib.request.Request( # <4>
-  "https://www.olympics.com/en/olympic-games/paris-2024/medals",  # <4>
-  data = None,  # <4>
-  headers = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:131.0) Gecko/20100101 Firefox/131.0'} # <3>
-) # <4>
-
-page_bytearray = urllib.request.urlopen(req) # <5>
-page = page_bytearray.read()  # <5>
-page_bytearray.close() # <5>
+file = open("../data/Paris 2024 Olympic Medal Table - Gold, Silver & Bronze.html") # <2>
+index = file.read() # <3>
 ```
 1. `bs4` is a library for web scraping. `BeautifulSoup` is its primary function.
-2. `urllib` helps with web calls, and `request` allows us to set browser headers (so it looks like we're using e.g. Firefox instead of a programming language to access the web). 
-3. `html2text` converts HTML to text, which is useful for debugging.
-3. This requests the URL using headers that suggest we're using an older version of Firefox on Windows. 
-4. These lines open the page, read it, and close the open page in memory (which is important because open files in memory can cause memory leaks and other badness)
+2. The HTML page is saved to disk for this example, so we can open that file using `open()`
+3. We can read the HTML using `file.read()`
 
 
-
-Pandas has a function that will read in an HTML table to a data frame. Let's try that first. 
+Pandas has a function that will read in an HTML table from an HTML page and convert it directly to a data frame. Let's try that first. 
+Pandas expects an HTML file, not the literal HTML, so we pass in `file` instead of `index`. 
 
 ```{python}
 #| error: true
-pd.read_html(page)
+pd.read_html(file)
 ```
 
 Well, that didn't work so well, so let's look for an actual table element:
 
 ```{python}
-soup = BeautifulSoup(page)
+soup = BeautifulSoup(index)
 tables = soup.find_all("table")
 tables
 ```
@@ -593,14 +585,14 @@ That's too much to type, so search for elements with a class that contains "Tabl
 
 ::: panel-tabset
 
-#### R 
+#### R  {-}
 
 ```{r olympic-data-table-container-r}
 table_nodes <- html_element(doc, css = "[class*='Table']")
 table_nodes
 ```
 
-#### Python
+#### Python {-}
 
 ```{python}
 table_nodes = soup.select("*[class*=Table]") # <1>
@@ -660,7 +652,7 @@ Each step in this outline may take more than one line of code.
 
 ::: panel-tabset
 
-#### R 
+#### R {-}
 
 The CSS selector we use here is a compound selector - it looks for div elements that have `data-row-id` or `data-medal-id` as an attribute. 
 
@@ -714,7 +706,7 @@ medal_data_wide <- medal_data |>
 knitr::kable(head(medal_data), row.names = F)
 ```
 
-#### Python
+#### Python {-}
 
 ```{python}
 table_nodes = soup.select("div[data-row-id],div[data-medal-id]") # <1>
@@ -789,6 +781,333 @@ knitr::kable(head(py$medal_data_wide), row.names = F)
 
 ::::
 
+## Ethical Web Scraping
+
+Scraping information off of the web can quickly push you into a zone where you have to worry about legality, privacy, and copyright issues.
+In addition, not all websites want to be scraped, and scraping a website (even if the website is not actively blocking you) can create unacceptable load on the server hosting the site, if you are not careful and ethical about what you are doing.
+This section describes a couple of important components of scraping websites ethically, but these components also provide some important technical background that can be useful for debugging why your web scraping script isn't working the way you expect.
+
+### robots.txt
+
+The `robots.txt` file is found at the root level of the website, and gives instructions to web crawlers/scrapers as to what areas of the site are allowed to be scraped, and who is allowed to scrape them.
+Websites identify who you are using a **User-agent** that is transmitted any time your computer requests information from the internet. 
+
+When we look at what we're allowed to scrape, we want to find the `User-agent: *` section of the `robots.txt` file that describes what someone with any user agent not otherwise specified is allowed to scrape. 
+
+Check out some robots.txt files to see what things they allow and block.
+
+- https://www.google.com/robots.txt    
+In google's robots.txt file, they explicitly block scraping search, groups, and other products (patents, citations, scholar, maps), but they allow scraping some books content (related, editions, subject, about). 
+
+- https://github.com/robots.txt    
+Github's robots.txt file provides some information about their API (which is more convenient than scraping, generally - see @sec-data-apis), but allows all user-agents and disallows most of the "extra" information about repositories - pulse, projects, forks, issues, milestones, commits, etc. - so you can access the main repositories but not the details via scraping, if you choose to scrape. Github also provides a contact email if you want to crawl the entire site -- likely not relevant unless you're writing a search engine, but it's helpful to know who to contact in any case. 
+
+- https://en.wikipedia.org/robots.txt    
+Wikipedia's robots.txt file allows some bots and disallows others. They mention paying attention to 429 rate limit response codes and not copying the entire site. Further down, they mention a reasonable request rate of 20 requests per second. 
+
+- https://www.olympics.com/robots.txt    
+This site doesn't allow scraping /athletes/library/*, search (which just prevents infinite recursive scraping -- that's actually helping bots out), test directories, or syndicated videos. No big deal. 
+
+- https://www.juniorrollerderby.org/robots.txt    
+This site doesn't allow crawling /users/ or /event sections of the site, but is otherwise fine with being scraped. 
+
+`robots.txt` files will often use a local path - the base site is `https://wikipedia.org/` or `https://google.com/` or `https://github.com/`, so they will list `/search/` as shorthand for `https://google.com/search/`. 
+It is fairly common for links to be specified relative to the base site as well, so you will often have to paste the front part of the URL onto the local path to get a valid URL. 
+
+The `polite` R package will ensure that your requests accommodate anything specified in the `robots.txt` file [@struckIntroductionWebScraping;@polite]. 
+The `reppy` python package [@kempRespectingRobotstxtYour2025;@b4handReppyReplacementRobotstxt2019] has similar functions to facilitate ethical web scraping.
+
+As with any ethical system, there can be reasons to justify not complying with robots.txt [@EthicsRobotstxt2013;@pierceRiseFallRobotstxt2024]. 
+Journalists often want to archive web pages exactly as they were to ensure that their sources are unimpeachable. 
+More broadly, the Internet Archive announced in 2017 that it would no longer observe robots.txt rules because its archival mission had a different goal than bots that crawl the internet for search indexing purposes.
+During the 2025 Trump administration directed purge of DEI content from military and government websites [@baldorPentagonsPurgeOfficials2025], internet activists often ignored robots.txt files in order to ensure that content was archived and not entirely erased from historical records. 
+However, even under these scenarios, ensuring that scraping does not overload the web server is still important, as overloaded servers don't respond to requests, and too many requests may get your IP address blocked by the server entirely. 
+
+`robots.txt` is also a primary defense against content being stolen and fed into AI applications; as a result, it is important to be aware of the file both as a consumer of web-based information and as someone who may one day publish content on the web. 
+
+:::: demo
+
+#### Demo: Checking `robots.txt` programmatically {-}
+
+::: panel-tabset
+
+##### R {-}
+
+```{r}
+library(polite)
+
+bow("https://wikipedia.org")
+bow("https://google.com/search")
+```
+
+##### Python {-}
+
+```{python}
+import requests
+from bs4 import BeautifulSoup
+from urllib.parse import urljoin, urlparse
+import urllib.robotparser
+
+def is_allowed(url):
+  # Setup robots.txt parser
+  rp = urllib.robotparser.RobotFileParser()
+  rp.set_url(urljoin(url, '/robots.txt'))
+  rp.read()
+  return rp.can_fetch("*", url)
+
+# Check if you're allowed to scrape the site
+is_allowed("https://wikipedia.org")
+is_allowed("https://google.com/search")
+
+```
+
+:::
+
+::::
+
+
+:::: example
+
+#### Try it out: Can you scrape these sites? {-}
+
+
+::: panel-tabset
+
+##### Problem {-}
+
+Determine (using any method you like) whether you're allowed to scrape the following sites, and whether there are any custom restrictions on the interval between requests:
+
+- https://linkedin.com
+- https://lincoln.craigslist.org/mis/
+- https://reddit.com/r/Aww/
+
+Also determine whether the site has a contact point for individual requests, if the data you want is not scrape-able. 
+
+##### Solution (manual) {-}
+
+- LinkedIn: [robots.txt](https://www.linkedin.com/robots.txt)
+```
+User-agent: *
+Disallow: /
+
+# Notice: If you would like to crawl LinkedIn,
+# please email whitelist-crawl@linkedin.com to apply
+# for white listing.
+```
+Scraping LinkedIn is not allowed.
+
+- Craigslist Missed Connections [robots.txt](https://lincoln.craigslist.org/robots.txt)
+```
+User-agent: *
+Disallow: /reply
+Disallow: /fb/
+Disallow: /suggest
+Disallow: /flag
+Disallow: /mf
+Disallow: /mailflag
+Disallow: /eaf
+```
+Scraping Craigslist missed connections is technically allowed. 
+Even so, Craigslist is notorious for banning users for too many requests, even when they're spaced out over a significant period of time and handled politely. 
+
+- Reddit /r/Aww: [robots.txt](https://www.reddit.com/robots.txt)
+```
+# Welcome to Reddit's robots.txt
+# Reddit believes in an open internet, but not the misuse of public content.
+# See https://support.reddithelp.com/hc/en-us/articles/26410290525844-Public-Content-Policy Reddit's Public Content Policy for access and use restrictions to Reddit content.
+# See https://www.reddit.com/r/reddit4researchers/ for details on how Reddit continues to support research and non-commercial use.
+# policy: https://support.reddithelp.com/hc/en-us/articles/26410290525844-Public-Content-Policy
+
+User-agent: *
+Disallow: /
+```
+Scraping Reddit is not allowed. Some posts may be accessible via the API. 
+
+##### Solution (R) {-}
+
+
+```{r}
+library(polite)
+
+bow("https://linkedin.com")
+bow("https://lincoln.craigslist.org/mis/")
+bow("https://reddit.com/r/Aww/")
+```
+
+##### Solution (Python) {-}
+
+```{python}
+import requests
+from bs4 import BeautifulSoup
+from urllib.parse import urljoin, urlparse
+import urllib.robotparser
+
+def is_allowed(url):
+  # Setup robots.txt parser
+  rp = urllib.robotparser.RobotFileParser()
+  rp.set_url(urljoin(url, '/robots.txt'))
+  rp.read()
+  return rp.can_fetch("*", url)
+
+# Check if you're allowed to scrape the site
+is_allowed("https://linkedin.com")
+is_allowed("https://lincoln.craigslist.org/mis/")
+is_allowed("https://reddit.com/r/Aww/")
+
+```
+
+:::
+
+::::
+
+### User Agents
+
+Web traffic logs on servers include your user agent, which provides information about your operating system and browser. 
+This information can help server administrators understand who is accessing their site, and can lead to decisions to e.g. upgrade the web page to no longer accommodate Internet Explorer users, since they make up a tiny fraction of all web traffic.
+From a user perspective, some sites will prevent e.g. Linux users from downloading unsupported software, or increase prices if your user agent indicates you're using a Mac [@klosowskiHowWebSites2013], so changing your user agent is not just something you might want to do when scraping the web. 
+
+::: column-margin
+
+![You can use the site https://whatmyuseragent.com to find out what information you're providing to websites. Don't depend on the accuracy of the location -- it is often where your internet provider is headquartered, rather than where you're actually located.](../images/advanced/user-agent-info.png){.lightbox fig-alt="The image is a screenshot from the website \"WhatMyUserAgent.com,\" displaying detailed information about the user\'s browsing and system characteristics. The top section shows the user agent string, highlighted in a blue box, which can be copied. Below that, the \"Your IP Address\" and \"Location\" sections provide a partially censored IP address and a geographic location with a Google Earth image depicting a world map. It identifies the city as Bellevue, with latitude 47.6154 and longitude -122.2103. A note on the left states the inaccuracy regarding the actual location. Further down, \"Browser Information\" details the browser as Firefox with version 139.0, JavaScript and cookies enabled, and screen resolution of 3840x2160 with a window size of 1920x965. The \"Opera System Information\" section lists \"GNU/Linux\" as the operating system and the platform as x64. Lastly, the \"Device Information\" section notes the type as a desktop."}
+
+:::
+
+::: {.demo collapse=true}
+
+#### From the Other Side: Examining Access Logs and User Agents {-}
+It's sometimes helpful to look at what a server administrator might see if you're scraping the web improperly. 
+To demonstrate, I decided to pull the access logs from my personal website just to see who had been snooping around and what their user agents were. 
+I've censored the IP addresses and will primarily focus on the browser type, if it is properly defined. 
+
+```{r}
+#| code-fold: true
+#| code-summary: Quick and dirty R code to look at the most common User-agents accessing my home website. 
+library(stringr)
+readLines("../data/server-access-log.txt") |>
+  str_extract(".*\"(.*)\"$", group = 1) |>
+  table() |>
+  sort(decreasing=T) |>
+  head(10) |>
+  as.data.frame() |>
+  set_names(c("User-agent", "Freq")) |>
+  knitr::kable()
+```
+
+It looks like the most common user agent is `scrapy`, a python library for web scraping, and the second most common is some variant of Mozilla/5.0 on various operating systems and platforms. 
+As a result of this investigation, I blocked `scrapy` using `robots.txt`, because I don't know what that's being used for but there is literally nothing of interest to the wider internet, data-wise, on my personal website. 
+I also blocked a bunch of different AI bots because I don't want them indexing my personal site either. 
+
+It's important to note from a server administrator side that `robots.txt` doesn't provide any additional security, as malicious actors can and will ignore ethical/polite web scraping conventions. 
+
+:::
+
+Convention dictates that your user agent when scraping should provide some contact information and reasoning, such as "Graduate student scraping for research on underwater basketweaving. Contact me at name@myuni.edu for more info."
+However, some sites will block user agents that do not appear to be a normal browser, even if scraping is explicitly allowed. 
+In these cases, you will want to set a header that mimics a browser (Consult this [up-to-date list of common user agents](https://techblog.willshouse.com/2012/01/03/most-common-user-agents/) for a few good choices). 
+
+:::: demo
+
+#### Setting a User Agent {-}
+
+::: panel-tabset
+
+##### R: `rvest` {-}
+
+You may have noticed in @sec-demo-olympics-medals that the R code read the file in from a saved version instead of from the web directly. 
+When we try to read from the web directly, we get this message:
+
+```{r}
+#| error: true
+library(rvest)
+doc <- read_html("https://www.olympics.com/en/olympic-games/paris-2024/medals")
+```
+
+By default, `rvest` uses the default user agent specified in the `curl` package^[`curl` is a very low-level way to interface with the web... be glad we don't have to use it directly.], which is `NULL`. 
+So, let's try setting an informative user agent, instead of NULL.
+
+```{r}
+#| error: true
+library(httr) # <1>
+
+# Set the UA to describe what we're doing
+ua <- "Demonstrating web scraping for educational purposes. Contact svanderplas2@unl.edu for more info."
+olympics <- GET("https://www.olympics.com/en/olympic-games/paris-2024/medals", 
+                user_agent(ua)) # <2>
+```
+1. `httr` is used to specify a user agent directly
+2. Use a `GET` request to acquire the HTML page code from the server, instead of reading the HTML directly
+
+Ok, well, that doesn't appear to work - we're still getting blocked by the server and can't even read the HTML file properly.
+The `robots.txt` file for this site allows scraping as long as we're not looking at `/athletes/library/` or `/search/`, so we're in compliance with the rules they've set... but maybe we just need to set a user agent that makes us look like a browser?
+
+```{r}
+library(httr) # <1>
+
+# Set the user agent to a super common one
+ua <- "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36"
+olympics <- GET("https://www.olympics.com/en/olympic-games/paris-2024/medals", 
+                user_agent(ua)) # <2>
+doc <- read_html(olympics) # <3>
+html_element(doc, "[data-cy=\"table-content\"]") # <4>
+```
+1. `httr` is used to specify a user agent directly
+2. Use a `GET` request to acquire the HTML page code from the server, instead of reading the HTML directly
+3. Use `read_html` to parse the HTML code that the server provided
+4. Check to make sure the information we wanted is present. 
+
+And, lo and behold, we can scrape the site properly once our user agent is set. 
+
+##### R: `polite` {-}
+
+
+```{r}
+library(polite) # <1>
+
+# Set the user agent to a super common one
+ua <- "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36"
+url <- "https://www.olympics.com/en/olympic-games/paris-2024/medals"
+olympics <- bow(url, user_agent = ua) # <2>
+doc <- scrape(olympics) # <3>
+html_element(doc, "[data-cy=\"table-content\"]") # <4>
+```
+1. `polite` allows you to specify a user agent directly
+2. `bow` acquires the HTML page code from the server
+3. `scrape` parses the HTML code that the server provided, at which point we can use various `rvest` and `xml2` functions to pull out relevant information. 
+4. Check to make sure the information we wanted is present. 
+
+
+##### Python {-}
+
+
+```{python}
+import pandas as pd
+import numpy as np
+from bs4 import BeautifulSoup, SoupStrainer # <1>
+import urllib.request # <2>
+
+req = urllib.request.Request( # <3>
+  "https://www.olympics.com/en/olympic-games/paris-2024/medals",  # <3>
+  data = None,  # <3>
+  headers = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:131.0) Gecko/20100101 Firefox/131.0'} # <3>
+) # <3>
+
+page_bytearray = urllib.request.urlopen(req) # <4>
+page = page_bytearray.read()  # <4>
+page_bytearray.close() # <4>
+
+soup = BeautifulSoup(page) # <5>
+table_nodes = soup.select("div[data-row-id],div[data-medal-id]")  # <5>
+```
+1. `bs4` is a library for web scraping. `BeautifulSoup` is its primary function.
+2. `urllib` helps with web calls, and `request` allows us to set browser headers (so it looks like we're using e.g. Firefox instead of a programming language to access the web). 
+3. This requests the URL using headers that suggest we're using an older version of Firefox on Windows. 
+4. These lines open the page, read it, and close the open page in memory (which is important because open files in memory can cause memory leaks and other badness)
+5. Check to make sure the information we wanted is present. 
+
+:::
+
+::::
+
 ## Scraping Static Webpages
 
 **Static** web pages have HTML that stays the same as the web page loads -- all of the content is specified in the HTML, and it doesn't change (much). 
@@ -819,7 +1138,7 @@ length(rev_war_tables)
 ```
 
 Ok, I wasn't expecting 33 tables! 
-Looking at the page source, we can see that actual data tables (as opposed to tables used for formatting and arranging content^[you aren't supposed to do for accessibility purposes because it's hard to make sense of the information with a screen reader.]) are sortable and have class `class="sortable wikitable jquery-tablesorter"`. 
+Looking at the page source, we can see that actual data tables (as opposed to tables used for formatting and arranging content^[You aren't supposed to do this because it's hard to make sense of the information with a screen reader - users who are low vision might think the information was actually related structurally when it is not and the table is just for arrangement purposes. As there are other ways to arrange content that are arguably better in other ways, tables should be reserved for situations where the content is actually structurally tabular.]) are sortable and have class `class="sortable wikitable jquery-tablesorter"`. 
 This is a good example of a static page that uses JavaScript (JQuery, to be specific) to enhance the page (e.g. making the table sortable) without actually injecting large amounts of content into the page. 
 
 ```{r}
@@ -832,6 +1151,15 @@ head(rev_war_battles)
 ```
 
 ##### Python {-}
+
+```{python}
+import pandas as pd
+
+rev_war_battles = pd.read_html("https://en.wikipedia.org/wiki/List_of_American_Revolutionary_War_battles", attrs= {"class": "sortable wikitable"})[0]
+
+rev_war_battles.iloc[:,0:3]
+```
+
 
 :::
 
@@ -846,6 +1174,13 @@ However, if we want any supplemental information, we will need to use a more cus
 Much of the time, the information we want from a website is not directly in tabular form, even if it may have a common structure. 
 Consider, for instance, a school directory listing the names, email addresses, office numbers, and phone numbers of the faculty and staff. 
 This could be formatted as a table (and we probably want the end result to be tabular), but more commonly it's structured on the web as a set of "Cards" formatted like the one shown in @fig-cartoon-photo-directory. 
+
+::: column-margin
+
+!["Cards" are often used to show a combination of image and text information populated from structured data. Image modified from a sample image by [Artguru AI](https://www.artguru.ai/ai-art-generator-from-photo/)](../images/advanced/cartoon-photo-directory.png){#fig-cartoon-photo-directory fig-alt="A headshot of a cartoon man with grey hair and a grey suit is shown on top. Underneath, the text reads Prof S. Singh. Statistics Chair. 302 Statistics Bldg, City, State, 97389. 123-867-5309." .lightbox}
+
+:::
+
 Typically, these cards are generated automatically from a structured database, and if we are strategic, we can get the information back into a structured form by using custom functions to abstract out specific tasks. 
 Often, in addition to the text, you will want to acquire image data, links, or data from linked pages along with the information presented on the landing page. 
 Or, you may want to acquire information from several pages with similar structure -- for instance, you may want to get all departments at an institution, or information from all of the animal shelters in your state. 
@@ -919,11 +1254,83 @@ rev_war_battles2 <- readRDS("../data/rev-war-battles2.RDS")
 head(rev_war_battles2)
 ```
 
+Unfortunately, that doesn't work either! One of the battles doesn't have a unique page, so there's a row mismatch. 
+We need to process each row separately and then rbind them together, which is best done by mapping a processing function onto the list. 
+
+```{r, eval=F}
+library(purrr)
+
+process_battle_row <- function(node){
+  link = html_element(node, "td:first-child a") |> html_attr("href")
+  tibble(
+    name = html_element(node, "td:first-child") |> html_text(),
+    link = if_else(length(link) == 0, NA, link),
+    date = html_element(node, "td:nth-child(2)") |> html_text(),
+    location = html_element(node, "td:nth-child(3)") |> html_text()
+  )
+}
+
+rev_war_battles2 <- map(rev_war_rows, process_battle_row) |> bind_rows()
+```
+```{r, eval=F, include=F}
+saveRDS(rev_war_battles2, "../data/rev-war-battles2.RDS")
+```
+```{r, echo=-1}
+rev_war_battles2 <- readRDS("../data/rev-war-battles2.RDS")
+head(rev_war_battles2)
+```
+
 
 
 
 ##### Python {-}
 
+
+```{python}
+from bs4 import BeautifulSoup, SoupStrainer
+import urllib.request
+
+url = "https://en.wikipedia.org/wiki/List_of_American_Revolutionary_War_battles"
+req = urllib.request.Request(url)
+
+page_bytearray = urllib.request.urlopen(req)
+page = page_bytearray.read()
+page_bytearray.close()
+
+```
+
+Our operational node here will be each row of the table. 
+To keep the data together (in case, for instance, some battle doesn't have its own page, and thus doesn't have a link), 
+we need to get a node list of the rows first, and then use selectors on that list to get our data in a consistent order. 
+
+
+```{python}
+#| error: true
+
+soup = BeautifulSoup(page)
+
+rev_war_rows = soup.select("table.sortable tr")
+
+battleCol = [i.select("td:first-child a") for i in rev_war_rows]
+dateCol = [i.select(":nth-child(2)") for i in rev_war_rows]
+locationCol = [i.select(":nth-child(3)") for i in rev_war_rows]
+
+name = [i[0].string if len(i) > 0 else pd.NA for i in battleCol]
+link = [i[0].attrs["href"] if len(i) > 0 else pd.NA for i in battleCol]
+date = [i[0].string for i in dateCol]
+location = [i[0].string for i in locationCol]
+
+rev_war_battles = pd.DataFrame({"name": name, "link": link, "date": date, "location": location}).iloc[1:]
+```
+```{python}
+#| eval: false
+#| include: false
+rev_war_battles.to_csv("../data/rev-war-battles2.csv")
+```
+```{python}
+#| include: false
+rev_war_battles=pd.read_csv("../data/rev-war-battles2.csv")
+```
 
 :::
 <!-- End panel tabset -->
@@ -978,6 +1385,11 @@ get_battle_location <- function(battle_link) {
     return(tibble(latitude = NA, longitude = NA, battle_link = battle_link, location_link = location_url))
   }
   
+  # Sleep for one second to limit load on servers - 
+  # this limits us to at most 2 requests per second, 
+  # well below Wikipedia's 20rps limit
+  Sys.sleep(1)
+  
   # Get location coords
   location_node <- html_node(location_doc, ".geo-dms")
   tibble(
@@ -1014,26 +1426,33 @@ A spatial package could be used to transform the latitude and longitude into num
 
 ## Scraping Dynamic Webpages
 
+Many modern webpages load page content dynamically using JavaScript. 
+This can have some advantages - for instance, the page loads quickly, and as you scroll, additional content is added, saving the cost of transferring additional data if you decide not to read the full page. 
+However, it's very annoying when your goal is to scrape content from the page, because tools like `rvest` and `BeautifulSoup` only get the initial HTML, not the HTML after JavaScript has modified the page. 
+
+
 
 ::: demo
 
-#### Demo: Roller Derby Skater Names
+#### Demo: Roller Derby Skater Names {-}
 
 
-[Roller Derby](https://en.wikipedia.org/wiki/Roller_derby) is a team sport played on a roller skating rink, and most leagues seem to be female-oriented.
+[Roller Derby](https://en.wikipedia.org/wiki/Roller_derby) is a team sport played on a roller skating rink, and most leagues seem to be female-dominated.
 The Junior Roller Derby Association (JRDA) web page contains a [list of US leagues](
 https://www.juniorrollerderby.org/us-leagues), and each league contains a list of registered organizations. Organizations can have multiple teams that are either open (anyone can join) or female-only, and each team has a [roster](https://www.juniorrollerderby.org/renegades) on the organization page. 
 Suppose that our goal is to examine the names that players register with (examples: "Hitty Stardust", "Collide-a-scope", "Malice in Wonderland", "The Curly Dervish", "Rainbow Bite") that are often puns with slight hints of violence, gendered humor, or personal characteristics. 
 In addition to players, we want to keep the league, organization, team, and team type (open/female-only). 
 
 In order to scrape this data, we have to consider multiple levels because of the hierarchical nature of both the website and the organization. 
-In these cases, it is often useful to write separate functions which scrape each level of the hierarchy. 
+In these cases, it is often useful to write separate functions which scrape each level of the hierarchy, and then write different functions to clean different components of the data.
+This provides modularity, but it also keeps your code from getting too long and complex for you to keep track of how each job is getting done. 
 
-I'll show the screenshots first, since they're relevant to both R and python. 
-
-![Roller Derby leagues - 5 tabs, and each tab has a list of organizations. Organization "blocks" of information are contained in divs that have class `textBlockElement` -- hopefully, that's enough of a selector to get the information.](../images/advanced/roller-derby-league-html-screenshot.png){fig-alt='The left side of the image shows a map of the United States divided by regions, each in distinct colors. The Northwest is in red, the Southwest in green, the Midwest in blue, the Northeast in yellow, and the Southeast in purple. Each state is labeled with its postal abbreviation. A legend in the bottom right corner matches the colors to the regions they represent. Below the map is the text "US Leagues Registered for the 2024 - 2025 Season." A menu appears with options like "NORTHWEST," "SOUTHWEST," "MIDWEST," "NORTHEAST," and "SOUTHEAST." The section labeled "RECREATIONAL" contains a logo for Pikes Peak Junior Roller Derby, located in Colorado Springs, CO. A dropdown menu labeled "NORTHWEST" is open, showing options such as "Open Link in New Tab" and "Inspect." The right side of the image displays a web browser's developer tools window. The HTML code is visible, highlighting a section related to tab content with a class of "selected"'. .lightbox}
+::: {layout-ncol=2}
+![Roller Derby leagues - 5 tabs, and each tab has a list of organizations. Organization "blocks" of information are contained in divs that have class `textBlockElement` -- hopefully, that's enough of a selector to get the information.](../images/advanced/roller-derby-league-html-screenshot.png){fig-alt='The left side of the image shows a map of the United States divided by regions, each in distinct colors. Below the map is the text "US Leagues Registered for the 2024 - 2025 Season." A menu appears with options like "NORTHWEST," "SOUTHWEST," "MIDWEST," "NORTHEAST," and "SOUTHEAST." The tab labeled "NORTHWEST" is selected. The right side of the image displays a web browser\'s developer tools window. The HTML code is visible, highlighting a section related to tab content with a class of "selected".' .lightbox}
 
 ![Roller Derby organizations are specified within the tab content div. There are several divs, only one of which is displayed (the others correspond to tabs which aren't selected). Organization "blocks" of information are contained in divs that have class `textBlockElement` -- hopefully, that's enough of a selector to get the information.](../images/advanced/roller-derby-team-html-screenshot.png){fig-alt='The image is a screenshot of a webpage and its corresponding HTML/CSS code displayed in a developer tools panel. The left side of the image shows a webpage listing US roller derby leagues registered for the 2024-2025 season. The page has a white background with blue and purple accents. Section headers divide leagues into "National" and "Recreational" categories. Logos of different roller derby teams are displayed along with their names and locations. Notable logos include the 509 Junior Roller Derby and Pikes Peak Junior Roller Derby. The right side is the developer tools interface, displaying HTML code and CSS rules corresponding to the webpage. Selected elements are highlighted, showing details such as class names and style properties.' .lightbox}
+
+:::
 
 What's interesting is that the first time you click on a new tab, you see it "fill" with data. 
 That is, the data isn't present when the page is loaded. 
@@ -1044,33 +1463,248 @@ We can do this in one of two ways
 1. Mirror the entire site using a command-line tool like `wget`, and then trawl through the downloaded information to see if there's a spreadsheet, table, CSV, or a bunch of HTML files that have the data present. 
 2. Launch a remote-controlled browser, click on things using commands, and then read the HTML after the script has run. 
 
-The second approach tends to be more successful (though the first is usually faster, if it works), and has the bonus effect of making you feel like a very powerful programmer (or mad scientist) as you sit back and watch your computer navigate the web according to your instructions. 
-Unfortunately, I can't easily demonstrate the output of this approach
+The second approach tends to be more successful (though the first is usually faster, if it works), and has the bonus effect of making you feel like a very powerful programmer (or mad scientist) as you sit back and watch your computer navigate the web according to your instructions, if you decide to launch the browser window to see the magic happen. 
+Unfortunately, I can't easily demonstrate the visual magic of this approach without screen recordings that are bigger than I can put on GitHub. 
 
 ::: panel-tabset
 
-##### R
+##### R {-}
 
 ```{r}
 #| message: false
 #| warning: false
 library(rvest)
+library(chromote) # <1>
+
 library(xml2)
 library(dplyr)
 library(tidyr)
 library(purrr)
 library(stringr)
+
 url <- "https://www.juniorrollerderby.org/us-leagues"
 
-library(chromote)
-doc <- read_html_live(url)
-doc |>
-  xml_nodes(".tabbedElement .tabContainer") |>
-  xml_children()
+rmt <- read_html_live(url) # <2> 
+rmt$click(".pageElement .contentTabs li:first-child") # <3> 
+rmt$click(".pageElement .contentTabs li:nth-child(2)") # <3> 
+rmt$click(".pageElement .contentTabs li:nth-child(3)") # <3> 
+rmt$click(".pageElement .contentTabs li:nth-child(4)") # <3> 
+rmt$click(".pageElement .contentTabs li:last-child") # <3> 
+
+# rmt$view() # <4>
+
+teams <- rmt |> 
+  html_elements(".tabContainer .pageEl .textBlockElement") 
+
+is_team_node <- map_int(teams, ~length(xml_find_first(., "div"))) > 0
+teams <- teams[is_team_node]
 ```
+
+Now, we need to write a function to extract the info from the main page.
+
+```{r}
+get_team_summary <- function(node) {
+  team_img <- html_node(node, ".leftTextImage img") |> html_attr("src")
+  team_link <- html_node(node, ".text p:nth-child(2) a") |> html_attr("href")
+  team_name <- html_node(node, ".text p:nth-child(2) a") |> html_text()
+  team_location <- html_node(node, ".text p:nth-child(3)") |> html_text()
+  
+  tibble(name = team_name, link = team_link, img = team_img, location = team_location)
+}
+
+team_df <- map(teams, get_team_summary) |> bind_rows()
+```
+
+##### Python {-}
 
 
 :::
+
+::: column-margin
+
+There are a LOT of steps when you're cleaning data from the internet. 
+It can be very easy to get overwhelmed. 
+I find it's helpful to look at the data as it exists on the web first, and imagine what form you'd like the data to be in at the end. 
+Then, sketching out the transformations step by step, as in @fig-roller-derby-cleaning-sketch can help with maintaining focus on one job at a time without getting overwhelmed. 
+
+:::
+
+Next, we need to figure out how to get the team roster information from the individual team pages. 
+A look at the HTML for the [Renegades team](https://www.juniorrollerderby.org/renegades) shows this interesting node:
+```{html}
+<iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSZPNZu2hhBDjnxWH58quhER6anponm1YCl512tHLTcURYUDzCXWqT7sNy7S_wcDKy8Wnoj4VNaAYyh/pubhtml?gid=1152027622&amp;single=true&amp;widget=false&amp;headers=false&amp;chrome=false&amp;range=a1:i25" width="100%" height="600"></iframe>
+```
+
+An `iframe` allows you to include another web page inside the current webpage. 
+In this case, we can see that this iframe is showing us a google sheet, rendered as a table. 
+In theory, we could use the `googlesheets4` package to read in the sheet, but `html_table` should work just as well. 
+
+It can be helpful to know a bit about how URLs are constructed in order to simplify this URL a bit. 
+Additional key-value information is often added to the end of a URL, separated from the main part of the URL by a `?`. 
+So, all of the information after the question mark in the iframe `src` attribute is not necessary for our purposes. 
+
+
+::: panel-tabset
+
+##### R {-}
+```{r}
+players <- read_html("https://docs.google.com/spreadsheets/d/e/2PACX-1vSZPNZu2hhBDjnxWH58quhER6anponm1YCl512tHLTcURYUDzCXWqT7sNy7S_wcDKy8Wnoj4VNaAYyh/pubhtml") |>
+html_table()
+
+length(players)
+players[[2]]
+```
+
+##### Python {-}
+
+:::
+
+Interesting - we can get all of the player names for all teams from the single sheet!
+Some organizations have multiple teams, but they all use the same basic structure for data - there are 23 rows of structured information, and there are blank lines at the top and bottom of each team. 
+
+So, to clean this up, we have to (roughly):
+
+1. Identify rows that are either primarily blank or primarily NA
+2. Remove any empty columns that aren't particularly needed
+3. Find "runs" of the same value indicating that a row is empty-ish
+4. Compute start/end of run sequences, assuming that the run is longer than 1 value
+5. Get only data frame rows corresponding to the run, separating the organization tables into separate teams. 
+
+Note that for organizations with multiple teams, there are usually only one set of coaches, so by separating this information out we (somewhat) lose the ability to keep coach information with the team.
+On the other hand, coaches weren't on our list of critical information. 
+
+::: panel-tabset
+
+##### R {-}
+
+```{r}
+split_team_df <- function(df) {
+  is_emptyish <- rowSums(is.na(df) | df == "") > 4 # <1>
+  
+  emptycols <- which(colSums(is.na(df))==nrow(df)) # <2>
+  df2 <- df[,-emptycols] # <2>
+  
+  run_stats <- rle(is_emptyish) # <3>
+  run_stats$end <- cumsum(run_stats$lengths) # <4> 
+  run_stats$start <- c(1, lag(run_stats$end)[-1] + 1) # <4> 
+  team_dfs <- tibble(start = run_stats$start, end = run_stats$end, value = run_stats$values) |> # <4> 
+    filter(!value) |> # <4> 
+    mutate(data = map2(start, end, ~df2[.x:.y,])) # <5> 
+}
+```
+
+```{r}
+team_data <- map(players, split_team_df) |> 
+  bind_rows() |>
+  mutate(nrow = end-start) |>
+  filter(nrow > 15) |>
+  magrittr::extract2("data")
+
+team_data[[1]]
+```
+
+##### Python {-}
+
+
+:::
+
+Then, we need to write another set of functions to clean up the multiple tables in the spreadsheet so that they're actually tidy data instead of a set of tables that are laid out in a format that is definitely not tidy. 
+In this case, it seemed easier to handle the player data and then the team data with separate functions, then combine that information. 
+
+![Sketch of which components of the spreadsheet need to go where.](../images/advanced/roller-derby-cleaning-sketch.svg){#fig-roller-derby-cleaning-sketch fig-alt='The image depicts a spreadsheet for a roller derby team roster, titled "CURRENT ACTIVE CHARTER ROSTER." The spreadsheet is segmented into different sections with a color-coded design. On the left, a blue-bordered table lists "Skater Number," "Skater Name," and "Active Date" for several players. To the right, the sections for "LEAGUE NAME, TEAM NAME, DIVISION" and "UNIFORM COLORS" are outlined in red and orange, respectively. The league is the "FoCo Junior Roller Derby," the team name is the Spartans, and they compete in the open division, with uniform colors as "BLACK WHITE BLUE." Below, a chart titled "COACHING STAFF" in grey features legal names and corresponding derby names. A red arrow connects the League, Team, and Division information to corresponding columns in the "clean" data representation. An orange arrow connects the uniform colors to a paste(..., collapse = ",") statement, and then to the colors column in the "clean" data table. The player roster is connected to the final column in the "clean" data table with a blue arrow.'}
+
+
+::: panel-tabset
+
+##### R {-}
+
+```{r}
+get_players <- function(sub_df) {
+  # Identify row where player table starts
+  header_row <- which(sub_df[,1] == "Skater Number") # <1>
+  
+  if (length(header_row) == 0) return(NA)
+  
+  # Get player info
+  player_info <- sub_df[(header_row+1):(header_row+21),] |>
+    set_names(c("Skater_Number", "Skater_Name", "Skater_Active_Date")) |>
+    na.omit()
+  
+  player_info
+}
+
+get_team_info <- function(sub_df) {
+  leagueidx <- sub_df[,1] == "LEAGUE NAME"
+  league <- if_else(length(leagueidx) == 0, NA, unlist(sub_df[leagueidx,2]))
+  
+  teamidx <- sub_df[,1] == "TEAM NAME"
+  team <- if_else(length(teamidx) == 0, NA, unlist(sub_df[teamidx,2]))
+  
+  divisionidx <- sub_df[,1] == "DIVISION"
+  division <- if_else(length(divisionidx) == 0, NA, unlist(sub_df[divisionidx,2]))
+  
+  coloridx <- which(sub_df[,1] == "UNIFORM COLORS")
+  if (length(coloridx) > 0) {
+    colors <- sub_df[coloridx:(coloridx+1),1:2] |>
+      unlist()
+    colors <- colors[colors != "UNIFORM COLORS"]
+    colors <- colors[colors != ""]
+    colors <- paste(na.omit(colors), collapse = ",")
+  } else {
+    colors <- NA
+  }
+  
+  tibble(league = league, team = team, division = division, colors = colors)
+}
+
+clean_team_df <- function(df) {
+  if(nrow(df) <= 10) {
+    warning("Insufficient number of rows, returning NULL")
+    return(NULL)
+  }
+  if(sum(df == "", na.rm = T) > 50) {
+    warning("Insufficient number of rows, returning NULL")
+    return(NULL)
+  }
+  
+  players <- get_players(df[,3:5])
+  
+  team_info <- get_team_info(df[,6:7]) |>
+    mutate(players = list(players))
+  return(team_info)
+}
+```
+
+After all of that, we're finally ready to use our cleaning functions!
+
+```{r}
+team_data_clean <- map(team_data, clean_team_df) |> 
+  bind_rows()
+```
+
+##### Python {-}
+
+:::
+
+Let's see if there are any common skater names, after all of that hard work.
+
+::: panel-tabset
+
+##### R {-}
+
+```{r}
+team_data_clean |>
+  unnest(players) |>
+  group_by(Skater_Name) |>
+  count() |>
+  arrange(desc(n)) |>
+  head(10)
+```
+
+##### Python {-}
+
+:::
+
 
 :::
 
