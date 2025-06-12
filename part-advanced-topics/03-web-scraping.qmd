@@ -851,26 +851,228 @@ Often, in addition to the text, you will want to acquire image data, links, or d
 Or, you may want to acquire information from several pages with similar structure -- for instance, you may want to get all departments at an institution, or information from all of the animal shelters in your state. 
 Writing flexible, modular code is the best way to handle this challenge. 
 
-::: content-margin
 
-!["Cards" are often used to show a combination of image and text information populated from structured data. Image modified from a sample image by [Artguru AI](https://www.artguru.ai/ai-art-generator-from-photo/)](../images/advanced/cartoon-photo-directory.png){fig-alt="A headshot of a cartoon man with grey hair and a grey suit is shown on top. Underneath, the text reads Prof S. Singh. Statistics Chair. 302 Statistics Bldg, City, State, 97389. 123-867-5309."}
+:::: demo
+#### Demo: Revolutionary War Battles {-}
+
+
+If we want to get information from the table of revolutionary war battles that isn't just text (for instance, the link locations to the pages with more detailed information), then we need to write a bit more custom code -- first, to get the links from the table, and second to get additional information from the specific pages for each battle. 
+
+In this case, it's easiest to think of the table as a set of rows with columns that have a specific order. 
+We can use CSS pseudo-classes (things you can append to elements): `:first-child`, `:nth-child(2)`,  `:nth-child(3)` to get the information from the first 3 columns -- the fourth is text that we don't need right now, and the fifth is a citation. 
+
+::: callout
+
+In order to reduce the load on wikipedia and the compile time for the textbook, I have saved the artifacts from this example after running the code once, and am invisibly loading those saved objects rather than re-scraping everything each time this book is re-compiled. 
 
 :::
+
+::: panel-tabset
+
+##### R {-}
+
+```{r}
+library(rvest)
+library(dplyr)
+doc <- read_html("https://en.wikipedia.org/wiki/List_of_American_Revolutionary_War_battles") 
+
+rev_war_rows <- html_elements(doc, ".wikitable tr")
+head(rev_war_rows)
+```
+
+Our operational node here will be each row of the table. To keep the data together (in case, for instance, some battle doesn't have its own page, and thus doesn't have a link), we need to get a node list of the rows first, and then use selectors on that list to get our data in a consistent order. 
+
+```{r}
+#| error: true
+rev_war_battles <- tibble(
+  name = html_elements(rev_war_rows, "td:first-child") |> html_text(),
+  link = html_elements(rev_war_rows, "td:first-child > a") |> html_attr("href"),
+  date = html_elements(rev_war_rows, "td:nth-child(2)") |> html_text(),
+  location = html_elements(rev_war_rows, "td:nth-child(3)") |> html_text()
+)
+
+```
+
+Unfortunately, that doesn't work either! One of the battles doesn't have a unique page, so there's a row mismatch. 
+We need to process each row separately and then rbind them together, which is best done by mapping a processing function onto the list. 
+
+```{r, eval=F}
+library(purrr)
+
+process_battle_row <- function(node){
+  link = html_element(node, "td:first-child a") |> html_attr("href")
+  tibble(
+    name = html_element(node, "td:first-child") |> html_text(),
+    link = if_else(length(link) == 0, NA, link),
+    date = html_element(node, "td:nth-child(2)") |> html_text(),
+    location = html_element(node, "td:nth-child(3)") |> html_text()
+  )
+}
+
+rev_war_battles2 <- map(rev_war_rows, process_battle_row) |> bind_rows()
+```
+```{r, eval=F, include=F}
+saveRDS(rev_war_battles2, "../data/rev-war-battles2.RDS")
+```
+```{r, echo=-1}
+rev_war_battles2 <- readRDS("../data/rev-war-battles2.RDS")
+head(rev_war_battles2)
+```
+
+
+
+
+##### Python {-}
+
+
+:::
+<!-- End panel tabset -->
+
+Now that we have links to the individual pages (where they exist), we can supplement the data in the original table with data from the more detailed battle-level pages. 
+One way to display this data might be to show an animated map that shows simultaneous actions in different locations. 
+To do this, we need latitude and longitude that are at least approximate (and ideally, at a higher resolution than state-level). 
+If we click on the [Powder Alarm](https://en.wikipedia.org/wiki/Powder_Alarm) battle page, we can see a structured table on the right that contains the location of the battle and links to [Suffolk County, Massachusetts](https://en.wikipedia.org/wiki/Suffolk_County,_Massachusetts). 
+The page for Suffolk County, MA has a latitude and longitude. 
+
+::: {#fig-rev-war-page-chain layout="[[45, -10, 45]]"}
+
+![(Click to enlarge) Each battle has a formatted table on the right with a sub-table that has a location field.](../images/advanced/rev-war-battle-page.png){fig-alt="The image is a composite screenshot showing a Wikipedia article titled \"Powder Alarm\" on the left and a web inspector view on the right. The Wikipedia article discusses the historical event known as the Powder Alarm, including its background and significance. It features an infobox with a picture of the Powder House in Somerville, Massachusetts, and details such as the event's date, location, and key figures like Thomas Gage and Paul Revere prominently mentioned throughout the text. The web inspector panel on the right displays HTML code related to the page, with a section highlighted in blue. The page elements are structured into tables, revealing details like styles, links, and locations mentioned in the article." .lightbox}
+
+![(Click to enlarge) Each location also has a formatted table on the right. GPS location is located within a span element with class `geo-dms`.](../images/advanced/rev-war-location-page.png){fig-alt='The image is a screenshot of a webpage and includes a section of HTML source code. The left side of the image displays a Wikipedia page about Suffolk County, Massachusetts. It features a historical photograph of the Old Suffolk County Courthouse and a map showing its location within the U.S. state of Massachusetts. The page provides details about the county, including its history, government, and politics. Visible text sections include a county overview table with information such as location, founded date, population, and time zone. A voter registration and party enrollment table is also shown. On the right side, the image shows the browser\'s Developer Tools interface, specifically the \"Inspector\" tab, which highlights a segment of the HTML code corresponding to the webpage\'s content. The code focuses on a table section displaying geographic coordinates with HTML elements and classes revealed. The cursor is highlighting the span containing the latitude and longitude.' .lightbox}
+
+Two steps are necessary in order to get geographic information from the information provided in the table of revolutionary war battles. 
+:::
+
+So, our function needs to:
+
+1. Identify the structured table on the battle page
+2. Find the location row in that table
+3. Look for a link in the location row and follow it, if it exists, to the linked location page
+4. Look for a latitude/longitude entry in the location link page
+
+If the structured table doesn't exist, the location row doesn't exist, or there is no location link, the function should return a data frame row with `lat=NA, long=NA`. 
+
+::: panel-tabset
+
+##### R {-}
+
+```{r, eval=F}
+library(tidyr)
+library(tibble)
+
+get_battle_location <- function(battle_link) {
+  if(is.na(battle_link)) return(tibble(latitude = NA, longitude = NA, battle_link = NA))
+  battle_url <- paste0("https://en.wikipedia.org/", battle_link)
+  battle_doc <- try(read_html(battle_url))
+  if("try-error" %in% class(battle_doc)) {
+    return(tibble(latitude = NA, longitude = NA, battle_link = battle_link, location_link = NA))
+  }
+  
+  # Get first (hopefully most specific) location link
+  location_url <- html_node(battle_doc, ".infobox .location a") |> html_attr("href")
+  if(is.na(location_url)) {
+    return(tibble(latitude = NA, longitude = NA, battle_link = battle_link, location_link = NA))
+  }
+  location_doc <- read_html(paste0("https://en.wikipedia.org/", location_url))
+  if("try-error" %in% class(location_doc)) {
+    return(tibble(latitude = NA, longitude = NA, battle_link = battle_link, location_link = location_url))
+  }
+  
+  # Get location coords
+  location_node <- html_node(location_doc, ".geo-dms")
+  tibble(
+    type = location_node |> html_children() |> html_attr("class"),
+    value = location_node |> html_children() |> html_text()
+  ) |> pivot_wider(names_from = "type") |>
+    mutate(battle_link = battle_link, location_link = location_url) # makes merging easier
+}
+
+battle_locations <- purrr::map(rev_war_battles2$link, get_battle_location)
+battle_locations <- bind_rows(battle_locations)
+```
+```{r, include = F, eval = F}
+saveRDS(battle_locations, file = "../data/rev_war_battle_locations.RDS")
+```
+```{r,echo=-1}
+battle_locations <- readRDS("../data/rev_war_battle_locations.RDS")
+battle_locations <- battle_locations |> unique() # filter out NA values that don't have any links at all
+
+rev_war_battles3 <- left_join(rev_war_battles2, battle_locations, by = c("link" = "battle_link"))
+head(rev_war_battles3)
+```
+
+
+##### Python {-}
+
+:::
+<!-- End panel tabset -->
+
+A spatial package could be used to transform the latitude and longitude into numerical values for plotting, but we will stop here, as this example has demonstrated the utility of using custom functions to extract components of a webpage without cataloging all of the information. 
+
+::::
+<!-- End Demo -->
+
+## Scraping Dynamic Webpages
+
 
 ::: demo
 
-#### Demo: Major League Baseball Teams
+#### Demo: Roller Derby Skater Names
 
-https://www.espn.com/mlb/players
+
+[Roller Derby](https://en.wikipedia.org/wiki/Roller_derby) is a team sport played on a roller skating rink, and most leagues seem to be female-oriented.
+The Junior Roller Derby Association (JRDA) web page contains a [list of US leagues](
+https://www.juniorrollerderby.org/us-leagues), and each league contains a list of registered organizations. Organizations can have multiple teams that are either open (anyone can join) or female-only, and each team has a [roster](https://www.juniorrollerderby.org/renegades) on the organization page. 
+Suppose that our goal is to examine the names that players register with (examples: "Hitty Stardust", "Collide-a-scope", "Malice in Wonderland", "The Curly Dervish", "Rainbow Bite") that are often puns with slight hints of violence, gendered humor, or personal characteristics. 
+In addition to players, we want to keep the league, organization, team, and team type (open/female-only). 
+
+In order to scrape this data, we have to consider multiple levels because of the hierarchical nature of both the website and the organization. 
+In these cases, it is often useful to write separate functions which scrape each level of the hierarchy. 
+
+I'll show the screenshots first, since they're relevant to both R and python. 
+
+![Roller Derby leagues - 5 tabs, and each tab has a list of organizations. Organization "blocks" of information are contained in divs that have class `textBlockElement` -- hopefully, that's enough of a selector to get the information.](../images/advanced/roller-derby-league-html-screenshot.png){fig-alt='The left side of the image shows a map of the United States divided by regions, each in distinct colors. The Northwest is in red, the Southwest in green, the Midwest in blue, the Northeast in yellow, and the Southeast in purple. Each state is labeled with its postal abbreviation. A legend in the bottom right corner matches the colors to the regions they represent. Below the map is the text "US Leagues Registered for the 2024 - 2025 Season." A menu appears with options like "NORTHWEST," "SOUTHWEST," "MIDWEST," "NORTHEAST," and "SOUTHEAST." The section labeled "RECREATIONAL" contains a logo for Pikes Peak Junior Roller Derby, located in Colorado Springs, CO. A dropdown menu labeled "NORTHWEST" is open, showing options such as "Open Link in New Tab" and "Inspect." The right side of the image displays a web browser's developer tools window. The HTML code is visible, highlighting a section related to tab content with a class of "selected"'. .lightbox}
+
+![Roller Derby organizations are specified within the tab content div. There are several divs, only one of which is displayed (the others correspond to tabs which aren't selected). Organization "blocks" of information are contained in divs that have class `textBlockElement` -- hopefully, that's enough of a selector to get the information.](../images/advanced/roller-derby-team-html-screenshot.png){fig-alt='The image is a screenshot of a webpage and its corresponding HTML/CSS code displayed in a developer tools panel. The left side of the image shows a webpage listing US roller derby leagues registered for the 2024-2025 season. The page has a white background with blue and purple accents. Section headers divide leagues into "National" and "Recreational" categories. Logos of different roller derby teams are displayed along with their names and locations. Notable logos include the 509 Junior Roller Derby and Pikes Peak Junior Roller Derby. The right side is the developer tools interface, displaying HTML code and CSS rules corresponding to the webpage. Selected elements are highlighted, showing details such as class names and style properties.' .lightbox}
+
+What's interesting is that the first time you click on a new tab, you see it "fill" with data. 
+That is, the data isn't present when the page is loaded. 
+This page is a dynamic webpage -- it is loading the data with scripts, and thus has to be treated more carefully. 
+
+We can do this in one of two ways
+
+1. Mirror the entire site using a command-line tool like `wget`, and then trawl through the downloaded information to see if there's a spreadsheet, table, CSV, or a bunch of HTML files that have the data present. 
+2. Launch a remote-controlled browser, click on things using commands, and then read the HTML after the script has run. 
+
+The second approach tends to be more successful (though the first is usually faster, if it works), and has the bonus effect of making you feel like a very powerful programmer (or mad scientist) as you sit back and watch your computer navigate the web according to your instructions. 
+Unfortunately, I can't easily demonstrate the output of this approach
+
+::: panel-tabset
+
+##### R
+
+```{r}
+#| message: false
+#| warning: false
+library(rvest)
+library(xml2)
+library(dplyr)
+library(tidyr)
+library(purrr)
+library(stringr)
+url <- "https://www.juniorrollerderby.org/us-leagues"
+
+library(chromote)
+doc <- read_html_live(url)
+doc |>
+  xml_nodes(".tabbedElement .tabContainer") |>
+  xml_children()
+```
+
 
 :::
 
-::: example
-
-#### Try It Out: Members of the US Congress
-
-https://www.congress.gov/members contains every member of any US congress since 1929 (presumably, they didn't make webpages for congresscritters who served before that point). 
-
 :::
+
 
 ## References {#sec-webscraping-refs}
