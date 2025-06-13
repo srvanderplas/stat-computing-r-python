@@ -509,7 +509,7 @@ Of course, you can chain these selectors together just as in the previous sectio
 
 :::: demo
 
-### Demo: Reading in Olympics Medals from HTML {- #sec-demo-olympics-medals}
+### Demo: Reading in Olympics Medals from HTML {- #sec-demo-olympic-medals}
 
 The IOC (International Olympic Committee) publishes medal counts for each Olympics, including the [2024 Paris games](https://www.olympics.com/en/olympic-games/paris-2024/medals). 
 If the code below doesn't work, try using the [archived page](../data/Paris 2024 Olympic Medal Table - Gold, Silver & Bronze.html) instead. 
@@ -960,7 +960,7 @@ is_allowed("https://reddit.com/r/Aww/")
 
 ::::
 
-### User Agents
+### User Agents {#sec-user-agents}
 
 Web traffic logs on servers include your user agent, which provides information about your operating system and browser. 
 This information can help server administrators understand who is accessing their site, and can lead to decisions to e.g. upgrade the web page to no longer accommodate Internet Explorer users, since they make up a tiny fraction of all web traffic.
@@ -1013,7 +1013,7 @@ In these cases, you will want to set a header that mimics a browser (Consult thi
 
 ##### R: `rvest` {-}
 
-You may have noticed in @sec-demo-olympics-medals that the R code read the file in from a saved version instead of from the web directly. 
+You may have noticed in @sec-demo-olympic-medals that the R code read the file in from a saved version instead of from the web directly. 
 When we try to read from the web directly, we get this message:
 
 ```{r}
@@ -1116,7 +1116,7 @@ These pages can be scraped using `rvest` and `xml2` in R or `bs4` (BeautifulSoup
 
 ### Reading in HTML Tables {#sec-html-table-direct}
 
-In the simplest possible scenario, the data is already well-organized in a tabular structure (with actual `<table>` tags, unlike the example in @#sec-demo-olympics-medals). 
+In the simplest possible scenario, the data is already well-organized in a tabular structure (with actual `<table>` tags, unlike the example in @sec-demo-olympic-medals). 
 
 :::: demo
 
@@ -1137,9 +1137,11 @@ rev_war_tables <- read_html("https://en.wikipedia.org/wiki/List_of_American_Revo
 length(rev_war_tables)
 ```
 
-Ok, I wasn't expecting 33 tables! 
+33 tables is a few too many to deal with!
+
 Looking at the page source, we can see that actual data tables (as opposed to tables used for formatting and arranging content^[You aren't supposed to do this because it's hard to make sense of the information with a screen reader - users who are low vision might think the information was actually related structurally when it is not and the table is just for arrangement purposes. As there are other ways to arrange content that are arguably better in other ways, tables should be reserved for situations where the content is actually structurally tabular.]) are sortable and have class `class="sortable wikitable jquery-tablesorter"`. 
-This is a good example of a static page that uses JavaScript (JQuery, to be specific) to enhance the page (e.g. making the table sortable) without actually injecting large amounts of content into the page. 
+This is a good example of a static page that uses JavaScript (JQuery, to be specific) to enhance the page (e.g. making the table sortable) without injecting large amounts of content into the page. 
+We only need the dynamic scraping solutions if the **content** is injected -- in this case, the JavaScript is only making modifications to the function/appearance of the page. 
 
 ```{r}
 library(rvest)
@@ -1154,8 +1156,8 @@ head(rev_war_battles)
 
 ```{python}
 import pandas as pd
-
-rev_war_battles = pd.read_html("https://en.wikipedia.org/wiki/List_of_American_Revolutionary_War_battles", attrs= {"class": "sortable wikitable"})[0]
+url = "https://en.wikipedia.org/wiki/List_of_American_Revolutionary_War_battles"
+rev_war_battles = pd.read_html(url, attrs= {"class": "sortable wikitable"})[0]
 
 rev_war_battles.iloc[:,0:3]
 ```
@@ -1165,7 +1167,7 @@ rev_war_battles.iloc[:,0:3]
 
 
 If all we wanted was the date of the battle and the state, we could stop here. 
-However, if we want any supplemental information, we will need to use a more customized approach... continue on to @sec-html-custom to augment this data some more!
+However, if we want any supplemental information, such as links to the battles or a more specific location that would be suitable for plotting on a map, we will need to use a more customized approach... continue on to @sec-html-custom to augment this data some more!
 
 ::::
 
@@ -1181,11 +1183,14 @@ This could be formatted as a table (and we probably want the end result to be ta
 
 :::
 
-Typically, these cards are generated automatically from a structured database, and if we are strategic, we can get the information back into a structured form by using custom functions to abstract out specific tasks. 
 Often, in addition to the text, you will want to acquire image data, links, or data from linked pages along with the information presented on the landing page. 
 Or, you may want to acquire information from several pages with similar structure -- for instance, you may want to get all departments at an institution, or information from all of the animal shelters in your state. 
-Writing flexible, modular code is the best way to handle this challenge. 
+Even when data is not in a "cards" style format, but is instead structured in a table, or something that is visually similar to a table but is not actually contained within `<table></table>` tags, it is typically easy enough to get the data out of the HTML markup systematically.
 
+The most effective way to write code for web scraping tasks more complicated than just reading in a single table is to write custom functions to extract the components you need (and put in appropriate empty/NA values if those components are missing), and then call those custom functions from a main function that can put everything back together). 
+You may need functions for multiple levels of pages, if you have to follow links from one main page to individual, more specific pages.
+These functions will need to contain error handling, because it is incredibly common for information to be missing, at which point your searches for specific nodes will come back empty. 
+It is very annoying to have your code fail on the 99th of 100 pages and have to re-scrape everything (and, in fact, you generally don't want to do this -- it is more polite to work in a way that ensures you are saving intermediate results and don't have to rescrape everything each time). 
 
 :::: demo
 #### Demo: Revolutionary War Battles {-}
@@ -1198,7 +1203,8 @@ We can use CSS pseudo-classes (things you can append to elements): `:first-child
 
 ::: callout
 
-In order to reduce the load on wikipedia and the compile time for the textbook, I have saved the artifacts from this example after running the code once, and am invisibly loading those saved objects rather than re-scraping everything each time this book is re-compiled. 
+In order to reduce the load on wikipedia and the compile time for the textbook, I have saved the artifacts from this example after running the code once. 
+I am invisibly loading those saved objects rather than re-scraping everything each time this book is re-compiled. 
 
 :::
 
@@ -1215,7 +1221,7 @@ rev_war_rows <- html_elements(doc, ".wikitable tr")
 head(rev_war_rows)
 ```
 
-Our operational node here will be each row of the table. To keep the data together (in case, for instance, some battle doesn't have its own page, and thus doesn't have a link), we need to get a node list of the rows first, and then use selectors on that list to get our data in a consistent order. 
+Our operational node here will be each row of the table. To keep the data together (in case, for instance, some battles don't have their own pages, and thus don't have a link), we need to get a node list of the rows first, and then use selectors on that list to get our data in a consistent order. 
 
 ```{r}
 #| error: true
@@ -1225,53 +1231,41 @@ rev_war_battles <- tibble(
   date = html_elements(rev_war_rows, "td:nth-child(2)") |> html_text(),
   location = html_elements(rev_war_rows, "td:nth-child(3)") |> html_text()
 )
-
 ```
 
-Unfortunately, that doesn't work either! One of the battles doesn't have a unique page, so there's a row mismatch. 
-We need to process each row separately and then rbind them together, which is best done by mapping a processing function onto the list. 
+Unfortunately, that doesn't work either! 
+One of the battles doesn't have a unique page, so there's a row mismatch. 
+We need to process each row separately and then rbind them together, or figure out how to fix the fact that if an element doesn't have a child element `a`, then it won't have a `href` attribute, either, and yet we don't want to lose track of the spot where there isn't a corresponding link.
 
-```{r, eval=F}
-library(purrr)
+Let's fix the missing-child issue first, and then I will demonstrate the other approach. 
+In this case, they're approximately the same level of difficulty, but often one approach is easier.
 
-process_battle_row <- function(node){
-  link = html_element(node, "td:first-child a") |> html_attr("href")
-  tibble(
-    name = html_element(node, "td:first-child") |> html_text(),
-    link = if_else(length(link) == 0, NA, link),
-    date = html_element(node, "td:nth-child(2)") |> html_text(),
-    location = html_element(node, "td:nth-child(3)") |> html_text()
-  )
+```{r}
+safe_href <- function(i) {
+  # Safely get a child link href from node i, returning NA if no such link exists
+  j <- html_element(i, "a") # <1>
+  if(length(j) == 0){ # <2>
+    return(NA) # <2>
+  } else {
+    res <- try(html_attr(j, "href")) # <3>
+    if ("try-error" %in% class(res)) return(NA) else return(res) # <3>
+  }
 }
 
-rev_war_battles2 <- map(rev_war_rows, process_battle_row) |> bind_rows()
-```
-```{r, eval=F, include=F}
-saveRDS(rev_war_battles2, "../data/rev-war-battles2.RDS")
-```
-```{r, echo=-1}
-rev_war_battles2 <- readRDS("../data/rev-war-battles2.RDS")
-head(rev_war_battles2)
-```
+rev_war_battles2 <- tibble(
+  name = html_elements(rev_war_rows, "td:first-child") |> html_text(),
+  link = html_elements(rev_war_rows, "td:first-child") |> map_chr(safe_href),
+  date = html_elements(rev_war_rows, "td:nth-child(2)") |> html_text(),
+  location = html_elements(rev_war_rows, "td:nth-child(3)") |> html_text()
+)
 
-Unfortunately, that doesn't work either! One of the battles doesn't have a unique page, so there's a row mismatch. 
-We need to process each row separately and then rbind them together, which is best done by mapping a processing function onto the list. 
-
-```{r, eval=F}
-library(purrr)
-
-process_battle_row <- function(node){
-  link = html_element(node, "td:first-child a") |> html_attr("href")
-  tibble(
-    name = html_element(node, "td:first-child") |> html_text(),
-    link = if_else(length(link) == 0, NA, link),
-    date = html_element(node, "td:nth-child(2)") |> html_text(),
-    location = html_element(node, "td:nth-child(3)") |> html_text()
-  )
-}
-
-rev_war_battles2 <- map(rev_war_rows, process_battle_row) |> bind_rows()
 ```
+1. First get any child of the node that is `a`
+2. Check if any children exist - if not, return NA 
+3. Try to get the `href` attribute from `a`, and if that works, return it; if not, return NA. In reality, every `a` element should have a `href` attribute, but this is also a good example of how to ensure your code doesn't fail unexpectedly. 
+
+When writing custom functions for web scrapign, it's usually helpful to give yourself an idea of what the function does in a comment -- you can often reuse these functions, but that only works if you're kind to future you and remind yourself what they actually do. 
+
 ```{r, eval=F, include=F}
 saveRDS(rev_war_battles2, "../data/rev-war-battles2.RDS")
 ```
@@ -1281,7 +1275,33 @@ head(rev_war_battles2)
 ```
 
 
+```{r, eval=F}
+library(purrr)
 
+process_battle_row <- function(node){# <1>
+  link = html_element(node, "td:first-child a") |> html_attr("href") # <2>
+  tibble(
+    name = html_element(node, "td:first-child") |> html_text(),
+    link = if_else(length(link) == 0, NA, link), # <3>
+    date = html_element(node, "td:nth-child(2)") |> html_text(),
+    location = html_element(node, "td:nth-child(3)") |> html_text()
+  )
+}
+
+rev_war_battles3 <- map(rev_war_rows, process_battle_row) |> bind_rows() # <4>
+```
+1. Here, the function is called on a single row of the table, so it's much harder to "lose" a value.
+2. First, get all first `td` elements with `a` children, and get the `href` attribute from those children. This will be `NULL` or `c()` (a list of length 0) if there is no `a` child of the first `td` element in the node.
+3. The biggest modification here is to use `if_else()` to handle the missing values and replace them with NA instead.
+4. Call `process_battle_row` on each row and bind the rows together. 
+
+```{r, eval=F, include=F}
+saveRDS(rev_war_battles3, "../data/rev-war-battles3.RDS")
+```
+```{r, echo=-1}
+rev_war_battles3 <- readRDS("../data/rev-war-battles3.RDS")
+head(rev_war_battles3)
+```
 
 ##### Python {-}
 
@@ -1307,29 +1327,49 @@ we need to get a node list of the rows first, and then use selectors on that lis
 ```{python}
 #| error: true
 
-soup = BeautifulSoup(page)
+soup = BeautifulSoup(page)   # <1>
 
-rev_war_rows = soup.select("table.sortable tr")
+rev_war_rows = soup.select("table.sortable tr")   # <2> 
 
-battleCol = [i.select("td:first-child a") for i in rev_war_rows]
-dateCol = [i.select(":nth-child(2)") for i in rev_war_rows]
-locationCol = [i.select(":nth-child(3)") for i in rev_war_rows]
+def getText(x): # <3>
+  try: # <3>
+    return x.text # <3>
+  except: # <3>
+    return "" # <3>
 
-name = [i[0].string if len(i) > 0 else pd.NA for i in battleCol]
-link = [i[0].attrs["href"] if len(i) > 0 else pd.NA for i in battleCol]
-date = [i[0].string for i in dateCol]
-location = [i[0].string for i in locationCol]
+def getLink(x): # <4>
+  try: # <4>
+    return x[0].find_all("a")[0].attrs["href"] # <4>
+  except: # <4>
+    return pd.NA # <4>
 
-rev_war_battles = pd.DataFrame({"name": name, "link": link, "date": date, "location": location}).iloc[1:]
+battleCol = [i.select("td:first-child") for i in rev_war_rows][1:] # <5>
+dateCol = [i.select_one(":nth-child(2)") for i in rev_war_rows][1:] # <5>
+locationCol = [i.select_one(":nth-child(3)") for i in rev_war_rows][1:] # <5>
+
+name = [getText(i) for i in battleCol] # <6>
+link = [getLink(i) for i in battleCol] # <6>
+date = [getText(i) for i in dateCol] # <6>
+location = [getText(i) for i in locationCol] # <6>
+
+rev_war_battles = pd.DataFrame({"name": name, "link": link, "date": date, "location": location}) # <7>
 ```
+1. Read the HTML for the full page
+2. Select the rows of the table that's sortable (e.g. the main table)
+3. Define a helper function that will return the text of a node if there is any, and "" otherwise. This makes list comprehensions much easier to read in step 6.
+4. Define a helper function that will return the `href` attribute of the link of a child node, if one exists, and NA otherwise. This makes list comprehensions much easier to read in step 6. 
+5. Select the columns of interest - battle, date, and location. Battle will create two columns in our result - one for the name of the battle, one for the link.
+6. Get the actual columns we intend to have in our data frame, using the helper functions created in steps 3-4. 
+7. Create a DataFrame by creating a dict of lists and then converting it. 
+
 ```{python}
 #| eval: false
 #| include: false
-rev_war_battles.to_csv("../data/rev-war-battles2.csv")
+rev_war_battles.to_csv("../data/rev-war-battles2.csv", index=False)
 ```
 ```{python}
 #| include: false
-rev_war_battles=pd.read_csv("../data/rev-war-battles2.csv")
+rev_war_battles=pd.read_csv("../data/rev-war-battles2.csv", parse_dates=False)
 ```
 
 :::
@@ -1416,6 +1456,79 @@ head(rev_war_battles3)
 
 ##### Python {-}
 
+```{python}
+#| eval: false
+from bs4 import BeautifulSoup,SoupStrainer
+import pandas as pd
+import urllib.request
+import time # <1>
+
+
+def req_page(url): # <2>
+  req = urllib.request.Request(url) # <2>
+  page_bytearray = urllib.request.urlopen(req) # <2>
+  page = page_bytearray.read() # <2>
+  page_bytearray.close() # <2>
+  return page # <2>
+
+
+def get_battle_location(battle_link): # <3>
+
+  try:                                                                    # <4>
+    page=req_page("https://en.wikipedia.org" + battle_link)               # <4>
+    soup = BeautifulSoup(page)                                            # <4>
+    location = soup.select_one(".infobox .location a")                    # <4>
+    if len(location) > 0:                                                 # <4>
+      location_link = location.attrs['href']                              # <4>
+    else:                                                                 # <4>
+      raise Exception("No location links found")                          # <4>
+  except:                                                                 # <4>
+    return {"latitude":pd.NA, "longitude":pd.NA,                          # <4>
+            "battle_link":battle_link, "location_link":pd.NA}             # <4>
+  
+  try:                                                                    # <5>
+    time.sleep(1)                                                         # <5>
+    page2 = req_page("https://en.wikipedia.org" + location_link)          # <5>
+    soup2 = BeautifulSoup(page2)                                          # <5>
+    location_node = soup2.select_one(".geo-dms").find_all("span")         # <5>
+    if len(location_node) == 2:                                           # <5>
+      coords = [i.string for i in location_node]                          # <5>
+    else:                                                                 # <5>
+      raise Exception("Insufficient geo-dms coordinates found")           # <5>
+  except:                                                                 # <5>
+    return {"latitude":pd.NA, "longitude":pd.NA,                          # <5>
+            "battle_link":battle_link, "location_link":location_link}     # <5>
+    
+  return {"latitude":coords[0], "longitude":coords[1],                    # <6>
+          "battle_link":battle_link, "location_link":location_link}       # <6>
+
+battle_locations = [get_battle_location(i) for i in rev_war_battles.link] # <7>
+battle_locations = pd.DataFrame(battle_locations)                         # <7>
+```
+1. Use the `time` library to sleep for 1 second before making a 2nd request within the same function.
+2. We'll be making multiple requests in this function, so streamline it so that we don't have to type 4 lines each time by making a short custom function.
+3. Define a function that takes the local link to the battle page and (1) gets the most specific location link provided for the battle, and (2) follows the link to the location page to get the latitude and longitude of that location. Return a dict containing lat/long, battle_link, and location_link. 
+4. Use a try/except statement to handle any errors that arise when a link doesn't resolve or a specific element isn't found. Get the battle page and select the first location infobox link, finding the `href` attribute within the link if there is a location (if not, raise an error that should trigger the except part of the statement). If anything fails, return a dict that has NAs for everything but the battle link.
+5. Use a try/except statement to get the location page (after sleeping for 1 sec). Look for a `.geo-dms` node and get its children. If there are exactly two children (lat/long), then extract the coords from the text of the element. Otherwise, raise an exception and return a dict with the battle and location link, but with NA values for latitude and longitude.
+6. If everything works, then return a dict with all of the relevant information.
+7. Call the function for every link in the rev_war_battles object, and then convert the result (a list of dicts) into a DataFrame. 
+
+```{python}
+#| echo: false
+#| include: false
+#| eval: false
+battle_locations.to_csv("../data/rev_war_battle_locations.csv", index=False)
+```
+```{python}
+#| include: false
+battle_locations = pd.read_csv("../data/rev_war_battle_locations.csv")
+```
+```{python}
+rev_war_battles_full = rev_war_battles.join(battle_locations.loc[:,["latitude", "longitude", "location_link"]])
+```
+
+We can use the `.join` method because both DataFrames have the same index; thus, we don't have to do a merge operation like we did in R. 
+
 :::
 <!-- End panel tabset -->
 
@@ -1430,7 +1543,8 @@ Many modern webpages load page content dynamically using JavaScript.
 This can have some advantages - for instance, the page loads quickly, and as you scroll, additional content is added, saving the cost of transferring additional data if you decide not to read the full page. 
 However, it's very annoying when your goal is to scrape content from the page, because tools like `rvest` and `BeautifulSoup` only get the initial HTML, not the HTML after JavaScript has modified the page. 
 
-
+Sometimes, there are clever ways around this problem - you may be able to submit a second request to the page and get a response with the content you want. 
+But more often, the best solution is just to emulate a browser and read the dynamic content out of the browser once JavaScript has changed the page. 
 
 ::: demo
 
@@ -1463,8 +1577,11 @@ We can do this in one of two ways
 1. Mirror the entire site using a command-line tool like `wget`, and then trawl through the downloaded information to see if there's a spreadsheet, table, CSV, or a bunch of HTML files that have the data present. 
 2. Launch a remote-controlled browser, click on things using commands, and then read the HTML after the script has run. 
 
-The second approach tends to be more successful (though the first is usually faster, if it works), and has the bonus effect of making you feel like a very powerful programmer (or mad scientist) as you sit back and watch your computer navigate the web according to your instructions, if you decide to launch the browser window to see the magic happen. 
-Unfortunately, I can't easily demonstrate the visual magic of this approach without screen recordings that are bigger than I can put on GitHub. 
+The first approach is usually faster, though many sites will block `wget` using `robots.txt`^[Technically, there is a flag for `wget` to ignore the robots rules, but it's probably better to use an approach that doesn't break the implicit rules set by the server.]. 
+
+The second approach tends to be more successful assuming you can get the infrastructure set up and configured (this has gotten much easier recently, at least in R), and has the bonus effect of making you feel like a very powerful programmer (or mad scientist) as you sit back and watch your computer navigate the web according to your instructions, if you decide to launch the browser window to see the magic happen. 
+
+You will need to install the `chromote` package in R and the `selenium` package in python. 
 
 ::: panel-tabset
 
@@ -1473,6 +1590,7 @@ Unfortunately, I can't easily demonstrate the visual magic of this approach with
 ```{r}
 #| message: false
 #| warning: false
+#| eval: false
 library(rvest)
 library(chromote) # <1>
 
@@ -1493,14 +1611,33 @@ rmt$click(".pageElement .contentTabs li:last-child") # <3>
 
 # rmt$view() # <4>
 
-teams <- rmt |> 
-  html_elements(".tabContainer .pageEl .textBlockElement") 
+teams <- rmt |> # <5>
+  html_elements(".tabContainer .pageEl .textBlockElement") # <5>
 
 is_team_node <- map_int(teams, ~length(xml_find_first(., "div"))) > 0
 teams <- teams[is_team_node]
-```
 
-Now, we need to write a function to extract the info from the main page.
+rmt$close() # <6>
+```
+1. The `chromote` package allows you to remote control a browser, though by default it will be **headless** - that is, you won't be able to see it. 
+2. `rvest` includes a `read_html_live()` function that implicitly sets up a `chromote` session. the `rmt` object here is the browser -- you can interact with it using a bunch of different methods, usually called with `$<function>`. `rmt` is a special type of object called a class, and works very similarly to many python objects, except that instead of using `.`. to access the class methods, you will use `$`. 
+3. We remotely click on each of the 5 regional tabs in order to load all of the content for each region
+4. This line is commented out because it doesn't work when the book is compiled, but it will work interactively if you uncomment it -- it allows you to see the browser that you're remote controlling. 
+5. You can interact with `rmt` using other `rvest` functions just like you would when using `read_html`, looking for elements and extracting content. 
+6. It's good practice to close the session when you're done with it rather than leaving it open. This saves computer memory, but also doesn't keep a connection to the remote server alive, which is polite. 
+
+Once we've extracted the content from the main page, we won't necessarily need anything else read "live" - it depends on how the content on the team pages is loaded. 
+Our next task is to write a function to extract the info from the main page.
+
+```{r}
+#| include: false
+#| eval: false
+saveRDS(teams, "../data/r-rollerderby-teams.RDS")
+```
+```{r}
+#| include: false
+teams <- readRDS("../data/r-rollerderby-teams.RDS")
+```
 
 ```{r}
 get_team_summary <- function(node) {
@@ -1517,6 +1654,52 @@ team_df <- map(teams, get_team_summary) |> bind_rows()
 
 ##### Python {-}
 
+```{python}
+#| eval: false
+import pandas as pd
+from io import StringIO
+from bs4 import BeautifulSoup,SoupStrainer
+from selenium import webdriver
+from selenium.webdriver import FirefoxOptions
+from selenium.webdriver.common.by import By
+import time # to ensure page loads before we get source
+options = FirefoxOptions()                                                               # <1>
+options.add_argument("-headless")                                                        # <1>
+browser = webdriver.Firefox(options = options)                                           # <1>
+
+browser.get("https://www.juniorrollerderby.org/us-leagues")                              # <2>
+time.sleep(2)                                                                            # <2>
+
+tab = browser.find_element(By.CSS_SELECTOR, ".pageElement .contentTabs li:first-child")  # <3> 
+tab.click()                                                                              # <3> 
+tab = browser.find_element(By.CSS_SELECTOR, ".pageElement .contentTabs li:nth-child(2)") # <3> 
+tab.click()                                                                              # <3> 
+tab = browser.find_element(By.CSS_SELECTOR, ".pageElement .contentTabs li:nth-child(3)") # <3> 
+tab.click()                                                                              # <3> 
+tab = browser.find_element(By.CSS_SELECTOR, ".pageElement .contentTabs li:nth-child(4)") # <3> 
+tab.click()                                                                              # <3> 
+tab = browser.find_element(By.CSS_SELECTOR, ".pageElement .contentTabs li:last-child")   # <3> 
+tab.click()                                                                              # <3> 
+
+soup = BeautifulSoup(StringIO(browser.page_source))                                      # <4>
+
+browser.close()                                                                          # <5>
+
+teams = soup.select(".tabContainer .pageEl .textBlockElement")                           # <6>
+teams = [i for i in teams if len(i.find_all('div')) > 0]                                 # <7>
+```
+1. Open a Firefox window (you could also use `webdriver.Chrome()` to get Chrome/Chromium if you prefer). The  options() statements ensure this driver is "headless" - that is, it doesn't actually pop open a window (this allows it to run on a server without a graphical display, like the one that builds the book automatically). You can just replace all three lines with `browser = webdriver.Firefox()` if you want to see the website. 
+2. Open the target URL and sleep 2 seconds to let the page load
+3. Find each tab and click on it. 
+4. Get the HTML code from the browser after JavaScript has had fun with it (`browser.page_source`), and tell BeautifulSoup it's HTML in string form rather than a request format (`StringIO`). 
+5. Close the browser - we don't need it now that we've gotten the HTML.
+6. Select the team div nodes (this selector will include some headings, like "National" and "Regional")
+7. Remove the extra headings that don't have div children. 
+
+```{python}
+def get_team_summary(node):
+  list(list(node.children)[1].children)[1].attrs['src']
+```
 
 :::
 
@@ -1531,6 +1714,7 @@ Then, sketching out the transformations step by step, as in @fig-roller-derby-cl
 
 Next, we need to figure out how to get the team roster information from the individual team pages. 
 A look at the HTML for the [Renegades team](https://www.juniorrollerderby.org/renegades) shows this interesting node:
+
 ```{html}
 <iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vSZPNZu2hhBDjnxWH58quhER6anponm1YCl512tHLTcURYUDzCXWqT7sNy7S_wcDKy8Wnoj4VNaAYyh/pubhtml?gid=1152027622&amp;single=true&amp;widget=false&amp;headers=false&amp;chrome=false&amp;range=a1:i25" width="100%" height="600"></iframe>
 ```
@@ -1550,12 +1734,44 @@ So, all of the information after the question mark in the iframe `src` attribute
 ```{r}
 players <- read_html("https://docs.google.com/spreadsheets/d/e/2PACX-1vSZPNZu2hhBDjnxWH58quhER6anponm1YCl512tHLTcURYUDzCXWqT7sNy7S_wcDKy8Wnoj4VNaAYyh/pubhtml") |>
 html_table()
-
+```
+```{r}
+#| eval: false
+#| include: false
+saveRDS(players, "../data/r-rollerderby-players.RDS")
+```
+```{r}
+#| include: false
+players <- readRDS("../data/r-rollerderby-players.RDS")
+```
+```{r}
 length(players)
 players[[2]]
 ```
 
+
 ##### Python {-}
+
+```{python}
+players = pd.read_html("https://docs.google.com/spreadsheets/d/e/2PACX-1vSZPNZu2hhBDjnxWH58quhER6anponm1YCl512tHLTcURYUDzCXWqT7sNy7S_wcDKy8Wnoj4VNaAYyh/pubhtml")
+```
+```{python}
+#| eval: false
+#| include: false
+
+import pickle
+with open('../data/py-rollerderby-players-save.p', 'wb') as f:
+  pickle.dump(players, f)
+```
+```{python}
+#| include: false
+import pickle
+players = pickle.load(open("../data/py-rollerderby-players-save.p", 'rb'))
+```
+```{python}
+len(players)
+players[1]
+```
 
 :::
 
@@ -1605,6 +1821,29 @@ team_data[[1]]
 
 ##### Python {-}
 
+```{python}
+import numpy as np
+
+def split_team_df(df):
+  is_emptyish = pd.isna(df).sum(axis = 1) > 4
+  fullcols = pd.isna(df).sum(axis = 0)!=df.shape[0]
+  
+  # https://stackoverflow.com/questions/66633109/aggregating-row-repeats-in-pandas-run-lengths
+  run_vals = (is_emptyish != is_emptyish.shift()).cumsum()
+  run_vals_tab = run_vals.value_counts()
+  
+  run_vals_full_idx = run_vals[~is_emptyish].value_counts().index
+  run_vals_idx = run_vals_tab.index[run_vals_tab!=1]
+  data_idx = np.intersect1d(run_vals_full_idx.values, run_vals_idx.values)
+  return [df.loc[run_vals==i, fullcols] for i in data_idx]
+
+from itertools import chain
+# https://stackoverflow.com/questions/11860476/how-to-unnest-a-nested-list
+team_data = [split_team_df(i) for i in players]
+team_data = list(chain(*team_data))
+
+team_data[0]
+```
 
 :::
 
@@ -1683,6 +1922,49 @@ team_data_clean <- map(team_data, clean_team_df) |>
 ```
 
 ##### Python {-}
+```{python, cache = F}
+from warnings import warn
+
+def get_players(sub_df):
+  sub_df = sub_df.reset_index().drop("index", axis = 1)
+  x = sub_df.iloc[:,0]=="Skater Number"
+  header_row = x.index[x][0]
+  
+  if pd.isnull(header_row):
+    return pd.NA
+  
+  stopidx = min(header_row+21, sub_df.shape[0])
+  playerdf = sub_df.iloc[(header_row+1):(stopidx+1),:].reset_index().drop("index", axis = 1)
+  playerdf.columns = ["skater_number", "skater_name", "skater_active_date"]
+  return {"players": playerdf.dropna()}
+
+def get_if_exists(idx, sub_df_col, replace=pd.NA):
+  header_row = idx.index[idx][0]
+  if not pd.isnull(header_row):
+    return sub_df_col[header_row]
+  return replace
+
+def get_team_info(sub_df):
+  league = get_if_exists(sub_df.iloc[:,0]=="LEAGUE NAME", sub_df.iloc[:,1])
+  team = get_if_exists(sub_df.iloc[:,0]=="TEAM NAME", sub_df.iloc[:,1])
+  division = get_if_exists(sub_df.iloc[:,0]=="DIVISION", sub_df.iloc[:,1])
+  
+  return {"league": league, "team": team, "division": division}
+
+def clean_team_df(df):
+  if (df.shape[0] < 8):
+    warn("fewer than 8 rows in data frame, skipping")
+    return {}
+  players = get_players(df.iloc[:,2:5])
+  team_info = get_team_info(df.iloc[:,5:7])
+  team_info = [team_info | players]
+  return team_info
+
+
+team_data_clean = [clean_team_df(i) for i in team_data] 
+len(team_data_clean)
+team_data_clean[0]
+```
 
 :::
 
@@ -1702,6 +1984,10 @@ team_data_clean |>
 ```
 
 ##### Python {-}
+```{python}
+player_names = pd.concat([i[0]['players'] for i in team_data_clean if len(i) > 0])
+player_names.skater_name.value_counts()[0:10]
+```
 
 :::
 
