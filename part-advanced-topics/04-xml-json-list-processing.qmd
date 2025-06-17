@@ -1,0 +1,200 @@
+---
+filters:
+  - diagram
+---
+
+# Record-based Data and List Processing Strategies {#sec-xml}
+
+@sec-data-web introduces how XML and HTML documents are constructed and demonstrates different techniques for scraping data from the web.  
+@sec-data-apis introduces Application Programming Interfaces (APIs) to get data from the web in a cleaner, more efficient way.
+Web-based data often uses different formats, like JSON (JavaScript Object Notation), to provide data from requests in a structured way. 
+Before we can effectively use APIs, it helps to review some basic patterns and methods for working with record based data and converting it into the rectangular data that most statistical analyses are built around.
+
+## Prerequisites {-}
+
+- Working knowledge of data wrangling techniques (@sec-data-cleaning, @sec-strings, @sec-data-reshape)
+- Familiarity with table joins (@sec-data-join)
+- Familiarity with functional programming (@sec-lists) 
+- Familiarity with XML file structures (@sec-data-web)
+
+This chapter will assume that you've used (or at least seen) techniques like split-apply-combine or map-reduce, anonymous functions, and table joins (full, left, right, inner) and similar techniques before. 
+Here, we will focus on how these strategies apply specifically to record-based, hierarchically formatted data that is often found in XML and JSON files. 
+
+## Objectives {-}
+- Differentiate between tabular and record-based data structures
+  - Develop strategies to transform record-based data into tabular data
+  - Recognize situations where multiple linked tables or nested list-columns may be required to represent the data effectively in a tabular format
+- Transform data in record-based formats such as XML and JSON into single or multiple linked rectangular data tables.
+- Implement data cleaning and quality control measures to ensure that data is read in and transformed correctly and important information is not lost. 
+
+
+## Data Models
+
+If you are reading this book, chances are you're approaching programming from a more statistical or data-sciency point of view, rather than as a computer scientist. 
+As a result, you probably have a general expectation that data will be laid out in a rectangular form, with rows representing observations or individuals and columns representating variables, measurements, or other dimensions of data which are applicable to each observation or individual. 
+
+This is an assumption which is much more common (at least in my experience) in statistics than in computer science more generally, though of course there are statisticians working on all sorts of different data types, including those we will discuss here.
+
+### Relational Data
+
+**Relational** data is a particular type of data model that assumes table-based data storage. 
+That is, when we access data in spreadsheets, CSVs, and so on, we are working with relational data. 
+In computer science terms, a *relation* consists of a *heading* and a *body*. 
+
+- The *heading* defines a set of *attributes* that have a name and a data type (mathematically, a domain).
+- The *body* is a set of **tuples** (a tuple is a collection of $n$ values, and is a formal data type in Python, but not in R), where there are as many values as are defined in the heading. 
+
+This is all a very technical way of describing the composition of a Data Frame, as this book did in @sec-data-frames, where a DataFrame is a heterogeneous list of columns where:
+
+-   Every entry in each column must have the same data type
+-   Every column must have the same number of rows
+
+### Record-based Data Models
+Before the relational data model became popular, however, there was the **hierarchical** data model.
+In the 1960s, computers began to be utilized for data storage, and this naturally led to record-based data models. 
+
+In a record-based data model, data are stored as **records** that are a collection of **fields**, where each field is a single value with an associated (usually fixed length/size) type. 
+The fields in a record determine the record's **type**. 
+
+#### Hierarchical Data Models
+
+A generic **entity** or **class** can be defined as a collection of **fields** in a more formal object-oriented hierarchical representation. 
+**Links** connect records with associated records, forming a tree. 
+
+This type of data structure is incredibly common, but it does not always (easily) reduce to tabular data. 
+In many cases, though, it is possible to represent hierarchical data as a set of tables that relate to each other through **keys**. 
+
+::: demo
+##### Demo: Hierarchical Employee Data {-}
+
+When a company hires an employee, many different records may be generated:
+
+- employee information (name, address, phone number, ssn)
+- initial paperwork (background check, tax information, training records)
+- employment agreement details (position type - permanent/contract/intern, start date, benefits, pay amount, which position the employee reports to)
+
+```{mermaid}
+%%| label: fig-employee-record-diag
+%%| fig-cap: This entity-relationship diagram contains information about corporate records relating to a single employee, such as employee details, supervisory relationships, employment agreement details, training records, tax information, and background checks. One
+%%| file: ../images/advanced/employee-records.mmd
+```
+
+In record-based data models, it can be complicated to actually *do* anything with the set of records. It might be relatively easy to e.g. list out all employees, but other related tasks, like determining how many people one individual is supervising, may require sifting through every ORG_REL record and could be complicated by how the records are stored (are they all text files in folders by employees?). 
+Record-based data models, whether hierarchical or not, were originally a digital extension of physical records (think rows of file cabinets in old movies). 
+
+:::
+
+:::: example
+
+##### Example: Hierarchical Employee Data {-}
+
+
+::: panel-tabset
+###### Problem Description {-}
+
+Read in [this XML file of sample employee data](../data/sample_employee_data.xml) and 
+
+1. Assemble a table of all of the employee information in @fig-employee-record-diag (that is, ID, first, middle, and last name, address, phone number, and social security number). 
+    - Can you do this using data processing functions like `map_dfr` and `as_list` in R or `read_xml` in pandas (you'll have to use chained operations in R and custom arguments in python)?
+    - Identify any employees with an invalid social security number using your tabular data representation.
+
+2. Identify the supervisor who has the most people reporting to them, without converting the data to tabular format, and then retrieve a list of all of that person's direct reports as employee IDs. 
+
+3. Identify whether there are any employees who took the same training twice, without converting the data to tabular format. 
+
+Do you prefer to work with tabular data or hierarchical data? Why?
+
+###### R (purrr) {-}
+
+```{r}
+library(xml2)
+library(purrr)
+library(dplyr)
+library(stringr)
+
+info <- read_xml("../data/sample_employee_data.xml")
+records <- xml_find_all(info, "//*/EMPLOYEE")
+df <- records |> 
+  as_list() |>
+  map_dfr(~.x |> 
+            unlist(recursive = T) |> 
+            t() |> 
+            as.data.frame() |> 
+            set_names("id", "first", "last", "middle", 
+                      "address", "phone", "ssn")
+  ) |>
+  mutate(valid_ssn = str_count(ssn, "\\d")==9)
+head(df)
+filter(df, !valid_ssn)
+
+```
+
+The `purrr::pluck()` function is a good way to pull out the information we need, once we convert the xml file to a list structure (which is still not a tabular form). 
+
+```{r}
+supervisors <- xml_find_all(info, "//*/ORG_REL/*")|> 
+  as_list() |>
+  map_chr(~purrr::pluck(., "SUPERVISOR_ID", 1)) 
+employees <- xml_find_all(info, "//*/ORG_REL/*")|> 
+  as_list() |>
+  map_chr(~purrr::pluck(., "EMPLOYEE_ID", 1)) 
+
+supervisor_reports <- supervisors |>
+  table() |> sort(decreasing = T)
+
+employees[which(supervisors == names(supervisor_reports)[1])]
+
+# Just for context
+filter(df, id%in%employees[which(supervisors == names(supervisor_reports)[1])])
+```
+
+```{r}
+# This is how easy it is in tabular form... 
+training_str <- xml_find_all(info, "//*/TRAINING/TRAININ")|> 
+  as_list() |>
+  map_dfr(~.x |> 
+            unlist(recursive = T) |> 
+            t() |> 
+            as.data.frame() |> 
+            set_names("id", "type", "employee_id", "score")
+  ) |> group_by(employee_id) |>
+  summarize(n = n(), n_unique = length(unique(type))) |>
+  filter(n != n_unique)
+```
+
+###### Python {-}
+
+```{python}
+from bs4 import BeautifulSoup
+import pandas as pd
+
+df = pd.read_xml("../data/sample_employee_data.xml", 
+                 iterparse={"EMPLOYEE": ["id", "first", "last", "middle", 
+                                         "address", "phone", "ssn"]})
+df.head()
+
+```
+
+:::
+
+::::
+
+#### Network Data Models
+
+In a hierarchical data model, each record has only one parent. 
+This is, as it turns out, a fairly restrictive constraint, as in the real world, there can be many-to-many relationships that are not strictly hierarchical - imagine trying to represent genealogical data with the restriction that each node can have only one parent!
+
+Another form of record-based data model is a **network**. 
+This model allows many-to-many relationships between records and even reciprocal links between two or more records (a "cycle" in network terms).  
+
+::: demo
+
+In an attempt to demonstrate how complex a network data model can get, I asked ChatGPT to generate  a data set of romantic relationships between Grey's Anatomy characters over the show's 21 seasons. 
+
+```{mermaid}
+%%| label: fig-greys-anatomy-network
+%%| fig-caption: Romantic relationships between characters in Grey's Anatomy, aggregated over all 21 seasons.
+%%| file: ../images/advanced/greys-network.mmd
+```
+
+:::

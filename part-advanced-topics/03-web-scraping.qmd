@@ -456,7 +456,64 @@ I have added line-breaks and indentation for readability, but the rest of the co
 ```
 :::
 
-## Filtering Data from HTML/XML: CSS and XPath Selectors
+### Reading HTML and XML files
+
+::: {.callout-tip collapse=true}
+#### Tip: When searching for help, be sure to specify packages in your query! {-}
+
+There are many different packages and approaches in both R and Python to working with HTML and XML. 
+Some people write their own custom parsers with regular expressions (masochists!), and there are multiple versions of packages (`xml` vs `xml2`, `httr` and `httr2`) as well as packages that have fairly similar syntax (`rvest`, `polite`) and packages that operate at very different technical levels (`curl`, `httr2`, `rvest`). 
+In the python ecosystem, there are multiple packages that have different ways to handle files in addition to different mechanisms and syntax for sifting through the HTML/XML nodes. 
+:::
+
+:::: demo
+#### Demo: Reading HTML files from the web
+
+Here is the basic syntax for reading in an XML or HTML file in R and python using commonly recommended packages for the job.
+
+::: panel-tabset
+
+##### R {-}
+
+```{r}
+#| code-fold: true
+#| 
+library(xml2)
+
+url <- "https://en.wikipedia.org/wiki/HTML"
+
+doc <- read_html(url)
+
+xml_children(doc)
+```
+
+We use `read_html()` to read in the document (the syntax is the same whether you're using a URL or a file path) and then can use `xml_children()` and other parsing functions to make some sense of the structure of the document -- in this case, confirming that it's a valid HTML document with a head and body node. 
+
+##### Python {-}
+
+```{python}
+import requests # Gets files from the web
+
+url = "https://en.wikipedia.org/wiki/HTML"
+response = requests.get(url)
+# response.text # This outputs a ton of stuff
+
+from bs4 import BeautifulSoup # Parses HTML/XML
+soup = BeautifulSoup(response.text)
+children = soup.html.find_all(recursive=False) # get direct children of the HTML tag
+
+for child in children:
+  print(child.name) # content is too long to print everything
+```
+
+We have to request the HTML document using `requests.get(url)` and then parse the HTML document with `bs4.BeautifulSoup`. 
+
+The remaining code just serves to confirm that we have both a head and a body node. 
+:::
+
+::::
+
+## Acquiring Data from HTML/XML: CSS and XPath Selectors
 
 Often, when pulling data from HTML or XML documents, it is useful to be able to navigate to one or more specific elements of the document and extract only those elements.
 There are two different "languages" for doing this - CSS selectors, which primarily are used with HTML documents, and XPath selectors, which can be used with both HTML and XML.
