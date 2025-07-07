@@ -1,0 +1,50 @@
+
+## Filtering Data from HTML/XML: CSS and XPath Selectors
+
+Often, when pulling data from HTML or XML documents, it is useful to be able to navigate to one or more specific elements of the document and extract only those elements.
+There are two different "languages" for doing this - CSS selectors, which primarily are used with HTML documents, and XPath selectors, which can be used with both HTML and XML.
+
+::: learnmore
+You may find it helpful to reference these guides to XPath and CSS selectors directly:
+
+-   [XPath syntax](https://www.w3schools.com/xml/xpath_syntax.asp)
+-   [CSS selectors](https://www.w3schools.com/cssref/css_selectors.php)
+:::
+
+### Selecting by element type
+
++--------------------------------------------------------------------------------------------------------+-----------+---------+
+| Task                                                                                                   | CSS       | XPath   |
++========================================================================================================+===========+=========+
+| Select all `p` elements from the document                                                              | `p`       | `//p`   |
++--------------------------------------------------------------------------------------------------------+-----------+---------+
+| Select all `p` elements that are direct descendants of an `h1` element                                 | `h1 \> p` | `h1/p`  |
++--------------------------------------------------------------------------------------------------------+-----------+---------+
+| Select all `p` elements that are descendants of an `h1` element, no matter where they are under `h1`   | `h1 p`    | `h1//p` |
++--------------------------------------------------------------------------------------------------------+-----------+---------+
+
+CSS elements can be combined using **combinators** - [specific combination operators](https://www.w3schools.com/cssref/css_ref_combinators.php).
+There are also [XPath axes](https://www.w3schools.com/xml/xpath_axes.asp) that provide some useful ways to combine selectors to get specific results.
+
+### Selecting by element ID/Class
+
+| Task | CSS | XPath |
+|----|----|----|
+| Select the element with ID "objectives" | `#objectives` | `//[@id='objectives']` |
+| Select the `<p>` element with ID "objectives" | `p#objectives` | `//p[@id='objectives']` |
+| Select the element with class 'level2' | `.level2` | `//[@class='level2']` |
+| Select the `<p>` element with class 'level2' | `p.level2` | `//p[@class='level2']` |
+
+Of course, you can chain these selectors together just as in the previous section.
+
+### Selecting by element attribute/value
+
+| Task | CSS | XPath |
+|----|----|----|
+| Select all elements with a "dataID" attribute | `[dataID]` | `//@dataID` |
+| Select all `<p>` elements with any attribute | not supported | `//p[@*]` |
+| Select all `<p>` elements with a "dataID" attribute | `p[dataID]` | `//p[@dataID]` |
+| Select all elements with a "dataID" attribute equal to "mydata" | `[dataID='mydata']` | `//*[@dataID='mydata']`  |
+| Select all elements with a "dataID" attribute containing "my" | `[dataID~='my']` or `[dataID*='my']` | `//*[contains(@dataID, 'mydata')]` |
+
+
