@@ -1,3 +1,349 @@
 # Application Programming Interfaces {#sec-data-apis}
 
-https://mixedanalytics.com/blog/list-actually-free-open-no-auth-needed-apis/
+<!-- https://mixedanalytics.com/blog/list-actually-free-open-no-auth-needed-apis/ -->
+
+<!-- Outline generated with copilot https://copilot.microsoft.com/shares/kXaxscoAnsYpny7LPrAC5 just to test out how useful it is for organizing content. I mostly used the outline and deviated significantly from the 'draft' it wrote -- which I mostly requested so that I could see exactly what scope it thought was appropriate (for kicks). -->
+
+## Objectives
+
+- Understand what APIs are and how to interface with them
+- Connect to RESTful APIs with and without authentication
+- Retrieve and parse JSON data from API queries
+- Handle common API challenges (pagination, rate limits, errors)
+
+## Introduction to APIs
+
+An **API** is an application programming interface. 
+APIs are designed to let different software and databases communicate with each other. 
+Statisicians and data scientists often need to access APIs to acquire data from an external source.
+In the past, I've used APIs to get weather data, information about adoptable pets in my area, CRAN package statistics, and wikipedia entry edits, but other people might use them to get data on financial market performance, social media posts, and more.
+
+### RESTful APIs
+
+Most APIs are RESTful -- they use the REST architecture (REST stands for Representational State Transfer) [@guptaWhatREST2025]. 
+
+::: {.advanced collapse=true}
+### Six guiding principles of RESTful architecture {-}
+
+
+- Uniform interface. 
+    - The interface uniquely identifies each resource involved in the interaction between the client (you) and the server (the data).
+    - The server provides a uniform representation of the data that the client can use to modify the resource state.
+    - Each resource representation should have enough information to describe itself and additional actions that are available.
+    - The client should have only the initial URI of the application, and should dynamically interact with the server through the use of hyperlinks.
+    
+- Client-Server. This enforces a separation of concerns so that the user interface (client-side) is separate from the server interface (data storage, platform, dependencies). 
+
+- Statelessness. Each request from client to server contains all information necessary to understand and complete the request. That is, the server cannot use previously stored information to complete a request. The client application must maintain the entire session state.
+
+- Cacheable. A response should (implicitly or explicitly) label itself as cacheable or non-cacheable. If cacheable, the client can reuse the response data for equivalent requests (within a certain time period). 
+
+- Layered system. The architecture is hierarchical, and each component cannot "see" beyond the immediate layer it is interacting with. 
+
+- Code on demand (optional). This allows client functionality to be extended by downloading and executing code.
+
+:::
+
+REST abstracts information into a **resource**, which can change state over time. 
+At any given time, the resource state is the **resource representation** and consists of the data, metadata about the data, and the links that help a client transition to another state. 
+
+::: callout-info
+
+A REST API consists of interlinked resources, known as the **resource model**.
+
+Think about a set of tables in a database, where the tables are linked. 
+A REST API is a set of syntax that allows you to access the table data using a consistent set of addresses that are called **Resource URIs** 
+
+A **URI** (Universal Resource Identifier) is the more updated term for a URL (Universal Resource Locator). Any URI that starts with https:// or ftp:// or mailto:// is a URL -- that is, all URLs are also URIs. ^[These terms are often mixed up and this has been an issue since at least 2003 [@zimmermanURIVsURL2020].]
+
+A URI will typically have an endpoint (the server address) along with **parameters** tacked on after the final `/`.
+The start of the parameter string is indicated with `?`, and parameters are separated by `&` characters. 
+The parameters often take the form of key-value pairs, so you might have a parameter string that looks like this: `?param1=value1&param2=value2`. 
+URIs cannot accommodate certain characters, such as spaces -- these must be [encoded using ASCII values](https://www.w3schools.com/tags//ref_urlencode.asp) [@w3schoolsHTMLURLEncoding2025].
+`%20` is the equivalent for a space, which is why you will often see it in URLs. Not all values in the linked ASCII table need to be encoded -- this usually applies to certain special characters like `/`, `-`, ` `, `(`, and `)`.
+:::
+
+While most RESTful applications use HTTP methods and an API built around what look like web addresses, this is not required. 
+
+### HTTP Methods
+
+There are several HTTP methods which are commonly used to interact with APIs [@mozilladocumentationnetworkHTTPRequestMethods2025]:
+
+- GET - requests the representation of a resource. These requests should only retrieve data and should not contain a request content. Your web browser submits a GET request every time you type an address in the address bar.
+
+- POST - submits an entity to a resource. This may cause a change in state or side effects on the server. For instance, submitting a web form may create a POST request that uploads your data to the server and updates a database. 
+
+- PUT - this method replaces all representations of the target resource with the request content. This updates existing data (that is, be careful!)
+
+- DELETE - this method removes all of the target resource data. 
+
+
+HTTP requests have a request header and a request body. 
+
+### HTTP Response Codes
+
+HTTP requests will return a response code. 
+
+In general, 2xx is Success, 3xx is 'address moved', 4xx is 'client screwed up', and 5xx is 'server screwed up', but you can find a full list [here](https://www.coderstool.com/http-response-codes). 
+
+::: {callout collapse=true}
+#### There's also a lovely poem from Rester Test [source](https://medium.com/@t79877005/api-response-codes-poem-451ca17e8f2c) that explains response codes and their meanings
+
+In the world of tech, there’s a curious thing,
+Called API requests that make devices sing.
+They’re like little messages that devices send,
+To get a response from their API friend.
+
+API requests are like a note,
+Sent to an API with a hopeful mote.
+They can ask for data or do some work,
+And wait for a response, like a playful quirk.
+
+But sometimes the API friend may say,
+“I cannot do as you request today”.
+And send a response with a special code,
+To let the device know what’s on the road.
+
+Response codes are like a language too,
+And help devices know what to do.
+There’s 200 for success, and 400 for bad,
+And 500 for errors, that makes devices sad.
+
+With response codes, the devices know,
+If their requests are a friend or foe.
+They can take action based on the code,
+And keep the tech world in a secure mode.
+
+So next time you send an API request,
+And wait for a response with bated breath,
+Remember that codes are the language that speak,
+And help devices find what they seek.
+
+API requests and response codes together,
+Are the backbone of tech’s forever.
+They help devices connect and communicate,
+And make our world a much better state.
+
+:::
+
+
+## Accessing APIs without Authentication
+
+:::: demo
+
+#### Demo: CURL and HTTP Requests {-}
+
+Let's try this out using `curl`, which is a command-line tool for URI manipulation and transfers. 
+We'll send a request to an API that takes a person's name as a parameter and returns information about the likely gender of that person. [Explore the API documentation](https://genderize.io/documentation).
+
+I've told curl to be verbose (to show us everything). 
+
+
+```{bash}
+curl -v https://api.genderize.io?name=Terry > ../data/genderize-api-response.txt 2> ../data/genderize-api-curl-output.txt
+```
+
+The first `>` redirects the response/output to `genderize-api-response.txt`; `2>` redirects the messages/errors/warnings to `genderize-api-curl-output.txt`. 
+This allows us to examine the [response](../data/genderize-api-response.txt) and the [output](../data/genderize-api-curl-output.txt) separately. 
+
+
+The first few lines of the output (1-42) are what's required to make a connection using SSL (essentially, when you use https:// instead of http://, you add an extra security layer where the protocol verifies that the server is certified to be what it claims to be). 
+
+Then, there's a GET request: 
+```
+* Connected to api.genderize.io (165.227.126.8) port 443
+* using HTTP/2
+* [HTTP/2] [1] OPENED stream for https://api.genderize.io/?name=Terry
+* [HTTP/2] [1] [:method: GET]
+* [HTTP/2] [1] [:scheme: https]
+* [HTTP/2] [1] [:authority: api.genderize.io]
+* [HTTP/2] [1] [:path: /?name=Terry]
+* [HTTP/2] [1] [user-agent: curl/8.11.0]
+* [HTTP/2] [1] [accept: */*]
+} [5 bytes data]
+> GET /?name=Terry HTTP/2
+> Host: api.genderize.io
+> User-Agent: curl/8.11.0
+> Accept: */*
+> 
+{ [5 bytes data]
+* Request completely sent off
+{ [5 bytes data]
+```
+
+This splits the URI up into a `Host` (api.genderize.io) and a `query string` (/?name=Terry) containing `parameter(s)` (name) and `value(s)` (Terry) with an associated protocol (HTTP/2). 
+Curl identifies itself as having the `user-agent` curl/8.11.0, and provides some idea of what responses it's looking for - in this case, `*/*`, which is internet for "anything". 
+At this point, we're not picky, and in any case, most sites have a default or use JSON exclusively.
+
+The output also contains a set of header information that is easier for us to read when it is formatted as a list. 
+Remember, HTTP responses have a header and a body -- this is a formatted version of the header of the server response. 
+
+- http/2 200 (response code)
+- server: nginx/1.16.1 (web server software version)
+- date (varies)
+- content-type: application/json; charset=utf-8 (expect a JSON file with encoding UTF-8)
+- content-length: 65 (how many characters the content is)
+- vary: accept-encoding
+- cache-control: max-age=0, private, must-revalidate
+- x-request-id (varies)
+- access-control-allow-credentials: true (whether you're allowed to make requests to the server)
+- access-control-allow-origin: *
+- access-control-expose-headers: x-rate-limit-limit, x-rate-limit-remaining, x-rate-limit-reset (values determining whether we're putting too much load on the server)
+- x-rate-limit-limit: 100
+- x-rate-limit-remaining: 91 (varies)
+- x-rate-limit-reset: 10538
+
+Then, we look at the [body of the server response](../data/genderize-api-response.txt)
+
+```
+{"count":89955,"name":"Terry","gender":"male","probability":0.75}
+```
+
+Notice that this has 65 characters and is in JSON format. 
+We get a frequency (`count`), the name we were checking up on, the likely gender, and the probability that someone with that name is of that gender (in this case, male). 
+
+::::
+
+:::: demo
+
+#### Example: CURL requests in R and Python {-}
+
+
+::: panel-tabset
+##### Task {-}
+
+Both R and Python use CURL as a backend to interact with the internet at large, but it is often easier to send requests using a request-specific library, such as `httr2`. 
+
+Let's connect to the Evil Insult Generator API and get one insult from R in Greek (`lang=el`) in XML (`type=xml`) and one from Python in Russian (`lang=ru`), formatted as JSON (`type=json`). 
+
+Please note that I have no idea how evil/off-color these insults might be, but the idea of an API just to insult you (in many languages) is amusing enough to demonstrate even at the risk that it is crude. 
+We're requesting these in non-English languages in the hopes of minimizing the offense (though the comment in the response gives a rough translation). 
+If you are fluent in Russian or Greek, please feel free to substitute Spanish (`es`), German (`de`), French (`fr`), Greek (`el`), Russian (`ru`), Chinese (`zh`), Hindi (`hi`), Polish (`pl`), or another language of your choice. 
+I think this API is using [ISO 639 2-letter language codes](https://en.wikipedia.org/wiki/List_of_ISO_639_language_codes), and it will return a string of asterisks if it doesn't understand your language -- it doesn't seem to have insults in every possible language, but I've verified a few modern/common ones. 
+
+##### R {-}
+
+Make sure you have the `httr2` library installed (it's a dependency of a lot of tidyverse packages, so you may already have it). 
+
+```{r}
+library(httr2)
+req <- request("https://evilinsult.com/generate_insult.php/?lang=el&type=xml") |>
+  req_perform()
+
+resp_raw(req) # response header and body
+xml_resp <- resp_body_string(req) # response body, encoded as a string
+
+library(xml2)
+read_xml(xml_resp)
+```
+
+##### Python {-}
+In Python, make sure you have the `requests` library installed. 
+
+```{python}
+import requests
+
+req = requests.get("https://evilinsult.com/generate_insult.php/?lang=ru&type=json")
+req.headers
+req.json() # python will format JSON as a dict, which is easier to work with
+```
+
+:::
+
+Interestingly, you can also pass the undocumented parameter `number` and get a non-random insult, but this seems to only work in the web browser - the API appears to return a random insult even when `number` is specified. 
+
+::::
+
+
+:::: example
+
+#### Example: Weather Data {-}
+
+The [National Weather Service](https://www.weather.gov/documentation/services-web-api) provides a free API for public weather data access. 
+The only requirement is that you provide a user-agent identifying your application and including contact information (an email address). 
+Assemble the temperature forecast data for Moore, OK (lat = 35.339508, long = -97.486702) and plot it using a line graph. 
+You may need to make several requests to get the data you want. 
+
+::: panel-tabset
+
+##### R {-}
+
+```{r}
+library(httr2)
+uastring <- "R/python data science demos, svanderplas2@unl.edu" # Set this to YOUR email, please!
+
+pointsreq <- request("https://api.weather.gov/points/35.339508,-97.486702") |>
+  req_user_agent(uastring) |>
+  req_perform()
+
+pointsjson <- resp_body_json(pointsreq)
+args <- pointsjson$properties[c("gridId", "gridX", "gridY")] # This will get us the forecast info
+
+req_url_str <- sprintf("https://api.weather.gov/gridpoints/%s/%s,%s/forecast/hourly", args[1], args[2], args[3])
+forecastreq <- request(req_url_str) |>
+  req_user_agent(uastring) |>
+  req_perform()
+
+forecastjson <- resp_body_json(forecastreq)
+forecastjson$properties$periods[[1]]
+
+library(lubridate)
+moore_temps <- tibble(start_time = map_vec(forecastjson$properties$periods, "startTime"),
+                      temp = map_vec(forecastjson$properties$periods, "temperature")) |>
+  mutate(start_time = ymd_hms(start_time))
+
+library(ggplot2)
+ggplot(moore_temps, aes(x = start_time, y = temp)) + geom_line()
+
+```
+
+##### Python {-}
+
+
+```{python}
+import requests
+import pandas as pd
+import seaborn.objects as so
+
+# PLEASE edit this to have your email address before you run the code.
+headers = {'User-Agent': 'R/python data science API demos', 'From': 'svanderplas2@unl.edu'} 
+
+pointsreq = requests.get("https://api.weather.gov/points/35.339508,-97.486702", headers=headers)
+pointsreq.headers
+points_json = pointsreq.json()
+target_url = points_json['properties']['forecast']+'/hourly'
+
+
+forecastreq = requests.get(target_url, headers=headers)
+forecast_json = forecastreq.json()
+forecast_df = pd.DataFrame(forecast_json['properties']['periods'])
+forecast_temp = forecast_df[['startTime', 'temperature']]
+
+so.Plot(forecast_temp, "startTime", "temperature").add(so.Line()).show()
+```
+
+The x-axis is a bit of a mess because I haven't spent the time to format it properly, but that's good enough for now.
+
+:::
+
+::::
+## API Authentication
+
+Common Methods - API Key, OAUTH 2.0
+
+Storing Credentials -- .Renviron, .env (Python +  python-dotenv)
+
+## API Limits
+
+## Best Practices
+
+When working with APIs, make sure to:
+
+- Read the API documentation carefully
+- Test with small requests first before scaling up
+  - If something doesn't work in R/Python, test with curl or in a browser
+- Secure your API keys using keyrings or environment variables. Do NOT push your API keys to GitHub!!!
+- Cache responses to limit server overload
+- Write reusable functions to make API calls where possible
+
+## References {-}
