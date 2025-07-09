@@ -1,6 +1,6 @@
 # Setting Up Your Computer {#sec-setting-up}
 
-## {{< fa bullseye >}} Objectives
+## Objectives {-}
 
 -   Set up RStudio, R, Quarto, and python
 -   Be able to run demo code in R and python
@@ -23,8 +23,11 @@ It's a good idea to be skeptical when someone is telling you to install things.
 
 ## Why do I need to install this stuff?
 
-Presumably, if you're reading this book, you either want to know how to do some statistical programming task, or you're taking a class on statistical programming that is using this textbook. 
-Hopefully, if you're reading this for a class, you *also* want to learn how to work with data in some fashion. 
+- R is good for data wrangling, statistical programming, modeling, and data visualization
+- Python is good for machine learning, deep learning, image processing, and web scraping
+- Quarto allows you to write R and python code, keeping code and documentation in the same document
+- git is helpful for tracking changes to code and data, and for collaborating
+
 While some parts of this book are fairly language-agnostic (R and python are both good languages for working with data), this setup is opinionated - the book focuses on a set of programs which are useful for doing statistical programming, including writing reports, keeping track of code, visualizing data, cleaning data, and getting set up for modeling data and producing results. 
 
 If you're just trying to learn R, perhaps you don't need to install python or quarto.
@@ -38,16 +41,20 @@ If you have trouble with these instructions or encounter an error, post on the c
 
 1.  Install R (and associated tools)
 
+:::: setup
+
+### Install R {.unnumbered}
+
 ::: panel-tabset
 
-### {{< fa brands windows >}} Windows
+#### {{< fa brands windows >}} Windows {.unnumbered}
 
 1. Get the R installer from CRAN: <https://cran.rstudio.com/bin/windows/base/>
 
 2. Install the Rtools4 package that matches the R version you installed: <https://cran.rstudio.com/bin/windows/Rtools/>    
 For example, if you installed R 4.4.3, you should download RTools 4.4. If you installed R 4.0.1, you should install RTools 4.0. 
 
-### {{< fa brands apple >}} Mac
+#### {{< fa brands apple >}} Mac {.unnumbered}
 
 1. Get the R installer from CRAN: <https://cran.rstudio.com/bin/macosx/>
 
@@ -57,7 +64,7 @@ For example, if you installed R 4.4.3, you should download RTools 4.4. If you in
   b. Install [Homebrew](https://brew.sh/) and then use homebrew to install XCode.^[If you prefer a different package manager, that's fine - Homebrew is widely used, but there are other options. Ultimately, you just need to have XCode so that you can compile R packages.] 
   
 I personally suggest option b, because Homebrew is used for a lot of different software-development related things, and having it will make life easier later. 
-  
+
 ---
 
 ##### Installing Homebrew + XCode {-}
@@ -94,9 +101,11 @@ You could install R using your package manager, but often this version is out of
 
 ::::
 
+
 2.  Download and install the latest version of [python 3](https://www.python.org/downloads/)
 
 :::: setup
+
 
 #### Extra Instructions to Setup Python on  {{< fa brands windows >}} Windows {-}
 
@@ -116,6 +125,23 @@ If you didn't do this, you can follow [these instructions](https://www.geeksforg
 ::::
 
 
+#### Extra Instructions to Setup Python on  {{< fa brands windows >}} Windows {-}
+
+**check the box that asks if you want to add Python to the system path.**    
+This will save you a *lot* of time and frustration. 
+If you didn't do this, you can follow [these instructions](https://www.geeksforgeeks.org/how-to-add-python-to-windows-path/) to fix the issue (you'll need to restart your machine).
+
+::::
+
+:::: learnmore
+-   If you're interested in python, you should install Jupyter using the instructions [here](https://jupyter.org/install) (I would just do `pip3 install jupyterlab`)\
+    We will not use jupyter much in this book - I prefer quarto - but the python community has decided to distribute code primarily in jupyter notebooks, so having it on your machine may be useful so that you can run other people's code.
+
+-   [Additional instructions for installing Python 3](https://www.py4e.com/lessons/install) from Python for Everybody if you have trouble.
+
+::::
+
+
 3.  Download and install the [latest version of RStudio](https://posit.co/download/rstudio-desktop/#download) for your operating system.
     RStudio is a integrated development environment (IDE) for R, created by Posit.
     It contains a set of tools designed to make writing R, python, javascript, and other data-related code easier.
@@ -123,7 +149,7 @@ If you didn't do this, you can follow [these instructions](https://www.geeksforg
 4.  Download and install the [latest version of Quarto](https://quarto.org/#getting-started) for your operating system.
     Quarto is a command-line tool released by Posit that allows you to create documents using R or python, combining code, results, and written text.
 
-The following steps may be necessary depending on which class you're in.
+The following steps may be helpful or required for your class.
 If you want to be safe, go ahead and complete these steps as well.
 
 5.  Install git using the instructions [here](https://happygitwithr.com/install-git.html).
@@ -133,6 +159,7 @@ If you want to be safe, go ahead and complete these steps as well.
     We will configure git later, in @sec-git. For now, let's just get it installed. 
 
 6.  Install LaTeX, rmarkdown, and quarto
+
 
 :::: setup
 
@@ -146,12 +173,31 @@ If you want to be safe, go ahead and complete these steps as well.
     install_tinytex()
     ```
     
+
+:::: setup
+
+#### Set Up Document Processing Software {.unnumbered}
+
+-   Launch R, and type the following commands into the console:
+
+```{r tinytex-install, eval = F}
+install.packages(c("tinytex", "knitr", "rmarkdown", "quarto"))
+library(tinytex)
+install_tinytex()
+```
+
+
 If you have an existing installation of LaTeX, using tinytex or another installer, I highly recommend that you uninstall LaTeX before re-installing the most recent version. 
 
 - Configure RStudio to use the tinytex installation of LaTeX: 
     - Go to Tools -> Global Options -> Sweave    
     ![A view of the RStudio Sweave configuration pane, with settings for PDF generation and LaTeX editing as recommended for this textbook's instructions.](../images/tools/Rstudio-sweave-config.png){fig-alt="The RStudio configuration pane for Sweave. The PDF generation options are as follows: Weave Rnw files using `knitr`, Typeset LaTeX into PDF using `XeLaTeX` (for font compatibility and modern rendering). The LaTeX editing and compilation options are a set of checkboxes; the two checked options are use tinytex when compiling .tex files, and Clean auxiliary output after compile. The PDF preview options can be set as you desire and are highly operating-system dependent."}
 
+
+::::
+
+
+        
 ::::
 
 

@@ -1,0 +1,962 @@
+
+# Record-based Data and List Processing Strategies {#sec-xml}
+
+@sec-data-web introduces how XML and HTML documents are constructed and demonstrates different techniques for scraping data from the web.  
+@sec-data-apis introduces Application Programming Interfaces (APIs) to get data from the web in a cleaner, more efficient way.
+Web-based data often uses different formats, like JSON (JavaScript Object Notation), to provide data from requests in a structured way. 
+Before we can effectively use APIs, it helps to review some basic patterns and methods for working with record based data and converting it into the rectangular data that most statistical analyses are built around.
+
+## Prerequisites {-}
+
+- Working knowledge of data wrangling techniques (@sec-data-cleaning, @sec-strings, @sec-data-reshape)
+- Familiarity with table joins (@sec-data-join)
+- Familiarity with functional programming (@sec-lists) 
+- Familiarity with XML file structures (@sec-data-web)
+
+This chapter will assume that you've used (or at least seen) techniques like split-apply-combine or map-reduce, anonymous functions, and table joins (full, left, right, inner) and similar techniques before. 
+Here, we will focus on how these strategies apply specifically to record-based, hierarchically formatted data that is often found in XML and JSON files. 
+
+## Objectives {-}
+- Differentiate between tabular and record-based data structures
+  - Develop strategies to transform record-based data into tabular data
+  - Recognize situations where multiple linked tables or nested list-columns may be required to represent the data effectively in a tabular format
+- Transform data in record-based formats such as XML and JSON into single or multiple linked rectangular data tables.
+- Implement data cleaning and quality control measures to ensure that data is read in and transformed correctly and important information is not lost. 
+
+
+## Data Models
+
+If you are reading this book, chances are you're approaching programming from a more statistical or data-sciency point of view, rather than as a computer scientist. 
+As a result, you probably have a general expectation that data will be laid out in a rectangular form, with rows representing observations or individuals and columns representating variables, measurements, or other dimensions of data which are applicable to each observation or individual. 
+
+This is an assumption which is much more common (at least in my experience) in statistics than in computer science more generally, though of course there are statisticians working on all sorts of different data types, including those we will discuss here.
+
+### Relational Data
+
+**Relational** data is a particular type of data model that assumes table-based data storage. 
+That is, when we access data in spreadsheets, CSVs, and so on, we are working with relational data. 
+In computer science terms, a *relation* consists of a *heading* and a *body*. 
+
+- The *heading* defines a set of *attributes* that have a name and a data type (mathematically, a domain).
+- The *body* is a set of **tuples** (a tuple is a collection of $n$ values, and is a formal data type in Python, but not in R), where there are as many values as are defined in the heading. 
+
+This is all an abstract way of describing the composition of a Data Frame, as this book did in @sec-data-frames, where a DataFrame is a heterogeneous list of columns where:
+
+-   Every entry in each column must have the same data type
+-   Every column must have the same number of rows
+
+In a relational model, a record typically corresponds to a row of the data -- in statistical terms, an observation (especially if our relational table is in tidy form). 
+
+Not every record-based system is relational, however. Let's examine a few other structures.
+
+### Record-based Data Models
+Before the relational data model became popular, however, there was the **hierarchical** data model.
+In the 1960s, computers began to be utilized for data storage, and this naturally led to record-based data models. 
+
+In a record-based data model, data are stored as **records** that are a collection of **fields**, where each field is a single value with an associated (usually fixed length/size) type. 
+The fields in a record determine the record's **type**. 
+
+#### Hierarchical Data Models
+
+A generic **entity** or **class** can be defined as a collection of **fields** in a more formal object-oriented hierarchical representation. 
+**Links** connect records with associated records, forming a tree. 
+
+This type of data structure is incredibly common, but it does not always (easily) reduce to tabular data. 
+In many cases, though, it is possible to represent hierarchical data as a set of tables that relate to each other through **keys**. 
+
+::: demo
+##### Demo: Hierarchical Employee Data {-}
+
+When a company hires an employee, many different records may be generated:
+
+- employee information (name, address, phone number, ssn)
+- initial paperwork (background check, tax information)
+- training history
+- employment agreement details (position type - permanent/contract/intern, start date, benefits, pay amount, which position the employee reports to)
+
+In the pre-computer days, you can imagine that each set of records might be kept alphabetized by the most important field (employee name, in many cases, position in others) in separate filing cabinets. 
+When computers entered the picture, the most direct translation was to build a hierarchical set of records with a structure much like the file cabinets - each set of information was kept with other records of its type, and these records could be linked together -- usually, by following direct relational links between different forms. 
+SAP, which is a very common enterprise data management system, still works this way - you pull up a record, and then click on linked records to navigate between different forms in the system.
+
+```{mermaid}
+%%| label: fig-employee-record-diag
+%%| fig-cap: This entity-relationship diagram contains information about corporate records relating to a single employee, such as employee details, supervisory relationships, employment agreement details, training records, tax information, and background checks. 
+%%| file: ../images/advanced/employee-records.mmd
+```
+
+In record-based data models, it can be complicated to actually *do* anything with the set of records. 
+It might be relatively easy to e.g. list out all employees, but other related tasks, like determining how many people one individual is supervising, may require sifting through every ORG_REL record and could be complicated by how the records are stored (are they all text files in folders by employees?). 
+Record-based data models, whether hierarchical or not, were originally a digital extension of physical records (think rows of file cabinets in old movies). 
+
+Note that it is a relatively simple step between a hierarchical data model and a relational data model with separate tables for each record type. 
+This isn't shocking, if only because the relational data model where tables are joined together is a direct descendant of the hierarchical form-based data model described here. 
+
+:::
+
+:::: example
+
+##### Example: Hierarchical Employee Data {-}
+
+
+::: panel-tabset
+###### Problem Description {-}
+
+Read in [this XML file of sample employee data](../data/sample_employee_data.xml) and 
+
+1. Assemble a table of all of the employee information in @fig-employee-record-diag (that is, ID, first, middle, and last name, address, phone number, and social security number). 
+    - Can you do this using data processing functions like `map_dfr` and `as_list` in R or `read_xml` in pandas (you'll have to use chained operations in R and custom arguments in python)?
+    - Identify any employees with an invalid social security number using your tabular data representation.
+
+2. Identify the supervisor who has the most people reporting to them, without converting the data to tabular format, and then retrieve a list of all of that person's direct reports as employee IDs. 
+
+3. Identify whether there are any employees who took the same training twice, without converting the data to tabular format. 
+
+Do you prefer to work with tabular data or hierarchical data? Why?
+
+###### R (purrr) {-}
+
+```{r}
+library(xml2)
+library(purrr)
+library(dplyr)
+library(stringr)
+
+info <- read_xml("../data/sample_employee_data.xml")
+records <- xml_find_all(info, "//*/EMPLOYEE")
+df <- records |> 
+  as_list() |>
+  map_dfr(~.x |> 
+            unlist(recursive = T) |> 
+            t() |> 
+            as.data.frame() |> 
+            set_names("id", "first", "last", "middle", 
+                      "address", "phone", "ssn")
+  ) |>
+  mutate(valid_ssn = str_count(ssn, "\\d")==9)
+head(df)
+filter(df, !valid_ssn)
+
+```
+
+The `purrr::pluck()` function is a good way to pull out the information we need, once we convert the xml file to a list structure (which is still not a tabular form). 
+
+```{r}
+supervisors <- xml_find_all(info, "//*/ORG_REL/*")|> 
+  as_list() |>
+  map_chr(~purrr::pluck(., "SUPERVISOR_ID", 1)) 
+employees <- xml_find_all(info, "//*/ORG_REL/*")|> 
+  as_list() |>
+  map_chr(~purrr::pluck(., "EMPLOYEE_ID", 1)) 
+
+supervisor_reports <- supervisors |>
+  table() |> sort(decreasing = T)
+
+employees[which(supervisors == names(supervisor_reports)[1])]
+
+# Just for context
+filter(df, id%in%employees[which(supervisors == names(supervisor_reports)[1])])
+```
+
+```{r}
+ids <- xml_find_all(info, "//*/TRAINING/TRAININ/EMPLOYEE_ID")|> xml_text()
+
+get_employee_training_type <- function(id) {
+  employee_training_xpath <- sprintf("//*/TRAINING/TRAININ/EMPLOYEE_ID[text()='%s']", id)
+  employee_training_nodes <- xml_find_all(info, employee_training_xpath)
+  training_type <- employee_training_nodes |> 
+    xml_parent() |>
+    xml_child("TRAINING_TYPE") |> 
+    xml_text() |> 
+    unlist()
+}
+
+duplicates <- function(list) {
+  length(list) != length(unique(list))
+}
+
+dupe_employees <- map(unique(ids), get_employee_training_type) |>
+  map_lgl(duplicates)
+
+unique(ids)[dupe_employees] |> as.numeric() |> sort()
+```
+
+
+
+```{r}
+# This is how easy it is in tabular form... 
+training_str <- xml_find_all(info, "//*/TRAINING/TRAININ")|> 
+  as_list() |>
+  map_dfr(~.x |> 
+            unlist(recursive = T) |> 
+            t() |> 
+            as.data.frame() |> 
+            set_names("id", "type", "employee_id", "score")
+  ) |> group_by(employee_id) |>
+  summarize(n = n(), n_unique = length(unique(type))) |>
+  filter(n != n_unique)
+```
+
+###### Python {-}
+
+```{python}
+from bs4 import BeautifulSoup
+import pandas as pd
+
+df = pd.read_xml("../data/sample_employee_data.xml", 
+                 iterparse={"EMPLOYEE": ["id", "first", "last", "middle", 
+                                         "address", "phone", "ssn"]})
+df.head()
+
+# Invalid SSNs
+df.query("~(ssn<=999999999 & ssn >= 100000000)")
+
+```
+
+In order to not convert things to a tabular format, we have to use the xml library directly. 
+This is annoying and a good vote in favor of using tabular formats instead of hierarchical stuff, particularly when pandas makes it easy to get the tabular format we need back out. 
+
+```{python}
+import xml.etree.ElementTree as ET
+doc = ET.parse(r"../data/sample_employee_data.xml")
+root = doc.getroot()
+relationships = root.find("ORG_REL")
+relationships = relationships.findall("ORG_RE")
+
+# These get the employee ID and supervisor ID for every relationship listed
+employees = pd.Series([e[1].text for e in relationships])
+supervisors = pd.Series([e[2].text for e in relationships])
+
+# Count # times supervisor ID appears in list
+supervisors.groupby(supervisors).count().head()
+
+# Supervisor with most employees
+busiest_sup = supervisors.groupby(supervisors).count().sort_values(ascending=False).index[0]
+busiest_sup
+
+# List of those employees
+busiest_sup_employees = employees.loc[supervisors==busiest_sup]
+busiest_sup_employees
+```
+
+Now we tackle the training problem in a similar way, making use of the fact that we can group one series (training types) by another (employee ID) and the index of the grouped series will have the employee ID we want. 
+This is right on the border of tabular data, and yes, I'm intentionally blurring the lines even further. 
+Ultimately, what we want is to solve the problem.
+
+```{python}
+trainings = root.find("TRAINING")
+trainings = trainings.findall("TRAININ")
+
+training_types = pd.Series([e[1].text for e in trainings])
+training_empl = pd.Series([e[2].text for e in trainings])
+multiple_trainings = training_types.groupby(training_empl).agg(lambda x: len(x) != x.nunique())
+# Employees who took the same training multiple times
+multiple_trainings.index[multiple_trainings.values]
+```
+:::
+
+::::
+
+#### Network Data Models
+
+In a hierarchical data model, each record has only one parent. 
+This is, as it turns out, a fairly restrictive constraint, as in the real world, there can be many-to-many relationships that are not strictly hierarchical - imagine trying to represent genealogical data with the restriction that each node can have only one parent!
+
+Another form of record-based data model is a **network**. 
+This model allows many-to-many relationships between records and even reciprocal links between two or more records (a "cycle" in network terms). 
+
+Often, it is convenient to separately model the individual entities ("nodes") in one table and the edges in another, when converting network data to something rectangular. 
+In the case that edges are not directional (and thus cycles are not possible), it is often useful to impose a constraint to ensure that there is only one proper link between two nodes. 
+One common constraint is a variant of "the ID of the first node is greater than the ID of the second". 
+When edges are directional, the order of the two nodes is useful, and no such constraints are required. 
+
+In both cases, extra information about the link between the two nodes may be included in additional columns in the 'edge' table. 
+
+:::: demo
+
+##### Demo: Relationship Data Networks
+
+In an attempt to demonstrate how complex a network data model can get, [I asked ChatGPT to generate a data set of romantic relationships between Grey's Anatomy characters over the show's 21 seasons.](../data/greys-anatomy-gpt.txt) 
+
+
+:::: column-margin
+
+![I have *no* desire to watch all 21 seasons to check the bot's work, so we're going to assume it's the authority here. Feel free to submit a pull request if you have corrections to offer.](../images/gifs/murderbot-content.gif){fig-alt="A gif from the AppleTV show Murderbot, showing a robot who says 'I watched 7532 hours of content'"}
+::::
+
+```{mermaid}
+%%| label: fig-greys-anatomy-network
+%%| fig-cap: Romantic relationships between characters in Grey's Anatomy, aggregated over all 21 seasons.
+%%| file: ../images/advanced/greys-network.mmd
+```
+
+This is a directed graph -- the edges are arrows, starting from the person initiating the relationship (presumably) and ending at the person who is the target of the relationship. 
+There is an additional value on each edge that describes the type of relationship. 
+
+We can imagine describing this data in tabular form as follows, showing some of the nodes involving Meredith Grey to save space: 
+
+Person1 | Person2 | type
+---- | ---- | ----
+MeredithGrey | DerekShepherd | romantic
+MeredithGrey | NathanRiggs | romantic
+MeredithGrey | AndrewDeLuca | romantic
+MeredithGrey | NickMarsh | romantic
+MeredithGrey | GeorgeOMalley | one-night
+GeorgeOMalley | MeredithGrey | one-night
+... | ... | ...
+
+Then, if we have additional data on each person, such as an astrological sign, we could also have a person table containing that information. 
+We can then reshape and join these tables to create different tables that are suitable for different analyses.
+
+If you'd like to play around with this data, there are two JSON files that contain all of the information you would need: [relationships](../data/greys-anatomy-data.json), and [astrological signs](../data/greys-anatomy-astrology.json) (not all characters have known or imputed astrological signs, so there will be some missing data).
+
+
+```{r}
+library(tibble)
+library(dplyr)
+library(tidyr)
+library(purrr)
+library(jsonlite)
+
+sign_order <- c("Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces")
+
+relationships <- read_json("../data/greys-anatomy-data.json") |>
+  map_df(as_tibble)
+astrology <- read_json("../data/greys-anatomy-astrology.json")
+astrology <- tibble(Person = names(astrology), sign = unlist(astrology)) |>
+  mutate(sign = factor(sign, levels = sign_order, ordered = T))
+```
+
+
+Since I don't know anything about astrology, let's start by examining whether certain astrological signs are more likely to have a certain type of relationship. 
+
+```{r}
+#| label: grey-relationship-type-sign
+long_rels <- relationships |> 
+  mutate(id = 1:n()) |> # <1>
+  pivot_longer(cols = 1:2) # <1>
+
+rels_signs <- long_rels |>
+  left_join(astrology, by = c("value" = "Person")) # <2>
+
+# Data that is left out
+anti_join(long_rels, astrology, by = c("value" = "Person")) # <3>
+anti_join(astrology, long_rels, by = c("Person" = "value")) # <3>
+
+contingency_table <- table(long_rels$relationship, long_rels$sign) # <4>
+knitr::kable(contingency_table, caption = "Types of relationships, by astrological signs of the participants.", label = "tbl-grey-relationship-type-sign")
+```
+1. Keep relationships together by adding an ID variable (for tracking data backwards after the pivot operation), and then pivot the first two variables into a "name" (source or target) and "value" (Person's name) column, keeping relationship type and id as originally specified.
+2. Add in the person's astrological sign. This is expected to be a many-to-one relationship -- each person should have one astrological sign, but there may be many relationships specified for a single person in the table, as the show went on for 21 years. 
+3. We do a sanity check to see what data was left out of the join step in 2. This requires checking both the forward and backwards joins -- the first shows the rows in `long_rels` that aren't in `astrology` (because the characters don't have astrological signs that are known), while the second shows the rows in `astrology` that don't have an equivalent in `long_rels` (there aren't any, in this case). Checking this ensures that you don't accidentally lose data. 
+4. Create the contingency table showing relationship type in rows and astrological sign in columns. 
+
+This table has a *lot* of zeros, so I don't think we're going to be able to pull off a statistical analysis because the data is too sparse. 
+Perhaps we could ask AI for similar data sets on the characters of House, ER, and other medical dramas, and then combine the data, if we wanted to proceed with a formal analysis.
+@holsterChapter7Network2022 provides demonstrations for how to analyze network data, if you are interested. 
+
+We can also just join both the source and the target in the same dataset to combine the information, as long as we are careful about renaming columns -- the resulting contingency table is shown under the code chunk below. 
+The sparsity of this data (we have 144 possible astrological combinations, and only `r nrow(relationships)` relationships) all but guarantees that we won't be able to do any meaningful data analysis -- Grey's Anatomy just didn't have enough relationships over 21 years for statistical purposes.
+
+```{r}
+#| label: grey-source-target-sign
+#| 
+relationship_signs <- relationships |> 
+  left_join(astrology, by = c("source" = "Person")) |>
+  rename(source_sign = sign) |>
+  left_join(astrology, by = c("target" = "Person")) |>
+  rename(target_sign = sign)
+
+table(Source = relationship_signs$source_sign, Target = relationship_signs$target_sign) |>
+  knitr::kable(caption = "Relationships in Grey's Anatomy, by astrological sign of the initiating individual (rows) and the target (columns). Not all relationships are included as not all characters have known or imputed (by the actor's sign) astrological sign.")
+```
+
+
+:::
+
+Before converting relational tables describing a network into a joint tabular structure assessing what we want to know, it is important to think carefully about the size of the data you are working with, as well as the types of joins you plan to execute.
+Thinking carefully about what dimension you expect your output to be will help you ensure that your join was executed as expected, and will also hopefully prevent you from doing a multiple-to-multiple join that outputs a behemoth of a dataset and potentially crashes your computer. 
+Every example is different, so think carefully about which columns you want to use to join, whether you expect a many-to-many relationship between tables, and what the output dimension should be. 
+
+:::: example
+
+##### Example: Computer Language Influences {-}
+
+New computer languages are often influenced by existing languages -- for instance, R is an open-source clone of S, which was a proprietary language used at IBM -- the function names are the same, but the methods are not necessarily identical underneath the hood. 
+
+I [worked with ChatGPT](../data/language-inheritance-gpt.txt) to develop a "family tree" of programming languages, focusing primarily on those used for data analysis tasks. 
+ChatGPT was categorically wrong several times, so while I can vouch for the R/Julia/Python portions of the tree, it's harder to guarantee that the other portions of the tree are 100% correct, though they seem to mostly match up with my prior knowledge. 
+In this case, the goal is to provide you with a dataset that can be manipulated, so that's the critical part of this exercise. 
+
+::: panel-tabset
+###### Problem Description {-}
+
+The json file [`Language-Inheritance.json`](../data/Language-Inheritance.json) provides data on each programming language in the relationship diagram, including the release date and creator(s) credited with the language. 
+
+```{mermaid}
+%%| label: fig-computer-language-inheritance
+%%| fig-cap: Relationships between computer languages. Direct influences are shown with solid lines, while indirect influences based on the larger ecosystem of programming languages at the time are shown with dotted lines. 
+%%| file: ../images/advanced/Language-Network.mmd
+```
+
+Read this JSON data in, and convert the information to two tables - a language table and a relationship table. 
+Ensure that ChatGPT at least did not claim that a language (A) inherits from a language (B) released after the release of language A. 
+(One draft of this data claimed that Matlab inherited from Julia, which was released well after Matlab). 
+
+
+In the case of equal release years, this would indicate rapid language development. 
+Otherwise, this would indicate one of several possibilities: time travel, evolution of the language to incorporate new influences, or ChatGPT is wrong. 
+In any of these cases, more research would be necessary to determine what happened and whether the link is reasonably included in the dataset. 
+
+###### R
+
+```{r}
+library(jsonlite)
+library(tibble)
+library(dplyr)
+library(tidyr)
+library(purrr)
+
+proglang <- read_json("../data/Language-Inheritance.json") # <1>
+# str(proglang) # long set of output
+
+proglang$nodes[[1]]
+
+fix_nodes <- function(i) { # <2>
+  tibble(id = i$id, year = i$year, creators = list(i$creators)) # <2>
+} # <2>
+
+proglangnodes <- map_dfr(proglang$nodes, fix_nodes)  # <3>
+head(proglangnodes)
+
+proglang$edges[[1]]
+
+proglangedges <- map_dfr(proglang$edges, as_tibble)  # <4>
+head(proglangedges)
+
+proglangrels <- left_join(proglangedges, proglangnodes, by = c("source"="id")) |>   # <5>
+  rename(year_source=year) |>  # <6>
+  select(-creators) |>  # <6>
+  left_join(proglangnodes, by = c("target" = "id")) |>  # <7>
+  rename(year_target = year) |>  # <8>
+  select(-creators)  # <8>
+
+filter(proglangrels, year_source >= year_target)   # <9>
+```
+1. Read in the data
+2. Create a tibble row from the data, using a list-column for the creators. This approach is a direct result of seeing the structure of the first node in the nodes sub-list, because it can't be easily rectangularized without list-columns. 
+3. For each language, apply the `fix_nodes` function, combining results rowwise into a tibble.
+4. Create a tibble row from the edge data. We can use `as_tibble` here because the data only has 3 components and there aren't any list-columns needed. 
+5. Left join the edges and nodes to get information on the source language. 
+6. Rename the year to be clearer that this is the year of the source language, and remove creators because we don't need them right now. 
+7. Left join the edges and nodes again, adding information on the target language.
+8. Rename the year to be clearer - target language, and remove creators again because they're not important to answer our quesiton.
+9. Determine whether any source languages have a year that's greater than or equal to the target language. 
+
+
+
+###### Python
+
+```{python}
+import json
+import pandas as pd
+
+with open('../data/Language-Inheritance.json') as f: # <1> 
+  data = json.load(f) # <1> 
+
+proglangnodes = pd.DataFrame(data['nodes']) # <2> 
+proglangyears = proglangnodes.drop('creators', axis = 1).set_index('id') # <3> 
+
+proglangedges = pd.DataFrame(data['edges']) # <4> 
+
+res = proglangedges.join(proglangyears, on = "source", how = 'left') # <5> 
+res = res.rename(columns = {'year':'year_source'}) # <6> 
+res.head()
+
+res = res.join(proglangyears, on = "target", how = 'left') # <7> 
+res = res.rename(columns = {'year':'year_target'}) # <8> 
+res.head()
+
+res.query('year_source>=year_target') # <9> 
+```
+1. Read in the data
+2. Create a DataFrame from the nodes (pandas automatically uses list-columns here)
+3. Define a DataFrame with just the language and year, and set the language ('id') as the index to prepare for joining this to the edge dataset. 
+4. Create a DataFrame from the edge data. 
+5. Left join the edges and nodes to get information on the source language. 
+6. Rename the year to be clearer that this is the year of the source language.
+7. Left join the edges and nodes again, adding information on the target language.
+8. Rename the year to be clearer - target language.
+9. Determine whether any source languages have a year that's greater than or equal to the target language. 
+
+:::
+
+The Wikipedia page for [JavaScript](https://en.wikipedia.org/wiki/JavaScript#History) suggests that JavaScript was influenced by Java, and that JavaScript appeared in December 1995 while Java appeared in May 1995. 
+So, I suppose we can conclude at this point that the stated link is reasonable. 
+::::
+
+## Developing A Conversion Strategy
+
+When you have an XML or JSON data file that is record based, it can be tricky to determine the best way to convert this into a tabular data structure. 
+
+A general strategy will look something like this:
+
+1. What types of records do you have? Are there multiple  types? How do they relate to each other?
+    - Identify linking variables (keys)
+    - Identify problematic attributes -- things that may be missing in some records, or may need to be list-columns or even nested data frames. 
+2. What data do you need? Sometimes, you don't have to convert the entire dataset into a tabular structure -- you can be selective about it, and save yourself a ton of work.
+3. What do you plan to do with the data? Sketch out the form of your target data (rows, columns, data types) so that you can plan a strategy of how to get from A to B. 
+4. Write functions to convert records into rows of a table (if step 1 has problematic attributes) or use a list-to-table conversion function (if step 1 doesn't have problematic attributes). 
+5. Double-check several records to ensure all data is accounted for and that keys match as expected.
+
+:::: demo
+
+### Demo: Book/TV Show Characters
+
+I have assembled a JSON file of all of the characters in A Song of Ice and Fire by George R. R. Martin using [An API of Ice and Fire](https://anapioficeandfire.com/) (I'll show how to do this in the next chapter). 
+The series has been used to create several TV Shows (Game of Thrones, House of the Dragon, and A Knight of the Seven Kingdoms).
+
+The JSON file has more than 50k rows, but it's clear that there is a structure to the data, along with a lot of missing information. 
+
+The tabs below work through the five steps listed immediately above this section.
+
+::: panel-tabset
+
+#### 1. Examine the record structure
+
+There is only one type of record in the file -- data corresponding to each character in the series. 
+
+::: {.callout  collapse=true}
+##### Selection of 4 records
+
+```
+{
+		"url": "https://anapioficeandfire.com/api/characters/1",
+		"name": "",
+		"gender": "Female",
+		"culture": "Braavosi",
+		"born": "",
+		"died": "",
+		"titles": [],
+		"aliases": [
+			"The Daughter of the Dusk"
+		],
+		"father": "",
+		"mother": "",
+		"spouse": "",
+		"allegiances": [],
+		"books": [
+			"https://anapioficeandfire.com/api/books/5"
+		],
+		"povBooks": [],
+		"tvSeries": [],
+		"playedBy": []
+	},	
+	{
+		"url": "https://anapioficeandfire.com/api/characters/238",
+		"name": "Cersei Lannister",
+		"gender": "Female",
+		"culture": "Westerman",
+		"born": "In 266 AC, at Casterly Rock",
+		"died": "",
+		"titles": [
+			"Light of the West",
+			"Queen Dowager",
+			"Protector of the Realm",
+			"Lady of Casterly Rock",
+			"Queen Regent"
+		],
+		"aliases": [
+			"Brotherfucker",
+			"The bitch queen"
+		],
+		"father": "",
+		"mother": "",
+		"spouse": "https://anapioficeandfire.com/api/characters/901",
+		"allegiances": [
+			"https://anapioficeandfire.com/api/houses/229"
+		],
+		"books": [
+			"https://anapioficeandfire.com/api/books/1",
+			"https://anapioficeandfire.com/api/books/2",
+			"https://anapioficeandfire.com/api/books/3"
+		],
+		"povBooks": [
+			"https://anapioficeandfire.com/api/books/5",
+			"https://anapioficeandfire.com/api/books/8"
+		],
+		"tvSeries": [
+			"Season 1",
+			"Season 2",
+			"Season 3",
+			"Season 4",
+			"Season 5",
+			"Season 6"
+		],
+		"playedBy": [
+			"Lena Headey"
+		]
+	},
+	{
+		"url": "https://anapioficeandfire.com/api/characters/2",
+		"name": "Walder",
+		"gender": "Male",
+		"culture": "",
+		"born": "",
+		"died": "",
+		"titles": [],
+		"aliases": [
+			"Hodor"
+		],
+		"father": "",
+		"mother": "",
+		"spouse": "",
+		"allegiances": [
+			"https://anapioficeandfire.com/api/houses/362"
+		],
+		"books": [
+			"https://anapioficeandfire.com/api/books/1",
+			"https://anapioficeandfire.com/api/books/2",
+			"https://anapioficeandfire.com/api/books/3",
+			"https://anapioficeandfire.com/api/books/5",
+			"https://anapioficeandfire.com/api/books/8"
+		],
+		"povBooks": [],
+		"tvSeries": [
+			"Season 1",
+			"Season 2",
+			"Season 3",
+			"Season 4",
+			"Season 6"
+		],
+		"playedBy": [
+			"Kristian Nairn"
+		]
+	},
+  {
+  		"url": "https://anapioficeandfire.com/api/characters/208",
+  		"name": "Brandon Stark",
+  		"gender": "Male",
+  		"culture": "Northmen",
+  		"born": "In 290 AC, at Winterfell",
+  		"died": "",
+  		"titles": [
+  			"Prince of Winterfell"
+  		],
+  		"aliases": [
+  			"Bran",
+  			"Bran the Broken",
+  			"The Winged Wolf"
+  		],
+  		"father": "",
+  		"mother": "",
+  		"spouse": "",
+  		"allegiances": [
+  			"https://anapioficeandfire.com/api/houses/362"
+  		],
+  		"books": [
+  			"https://anapioficeandfire.com/api/books/5"
+  		],
+  		"povBooks": [
+  			"https://anapioficeandfire.com/api/books/1",
+  			"https://anapioficeandfire.com/api/books/2",
+  			"https://anapioficeandfire.com/api/books/3",
+  			"https://anapioficeandfire.com/api/books/8"
+  		],
+  		"tvSeries": [
+  			"Season 1",
+  			"Season 2",
+  			"Season 3",
+  			"Season 4",
+  			"Season 6"
+  		],
+  		"playedBy": [
+  			"Isaac Hempstead-Wright"
+  		]
+  	}
+```
+:::
+
+Any entry that includes a URL is a linking variable (by definition, as well as in practice -- it is not this easy to figure out linking variables in every dataset). 
+
+We can also see that 'books' does not include 'povBooks' - that is, if the character has a point-of-view chapter in a book, it is included in 'povBooks' instead of 'books'. 
+We might want to do a bit of cleaning here, and create a table that has books and a logical variable indicating if the character has a POV chapter in that book. 
+
+What isn't clear is whether multiple actors could play a single character -- for instance, if there was a young version and an old version of a character in a flashback. 
+That occurrence doesn't seem to happen here (there's only one playedBy value for any character, as far as I can tell), but it could. 
+Of course, if this did occur, the JSON data structure should be different as well -- perhaps with series and playedBy nested under a single variable and constrained to be the same length, so that it's clear which actor played in each series. 
+
+#### 2. Identify Needed Data
+
+In this case, we don't know what data we need (because I haven't specified an analysis) so we need to keep all of the data.
+
+#### 3. Sketch Form of the Data
+
+
+Right away, it is possible to conceptualize this data in a number of different ways. 
+We can store links within a single table, using list-columns, or we could store some of the relational information in different tables, and keep our main table very simple in structure. 
+
+![Only 3 tables, with lots of list-columns in personal information.](../images/advanced/list-proc-asoiaf-org1.svg){fig-alt="A sketch of a set of 3 data tables, with ID as a linking key between them. The first table is labeled Personal Information and has columns ID, URL, Name, Gender, Culture, Born, Died, Titles (list-col), Aliases (list-col), Father, Mother, Spouse (list-col), Allegiances (list-col). The second table has Book information, with columns ID, Book, and pov (point of view). The third is labeled TV Show Information and has columns ID, TVSeries, and playedBy."}
+![Four Tables, moving father, mother, and spouse relationships to a general 'Relationship Information' table where the type of relationship is described along with a link to the other individual's ID.](../images/advanced/list-proc-asoiaf-org2.svg){fig-alt="A sketch of a set of 4 data tables, with ID as a linking key between them. The first table is labeled Personal Information and has columns ID, URL, Name, Gender, Culture, Born, Died, Titles (list-col), Aliases (list-col), Allegiances (list-col). The second is labeled Relationship Information and has columns ID, URL, RelationshipType, and RelativeID. The third table has Book information, with columns ID, Book, and pov (point of view). The fourth is labeled TV Show Information and has columns ID, TVSeries, and playedBy."}
+
+![A structure with no list-columns. Any list-column could be moved to its own table using the ID variable as a link, if this is preferable to work with.](../images/advanced/list-proc-asoiaf-org3.svg){fig-alt="A sketch of a set of 7 data tables, with ID as a linking key between them. The first table is labeled Personal Information and has columns ID, URL, Name, Gender, Culture, Born, Died. The second is labeled Relationship Information and has columns ID, URL, RelationshipType, and RelativeID. The third table has Book information, with columns ID, Book, and pov (point of view). The fourth is labeled TV Show Information and has columns ID, TVSeries, and playedBy. The fifth is labeled Titles and has columns ID and Title. The sixth is labeled Aliases and has columns ID and Alias. The seventh is labeled Allegiances and has columns ID and Allegiance."}
+We must generally assume that almost any field other than ID/URL can be blank, and fields like Titles, Aliases, Allegiances, Spouse, Book, pov (point of view), and TVSeries can contain multiple values. 
+
+
+Of these strategies, the second strategy seems like it's the easiest to work with for most general problems -- it strikes a balance between number of tables (which will require joins to get into an analysis form, most likely) and the complexities of having to deal with list-columns. 
+
+#### 4. Write Functions to Format Data
+```{r}
+#| label: load-got-list-data
+#| include: false
+#| eval: true
+load("../data/got-list-analysis.RData")
+```
+
+```{r}
+#| label: create-got-list-data
+#| eval: false
+#| echo: true
+
+library(jsonlite)
+library(tibble)
+library(dplyr)
+library(tidyr)
+library(purrr)
+library(stringr)
+
+data <- read_json("../data/asoiaf_characters.json") # <1>
+
+blank_to_na <- function(j) {  # <2>
+  if (is.null(j)) {  # <3>
+    return(NA)  # <3>
+  }  # <3>
+  if (length(j) == 0) {  # <3>
+    return(NA)  # <3>
+  }  # <3>
+  if (length(j) > 1) {  # <4>
+    return(list(unlist(j)))  # <4>
+  }  # <4>
+  if (j == "") {  # <5>
+    return(NA)  # <5>
+  }  # <5>
+  return(j)  # <6>
+}
+
+fix_char_data <- function(i) {  # <7>
+  ifix <- map(i, blank_to_na)  # <8>
+  ifixtbl <- as_tibble(ifix) |>  # <9>
+    mutate(id = str_remove(url, "https://anapioficeandfire.com/api/characters/"))  # <9>
+  
+  personalInfo <- ifixtbl |>  # <10>
+    select(id, url, name, gender, culture, born, died, titles, aliases, allegiances)  # <10>
+  
+  relationships <- ifixtbl |>  # <11>
+    select(id, father, mother, spouse) |>  # <11>
+    pivot_longer(-id, names_to = "relationship_type", values_to = "relative_ID") |>  # <11>
+    unnest(relative_ID) |>  # <11>
+    mutate(relationship_type = as.character(relationship_type),   # <11>
+           relative_ID = as.character(relative_ID)) |>  # <11>
+    filter(!is.na(relative_ID))  # <11>
+  
+  book <- ifixtbl |>  # <12>
+    select(id, books, povBooks) |>  # <12>
+    pivot_longer(-id) |>  # <12>
+    unnest(value) |>  # <12>
+    mutate(pov = name == "povBooks") |>  # <12>
+    select(id, book = value, pov) |>  # <12>
+    mutate(book = as.character(book), pov = as.character(pov)) |>  # <12>
+    filter(!is.na(book))  # <12>
+  
+  tv_show <- ifixtbl |>  # <13>
+    select(id, tvSeries, playedBy) |>  # <13>
+    unnest(tvSeries) |>  # <13>
+    unnest(playedBy) |>  # <13>
+    mutate(tvSeries = as.character(tvSeries), playedBy = as.character(playedBy)) |>  # <13>
+    filter(!is.na(tvSeries))  # <13>
+  
+  return(tibble(personal = list(personalInfo),   # <14>
+                relationships = list(relationships),    # <14>
+                book = list(book),    # <14>
+                tv = list(tv_show)))   # <14>
+}
+
+datatbl <- map_dfr(data, fix_char_data)   # <15>
+
+personalInfo <- bind_rows(datatbl$personal)   # <16>
+relationships <- bind_rows(datatbl$relationships)   # <16>
+book <- bind_rows(datatbl$book)   # <16>
+tv_show <- bind_rows(datatbl$tv)   # <16>
+```
+1. Read in the data
+2. Write a function to handle different types of 'missingness' and replace with NA. 
+3. If the object is null or has length 0, return NA. 
+4. If the object is a list, return the list, but ensure it has only one level of hierarchy. This *could* get us in trouble if we used this same function on a different dataset, but the character variables don't have multiple levels of nesting, so it's ok in this case. This addition ensures we don't accidentally add another level of nesting, but also that we can handle an unnested list appropriately. 
+5. Another option for a 'blank' value is to have an empty string. We want to also replace that with NA. 6. If none of the empty options is true, then just return the value.
+7. Now, we write a function to create data table rows for each individual's data, for the 4 tables we decided to create. Creating each row of the 4 tables and using nested data frames allows us to only run the fixit function once, and then slice the data into sub-tables as we want. 
+8. Fix the data.
+9. Convert the fixed data to a table so it's easily manipulated with dplyr/tidyr
+10. Select the personal information into a separate table.
+11. Select the relationship information into a separate table. Then, pivot the relationships into relationshipType and relative_ID. Once that's done, we can unnest, which allows for multiple values of mother, father, and spouse. The mutate() statement just ensures that all variables are typed correctly - otherwise, we might have the default NA_logical_ instead of NA_character_ and get an error when we bind all the rows together. 
+12. Select the book information into a separate table. Then, pivot the relationships into book and pov, unnest, and create the pov variable as a logical indicating whether the book came from povBooks or books. The mutate() statement just ensures that all variables are typed correctly - otherwise, we might have the default NA_logical_ instead of NA_character_ and get an error when we bind all the rows together. 
+13. Select the tv information into a separate table and unnest each variable. This could lead to a many-to-many relationship in the case that someone played a character in one series but another actor played the character in the next series. A more rational structure would be to have tvSeries and playedBy nested together, so that it would be possible to indicate this conclusively, but this is an issue with the original data structure that we just respond to. The mutate() statement just ensures that all variables are typed correctly - otherwise, we might have the default NA_logical_ instead of NA_character_ and get an error when we bind all the rows together. 
+14. We return a nested tibble with each of the 4 tables we've created for our character. 
+15. Apply the full function to each record in data.
+16. Extract each nested tibble out and bind the rows together to get the 4 tables we wanted.
+
+```{r}
+#| label: save-got-list-data
+#| include: false
+#| eval: false
+save(data, datatbl, personalInfo, relationships, book, tv_show, blank_to_na, fix_char_data, file = "../data/got-list-analysis.RData")
+```
+
+#### 5. Double-check Records for Accuracy
+
+When double-checking records, I like to use a combination of strategies - random spot-checking, as well as checking values I know are likely to be challenging in one way or another.
+
+```{r}
+set.seed(3420934)
+tests <- sample(size = 3, x = 1:length(data))
+tests
+```
+```{r}
+#| code-fold: true
+#| code-summary: Random individual with ID=`{r} tests[1]`
+i <- tests[1]
+data[[i]][c("url", "name", "gender", "culture", "born", "died", "titles", "aliases", "allegiances")] |> print()
+filter(personalInfo, id==as.character(i)) |> print()
+filter(personalInfo, id==as.character(i))$titles |> print()
+filter(personalInfo, id==as.character(i))$aliases |> print()
+filter(personalInfo, id==as.character(i))$allegiances |> print()
+data[[i]][c("books", "povBooks")] |> print()
+filter(book, id == as.character(i)) |> print()
+data[[i]][c("mother", "father", "spouse")] |> print()
+filter(relationships, id == as.character(i)) |> print()
+data[[i]][c("tvSeries", "playedBy")] |> print()
+filter(tv_show, id == as.character(i)) |> print()
+```
+```{r}
+#| code-fold: true
+#| code-summary: Random individual with ID=`{r} tests[2]`
+i <- tests[2]
+data[[i]][c("url", "name", "gender", "culture", "born", "died", "titles", "aliases", "allegiances")] |> print()
+filter(personalInfo, id==as.character(i)) |> print()
+filter(personalInfo, id==as.character(i))$titles |> print()
+filter(personalInfo, id==as.character(i))$aliases |> print()
+filter(personalInfo, id==as.character(i))$allegiances |> print()
+data[[i]][c("books", "povBooks")] |> print()
+filter(book, id == as.character(i)) |> print()
+data[[i]][c("mother", "father", "spouse")] |> print()
+filter(relationships, id == as.character(i)) |> print()
+data[[i]][c("tvSeries", "playedBy")] |> print()
+filter(tv_show, id == as.character(i)) |> print()
+```
+```{r}
+#| code-fold: true
+#| code-summary: Random individual with ID=`{r} tests[3]`
+i <- tests[3]
+data[[i]][c("url", "name", "gender", "culture", "born", "died", "titles", "aliases", "allegiances")] |> print()
+filter(personalInfo, id==as.character(i)) |> print()
+filter(personalInfo, id==as.character(i))$titles |> print()
+filter(personalInfo, id==as.character(i))$aliases |> print()
+filter(personalInfo, id==as.character(i))$allegiances |> print()
+data[[i]][c("books", "povBooks")] |> print()
+filter(book, id == as.character(i)) |> print()
+data[[i]][c("mother", "father", "spouse")] |> print()
+filter(relationships, id == as.character(i)) |> print()
+data[[i]][c("tvSeries", "playedBy")] |> print()
+filter(tv_show, id == as.character(i)) |> print()
+```
+
+Then, we move on to the nonrandom sample, picking people we know and can verify, as  well as those who might reasonably have significant missing data or excessively long nested lists of attributes. 
+
+```{r}
+#| code-fold: true
+#| code-summary: Arya Stark 
+i <- 148
+data[[i]][c("url", "name", "gender", "culture", "born", "died", "titles", "aliases", "allegiances")] |> print()
+filter(personalInfo, id==as.character(i)) |> print()
+filter(personalInfo, id==as.character(i))$titles |> print()
+filter(personalInfo, id==as.character(i))$aliases |> print()
+filter(personalInfo, id==as.character(i))$allegiances |> print()
+data[[i]][c("books", "povBooks")] |> print()
+filter(book, id == as.character(i)) |> print()
+data[[i]][c("mother", "father", "spouse")] |> print()
+filter(relationships, id == as.character(i)) |> print()
+data[[i]][c("tvSeries", "playedBy")] |> print()
+filter(tv_show, id == as.character(i)) |> print()
+```
+
+```{r}
+#| code-fold: true
+#| code-summary: Jon Snow 
+i <- 583
+data[[i]][c("url", "name", "gender", "culture", "born", "died", "titles", "aliases", "allegiances")] |> print()
+filter(personalInfo, id==as.character(i)) |> print()
+filter(personalInfo, id==as.character(i))$titles |> print()
+filter(personalInfo, id==as.character(i))$aliases |> print()
+filter(personalInfo, id==as.character(i))$allegiances |> print()
+data[[i]][c("books", "povBooks")] |> print()
+filter(book, id == as.character(i)) |> print()
+data[[i]][c("mother", "father", "spouse")] |> print()
+filter(relationships, id == as.character(i)) |> print()
+data[[i]][c("tvSeries", "playedBy")] |> print()
+filter(tv_show, id == as.character(i)) |> print()
+```
+
+```{r}
+#| code-fold: true
+#| code-summary: Cersei Lannister 
+i <- 238
+data[[i]][c("url", "name", "gender", "culture", "born", "died", "titles", "aliases", "allegiances")] |> print()
+filter(personalInfo, id==as.character(i)) |> print()
+filter(personalInfo, id==as.character(i))$titles |> print()
+filter(personalInfo, id==as.character(i))$aliases |> print()
+filter(personalInfo, id==as.character(i))$allegiances |> print()
+data[[i]][c("books", "povBooks")] |> print()
+filter(book, id == as.character(i)) |> print()
+data[[i]][c("mother", "father", "spouse")] |> print()
+filter(relationships, id == as.character(i)) |> print()
+data[[i]][c("tvSeries", "playedBy")] |> print()
+filter(tv_show, id == as.character(i)) |> print()
+```
+
+```{r}
+#| code-fold: true
+#| code-summary: Drogo 
+i <- 1346
+data[[i]][c("url", "name", "gender", "culture", "born", "died", "titles", "aliases", "allegiances")] |> print()
+filter(personalInfo, id==as.character(i)) |> print()
+filter(personalInfo, id==as.character(i))$titles |> print()
+filter(personalInfo, id==as.character(i))$aliases |> print()
+filter(personalInfo, id==as.character(i))$allegiances |> print()
+data[[i]][c("books", "povBooks")] |> print()
+filter(book, id == as.character(i)) |> print()
+data[[i]][c("mother", "father", "spouse")] |> print()
+filter(relationships, id == as.character(i)) |> print()
+data[[i]][c("tvSeries", "playedBy")] |> print()
+filter(tv_show, id == as.character(i)) |> print()
+```
+
+:::
+
+
+::::
+
+@bryanManipulateXMLPurrr2024 and @bryanAnalyzeGithubStuff2025 contain additional worked examples in R, and @westTabulateJSONData2022 contains an example in python for how to convert JSON/XML/API values to tabular data. 
+
+
+## Conclusions
+
+Converting from record-based data models to relational data models is complex, in part because it depends on the structure of the data and the keys which link different tables/forms/nodes. 
+In general, your best bet is to carefully look at the data, investigate any values you don't understand (or values that you think may be keys to another table, but you aren't sure), and then design a correpsonding relational table structure that makes sense for the data you have in front of you.
+
+While you're considering how to do this, it is also important to sanity check for possible many-to-many relationships that may arise and ruin your data analysis.
+It's common to make assumptions about the absence of many-to-many relationships (for instance, I did that at least twice in the demo above), but they're usually hidden within the code and not obvious.
+When the data are updated, if those assumptions don't still hold, you could end up with an analysis that doesn't make any sense, so be careful and explicit about your assumptions with the data.
+
+## References {-}
+
+
+<!-- https://github.com/jennybc/manipulate-xml-with-purrr-dplyr-tidyr -->
+<!-- https://github.com/jennybc/analyze-github-stuff-with-r -->

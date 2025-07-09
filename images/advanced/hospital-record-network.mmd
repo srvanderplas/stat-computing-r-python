@@ -1,0 +1,132 @@
+
+erDiagram
+  EMPLOYEE {
+    string name
+    int id PK
+    int contract_id FK
+  }
+  EMPLOYEE ||--|{ HR_CONTRACT : has
+  EMPLOYEE ||--|{ PAYCHECK : has
+  SUPERVISOR {
+    int id PK
+    int suboordinate_id FK
+    int supervisor_id FK
+  }
+  EMPLOYEE }|--|o SUPERVISOR : has
+  HR_CONTRACT {
+    int id PK
+    int employee_id FK
+    int position_id FK
+    string department
+    float salary
+    float benefits
+  }
+  DOCTOR {
+    int id PK
+    int employee_id FK
+    int contract_ID FK
+    string specialty
+    int degree_id FK
+  }
+  EMPLOYEE }|--o| DOCTOR : is
+  NURSE {
+    int id PK
+    int employee_id FK
+    int contract_ID FK
+    string specialty
+    int degree_id FK
+  }
+  EMPLOYEE }|--o| NURSE : is
+  TECH {
+    int id PK
+    int employee_id FK
+    int contract_ID FK
+    array(int) equip_cert_id FK
+  }
+  EMPLOYEE }|--o| TECH : is
+  PAYCHECK {
+    int id PK
+    int employee_id FK
+    int contract_id FK
+    date issue_date
+    date start_period
+    date end_period
+    float gross_pay
+    float total_deductions
+    float net_pay
+    bool issued
+    bool cashed
+  }
+  PAYCHECK }|--|| HR_CONTRACT : has
+  PATIENT {
+    int id PK
+    string last
+    string first
+    string sex
+    int ssn FK
+  }
+  PATIENT ||--o{ INSURANCE : has
+  VISIT {
+    int id PK
+    int patient_id FK
+    int doctor_id FK
+    int nurse_id FK
+    string complaint
+    date visit_date
+  }
+  VISIT }|--|{ DOCTOR : has
+  VISIT }|--|{ NURSE : has
+  VISIT }|--|| PATIENT: has
+  INSURANCE {
+    int id PK
+    int patient_id FK
+    date start_date
+    date end_date
+    string company
+    string ins_id
+    string benefits_code
+  }
+  EQUIPMENT {
+    int id PK
+    string name
+    string specifications
+    date date-certified
+    array(int) test_codes
+  }
+  TEST {
+    int id PK
+    int equip_id FK
+    float bill_amt
+    float bill_amt_ins
+    string description
+    float sensitivity
+    float specificity
+  }
+  TEST }|..o| EQUIPMENT : has
+  RESULT {
+    int id PK
+    int patient_id FK
+    int visit_id FK
+    int ordered_by_id FK
+    int performed_by_id FK
+    int equip_id FK
+    int test_id FK
+    date date
+    string result
+    string attached_file
+  }
+  RESULT }|--|| PATIENT: has
+  RESULT }|--|o DOCTOR : has
+  RESULT }|--|{ TECH : has
+  RESULT ||--|| TEST : has
+  RESULT }|--|| VISIT : has
+  RESULT }|..|o EQUIPMENT : has
+
+accTitle: Sample Hospital Entity-Relationship Diagram
+accDescr {
+  This diagram contains entities such as employees, supervisors, hr_contracts, doctor, nurse, technician, paycheck, patient, visit, test, equipment, result, and insurance.
+  Relationships between e.g. employees and supervisors are described with annotated lines - each employee has one supervisor, while each supervisor has many employees.
+  Each paycheck corresponds to a single employee, but an employee should have multiple paychecks.
+  Doctors, Nurses, and Technicians are each subsets of the employees list, and so on.
+  Each entity has one or more fields, and some fields are primary keys (they uniquely identify a single entity record) while others are foreign keys, which can be used to identify links to related entity records.
+}

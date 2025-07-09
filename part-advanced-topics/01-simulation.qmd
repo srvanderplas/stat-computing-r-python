@@ -3,7 +3,9 @@
 ## {{< fa bullseye >}} Objectives
 
 -   Understand the limitations of pseudorandom number generation
--   Program a simulation for a specific task, process, or model
+-   Understand the connection between sampling methods such as inverse probability sampling and rejection sampling and theoretical statistics
+-   Implement sampling methods as required for distributions that do not have closed form approximations
+-   Use Monte Carlo methods for integration and other simulation tasks
 -   Determine the appropriate data structure to use for storing simulation task results
 
 
@@ -30,7 +32,7 @@ Since $a$, $c$, $m$ are usually specified by the implementation, as a user, you 
 It is critically important to set your seed if you want the results to be reproducible and you are using an algorithm that depends on randomness.
 :::
 
-Once you set your seed, the remaining results will only be reproducible if you generate the same set of random numbers every time.
+Once you set your seed, the remaining results will only be reproducible if you generate the same amount of random numbers every time.
 
 ::: column-margin
 I once helped a friend fit a model for their masters thesis using Simulated Annealing (which relies on random seeds).
@@ -38,7 +40,7 @@ We got brilliant results, but couldn't ever reproduce them, because I hadn't set
 😭
 :::
 
-::: callout-caution
+::: {.callout-caution collapse="true"}
 ### Example: Setting Seeds for Reproducibility
 
 :::: panel-tabset
@@ -122,29 +124,30 @@ To make my documents more reproducible, I will sometimes set a new seed at the s
 This introduces certain "fixed points" where results won't change immediately after I've re-set the seed.
 This is particularly important when I'm generating bootstrap estimates, fitting models, or simulating data for graphics experiments.
 
-::: column-margin
-![If you know, you know. If not, go watch some Dr. Who sometime. [Source](https://tenor.com/view/doctor-who-river-song-fixed-points-time-can-be-rewritten-fixed-points-can-be-rewritten-gif-22870014)](../images/gifs/fixed points.gif){fig-alt="A gif of Dr. River Song from Dr. Who, in a spacesuit, saying 'Fixed points can be rewritten' while fluttering her eyelashes."}
-:::
-
-
 Pick your seed in any way you want.
-I tend to just randomly wiggle my fingers over the number keys, but I have also heard of people using the date in yyyymmdd format, favorite people's birthdays, the current time in hhmmss format... basically, you can use anything.
+I tend to just randomly wiggle my fingers over the number keys, but I have also heard of people using the date in yyyymmdd format, favorite people's birthdays, the current time in hhmmss format... basically, you can use anything, so long as it's a valid integer. 
 
-## Built-in simulations from distributions
 
-Often, we can get away with just simulating data from a known distribution.
-As both R and python are meant for statistical computing, this is extremely easy by design.
+## Simulating from Probability Distributions
+
+### Using Built-in Simulation Functions
+
+Often, we can get away with simulating data from a known distribution. 
+In these cases, there is absolutely no point in DIY -- use the implementation that is available in R or Python, as it will be more numerically stable and much faster due to someone else having optimized the underlying C code. 
 
 ::: panel-tabset
-### R
+#### R
 
 You can see the various distribution options using `?Distributions`.
-In general, `dxxx` is the PDF/PMF, `pxxx` is the CDF, `qxxx` is the quantile function, and `rxxx` gives you random nubmers generated from the distribution.
+In general, `dxxx` is the PDF/PMF, `pxxx` is the CDF, `qxxx` is the quantile function, and `rxxx` gives you random numbers generated from the distribution.
 (`xxx`, obviously, is whatever distribution you're looking to use.)
 
 ```{r}
 #| fig-width: 10
 #| fig-height: 2
+#| label: fig-built-in-sims-r
+#| fig-cap: Density curves created from 500 samples from each of the Chi-Sq(5), Exponential(1), Gamma(3, 1), Normal(0,1), and t(5) distributions. 
+#| fig-alt: "A plot with 5 panels, where each panel contains a density curve created from 500 simulated values. Chi-Sq(5), Exponential(1), Gamma(3, 1), Normal(0,1), and t(5) distributions are shown."
 library(tibble)
 library(dplyr)
 library(tidyr)
@@ -162,11 +165,14 @@ tibble(
   ggplot(aes(x = value)) + geom_density() + facet_wrap(~dist, scales = "free", nrow = 1)
 ```
 
-### Python
+#### Python
 
 ```{python}
 #| fig-width: 10
 #| fig-height: 2
+#| label: fig-built-in-sims-py
+#| fig-cap: Density curves created from 500 samples from each of the Chi-Sq(5), Exponential(1), Gamma(3, 1), Normal(0,1), and t(5) distributions. 
+#| fig-alt: "A plot with 5 panels, where each panel contains a density curve created from 500 simulated values. Chi-Sq(5), Exponential(1), Gamma(3, 1), Normal(0,1), and t(5) distributions are shown."
 import random
 random.seed(109025879)
 
@@ -185,22 +191,23 @@ long_df = pd.melt(wide_df, id_vars = None, var_name = "dist", value_name = "valu
 
 from plotnine import *
 
-(ggplot(long_df, aes(x = "value")) + geom_density() + facet_wrap("dist", scales="free", nrow = 1))
+p = (ggplot(long_df, aes(x = "value")) + geom_density() + facet_wrap("dist", scales="free", nrow = 1) + theme(figure_size=(10,2)))
+p.show()
 ```
 :::
 
-::: callout-tip
-### Try it out
+::: {.callout-tip collapse="true"}
+#### Try it out
 
 :::: panel-tabset
-#### Problem
+##### Problem
 
 Generate variables x and y, where x is a sequence from -10 to 10 and y is equal to $x + \epsilon$, $\epsilon \sim N(0, 1)$.
 Fit a linear regression to your simulated data (in R, `lm`, in Python, `sklearn.linear_model`'s `LinearRegression`).
 
 Hint: Sample code for regression using sklearn [@menonLinearRegressionLines2018].
 
-#### R
+##### R
 
 ```{r}
 set.seed(20572983)
@@ -210,7 +217,7 @@ regression <- lm(y ~ x, data = data)
 summary(regression)
 ```
 
-#### Python
+##### Python
 
 ```{python, collapse = T}
 import random
@@ -246,9 +253,9 @@ plt.show()
 
 Simulation from different distributions can be used to determine which estimators are most appropriate for a given scenario, to determine how likely it is to observe a specific value in a sample of size $n$, and for many other applications. 
 
-:::: callout-caution
+:::: {.callout-caution collapse=true}
 
-### Example: Mean vs. Median
+#### Example: Mean vs. Median
 
 Suppose you want to determine which estimator is better - mean or median - for $t$-distributions with different degrees of freedom and different numbers of observations.
 
@@ -263,7 +270,7 @@ How can you use this information to determine which estimator is preferable in e
 
 ::: panel-tabset
 
-#### R
+##### R
 
 First, let's conduct the simulation. 
 I find it helpful to make a function to simulate the data and calculate the necessary quantities, and then to use the `purrr` package to run my function $N$ times with each parameter set.
@@ -323,7 +330,7 @@ result_sum |>
   theme_bw()
 ```
 
-#### Python
+##### Python
 
 ```{python t-dist-bias-sim-py}
 from scipy.stats import t # t distribution class
@@ -390,6 +397,264 @@ Both estimators are asymptotically unbiased, and are unbiased even for small sam
 
 ::::
 
+## Simulating from Non-standard distributions
+
+In some cases, you may want to simulate from a probability distribution that isn't already implemented in your software of choice. 
+To decide how to do this efficiently requires that you first take stock of what you actually have describing your distribution. 
+
+Do you have a: 
+
+- method for getting from a standard distribution to your distribution via e.g. censoring, combining variables, etc.?
+- probability density/mass function?
+- cumulative density function?
+
+If you have a PDF/PMF, can it be integrated to get a CDF, either analytically or computationally?
+
+If your PDF/PMF cannot be easily integrated, can you come up with a more standard distribution with a similar shape that you can use to get samples from your distribution?
+
+
+If you have a method of getting from a standard distribution via censoring or combinations of variables, this is often the most intuitive way of generating a random sample from a complex distribution. 
+In addition, this can be a good mechanism for generating distributions that mimic real-world processes that are not always natural to translate into functional probability distributions. 
+
+If you have a CDF, and the CDF can be easily inverted, it is often easiest to try inverse probability sampling first.
+In some cases, however, it is difficult to get an analytical form for the CDF (or the inverse CDF); in these cases, it may be preferable to work with the PDF/PMF instead. 
+When working with a probability density or mass function, it is often natural to try rejection sampling before moving on to other methods. 
+
+### Inverse Probability Sampling
+
+If you have a cumulative distribution function $F$ that is nondecreasing, you can use that $F$ to get samples from your distribution by generating uniform random variables $u \sim U[0,1]$ and computing $x = F^{-1}(u)$. 
+This method relies on the [probability integral transform](https://en.wikipedia.org/wiki/Probability_integral_transform). 
+
+Let's consider how this might work in the case of a distribution with the following CDF: $$F(x\leq X) = x^2, \ \ 0 < x < 1.$$
+
+
+Steps: 
+
+1. Generate a random number $u \sim U[0,1]$
+2. Find the inverse of the desired CDF, $x^\ast = F^{-1}_X(u)$
+
+
+This procedure can often be done in a vectorized manner, if the CDF and inverse CDF (or quantile function) are written with vectorization in mind. 
+
+
+```{r inverse-prob-sketch}
+#| fig-width: 8
+#| fig-height: 3
+#| echo: false
+#| label: fig-inverse-prob-sketch
+#| fig-cap: "Steps in Inverse Probability Sampling. First, we consider the CDF, which has a range of [0,1] over the domain of $x$. A uniform[0,1] random variable can be used to select a random position along the CDF's range, corresponding to the first step of the inverse probability sampling algorithm. Inverting the CDF produces a value $X^\ast$, which is a random sample from the distribution specified by the CDF $F(x)$."
+#| fig-alt: "A three-panel figure showing the same CDF, which is 0 for x < 0, 1 for x > 1, and x^2 for 0 < x < 1. The first panel shows only the CDF and is titled 'Step 0: Cumulative Density Function'. The second panel shows a horizontal line drawn at a randomly generated value between 0 and 1 that extends from 0 to the CDF. The line is labeled 'Generated  u ~ U[0,1]', and the plot is labeled 'Step 1: Generate Uniform RV'. The third panel shows an additional vertical line drawn from the horizontal line's intersection with the CDF to the x-axis, and is labeled 'Generated X*=F^{-1}(u)'. The panel is titled 'Step 2: Invert to generate X*~F'."
+
+pquad <- function(x) {
+  y <- x^2
+  y[x < 0] <- 0
+  y[x > 1] <- 1
+  return(y)
+}
+
+qquad <- function(u) {
+  stopifnot(u >= 0, u <= 1)
+  x <- sqrt(u)
+  return(x)
+}
+
+library(ggplot2)
+p1 <- ggplot() + geom_function(fun = pquad) + xlim(-0.1, 1.5) + 
+  ylab("P(x<X)") + xlab("X") + ggtitle("Step 0:\nCDF") 
+
+set.seed(234303932)
+u <- runif(1)
+xgen <- qquad(u)
+
+p2 <- p1 + geom_segment(aes(x = 0, xend = xgen, y = u, yend = u), color = "grey40", linetype = 2) + 
+  annotate(geom = "text", x = 0, y = u, hjust = 0, vjust = 0.5, label = "Generated\nu ~ U[0,1]") + 
+  ggtitle("Step 1:\nGenerate Uniform RV") 
+
+p3 <- p2 + geom_segment(aes(x = xgen, xend = xgen, y = u, yend = 0), color = "grey20", linetype = 4) + 
+  annotate(geom = "text", x = xgen, y = 0, hjust = 0.1, label = "Generated X* = F^{-1}(u)") + 
+  ggtitle("Step 2:\nInvert to generate X* ~ F")
+
+library(patchwork)
+p1 + p2 + p3
+```
+
+### Rejection Sampling
+
+In some cases, you have a PDF but not an easily obtainable or invert-able CDF. 
+You could numerically integrate your PDF and use inverse probability sampling, but it may also be easier to use rejection sampling.
+
+Rejection sampling, which is also sometimes called 'acceptance-rejection' sampling works for any distribution with a density function. 
+Rejection sampling operates by generating random samples from a proposal distribution, and accepting those proposals with a certain probability determined by the relationship between the proposal and target distribution at that point.
+
+It is easiest to illustrate how this works by showing a probability distribution with a defined domain (say, $[0,10]$). 
+In this case, I've created a nonstandard probability distribution by sketching a bimodal distribution on the interval and converting it to a polynomial. 
+
+```{r rejection-sample-crude-sketch}
+#| fig-width: 8
+#| fig-height: 3
+#| echo: false
+#| label: fig-rejection-crude-sketch
+#| fig-cap: "Intuition for Rejection Sampling. First, we consider the density function. If we sample points from the rectangle enclosing the density function, we can keep only points below the density, and those points would have $x$ values corresponding to the probability distribution $f(x)$."
+#| fig-alt: "A three-panel figure showing the same bimodal PDF with unspecified form over 0 < x < 10. The first panel shows only the PDF. The second panel shows 2000 dots scattered over the rectangle, with points above $f(x)$ as red circles and points below $f(x)$ as blue triangles. The third panel shows a blue histogram with the black PDF overlaid; the histogram is formed from the x coordinates of the points below $f(x)$ in the previous panel."
+
+mypoly <- function(x) {
+  1/37.67616 * (x >= 0) *(x <= 9.999922) * (
+1.3933828944952861e-002 * x^0
+     +  1.5773857564814580e+000 * x^1
+     +  4.3967967726458914e+000 * x^2
+     + -2.5975245110101897e+000 * x^3
+     +  5.6872604141874938e-001 * x^4
+     + -6.2348409837951993e-002 * x^5
+     +  3.5935687601007299e-003 * x^6
+     + -9.0392716704804728e-005 * x^7
+)
+}
+
+mypolyderiv <- function(x) {
+  1/37.67616 * (x >= 0) *(x <= 9.999922) * (
+     +  1.5773857564814580e+000 * x^0
+     +  2*4.3967967726458914e+000 * x^1
+     + 3*-2.5975245110101897e+000 * x^2
+     +  4*5.6872604141874938e-001 * x^3
+     + 5*-6.2348409837951993e-002 * x^4
+     +  6*3.5935687601007299e-003 * x^5
+     + 7*-9.0392716704804728e-005 * x^6
+)
+}
+
+p1 <- ggplot() + geom_function(fun = mypoly) + xlim(0, 10) + 
+  ylab("f(x)") + xlab("x")
+
+library(tibble)
+library(dplyr)
+set.seed(2403978)
+unifsample <- tibble(
+  x = runif(2000, 0, 10), 
+  y = runif(2000, 0, max(mypoly(seq(0, 10, .01)))),
+  below = y < mypoly(x)
+)
+
+
+p2 <- ggplot(unifsample, aes(x = x, y = y, color = below, shape = below)) + 
+  geom_point() +
+  scale_color_discrete("Below f(x)") + 
+  scale_shape_discrete("Below f(x)") + 
+  geom_function(fun = mypoly, color = "black") + xlim(0, 10) + 
+  ylab("f(x)") + xlab("x") + 
+  theme(legend.position = "bottom")
+
+p3 <- ggplot(filter(unifsample, below), aes(x = x)) + 
+  geom_histogram(aes(y = after_stat(density)), fill = "#00BFC4", color = "black", bins = 50) + 
+  geom_function(fun = mypoly, color = "black") + xlim(0, 10) +
+  ylab("f(x)") + xlab("x") 
+
+p1 + p2 + p3
+```
+
+Think about throwing darts at this PDF (who hasn't wanted to do that?).
+Any darts that land below the line describing $f(x)$ would be distributed uniformly within the area under the curve, and their $x$ values would be a random sample from $f(x)$. 
+Rejection sampling is essentially a formalization of this idea. 
+
+In the crudest case, rejection sampling is essentially a Monte Carlo sampling method -- we generate random proposals from $\mathbb{R}^n$ and reject anything outside of our probability density. 
+But, we can usually improve over generating over the full $\mathbb{R}^n$ -- in most cases, we can find a better proposal space. 
+In @fig-rejection-crude-sketch, we generated `{r} nrow(unifsample)` points and rejected `{r} sum(!unifsample$below)` of those points, for an acceptance rate of `{r} mean(unifsample$below)*100`%. 
+
+But, what if we were a bit smarter about how we proposed points?
+Bimodal distributions are irritating, because there's always that space in the middle between the modes, but, what if we could at least not "throw darts" at the top corners?
+
+The idea here is to get an "envelope distribution" - a function that is greater than or equal to $f(x)$ at every point where $f(x) > 0$, and use that function to generate a proposal value.  Then, we can accept or reject that proposal value based on the relationship between our envelope distribution and $f(x)$. 
+This is essentially the same thing that we did before, but our "envelope" was very rectangular. 
+
+What is interesting is that we can generate an "envelope distribution" from a distribution that isn't, strictly speaking, greater than $f(x)$, by using some fancy scaling.
+
+An envelope distribution $g(x)$ can be used for rejection sampling if  $\displaystyle \frac{f(x)}{g(x)} \leq M$ for some constant $M<\infty$.
+
+Steps:
+
+1. Generate $u\sim U[0,1]$
+2. Generate $x\sim g(x)$, a proposal value
+3. Accept $x$ if $u < \displaystyle\frac{f(x)}{M g(x)}$; otherwise, start over. 
+
+
+```{r}
+#| fig-width: 8
+#| fig-height: 3
+#| echo: false
+#| label: fig-rejection-better-sketch
+#| fig-cap: "Rejection Sampling with a Better Envelope. First, we consider the density function f(x) and an envelope function g(x) such that M g(x) > f(x) for a constant M < infinity. We can determine $M$ by the maximum of the ratio between f(x) and g(x) on the full domain $x$. Then, if we sample points from g(x) and accept those points when a uniform(0,1) RV u < f(x)/(M g(x)), this gives us a sample from f(x). Essentially, we keep the sample g(x) with probability scaled by the likelihood ratio between f and g at x. This is more adaptive than the rectangular proposal envelope but functionally works the same way."
+#| fig-alt: "A three-panel figure showing the same bimodal PDF with unspecified form over 0 < x < 10. The first panel shows only the PDF and a proposal density that has a similar shape to the original. The second panel shows the ratio between the proposal and the original density, with the maximum value shown as a horizontal line indicating the value of the constant $M$. The third panel shows dots under M g(x), with those which are also under f(x) shown as blue triangles, where those above f(x) are shown as red circles. The blue triangles represent a sample from $f(x)$"
+
+library(truncnorm)
+
+set.seed(450937923)
+
+proposalfn <- function(x) {
+  .75*dtruncnorm(x, mean = 2.5, sd = 2, a = 0, b = 10) + .25*dtruncnorm(x, mean = 8.9, sd = 1, a = 0, b = 10)
+}
+
+m_calc <- function(x) {
+  mypoly(x) / proposalfn(x)
+}
+
+p1 <- ggplot() + 
+  geom_function(fun = mypoly, color = "#00BFC4") + 
+  annotate(x = 3.5, y = 0.20, label = "f(x)", geom = "text") + 
+  geom_function(fun = proposalfn, color = "#F8766D") + 
+  annotate(x = 8.5, y = 0.125, label = "g(x)", geom = "text") + 
+  scale_color_discrete("Distribution") + 
+  xlim(0, 10) + 
+  ylab("f(x)") + xlab("x") + 
+  ggtitle("Proposal g(x) and f(x)")
+
+mvals <- m_calc(seq(0, 10, .0001))
+max_M <- max(mvals)
+max_M_x <- seq(0, 10, .0001)[which.max(mvals)]
+
+p2 <- ggplot() + 
+  geom_function(fun = m_calc) + xlim(0, 10)  + 
+  ylab("M") + xlab("x") + 
+  annotate(geom = "text", x = 5, y = 0, vjust = 0, label = "Calculate\nM = max(f(x)/g(x))\nover all x") + 
+  geom_hline(aes(yintercept = max_M), linetype = 2) + 
+  annotate(x = max_M_x, y = max_M, label = sprintf("M = %.04f", max_M), geom = "text", hjust = 0, vjust = -0.2)
+
+proposedist <- function(n) {
+  x1 <- rtruncnorm(round(3*n/4), mean = 2.5, sd = 2, a = 0, b = 10)
+  x2 <- rtruncnorm(round(1*n/4), mean = 8.9, sd = 1, a = 0, b = 10)
+  sample(c(x1, x2), size = n)
+}
+
+proposals <- tibble(
+  x = proposedist(2000),
+  gx = proposalfn(x),
+  fx = mypoly(x),
+  u = runif(2000),
+  accept = u < (fx/(max_M*gx))
+)
+
+
+p3 <-  ggplot(proposals, aes(x = x, y = u * max_M * gx, color = accept, shape = accept)) + 
+  geom_point() +
+  annotate(x =5, y = 0.215, label = "Proposal = M g(x)", geom = "text", hjust = 0.5) + 
+  geom_function(fun = mypoly, color = "#00BFC4") + 
+  geom_function(fun = function(x) max_M * proposalfn(x), color = "#F8766D") + 
+  xlim(0, 10) + 
+  ylab("f(x)") + xlab("x") + 
+  guides(color = "none", shape = "none") + 
+  theme(legend.position = "bottom")
+
+p1 + p2 + p3
+```
+
+
+In @fig-rejection-better-sketch, where the proposal density is a mixture of two truncated normal densities, we generated `{r} nrow(proposals)` points and rejected `{r} sum(!proposals$accept)` of those points, for an acceptance rate of `{r} mean(proposals$accept)*100`%. 
+I'm entirely sure I could get the proposal density much closer to $f(x)$ if necessary, but it's better to be able to illustrate how the process works. 
+It is possible to use any given $M$ for the proposal density, so long as the $M$ you use meets the condition of $M \geq \frac{f(x)}{g(x)}$ for all $x$ with $P(x) > 0$. 
+Using a larger $M$ will simply decrease the acceptance probability, which will be less efficient but will still produce a valid sample. 
+
+
+
+
+
 ## Simulation to test model assumptions
 
 One of the more powerful ways to use simulation in practice is to use it to test the assumptions of your model.
@@ -410,7 +675,7 @@ You can read more about purrr in @sec-lists.
 :::
 
 
-::: callout-caution
+::: {.callout-caution collapse=true}
 ### Example: Confidence Interval coverage rates
 
 ::: panel-tabset
@@ -524,7 +789,7 @@ From this, we can see that working with the log-transformed, normally distribute
 Note the use of BY-group processing to analyze each group at once - this is very similar to the use of `purrr::map()` in the R code.
 :::
 
-::: callout-caution
+::: {.callout-caution collapse=true}
 
 ### Example: Multilevel Regression and Post Stratification simulation
 
@@ -534,7 +799,8 @@ This example talks about how to take a biased sample and then recover the origin
 When reading this example, you may not be all that interested with the specific model - but focus on the **process of simulating data for your analysis** so that you understand how and why you would want to simulate data in order to test a computational method.
 :::
 
-::: callout-caution
+::: {.callout-caution collapse=true}
+
 ### Example: Regression and high-leverage points
 
 What happens if we have one high-leverage point (e.g. a point which is an outlier in both x and y)?
@@ -612,7 +878,7 @@ ggplot(tidy_coefs, aes(x = estimate, color = group)) +
 Obviously, you should experiment with different methods of generating a high-leverage point (maybe use a different distribution?) but this generating mechanism is simple enough for our purposes and shows that the addition of high leverage points biases the true values (slope = 1, intercept = 0).
 :::
 
-::: callout-tip
+::: {.callout-tip collapse="true"}
 ### Try it out
 
 :::: panel-tabset
@@ -793,7 +1059,7 @@ The expected number of uniform RV draws required to sum to 1 is $e$!
 
 Monte Carlo methods are often used to approximate the value of integrals which do not have a closed-form (in particular, these integrals tend to pop up frequently in Bayesian methods).
 
-::: callout-caution
+::: {.callout-caution collapse="true"}
 ### Example: Integration
 
 ::: panel-tabset
@@ -858,7 +1124,7 @@ mean(riemann$y)
 :::
 
 
-::: callout-caution
+::: {.callout-caution collapse="true"}
 ### Example: Integration in 2d
 
 ::: panel-tabset
@@ -986,6 +1252,8 @@ np.pi
 
 #### Numeric integration
 
+We can compare our results to the results we would get using a more typical  numerical integration function, such as `integrate` in R. 
+
 ```{r}
 set.seed(20491720)
 fn <- function(x)  2*sqrt(1-x^2)
@@ -999,7 +1267,7 @@ pi
 :::
 
 
-::: callout-tip
+::: {.callout-tip collapse="true"}
 ### Try it out
 
 ::: panel-tabset
