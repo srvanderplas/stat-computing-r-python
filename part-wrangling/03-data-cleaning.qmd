@@ -186,7 +186,9 @@ In base R or python, these tasks are still important, and so I'll do my best to 
 You might want to keep only even rows, or only the first 10 rows in a table. 
 
 ```{r filter-poke}
-library(tidyverse)
+library(readr)
+library(dplyr)
+
 poke <- read_csv("https://github.com/srvanderplas/datasets/raw/main/clean/pokemon_gen_1-9.csv")
 filter(poke, (row_number() %% 2 == 0)) 
 # There are several pokemon who have multiple entries in the table,
@@ -354,23 +356,20 @@ Use the [Pokemon data](https://github.com/srvanderplas/datasets/raw/main/clean/p
 
 #### R: `dplyr` {-}
 
-```{r poke-tryitout, message = F}
+```{r poke-tryitout, message=FALSE}
 poke <- read_csv("https://github.com/srvanderplas/datasets/raw/main/clean/pokemon_gen_1-9.csv")
 
-filter(poke, type_1 == "Water")
+filter(poke, str_detect(type, "Water"))[,c('gen', 'type', 'weight_kg')] 
 
-filter(poke, type_1 == "Water" | type_2 == "Water")
-# The conditions have to be separated by |, which means "or"
 ```
+`str_detect` looks for Water in the type entry -- Pokemon can have one or two types, and in type, these are separated by a comma. Instead of splitting the types apart (which we could do), it's easier to just check to see if water exists in the entire string.
 
 #### Python
 ```{python poke-tryitout-py}
 import pandas as pd
 poke = pd.read_csv("https://github.com/srvanderplas/datasets/raw/main/clean/pokemon_gen_1-9.csv")
 
-poke.query("type_1=='Water'")
-poke.query("type_1=='Water'|type_2=='Water'")
-# The conditions have to be separated by |, which means "or"
+poke.query("type.str.contains('Water')")[['gen', 'type', 'weight_kg']]
 ```
 
 #### Base R
@@ -378,11 +377,11 @@ poke.query("type_1=='Water'|type_2=='Water'")
 ```{r poke-tryitout2, message = F}
 poke <- read_csv("https://github.com/srvanderplas/datasets/raw/main/clean/pokemon_gen_1-9.csv")
 
-subset(poke, type_1 == "Water")
-
-subset(poke, type_1 == "Water" | type_2 == "Water")
-# The conditions have to be separated by |, which means "or"
+subset(poke, grepl("Water", type))
 ```
+
+`grepl` is a function that searches a string (`grep`) and returns a logical value (`grep+l`). 
+It's very useful for subsetting. 
 
 :::
 
