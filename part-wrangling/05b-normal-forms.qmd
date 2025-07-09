@@ -56,7 +56,9 @@ We can check whether that condition is fulfilled by tallying up the combination:
 
 ```{r}
 wallaby %>% 
-  count(Anim, sort = TRUE) %>% head() %>% knitr::kable(caption="Anim by itself is not uniquely identifying rows in the data.")
+  count(Anim, sort = TRUE) %>% 
+  head() %>% 
+  knitr::kable(caption="Anim by itself is not uniquely identifying rows in the data.")
 ```
 
 Anim by itself is not a key variable, because for some animal ids we have multiple sets of measurements. 
@@ -66,7 +68,9 @@ Anim by itself is not a key variable, because for some animal ids we have multip
 
 ```{r}
 wallaby %>% 
-  count(Anim, Age, sort = TRUE) %>% head() %>% knitr::kable(caption="All combinations of animal ID and an animal's age only refer to one set of measurements.")
+  count(Anim, Age, sort = TRUE) %>% 
+  head() %>% 
+  knitr::kable(caption="All combinations of animal ID and an animal's age only refer to one set of measurements.")
 ```
 
 The combination of `Anim` and `Age` uniquely describes each observation, and is therefore a key for the data set.
@@ -138,7 +142,9 @@ wallaby2 %>% count(Anim, sort=TRUE) %>% head() %>%
 This finding is a sign of an inconsistency in the data set - and just a first example for why we care about normal forms. Here, we identify the first entry in the results below as a completely different animal - it is male and lives in a different location. Most likely, this is a wrongly identified animal.
 
 ```{r}
-wallaby %>% filter(Anim == 125) %>% head() %>% knitr::kable(caption="Based on the listing for the values of animal 125, the very first entry does not fit in well with the other values.")
+wallaby %>% 
+  filter(Anim == 125) %>% head() %>% 
+  knitr::kable(caption="Based on the listing for the values of animal 125, the very first entry does not fit in well with the other values.")
 ```
 
 <details>
@@ -156,7 +162,17 @@ With a bit of detective work, we can identify animal 126 as the most likely cand
 ```{r, echo = FALSE, warning = FALSE}
 #| label: fig-wallaby125
 #| fig-cap: Scatterplots of Weight by Age, facetted by animal number. Only male specimen in location Ha are considered. The orange point shows the measurements of the entry wrongly assigned to animal 125 (which is female and lives in a different location).
-wallaby %>% filter(Loca == "Ha", Anim!=125, Sex == 1, !is.na(Weight)) %>% mutate(Anim=factor(Anim)) %>%  ggplot(aes(x = Age, y = Weight)) + geom_point(size = 4, alpha = 0.5) + facet_wrap(~Anim) + geom_point(data = filter(wallaby, Anim==125, Sex==1) %>% select(-Anim), colour = "darkorange", size = 4, alpha = 0.8) + xlim(c(50,200)) + theme_bw() + ylim(c(0,5000)) + 
+wallaby %>% 
+  filter(Loca == "Ha", Anim!=125, Sex == 1, !is.na(Weight)) %>%
+  mutate(Anim=factor(Anim)) %>%  
+  ggplot(aes(x = Age, y = Weight)) + 
+  geom_point(size = 4, alpha = 0.5) + 
+  facet_wrap(~Anim) + 
+  geom_point(data = filter(wallaby, Anim==125, Sex==1) %>% select(-Anim),
+             colour = "darkorange", size = 4, alpha = 0.8) +
+  xlim(c(50,200)) + 
+  ylim(c(0,5000)) + 
+  theme_bw() + 
   ggtitle("Weight measurements of male wallabies in location Ha")
 ```
 In @fig-wallaby126 all measurements for wallaby 126 are shown by age (in days) when they were taken. The additional measurement wrongly assigned to animal 125 is shown in orange. All of the values are sensible within the grow curves of animal 126.
@@ -164,7 +180,10 @@ In @fig-wallaby126 all measurements for wallaby 126 are shown by age (in days) w
 ```{r echo = FALSE}
 #| label: fig-wallaby126
 #| fig-cap: Growth curves of animal 126 for all the measurements taken between days 50 and 200. In orange, the additional entry for animal 125 is shown. The values are consistent with animal 126's growth.
-wallaby_long <- wallaby %>% pivot_longer(c("Weight", "Head":"Tail"), values_to = "Measurement", names_to="Trait") %>% filter(Trait!="Leng")
+wallaby_long <- wallaby %>% 
+  pivot_longer(c("Weight", "Head":"Tail"), values_to = "Measurement", names_to="Trait") %>% 
+  filter(Trait!="Leng")
+
 wallaby_long %>% 
   filter(Anim==126, between(Age, 50, 200)) %>% 
   ggplot(aes(x = Age, y = Measurement)) + 
@@ -186,9 +205,7 @@ As a direct result of the normalization step, we make a change (!!!) to the orig
 ```{r}
 # Cleaning Step 1
 wallaby_cleaner <- wallaby %>% 
-  mutate(
-    Anim = ifelse(Anim==125 & Sex==1, 126, Anim)
-  )
+  mutate(Anim = ifelse(Anim==125 & Sex==1, 126, Anim))
 ```
 Making any changes to a dataset should never be done light-heartedly,  always be well argued and well-documented. For the present example, we will keep the above investigation as argument, and the code to show the exact nature of the cleaning step.
 :::
@@ -225,18 +242,23 @@ In the example of the `wallaby` data, we have identified the non-key variables `
 We separate those variables into the data set `wallaby_demographics` and reduce the number of rows by finding a tally of the number of rows we summarize. 
 
 ```{r}
-wallaby_demographics <- wallaby_cleaner %>% select(Anim, Sex, Loca) %>%
+wallaby_demographics <- wallaby_cleaner %>% 
+  select(Anim, Sex, Loca) %>%
   count(Anim, Sex, Loca) 
 # Don't need the total number
 ```
 Once we have verified that `Anim` is a key for `wallaby_demographics`, we know that this table is in 2nd normal form. 
 ```{r}
-wallaby_demographics %>% count(Anim, sort=TRUE) %>% head()
+wallaby_demographics %>% 
+  count(Anim, sort=TRUE) %>% 
+  head()
 ```
 With the key-splitting variables `Sex` and `Loca` being taken care of in the second dataset, we can safely remove those variables from the original data. To preserve the original, we actually create a separate copy called `wallaby_measurements`:
 
 ```{r}
-wallaby_measurements <- wallaby_cleaner %>% select(-Sex, -Loca) 
+wallaby_measurements <- wallaby_cleaner %>% 
+  select(-Sex, -Loca) 
+
 wallaby_measurements %>%
   head()
 ```
@@ -291,7 +313,7 @@ wallaby_Location <- wallaby_demographics %>% select(Anim, Loca)
 Another approach to bringing a dataset into key-value pairs is to summarize the values of a set of variables by introducing a new key for the variable names:
 
 ::: panel-tabset
-##### in R {.unnumbered}
+##### R {.unnumbered}
 
 ```{r}
 wallaby_measurements_long <- wallaby_measurements %>% 
@@ -303,7 +325,7 @@ head(wallaby_measurements_long)
 ```
 By specifying `values_drop_na` as `TRUE` we exclude all measurements that could not be taken, such as `Weight` for about the first 50 days of age, and `Leng` for the animal until the joey is ready to leave the safety of the pouch. Note, that while this normalization step might save space, the structural nature of missing values might be further hidden.
 
-##### in python {.unnumbered}
+##### Python {.unnumbered}
 
 ```{python}
 import pandas as pd
