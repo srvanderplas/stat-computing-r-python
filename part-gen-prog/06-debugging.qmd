@@ -12,7 +12,7 @@ This is a lifelong topic - as you become a more advanced programmer, you will ne
 - Use online resources to research errors
 
 
-![The faces of debugging (by Allison Horst)](../images/gen-prog/debugging.jpg){fig-alt="A cartoon of a fuzzy round monster face showing 10 different emotions experienced during the process of debugging code. The progression goes from (1) “I got this” - looking determined and optimistic; (2) “Huh. Really thought that was it.” - looking a bit baffled; (3) “...” - looking up at the ceiling in thought; (4) “Fine. Restarting.” - looking a bit annoyed; (5) “OH WTF.” Looking very frazzled and frustrated; (6) “Zombie meltdown.” - looking like a full meltdown; (7) (blank) - sleeping; (8) “A NEW HOPE!” - a happy looking monster with a lightbulb above; (9) “insert awesome theme song” - looking determined and typing away; (10) “I love coding” - arms raised in victory with a big smile, with confetti falling."}
+![The faces of debugging (by Allison Horst)](../images/gen-prog/debugging.png){fig-alt="A cartoon of a fuzzy round monster face showing 10 different emotions experienced during the process of debugging code. The progression goes from (1) “I got this” - looking determined and optimistic; (2) “Huh. Really thought that was it.” - looking a bit baffled; (3) “...” - looking up at the ceiling in thought; (4) “Fine. Restarting.” - looking a bit annoyed; (5) “OH WTF.” Looking very frazzled and frustrated; (6) “Zombie meltdown.” - looking like a full meltdown; (7) (blank) - sleeping; (8) “A NEW HOPE!” - a happy looking monster with a lightbulb above; (9) “insert awesome theme song” - looking determined and typing away; (10) “I love coding” - arms raised in victory with a big smile, with confetti falling."}
 
 ## Avoiding Errors: Defensive Programming
 
@@ -137,8 +137,8 @@ Redesigning your code to be more modular and more organized is also a good idea.
 In programming, as in life, big, general problems are very hard to solve effectively. 
 Instead, the goal is to break a problem down into smaller pieces that may actually be solvable. 
 
-::: callout-caution
-### Example: Exhaustion
+::: demo
+### Demo: Exhaustion
 
 This example inspired by @grimesThis500YearOldPiece2019. 
 
@@ -239,8 +239,8 @@ Describe what you see and what you'd hope to see if the code were working.
 - [reprex magic - Vignette adapted from a blog post by Nick Tierney](https://reprex.tidyverse.org/articles/articles/magic-reprex.html)
 :::
 
-::: callout-caution
-### Example: MWEs 
+::: demo
+### Demo: Minimum Working Examples in Practice 
 
 ::: panel-tabset
 
@@ -344,7 +344,7 @@ While converting the book from Rmarkdown to quarto, I ran into an issue setting 
 
 I found an issue describing the same segfault issue I had been getting, and so I made a [post there](https://github.com/rstudio/reticulate/issues/1133) with a new github repository containing a [minimal working example](https://github.com/srvanderplas/test-quarto) that I set up to test the problem. 
 
-Within 24h, I had gotten replies from people working at RStudio, and one of them had [diagnosed the problem](https://github.com/rstudio/reticulate/issues/1133#issuecomment-1021783041). 
+Within 24h, I had gotten replies from people working at RStudio/Posit, and one of them had [diagnosed the problem](https://github.com/rstudio/reticulate/issues/1133#issuecomment-1021783041). 
 After I asked a few more questions, one of them submitted a pull request to my repository with a solution.
 
 I didn't know enough python or enough about GitHub Actions to diagnose the problem myself, but because I managed to create a reproducible example, I got the answers I needed from people with more experience.
@@ -353,13 +353,14 @@ I didn't know enough python or enough about GitHub Actions to diagnose the probl
 
 :::
 
-::: callout-tip
-### Try It Out 
+::: example
+### Example: Debugging Exercises 
 
 Use [this list of StackOverflow posts](../files/Debugging_exercise.html) to try out your new debugging techniques. 
 Can you figure out what's wrong? 
 What information would you need from the poster in order to come up with a solution?
 How much time did you spend trying to figure out what the poster was actually asking?
+
 :::
 
 
@@ -374,8 +375,8 @@ When the code is executed, you get a window into what the variables look like du
 
 This is called **print debugging** and it is an incredibly useful tool.
 
-::: callout-caution
-#### Example: Nested Functions
+::: demo
+#### Demo: Nested Functions
 
 ::: panel-tabset
 #### R
@@ -479,8 +480,8 @@ aa(5)
 
 For more complex data structures, it can be useful to add `str()`, `head()`, or `summary()` functions. 
 
-::: callout-caution
-#### Real world example: Web Scraping
+::: demo
+#### Real world demo: Web Scraping
 
 In fall 2020, I wrote a webscraper to get election polling data from the RealClearPolitics site as part of the [`electionViz` package](https://www.github.com/heike/electionViz).
 I wrote the function `search_for_parent()` to get the parent HTML tag which matched the "tag" argument, that had the "node" argument as a descendant. 
@@ -566,8 +567,8 @@ I could then see that the HTML node that is returned is in fact the table node.
 
 :::
 
-::: callout-tip
-#### Try it out: Hurricanes in R
+::: example
+#### Example: Hurricanes in R
 
 Not all bugs result in error messages, unfortunately, which makes higher-level techniques like `traceback()` less useful. 
 The low-tech debugging tools, however, still work wonderfully. 
@@ -777,8 +778,8 @@ If you think you may need them again, comment them out, otherwise, just delete t
 `traceback()` can help you narrow down where an error occurs by taking you through the series of function calls that led up to the error. 
 This may help you identify which function is actually causing the problem, which is especially useful when you have nested functions or are using package functions that depend on other packages.
 
-::: callout-demo
-#### Using traceback
+::: demo
+#### Demo: Using traceback
 
 ::: panel-tabset
 ##### R
@@ -852,19 +853,46 @@ Python's [traceback](https://docs.python.org/3/library/traceback.html) informati
 <iframe width="100%" height="auto" src="https://www.youtube.com/embed/dA2ce5SA3C8" title="Using debug() in R" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 :::
 
-::: panel-tabset
-
-#### R `browser()`
-
-The `browser()` function is useful for debugging your own code. 
+In R, the interactive debugging tool of choice is the `browser()` function. 
 If you're writing a function and something isn't working quite right, you can insert a call to `browser()` in that function, and examine what's going on. 
 
-::: callout-caution
-##### Example : browser()
+::: youtube-video-container
+<iframe width="100%" height="auto" src="https://www.youtube.com/embed/zGRsLLWGVR0" title="Using ipdb in python" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+:::
 
-Suppose that I want to write a function that will plot an xkcd comic in R. 
+In python, the equivalent interactive debugger is `ipdb`. You can install it with `pip install ipdb`.
+If you want to run Python in the interactive ipython console, then you can invoke the ipdb debugging with `%debug get_xkcd()` (this may or may not work in your RStudio python via reticulate session).
+You can also insert `ipdb.set_trace()` in the middle of your function (before the error), and it will function more or less the same as `browser()` in R. 
+
+::: setup
+#### Additional `ipdb` Options
+
+If you're working in Python in RStudio and you run into ipdb problems, you can get into debug mode in a more involved way.
+ To run code using `ipdb` when your code hits an error, add `from ipdb import launch_ipdb_on_exception` to the top of your python code chunk. 
+Then, at the bottom, put any lines that may trigger the error after these two lines:
+
+```
+if __name__ == "__main__":
+  with launch_ipdb_on_exception():
+    <your properly indented code goes here>
+```
+
+This ensures that ipdb is launched when an error is reached.
+:::
+
+:::: example
+#### Example: Interactive Debugging with XKCD {-}
+::: panel-tabset
+
+##### Problem {-}
+I wanted to write a function that will plot an xkcd comic, but it isn't working. 
+I've provided starter code for R and python in the next two tabs. 
+Use the interactive browser command to figure out what is going on and fix the problem.
+
+##### R starter code {-}
 
 I start with 
+
 ```{r browser-demo, error = T}
 library(png)
 library(xml2)
@@ -888,7 +916,14 @@ get_xkcd() %>%
   plot()
 ```
 
-Here's the final function
+##### R solution  {-}
+Inserting `browser() at the top of the get_xkcd function (inside the function call) lets us explore what's going wrong. 
+
+The first issue is that the URL for the image isn't fully formed -- it's missing the https: component (or, it has 2 extra slashes at the front--take your pick). 
+
+Then, instead of reading the PNG from the URL, we need to download it first and then read it in from the downloaded file. 
+
+Here's the final function, since this is somewhat hard to actually demonstrate because it's interactive...
 
 ```{r browser-demo-2}
 library(png)
@@ -905,6 +940,8 @@ get_xkcd <- function() {
     xml_attr("src")
   
   # Fix image address so that we can access the image
+  # Remove the first two characters 
+  # (start at character 3 and go to the end)
   image <- substr(image, 3, nchar(image))
   
   # Download the file to a temp file and read from there
@@ -921,32 +958,10 @@ get_xkcd() %>%
 :::
 
 
-#### Python
-
-In python, the equivalent interactive debugger is `ipdb`. You can install it with `pip install ipdb`.
-
-If you want to run Python in the interactive ipython console, then you can invoke the ipdb debugging with `%debug get_xkcd()`. 
-This is similar to `browser()` in R. 
-If you're working in Python in RStudio, though, you have to get into debug mode in a more involved way.
-
-To run code using `ipdb` when your code hits an error, add `from ipdb import launch_ipdb_on_exception` to the top of your python code chunk. 
-Then, at the bottom, put any lines that may trigger the error after these two lines:
-
-```
-if __name__ == "__main__":
-  with launch_ipdb_on_exception():
-    <your properly indented code goes here>
-```
-
-This ensures that ipdb is launched when an error is reached.
-
-
-::: callout-caution
-##### Example using `ipdb`
-Suppose that I want to write a function that will plot an xkcd comic in python. 
+##### Python {-}
 
 I start with 
-```{python browser-demo-py, error = T}
+```{python ipdb-demo-py, error = T}
 from bs4 import BeautifulSoup
 import urllib.request # work with html
 from PIL import Image # work with images
@@ -955,6 +970,8 @@ import numpy as np
 # importing pyplot and image from matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.image as img
+
+from ipdb import launch_ipdb_on_exception
 
 # get the most current xkcd
 def get_xkcd():
@@ -980,13 +997,56 @@ plt.show()
 
 ```
 
-Here's the final function
+##### Python solution {-}
+
+```{python ipdb-demo2-py, eval=F}
+from bs4 import BeautifulSoup
+import urllib.request # work with html
+from PIL import Image # work with images
+import numpy as np
+
+import ipdb # load IPDB
+
+# importing pyplot and image from matplotlib
+import matplotlib.pyplot as plt
+import matplotlib.image as img
+
+# get the most current xkcd
+def get_xkcd():
+  ipdb.set_trace() # Set a breakpoint to enter debugging
+  url = "http://xkcd.com"
+  
+  # Get the URL
+  html_file = urllib.request.urlopen(url)
+  page = html_file.read() 
+  decode_page = page.decode("utf8")
+  
+  # Read the page as HTML
+  soup = BeautifulSoup(decode_page, 'html')
+  
+  # Get the comic src from the img tag
+  imlink = soup.select('#comic > img')[0].get('src')
+  
+  image = np.array(Image.open(urllib.request.urlopen(imlink)))
+  
+  return image
+
+plt.imshow(get_xkcd())
+plt.show()
+
+```
+
+The first issue is that the URL for the image isn't fully formed -- it's missing the https: component (or, it has 2 extra slashes at the front--take your pick). 
+
+Here's the final function:
 
 ```{python browser-demo-py2, error = T}
 from bs4 import BeautifulSoup
 import urllib.request # work with html
 from PIL import Image # work with images
 import numpy as np
+
+from ipdb import launch_ipdb_on_exception
 
 # importing pyplot and image from matplotlib
 import matplotlib.pyplot as plt
@@ -1015,17 +1075,12 @@ plt.imshow(get_xkcd())
 plt.show()
 ```
 
-
-::: youtube-video-container
-<iframe width="100%" height="auto" src="https://www.youtube.com/embed/zGRsLLWGVR0" title="Using ipdb in python" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 :::
 
 :::
 
-:::
-
-::: callout-tip
-#### Try it out 
+::: example
+#### Example: More Interactive Debugging with XKCD
 
 ::: panel-tabset
 
@@ -1156,11 +1211,12 @@ In short, debug mode opens up a new interactive session inside the function eval
 This lets you observe what's going on in the function, pinpoint the error (and what causes it), and potentially fix the error, all in one neat workflow. 
 
 `debug()` is most useful when you're working with code that you didn't write yourself. 
-So, if you can't change the code in the function causing the error, `debug()` is the way to go. Otherwise, using `browser()` is generally easier. 
+So, if you can't change the code in the function causing the error, `debug()` is the way to go. 
+Otherwise, using `browser()` is generally easier. 
 Essentially, `debug()` places a `browser()` statement at the first line of a function, but without having to actually alter the function's source code. 
 
-::: {.callout-caution collapse="true"}
-#### `debug()` example
+::: demo
+#### Demo: `debug()` in R
 
 ```{r debug-demo, error = T}
 data(iris)
@@ -1202,8 +1258,8 @@ But, until I run `undebug(lm)`, every call to `lm` will take me into the debug w
 `undebug(f)` will remove the debug flag on the function `f`. `debugonce(f)` will only debug f the first time it is run. 
 
 
-::: callout-tip
-#### Try it out: `debug` in R
+::: example
+#### Example: `debug` in R
 
 ::: panel-tabset
 
