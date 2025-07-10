@@ -327,7 +327,192 @@ The x-axis is a bit of a mess because I haven't spent the time to format it prop
 :::
 
 ::::
+
 ## API Authentication
+
+Many APIs require authentication to get response codes other than 4xx (unauthorized). 
+Authentication helps API providers ensure that it's more difficult for users to spam the service and tie up resources. 
+In some cases, you may pay to access an API, and the API may track how many requests you make or how much server time you use in order to bill you appropriately[^gptkey]. 
+
+[^gptkey]: It's fairly common for people who are new to working with the ChatGPT AI to accidentally push their keys to github, and then [post](https://www.reddit.com/r/OpenAI/comments/zotyq4/how_did_openai_detect_that_my_api_key_was_pushed/) about it, wondering why they have no credits left in their account. **BE CAREFUL** when using APIs and version control - you need to always make sure your keys are stored securely and not pushed to version control.
+
+
+There are two common methods APIs use for authentication: key-based authentication, and OAUTH 2.0 authentication. 
+In addition to these methods, some APIs implement their own authentication systems that aren't standard.
+
+Chances are, you'll have to read the API documentation to figure out how to authenticate, even if they are using a relatively common authentication method. 
+
+### Storing Secrets Securely
+
+Whether you're using an API key or OAUTH2.0 or some other authentication method, it's important to make sure you store your secrets (passwords, logins, keys, tokens) securely. 
+There is always a balance between security and convenience (ease of access), though. 
+I don't guard my password for reddit in the same way that I guard my bank account information or my SSN, because the worst someone can do on reddit with my username is post nonsense or offensive stuff -- they can't bankrupt me. 
+
+The solutions for secret storage here are presented roughly from less to more secure (or from more to less convenient). 
+All of these storage methods are preferable to putting the secret directly into your script.
+
+#### Environment files
+
+Most programs have the ability to read in secrets or environment variables using a separate file. 
+The dot at the beginning of the file name indicates that the file is hidden on UNIX-based systems -- just an additional tiny bit of security. 
+In R, secrets can be stored in the `.Renviron` file, and Python uses the `.env` file (using this requires the `python-dotenv` package, available via pip). 
+The `usethis` package in R can help you manage your `.Renviron` file, if you 
+When you create an environment file in your project directory, you should immediately add it to your `.gitignore` file, so that git never sees the file and there's no risk that you accidentally add it to your git repository.
+Even better, you can use the global `.gitignore` file and ensure that git NEVER sees the file. 
+
+You will have to recreate this file on each computer you're using, though, since it isn't backed up in git. 
+I will often save my API keys to both the environment file and to my password manager ([KeePassXC](https://keepassxc.org/)) so that I have the key stored in an encrypted location that syncs across all of my computers in addition to an environment file.
+
+Environment variables are stored in the form `key=value`. 
+If your value has spaces, you may want to store them as `key="value with spaces"` to avoid trouble, but you may not have to do so. 
+Your keys should not have spaces.
+
+:::: demo
+##### Demo: Environment File Secret Storage and Access
+::: panel-tabset
+###### R {-}
+
+```{r}
+if(!"usethis" %in% installed.packages()){
+  install.packages("usethis")
+} 
+```
+
+You can manually create and edit the `.Renviron` file, or you can use the `usethis` package to do so. 
+The advantage of the `usethis` package is that it makes it much easier to find the user-level `.Renviron` file. 
+Personally, I try to use project-level secrets wherever possible, but some things are used across so many projects that it's easier just to keep them in one place, like my GitHub access token. 
+
+```{r}
+library(usethis)
+usethis::edit_r_environ("project") # <1>
+usethis::edit_r_environ("user") # <2>
+```
+1. If you want to store the secrets in your project folder (e.g. in what is likely your working directory)
+2. If you want to store the secrets in your user's folder, which would be accessible from any project on your machine while you're logged in. 
+
+Add these lines to your `.Renviron` file:
+```
+API_KEY=test-key
+API_SECRET=test-secret
+```
+
+R will automatically load environment variables when the R session is started, but you do need to restart your session after you create or update the `.Renviron` file in order to access new environment variables.
+
+
+You can then access the values using `Sys.getenv("secret-name")`
+```{r}
+Sys.getenv("API_KEY")
+Sys.getenv("API_SECRET")
+```
+
+###### Python {-}
+```{python}
+%pip install python-dotenv
+```
+
+In a `.env` file in the project directory, add these lines:
+
+```
+API_KEY=test-key
+API_SECRET=test-secret
+```
+
+or, run the following code in a UNIX-compatible terminal: 
+
+```{bash}
+echo -ne "API_KEY=test-key\nAPI_SECRET=test-secret" >> .env
+```
+
+Then, we need to tell Python to check that file using `dotenv.load_dotenv()`
+
+```{python}
+from dotenv import load_dotenv
+import os
+load_dotenv()
+```
+
+Secrets in the `.env` file can then be accessed by name.
+```{python}
+api_key = os.getenv("API_KEY")
+api_secret = os.getenv("API_SECRET")
+
+print("API_KEY: ", api_key)
+print("API_SECRET: ", api_secret)
+```
+
+You can also access a dictionary of secrets using the  `dotenv.dotenv_values()` function.
+
+```{python}
+from dotenv import dotenv_values
+secrets = dotenv_values(".env")
+
+secrets['API_KEY']
+secrets['API_SECRET']
+```
+
+:::
+::::
+
+
+#### System Credential Storage
+
+
+
+
+
+#### Additional Options
+
+There are other options to store secrets, including cloud secret storage, that are used at the enterprise level but may not be that helpful for you right now.
+If you are using Github Actions to build things, you can emulate environment variable secret storage using custom environment variables for your actions. 
+To my knowledge, you can't easily use system credential storage in a continuous integration environment. 
+
+### API Keys
+
+The simplest method of API authentication is a key-based system. 
+You sign up with the API and they issue you (or your application) a key -- a sequence of characters that uniquely identifies your user or application. 
+
+Keys can be  used in two different ways: you either pass the key in with every query (very simple), or you use your key at the start to obtain a token, which you then include with every query or pass along in the request header. 
+
+To determine how the key should be used, you will have to read the API documentation.
+Most APIs will provide you with examples of how you would submit certain queries, so you can often figure out the authentication process from those examples.
+
+:::: demo
+
+#### Demo: API Authentication with NewsAPI
+
+[NewsAPI](https://newsapi.org/) provides access to articles and headlines from around the world. 
+Anyone can sign up for an API key that allows 1000 requests per day while you are developing the application (commercial projects and projects which are "in production" require a paid license). 
+
+Sign up for an API key so that you can follow along with this demonstration. 
+I can't publish my API key for obvious reasons, so you'll have to fill yours in.
+
+The homepage of the API provides several example GET queries (replace `<your key>` with your API key):
+
+- Top business headlines in the US right now: 
+`GET https://newsapi.org/v2/top-headlines?country=us&category=business&apiKey=<your key>` 
+
+- Top headlines from TechCrunch right now: `GET https://newsapi.org/v2/top-headlines?sources=techcrunch&apiKey=<your key>`
+
+- All articles published by the Wall Street Journal in the past 6 months, sorted by recent first: `https://newsapi.org/v2/everything?domains=wsj.com&apiKey=<your key>`
+
+These examples are often enough to give you a sense of how to construct a query, but for more detail, most sites also provide [documentation](https://newsapi.org/docs). 
+
+For instance, if we look at the [Authentication](https://newsapi.org/docs/authentication) page, you can see that there are 3 options for using your API key:
+
+- passed in using the `apiKey` querystring parameter
+- via the `X-Api-Key` HTTP header
+- via the `Authorization` HTTP header
+
+The last two are preferable because they don't show up in logs, as they're hidden in the header rather than the URI. 
+
+::: panel-tabset
+
+##### R {-}
+
+```{r}
+
+```
+
 
 Common Methods - API Key, OAUTH 2.0
 
