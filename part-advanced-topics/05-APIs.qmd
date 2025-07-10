@@ -456,13 +456,75 @@ secrets['API_SECRET']
 
 #### System Credential Storage
 
+All major operating systems ({{< fa brands windows >}} {{< fa brands apple >}}{{< fa brands linux >}}) have a system password store available.
+Both R and Python can interface with this system password storage directly, ensuring that your passwords are not stored in plaintext anywhere, including on your machine.
+
+You will need the `keyring` package in both R and Python to use this functionality.
+
+::: demo
+##### Demo: System Keyring Secret Storage {-}
+
+::: panel-tabset
+###### R {-}
+
+```{r}
+#| eval: false
+install.packages("keyring")
+```
+
+With this method, you will typically interactively set the secret value the first time. 
+```{r}
+#| eval: false
+library(keyring)
+# Run in an interactive session
+key_set("API_KEY")
+```
+
+```{r, include=FALSE}
+library(keyring)
+key_set_with_value(service = "env", username = "API_KEY", password="test-key")
+```
 
 
+Running this command will pop up a window for you to enter the key value directly. 
 
+Then, to get the secret back from the keyring, you just need to run `key_get("secret-name")`. 
+
+```{r}
+key_get("API_KEY")
+```
+If you want to list out the keys which are available using a specific service (names only, no values), you can use `key_list(service = "your-service")`. 
+
+::: {.advanced collapse=true}
+###### Non-default backends {-}
+
+You can [set a different backend](https://keyring.r-lib.org/reference/backends.html) for storing your secrets if you would like to do so. 
+In most cases, the operating system default is fine, but for instance on my machine, the default is to use environment variables (which is perhaps only slightly more secure than using the environment configuration files in the previous section). 
+As it would also be perfectly reasonable to use my system keyring (KDE Wallet, in my case), I could configure the package to use that service instead.
+:::
+
+
+###### Python {-}
+
+```{python}
+#| eval: false
+%pip install keyring
+```
+
+```{python}
+import keyring as kr
+
+# Run this in the python console interactively to leave no trace
+kr.set_password("test-service", "API_KEY", "test-key")
+
+kr.get_password("test-service", "API_KEY")
+```
 
 #### Additional Options
 
 There are other options to store secrets, including cloud secret storage, that are used at the enterprise level but may not be that helpful for you right now.
+I also found a [KeePassXC package for python](https://github.com/hrehfeld/python-keepassxc-browser), but couldn't find a similar one for R. 
+
 If you are using Github Actions to build things, you can emulate environment variable secret storage using custom environment variables for your actions. 
 To my knowledge, you can't easily use system credential storage in a continuous integration environment. 
 
@@ -483,8 +545,9 @@ Most APIs will provide you with examples of how you would submit certain queries
 [NewsAPI](https://newsapi.org/) provides access to articles and headlines from around the world. 
 Anyone can sign up for an API key that allows 1000 requests per day while you are developing the application (commercial projects and projects which are "in production" require a paid license). 
 
+
 Sign up for an API key so that you can follow along with this demonstration. 
-I can't publish my API key for obvious reasons, so you'll have to fill yours in.
+Save your API key using your preferred method (or both of the methods) discussed above, using the service "NEWSAPI" and the username "NEWSAPI_KEY". 
 
 The homepage of the API provides several example GET queries (replace `<your key>` with your API key):
 
@@ -510,15 +573,84 @@ The last two are preferable because they don't show up in logs, as they're hidde
 ##### R {-}
 
 ```{r}
+key <- Sys.getenv("NEWSAPI_KEY")
 
+library(httr2)
+uastring <- "R/python data science demos, svanderplas2@unl.edu" # Set this to YOUR email, please!
+
+query <- "https://newsapi.org/v2/everything?domains=wsj.com&language=en"
+
+# Option 1: Pass the API Key in using the URI
+res1 <- request(paste0(query, "&apiKey=", key)) |>
+  req_perform()
+# Redacting apiKey from various places before printing the object
+res1$url <- gsub(key, "<your key>", res1$url)
+res1$request$url <- gsub(key, "<your key>", res1$request$url)
+res1
+
+res2 <- request(query) |>
+  req_user_agent(uastring) |>
+  req_headers_redacted("X-Api-Key" = key) |>
+  req_perform()
+res2
+
+
+res3 <- request(query) |>
+  req_user_agent(uastring) |>
+  req_headers_redacted("Authorization" = key) |>
+  req_perform()
+res3
+```
+
+Then, we can analyze the response body and re-format it to get rectangular data.
+
+```{r}
+library(jsonlite)
+library(dplyr)
+library(purrr)
+library(tibble)
+library(tidyr)
+response <- resp_body_string(res1) |>
+  parse_json(simplifyVector = T)
+response <- response$articles |>
+  unnest_wider("source")
+head(response)
+```
+
+##### Python {-}
+
+```{python}
+from dotenv import load_dotenv
+import os
+load_dotenv()
+key = os.environ.get('NEWSAPI_KEY', "")
+
+import requests
+
+query = "https://newsapi.org/v2/everything?domains=wsj.com&language=en"
+req1 = requests.get(query+"&apiKey="+key)
+req2 = requests.get(query, headers={"X-Api-Key": key})
+req3 = requests.get(query, headers={"Authorization": key})
 ```
 
 
-Common Methods - API Key, OAUTH 2.0
+Then, we can analyze the response body and re-format it to get rectangular data.
 
-Storing Credentials -- .Renviron, .env (Python +  python-dotenv)
+```{python}
+import pandas as pd
 
-## API Limits
+response = pd.json_normalize(req3.json()['articles'])
+response
+```
+
+:::
+
+::::
+
+### OAUTH2.0
+
+
+
 
 ## Best Practices
 
