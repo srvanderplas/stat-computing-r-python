@@ -85,10 +85,16 @@ HTTP requests have a request header and a request body.
 HTTP requests will return a response code. 
 
 In general, 2xx is Success, 3xx is 'address moved', 4xx is 'client screwed up', and 5xx is 'server screwed up', but you can find a full list [here](https://www.coderstool.com/http-response-codes). 
+You're probably familiar with a 404 error, which 
 
-::: {callout collapse=true}
-#### There's also a lovely poem from Rester Test [source](https://medium.com/@t79877005/api-response-codes-poem-451ca17e8f2c) that explains response codes and their meanings
+::: column-margin
+Julia Evans [@evansQuestionsHTTPStatus2020] has some lovely Q&A flashcards on HTTP codes, and there is a cartoon-style [zine]( https://wizardzines.com/zines/http/) for sale that is really lovely as well.  
+:::
 
+::: {.callout collapse=true}
+#### There's a lovely poem from Rester Test [source](https://medium.com/@t79877005/api-response-codes-poem-451ca17e8f2c) that explains response codes and their meanings
+
+```
 In the world of tech, there’s a curious thing,
 Called API requests that make devices sing.
 They’re like little messages that devices send,
@@ -116,13 +122,14 @@ And keep the tech world in a secure mode.
 
 So next time you send an API request,
 And wait for a response with bated breath,
-Remember that codes are the language that speak,
+Remember that codes are the language they speak,
 And help devices find what they seek.
 
 API requests and response codes together,
 Are the backbone of tech’s forever.
 They help devices connect and communicate,
 And make our world a much better state.
+```
 
 :::
 
@@ -337,14 +344,14 @@ In some cases, you may pay to access an API, and the API may track how many requ
 [^gptkey]: It's fairly common for people who are new to working with the ChatGPT AI to accidentally push their keys to github, and then [post](https://www.reddit.com/r/OpenAI/comments/zotyq4/how_did_openai_detect_that_my_api_key_was_pushed/) about it, wondering why they have no credits left in their account. **BE CAREFUL** when using APIs and version control - you need to always make sure your keys are stored securely and not pushed to version control.
 
 
-There are two common methods APIs use for authentication: key-based authentication, and OAUTH 2.0 authentication. 
+There are two common methods APIs use for authentication: key-based authentication, and OAuth 2.0 authentication. 
 In addition to these methods, some APIs implement their own authentication systems that aren't standard.
 
 Chances are, you'll have to read the API documentation to figure out how to authenticate, even if they are using a relatively common authentication method. 
 
 ### Storing Secrets Securely
 
-Whether you're using an API key or OAUTH2.0 or some other authentication method, it's important to make sure you store your secrets (passwords, logins, keys, tokens) securely. 
+Whether you're using an API key or OAuth2.0 or some other authentication method, it's important to make sure you store your secrets (passwords, logins, keys, tokens) securely [@INFO2950Securely]. 
 There is always a balance between security and convenience (ease of access), though. 
 I don't guard my password for reddit in the same way that I guard my bank account information or my SSN, because the worst someone can do on reddit with my username is post nonsense or offensive stuff -- they can't bankrupt me. 
 
@@ -355,7 +362,7 @@ All of these storage methods are preferable to putting the secret directly into 
 
 Most programs have the ability to read in secrets or environment variables using a separate file. 
 The dot at the beginning of the file name indicates that the file is hidden on UNIX-based systems -- just an additional tiny bit of security. 
-In R, secrets can be stored in the `.Renviron` file, and Python uses the `.env` file (using this requires the `python-dotenv` package, available via pip). 
+In R, secrets can be stored in the `.Renviron` file [@roelpiCustomizingRenvironFile2020], and Python uses the `.env` file (using this requires the `python-dotenv` package, available via pip). 
 The `usethis` package in R can help you manage your `.Renviron` file, if you 
 When you create an environment file in your project directory, you should immediately add it to your `.gitignore` file, so that git never sees the file and there's no risk that you accidentally add it to your git repository.
 Even better, you can use the global `.gitignore` file and ensure that git NEVER sees the file. 
@@ -417,9 +424,10 @@ API_KEY=test-key
 API_SECRET=test-secret
 ```
 
-or, run the following code in a UNIX-compatible terminal: 
+or, run the following code in a UNIX-compatible terminal (Windows users - use git bash): 
 
 ```{bash}
+#| eval: false
 echo -ne "API_KEY=test-key\nAPI_SECRET=test-secret" >> .env
 ```
 
@@ -457,11 +465,11 @@ secrets['API_SECRET']
 #### System Credential Storage
 
 All major operating systems ({{< fa brands windows >}} {{< fa brands apple >}}{{< fa brands linux >}}) have a system password store available.
-Both R and Python can interface with this system password storage directly, ensuring that your passwords are not stored in plaintext anywhere, including on your machine.
+Both R and Python can interface with this system password storage directly [@AccessSystemCredential;@expertHowHandleSecrets2023], ensuring that your passwords are not stored in plaintext anywhere, including on your machine.
 
 You will need the `keyring` package in both R and Python to use this functionality.
 
-::: demo
+:::: demo
 ##### Demo: System Keyring Secret Storage {-}
 
 ::: panel-tabset
@@ -519,6 +527,9 @@ kr.set_password("test-service", "API_KEY", "test-key")
 
 kr.get_password("test-service", "API_KEY")
 ```
+:::
+
+::::
 
 #### Additional Options
 
@@ -647,12 +658,230 @@ response
 
 ::::
 
-Still need to add in citations from  Zotero... 
 
-### OAUTH2.0
+### OAuth 2.0
 <!-- https://copilot.microsoft.com/shares/3RwERjUjrhrashJeNiyTd This isn't actually all that useful, lol...  -->
 
+::: callout-warning
+#### Under Construction {-}
 
+This section is still under construction, as I've had trouble finding a ton of compelling examples of why you should use OAuth instead of API key authentication. 
+
+You should, however, understand the basic premise of OAuth authentication, even if we don't use it to access data.
+:::
+
+Key-based authentication is reasonably secure, but it is hard to guard against keys being shared or used by others if they are exposed. 
+Just as passwords are considered less secure than two-factor authentication, API keys are considered less secure than OAuth2.0, a method which requires multiple steps to authenticate:
+
+1. User log in
+2. An authorization code is generated for the application
+3. The authorization code is exchanged for a limited time access token
+4. The token is used to access the API
+
+In addition, API keys do not have any fine-grained way of ensuring that certain users have access to only certain resources. 
+OAuth2.0 allows generation of fine-grained, limited scope permissions -- for instance, you might be allowed to read information but not write it, or read only information relating to certain variables.
+
+You're already likely familiar with OAuth2.0, because that's how the "Sign in with Google/Facebook/Github" links work on various sites (here's a list of [OAuth providers](https://en.wikipedia.org/wiki/List_of_OAuth_providers)). 
+You authorize the application to see that you have a pre-existing profile from another site, and you may also allow the application to see certain information (name, profile picture, email address, ...). 
+The application is given an access token that grants it limited access to your pre-existing profile information, and that is used to allow you access to the application without creating a new profile. 
+
+::: column-margin
+
+[A nice explanation of how OAuth2.0 works with cute shapes](https://engineering.backmarket.com/oauth2-explained-with-cute-shapes-7eae51f20d38) [@severOAuth2ExplainedCute2022]
+:::
+
+As you might expect, preparing to use OAuth 2.0 authentication is a bit more complicated than just getting  an API key.
+In addition, it will vary by API, so you need to carefully read the documentation. 
+I can't provide a demo that is going to work for all APIs out there, unfortunately.
+
+:::: demo
+#### Demo: Using Github's API
+
+1. Navigate to https://github.com/settings/developers and click on OAuth Apps
+2. Create a New Oauth App by clicking the button in the top right corner
+
+![Initial steps to create a github OAuth application.](../images/advanced/oauth-github-1.png){.lightbox #fig-oauth-github-1 fig-alt="A screenshot of the github developer settings page. The OAuth Apps button on the left side is highlighted and corresponding text says 'select OAuth apps'. In the top right corner, the 'New OAuth App' button is highlighted and says 'create a new OAuth app'."}
+
+3. Fill in the OAuth application form. OAuth is usually used for web applications, so some of these values don't quite make sense for our data-gathering purposes -- and that's ok. 
+    - Application name: `oauth-testing` is a good option
+    - Homepage URL: `https://github.com/<username>` (fill in your username) is a good option
+    - Authorization Callback URL: Use the same URL as you used above.
+    - Click Register when you're done.
+    
+![Github application registration value example](../images/advanced/oauth-github-2.png){.lightbox #fig-oauth-github-2 fig-alt="A screenshot of the github OAuth application registration page. The application name field has text next to it suggesting 'oauth-testing' as a good value. The two URL fields (Homepage URL and Authorization callback URL) are highlighted and text suggests to put a web address here - 'https://github.com/your-username' is fine. Finally, the Register application button is highlighted with instructions to click the button when the other fields are complete."}
+
+4. You should be redirected to your application page, and it should look something like @fig-oauth-github-3 (I've censored my client ID, but yours should be readable). Click on the 'Generate a new client secret' button. Using your preferred secret storage method, save both your client ID and client Secret to your computer -- if using a keyring, providing an ID of "`GH_API`" along with a username of "`CLIENT_ID`" and a password of "`CLIENT_SECRET`" should work. If using an environment file, just save `GH_APP_ID=...` and `GH_APP_SECRET=...` separately. 
+
+::: {layout-ncol=2}
+
+![Github application settings page. Generate a client secret. ](../images/advanced/oauth-github-3.png){.lightbox #fig-oauth-github-3 fig-alt="A screenshot of a github API application page, showing the client ID and button to generate a new client secret."}
+
+![Github application settings page after the client secret has been generated.  Record the client ID and generated secret values to your secret storage mechanism of choice. ](.lightbox #fig-oauth-github-3 fig-alt="A screenshot of a github API application page, showing the client ID and the newly-generated client secret.")
+
+:::
+
+5. Scroll to the bottom of your app page and select 'Enable Device Flow' - this will hopefully allow you to use 
+
+6. Use the documentation (or LLMs like Copilot/GPT) to figure out how to authenticate for your specific API. Note that LLMs will be most useful for common APIs. 
+
+::: panel-tabset
+
+##### R {-}
+
+I'm using environment variables to store my client ID and secret, so I will access them like this:
+
+```{r}
+client_id <- Sys.getenv("GH_APP_ID")
+secret <- Sys.getenv("GH_APP_SECRET")
+```
+
+```{r}
+library(httr2)
+
+# Step 1: Define the OAuth client
+client <- oauth_client(
+  id = client_id,            # Replace with your GitHub App's client ID
+  secret = secret,    # Replace with your GitHub App's client secret
+  token_url = "https://github.com/login/oauth/access_token"
+)
+```
+
+This next bit is interactive, so I can't really easily demonstrate it for you here. 
+Sorry!
+```{r}
+#| eval: false
+# Step 2: Set up the authorization flow
+auth <- oauth_flow_auth_code(
+  client = client,
+  auth_url = "https://github.com/login/oauth/authorize",
+  scope = "repo"                    # Example scope: access to repo
+)
+```
+
+If this succeeds, then you'll be able to submit the next request successfully and get Hadley Wickham's user information. 
+
+```{r}
+#| eval: false
+# Step 3: Create a request using the token
+req <- request("https://api.github.com/users/hadley") |>
+  req_auth_bearer_token(auth$access_token)
+
+# Step 4: Perform the request
+resp <- req_perform(req)
+```
+
+```{r}
+#| include: false
+#| eval: false
+save(resp, file = "../data/wickham-github-data.RData")
+```
+```{r}
+#| include: false
+load("../data/wickham-github-data.RData")
+```
+
+```{r}
+# Step 5: Print the response
+resp |> 
+  resp_body_json() |>
+  head()
+```
+
+
+##### Python {-}
+
+You will need the `requests` package for this demo, which you can obtain with `pip install requests`.
+
+```{python}
+#| eval: false
+from requests_oauthlib import OAuth2Session
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
+# Step 1: Define your credentials
+client_id = os.getenv("GH_APP_ID")
+client_secret = os.getenv("GH_APP_SECRET")
+redirect_uri = "https://localhost"  # Must match your app settings
+
+# Step 2: Define OAuth endpoints
+authorization_base_url = "https://github.com/login/oauth/authorize"
+token_url = "https://github.com/login/oauth/access_token"
+
+# Step 3: Create an OAuth2 session
+github = OAuth2Session(client_id, redirect_uri=redirect_uri, scope=["repo"])
+
+# Step 4: Redirect user to GitHub for authorization
+authorization_url, state = github.authorization_url(authorization_base_url)
+```
+```{python}
+#| include: false
+import msgpack
+def save_object(obj, file):
+  try:
+    with open(file, "wb") as f:
+      #pickle.dump(obj, f, protocol=pickle.HIGHEST_PROTOCOL)
+      packed=msgpack.packb(obj)
+      f.write(packed)
+  except Exception as ex:
+    print("Error during packing object (Possibly unsupported):", ex)
+
+def load_object(filename):
+  try:
+    with open(filename, "rb") as f:
+      #return pickle.load(f)
+      packed = f.read()
+      return msgpack.unpackb(packed)
+  except Exception as ex:
+    print("Error during unpacking object (Possibly unsupported):", ex)
+
+```
+```{python}
+#| eval: false
+#| include: false
+save_object([authorization_url, state], "../data/github-oauth-py-obj1.pkl")
+```
+```{python}
+#| include: false
+authorization_url, state = load_object("../data/github-oauth-py-obj1.pkl")
+```
+
+```{python}
+print(f"Visit this URL and authorize: {authorization_url}")
+
+# Step 5: Get the authorization response URL manually (paste it into the quotes)
+redirect_response = "https://localhost/?code=f188b7e06bf0dca942e8&state=OV6agqUeiFjyXciNqSr0bnY7ZB4FuL"
+```
+
+```{python}
+#| eval: false
+# Step 6: Fetch the access token
+token = github.fetch_token(token_url, client_secret=client_secret,
+                           authorization_response=redirect_response)
+
+# Step 7: Make an authenticated API call
+response = github.get("https://api.github.com/users/hadley")
+```
+```{python}
+#| eval: false
+#| include: false
+
+save_object([token, response], "../data/github-oauth-py-obj2.pkl")
+```
+```{python}
+#| include: false
+token, response = load_object("../data/github-oauth-py-obj2.pkl")
+```
+```{python}
+print(response.json())
+```
+
+:::
+
+Note that in both cases, the OAuth libraries (`httr2`, `requests_oauthlib`) handle passing the token to the requests - we don't have to do that manually. 
+
+
+::::
 
 ## Best Practices
 
