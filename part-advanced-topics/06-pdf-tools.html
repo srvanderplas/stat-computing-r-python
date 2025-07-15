@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2025-07-11">
+<meta name="dcterms.date" content="2025-07-15">
 
 <title>36&nbsp; Working with PDFs – Statistical Computing using R and Python</title>
 <style>
@@ -45,6 +45,9 @@ ul.task-list li input[type="checkbox"] {
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
 <link href="../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script src="../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
+<link href="../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
+<link href="../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -83,6 +86,32 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
 </script>
 <script src="https://kit.fontawesome.com/baac5f0610.js" crossorigin="anonymous"></script>
 <style>
+div.callout-advanced.callout {
+  border-left-color: #cbbaf9;
+}
+div.callout-advanced.callout-style-default > .callout-header {
+  background-color: rgba(203, 186, 249, 0.13);
+}
+div.callout-advanced .callout-toggle::before {  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgb(33, 37, 41)" class="bi bi-chevron-down" viewbox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"></path></svg>');}
+div.callout-advanced.callout-style-default .callout-icon::before, div.callout-advanced.callout-titled .callout-icon::before {
+  font-family: 'Font Awesome 6 Free', FontAwesome;
+  font-style: normal;
+  content: '\f5dc' !important;
+  background-image: none;
+}
+div.callout-setup.callout {
+  border-left-color: #f3e969;
+}
+div.callout-setup.callout-style-default > .callout-header {
+  background-color: rgba(243, 233, 105, 0.13);
+}
+div.callout-setup .callout-toggle::before {  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgb(33, 37, 41)" class="bi bi-chevron-down" viewbox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"></path></svg>');}
+div.callout-setup.callout-style-default .callout-icon::before, div.callout-setup.callout-titled .callout-icon::before {
+  font-family: 'Font Awesome 6 Free', FontAwesome;
+  font-style: normal;
+  content: '\f6e3' !important;
+  background-image: none;
+}
 div.callout-demo.callout {
   border-left-color: #91d5d4;
 }
@@ -122,39 +151,42 @@ div.callout-example.callout-style-default .callout-icon::before, div.callout-exa
   content: '\f206' !important;
   background-image: none;
 }
-div.callout-advanced.callout {
-  border-left-color: #cbbaf9;
-}
-div.callout-advanced.callout-style-default > .callout-header {
-  background-color: rgba(203, 186, 249, 0.13);
-}
-div.callout-advanced .callout-toggle::before {  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgb(33, 37, 41)" class="bi bi-chevron-down" viewbox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"></path></svg>');}
-div.callout-advanced.callout-style-default .callout-icon::before, div.callout-advanced.callout-titled .callout-icon::before {
-  font-family: 'Font Awesome 6 Free', FontAwesome;
-  font-style: normal;
-  content: '\f5dc' !important;
-  background-image: none;
-}
-div.callout-setup.callout {
-  border-left-color: #f3e969;
-}
-div.callout-setup.callout-style-default > .callout-header {
-  background-color: rgba(243, 233, 105, 0.13);
-}
-div.callout-setup .callout-toggle::before {  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgb(33, 37, 41)" class="bi bi-chevron-down" viewbox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"></path></svg>');}
-div.callout-setup.callout-style-default .callout-icon::before, div.callout-setup.callout-titled .callout-icon::before {
-  font-family: 'Font Awesome 6 Free', FontAwesome;
-  font-style: normal;
-  content: '\f6e3' !important;
-  background-image: none;
-}
 </style>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 <link rel="stylesheet" href="../build_deps/style.css">
 </head>
 
-<body class="nav-sidebar floating">
+<body class="nav-sidebar floating slimcontent">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -510,11 +542,22 @@ div.callout-setup.callout-style-default .callout-icon::before, div.callout-setup
 </nav>
 <div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
-        
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#objectives" id="toc-objectives" class="nav-link active" data-scroll-target="#objectives">Objectives</a></li>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link" data-scroll-target="#introduction"><span class="header-section-number">36.1</span> Introduction</a>
+  <ul class="collapse">
+  <li><a href="#pdf-file-format" id="toc-pdf-file-format" class="nav-link" data-scroll-target="#pdf-file-format"><span class="header-section-number">36.1.1</span> PDF File Format</a></li>
+  </ul></li>
+  <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/srvanderplas/stat-computing-r-python/edit/main/part-advanced-topics/06-pdf-tools.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li></ul></div></nav>
     </div>
 <!-- main -->
-<main class="content column-page-right" id="quarto-document-content">
+<main class="content page-columns page-full column-body" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default"><nav class="quarto-page-breadcrumbs quarto-title-breadcrumbs d-none d-lg-block" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../part-advanced-topics/00-advanced.html">Part IV: Advanced Topics</a></li><li class="breadcrumb-item"><a href="../part-advanced-topics/06-pdf-tools.html"><span class="chapter-number">36</span>&nbsp; <span class="chapter-title">Working with PDFs</span></a></li></ol></nav>
 <div class="quarto-title">
@@ -523,13 +566,13 @@ div.callout-setup.callout-style-default .callout-icon::before, div.callout-setup
 
 
 
-<div class="quarto-title-meta column-page-right">
+<div class="quarto-title-meta column-body">
 
     
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">July 11, 2025</p>
+      <p class="date">July 15, 2025</p>
     </div>
   </div>
   
@@ -541,8 +584,129 @@ div.callout-setup.callout-style-default .callout-icon::before, div.callout-setup
 </header>
 
 
+<p>When I started my first job out of graduate school, one particular process used by my coworkers completely mystified me: they would print out a document, and then immediately scan it back in, with the scan emailed to themselves. This seemed like a waste of toner, paper, and time to me – why would anyone do such a thing? Eventually, I found out that the printer would automatically recognize the text and add a text layer to a PDF that previously couldn’t be highlighted. So, my coworkers found a handy workaround to manually typing out the numbers they needed from older PDF documents! As clever as this was, it was also unnecessary. A lot of paper, toner, and time could have been saved if the company had just provided <strong>Optical Character Recognition</strong> programs and made them available to workers.</p>
+<p>In this chapter, you’ll learn about PDF document structure, as well as how to use OCR programs.</p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../images/advanced/xkcd-2304-preprint.png" class="img-fluid figure-img" alt="The image is a comic strip depicting a person sitting at a news desk. The person has simplistic features with a round head, short hair, and no facial features drawn. A speech bubble above them says &quot;According to a new PDF...&quot; Behind them is a sign reading &quot;Breaking News.&quot; Crossed out phrases above them include &quot;According to a new preprint...&quot;, &quot;...an unpublished study...&quot;, and &quot;According to a new paper uploaded to a preprint server, but which has not undergone peer review...&quot;. Below the main image, there's a section titled &quot;Benefits of just saying 'a PDF':&quot; followed by three bullet points. • AVOIDS IMPLICATIONS ABOUT PUBLICATION STATUS • IMMEDIATELY RAISES QUESTIONS ABOUT AUTHOR(S) • STILL IMPLIES &quot;THIS DOCUMENT WAS PROBABLY PREPARED BY A PROFESSIONAL, BECAUSE NO NORMAL HUMAN TRYING TO COMMUNICATE IN 2020 WOULD CHOOSE THIS RIDICULOUS FORMAT&quot;."></p>
+<figcaption>DOWNSIDES: Adobe people may periodically email your newsroom to ask you to call it an ‘Adobe® PDF document,’ but they’ll reverse course once they learn how sarcastically you can pronounce the registered trademark symbol.<br>CC-A-NC2.5 by Randall Munroe. <a href="https://xkcd.com/2304/">source</a></figcaption>
+</figure>
+</div>
+</div></div><section id="objectives" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="objectives">Objectives</h2>
+<ul>
+<li>Identify the type of PDF and the data it contains.</li>
+<li>Develop a strategy to extract the data from the PDF programmatically, using strategies to improve the success of Optical Character Recognition (OCR) if necessary.</li>
+<li>Augment the PDF files with OCR to add a text layer, if necessary, before extracting information.</li>
+<li>Extract information from PDFs programmatically and format the information appropriately.</li>
+<li>Implement quality control and data cleaning measures which handle the most common OCR errors elegantly.</li>
+</ul>
+</section>
+<section id="introduction" class="level2 page-columns page-full" data-number="36.1">
+<h2 data-number="36.1" class="anchored" data-anchor-id="introduction"><span class="header-section-number">36.1</span> Introduction</h2>
+<p>Over the objections of open data organizations, data archivists <span class="citation" data-cites="klindtPDFConsideredHarmful2017"><a href="#ref-klindtPDFConsideredHarmful2017" role="doc-biblioref"><strong>klindtPDFConsideredHarmful2017?</strong></a></span>, and programmers <span class="citation" data-cites="edwardsWhyExtractingData2025 zhangDocumentParsingUnveiled2024"><a href="#ref-edwardsWhyExtractingData2025" role="doc-biblioref"><strong>edwardsWhyExtractingData2025?</strong></a>, <a href="#ref-zhangDocumentParsingUnveiled2024" role="doc-biblioref"><strong>zhangDocumentParsingUnveiled2024?</strong></a></span>, companies and government agencies frequently use PDF (portable document format) documents to store and release data. Election results (<a href="https://sos.oregon.gov/elections/Documents/results/november-general-2024-results.pdf">Oregon, 2024</a>), property appraisals (<a href="../data/Lancaster-County-NE-Real-Estate-AppraisalCard-28719-2025-147568.pdf">Lancaster County, Nebraska</a>), public health reports (<a href="../data/cdc-mmwr-2025-07-10.pdf">Centers for Disease Control Morbidity and Mortality Weekly Reports</a>), and more, locked up <span class="citation" data-cites="harbertTappingPowerUnstructured2021"><a href="#ref-harbertTappingPowerUnstructured2021" role="doc-biblioref"><strong>harbertTappingPowerUnstructured2021?</strong></a></span> in PDF format instead of stored properly in nicely formatted spreadsheets or databases. Even though we object to the storage mechanism, learning how to deal with data stored in PDF format is a valuable skill for the aspiring data scientist. Even if you never work with PDF data in a professional capacity (and I hope you’re that lucky), these skills are very useful for public data side projects.</p>
+<section id="pdf-file-format" class="level3 page-columns page-full" data-number="36.1.1">
+<h3 data-number="36.1.1" class="anchored" data-anchor-id="pdf-file-format"><span class="header-section-number">36.1.1</span> PDF File Format</h3>
+<p>The PDF file format was created in 1993 by Adobe and was a proprietary format until 2008, when the format became an open standard under the control of the International Standards Organization <span class="citation" data-cites="wikimediacontributorsHistoryPDF2024"><a href="#ref-wikimediacontributorsHistoryPDF2024" role="doc-biblioref"><strong>wikimediacontributorsHistoryPDF2024?</strong></a></span>. As the acronym suggests, Portable Document Format is intended to be readable on any computer. This was something of a novel idea in the 1990s, when Mac users used one document creation software and Windows users another, and there was not a version of e.g.&nbsp;Microsoft Office available for Mac.</p>
+<p>The technical details of a PDF file are complex <span class="citation" data-cites="gnupdfprojectIntroductionPDF2014 hodsonPDFSuccinctly2012"><a href="#ref-gnupdfprojectIntroductionPDF2014" role="doc-biblioref"><strong>gnupdfprojectIntroductionPDF2014?</strong></a>, <a href="#ref-hodsonPDFSuccinctly2012" role="doc-biblioref"><strong>hodsonPDFSuccinctly2012?</strong></a></span>. However, conceptually, there are four required components to a PDF document, as shown in <a href="#fig-pdf-doc-components" class="quarto-xref">Figure&nbsp;<span>36.1</span></a>:</p>
+
+<div class="no-row-height column-margin column-container"><div class="">
+<div id="fig-pdf-doc-components" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="A box containing four colored boxes: Header, Body, Cross-ref table, and Trailer.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-pdf-doc-components-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="../images/advanced/pdf-document-components.png" class="lightbox" data-gallery="quarto-lightbox-gallery-1" title="Figure&nbsp;36.1: High-level required components of a PDF document."><img src="../images/advanced/pdf-document-components.png" class="img-fluid figure-img" alt="A box containing four colored boxes: Header, Body, Cross-ref table, and Trailer."></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-pdf-doc-components-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;36.1: High-level required components of a PDF document.
+</figcaption>
+</figure>
+</div>
+<div id="fig-pdf-body-components" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="A network diagram showing the Catalog, with an arrow leading to the Page Tree. Below the Page tree are two page nodes, Page 1 and Page 2. Arrows connect the Page tree to the pages, and the pages to the page tree. The final layer of the network contains page 1 content, resources, and page 2 content. Arrows point from page 1 and 2 to the resources node, as well as to the corresponding page content.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-pdf-body-components-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="../images/advanced/pdf-body-components.png" class="lightbox" data-gallery="quarto-lightbox-gallery-2" title="Figure&nbsp;36.2: Required components of a PDF Body"><img src="../images/advanced/pdf-body-components.png" class="img-fluid figure-img" alt="A network diagram showing the Catalog, with an arrow leading to the Page Tree. Below the Page tree are two page nodes, Page 1 and Page 2. Arrows connect the Page tree to the pages, and the pages to the page tree. The final layer of the network contains page 1 content, resources, and page 2 content. Arrows point from page 1 and 2 to the resources node, as well as to the corresponding page content."></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-pdf-body-components-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;36.2: Required components of a PDF Body
+</figcaption>
+</figure>
+</div>
+</div></div><ul>
+<li>Header
+<ul>
+<li>PDF version number</li>
+<li>arbitrary sequence of binary data to prevent applications from opening the document as a text file (which would corrupt the file)</li>
+</ul></li>
+<li>Body (relationships between body components shown in <a href="#fig-pdf-body-components" class="quarto-xref">Figure&nbsp;<span>36.2</span></a>)
+<ul>
+<li>Page tree - serves as the root of the document, and may be as simple as a list of pages.</li>
+<li>Pages - each page is defined independently and contains its own metadata, links to resources, and content (defined separately).</li>
+<li>Resources - objects required to render a page, such as fonts.</li>
+<li>Content - text and graphics which appear visually on the page.</li>
+<li>Catalog - an indication to programs as to where to start reading the document. Often this is just a link to the root page tree.</li>
+</ul></li>
+<li>Cross-reference table - Records the location in the file of each object in the body of the file so that when viewing a page, only objects from that page are loaded into memory.</li>
+<li>Trailer - tells applications how to read the file
+<ul>
+<li>A reference to the catalog which links to the document root</li>
+<li>Location of the cross-reference table</li>
+<li>Size of the cross-reference table</li>
+</ul></li>
+</ul>
+<p><span class="citation" data-cites="kingAdobeIntroductionInsides2005"><a href="#ref-kingAdobeIntroductionInsides2005" role="doc-biblioref"><strong>kingAdobeIntroductionInsides2005?</strong></a></span> has some good examples showing pages and the PDF document code that create the pages.</p>
+<p>Within the page, <strong>streams</strong> are often used to define the page’s appearance (the other option is <strong>lattices</strong>, which can be used to divide the page up into sections). To add text, commands are issued to define the font, position the text cursor, and type the text onto the page. Text is positioned from the bottom left corner, with <span class="math inline">\(Y\)</span> defining the vertical and <span class="math inline">\(X\)</span> defining the horizontal location. Line breaks and other formatting features are not a part of the PDF format – these operations are performed by another program before the file is saved as PDF. As a result, text commands in PDF can be fragmented, leading to a continuous paragraph of words being written in the PDF file as separate lines, with other page elements present in between (like figure captions, page numbers, and images). In addition, PDF documents allow for changing the kerning of text (space between letters) in specific ways that may make it difficult for the characters to be separated visually. One common example of this is the sequence of characters <code>ff</code> or <code>fi</code> in a document, which can sometimes be read in interesting ways by OCR: sometimes, as unicode ﬀ or ﬁ, sometimes as Cyrillic characters, and sometimes left out entirely or misplaced.</p>
+<div class="callout callout-style-default callout-demo callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Demo: PDF Text Fun
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Consider a <a href="../data/Lancaster-County-NE-Real-Estate-AppraisalCard-28719-2025-147568.pdf">Home appraisal record from Lancaster County, NE</a>. Opening the card in a PDF reader and selecting all the text yields a <a href="../data/Lancaster-County-NE-Real-Estate-AppraisalCard-28719-2025-147568.txt">disorganized text file</a> (and this PDF is actually created using modern methods and relatively clean!)</p>
+<p>A few observations, marked up in <a href="#fig-pdf-layout-text" class="quarto-xref">Figure&nbsp;<span>36.3</span></a>:</p>
+<ul>
+<li>The title on page 1 is on line 39 of the file, and it appears that the data from the first column is on lines 1-38.</li>
+<li>When there are multi-column tables, as in the “Inspection History” table in the middle of the first page, the values are listed by column, but missing values (the times of inspection) are not indicated at all!</li>
+<li>The Appraised Values table has columns Land, Building, Total, and Method. Line 142 of the text file shows an entry for “Total Method”, and it is clear that the text for the two columns has been combined.</li>
+</ul>
+<div id="fig-pdf-layout-text" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="A screenshot of the first page of the PDF, with boxes highlighting the locations corresponding to the points shown above. In the Appraised Values table, arrows are shown connecting the Appraised Values header, Land, Building, Total Method, Current, $45,000, $111,000, $156,000 IDXVAL, Prior, $45,000, $111,000, and $156,000 IDXVAL sequentially.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-pdf-layout-text-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="../images/advanced/Lancaster-County-NE-Real-Estate-AppraisalCard-28719-2025-147568.svg" class="lightbox" data-gallery="quarto-lightbox-gallery-3" title="Figure&nbsp;36.3: Comparing text of PDF document to the rendered PDF document."><img src="../images/advanced/Lancaster-County-NE-Real-Estate-AppraisalCard-28719-2025-147568.svg" class="img-fluid figure-img" alt="A screenshot of the first page of the PDF, with boxes highlighting the locations corresponding to the points shown above. In the Appraised Values table, arrows are shown connecting the Appraised Values header, Land, Building, Total Method, Current, $45,000, $111,000, $156,000 IDXVAL, Prior, $45,000, $111,000, and $156,000 IDXVAL sequentially."></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-pdf-layout-text-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;36.3: Comparing text of PDF document to the rendered PDF document.
+</figcaption>
+</figure>
+</div>
+<p>Now, perhaps we could write a script that would disentangle some of this information and format it properly, though I think the missing values would still be unrecoverable without someone visually mapping the data to the corresponding lines.</p>
+<p>The arrangement of the text you get from selecting all text is different in different PDF applications – I tried it with <a href="../data/Lancaster-County-NE-Real-Estate-AppraisalCard-28749-2025-147568.txt">Okular</a> and <a href="../data/Lancaster-County-NE-Real-Estate-AppraisalCard-28749-2025-147568-Firefox.txt">Firefox</a>, and got totally different orders of text boxes.</p>
+<p>The scope of the actual problem only becomes visible when you look at a second <a href="../data/Lancaster-County-NE-Real-Estate-AppraisalCard-28749-2025-147568.pdf">PDF document</a> and the corresponding <a href="../data/Lancaster-County-NE-Real-Estate-AppraisalCard-28749-2025-147568.txt">text file</a>. <a href="#fig-pdf-layout-text-parallel" class="quarto-xref">Figure&nbsp;<span>36.4</span></a> shows the two PDF files and their corresponding text files, with the comparable portion of each PDF and text file highlighted.</p>
+<div id="fig-pdf-layout-text-parallel" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="A screenshot of the text files and PDF files for both real estate appraisal cards. The recent appeal history and assessed value history table headers and first row of text are highlighted in both sets of documents.">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-pdf-layout-text-parallel-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<a href="../images/advanced/Lancaster-County-NE-Real-Estate-AppraisalCard-28749-2025-147568.png" class="lightbox" data-gallery="quarto-lightbox-gallery-4" title="Figure&nbsp;36.4: Lancaster county, NE real estate appraisal cards and text, with correpsonding sections highlighted across two appraisal cards. The text corresponding to the same space on the PDF has different formatting because one row of the table is blank on one of the cards."><img src="../images/advanced/Lancaster-County-NE-Real-Estate-AppraisalCard-28749-2025-147568.png" class="img-fluid figure-img" alt="A screenshot of the text files and PDF files for both real estate appraisal cards. The recent appeal history and assessed value history table headers and first row of text are highlighted in both sets of documents."></a>
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-pdf-layout-text-parallel-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;36.4: Lancaster county, NE real estate appraisal cards and text, with correpsonding sections highlighted across two appraisal cards. The text corresponding to the same space on the PDF has different formatting because one row of the table is blank on one of the cards.
+</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>Hopefully you’re beginning to understand how challenging this whole extracting data from PDFs thing can be!</p>
+</section>
+</section>
+<section id="references" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="references">References</h2>
 
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -1154,7 +1318,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <input type="hidden" id="giscus-base-theme" value="light">
 <input type="hidden" id="giscus-alt-theme" value="dark">
-<nav class="page-navigation column-page-right">
+<nav class="page-navigation column-body">
   <div class="nav-page nav-page-previous">
       <a href="../part-advanced-topics/05-APIs.html" class="pagination-link" aria-label="Application Programming Interfaces">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">35</span>&nbsp; <span class="chapter-title">Application Programming Interfaces</span></span>
@@ -1174,7 +1338,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </div>   
     <div class="nav-footer-center">
       &nbsp;
-    <div class="toc-actions"><ul><li><a href="https://github.com/srvanderplas/stat-computing-r-python/edit/main/part-advanced-topics/06-pdf-tools.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li></ul></div></div>
+    <div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/srvanderplas/stat-computing-r-python/edit/main/part-advanced-topics/06-pdf-tools.qmd" class="toc-action"><i class="bi bi-github"></i>Edit this page</a></li></ul></div></div>
     <div class="nav-footer-right">
       <ul class="footer-items list-unstyled">
     <li class="nav-item compact">
@@ -1187,6 +1351,38 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     </div>
   </div>
 </footer>
+<script>var lightboxQuarto = GLightbox({"openEffect":"zoom","descPosition":"bottom","loop":false,"selector":".lightbox","closeEffect":"zoom"});
+(function() {
+  let previousOnload = window.onload;
+  window.onload = () => {
+    if (previousOnload) {
+      previousOnload();
+    }
+    lightboxQuarto.on('slide_before_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      const href = trigger.getAttribute('href');
+      if (href !== null) {
+        const imgEl = window.document.querySelector(`a[href="${href}"] img`);
+        if (imgEl !== null) {
+          const srcAttr = imgEl.getAttribute("src");
+          if (srcAttr && srcAttr.startsWith("data:")) {
+            slideConfig.href = srcAttr;
+          }
+        }
+      } 
+    });
+  
+    lightboxQuarto.on('slide_after_load', (data) => {
+      const { slideIndex, slideNode, slideConfig, player, trigger } = data;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(slideNode);
+      }
+    });
+  
+  };
+  
+})();
+          </script>
 
 
 
