@@ -100,6 +100,7 @@ The scope of the actual problem only becomes visible when you look at a second [
 
 Hopefully you're beginning to understand how challenging this whole extracting data from PDFs thing can be!
 
+### PDF Layers
 
 Practically, we can think of PDFs as having a text layer, an image layer, or both (hybrid PDFs). 
 A PDF with a text layer will allow you to select embedded text and copy it into a text file, while a PDF that just has an image layer does not. 
@@ -107,22 +108,168 @@ It is also possible to have a PDF that has an image layer with a corresponding t
 Optical Character Recognition takes a PDF with only image layers and creates a text file (or layer, depending on the tool) by  identifying the characters in the document and converting those characters to text with a corresponding $(x,y)$ location in the document.
 Different OCR programs use different conventions for this process, and the quality of the image matters a lot as well - some images are just not good enough to produce a passable transcription of the text using automatic methods. 
 
-::: demo
+:::: demo
 
-### Demo: OCR {-}
+### Demo: Types of PDF Files and Layers {-}
 
 For this demo, I've converted the first page of one of the Lancaster county, NE property appraisal PDFs into an [image only PDF](../data/Lancaster-County-NE-Real-Estate-AppraisalCard-28749-2025-147568-pg1-image.pdf) and a [text-based PDF (the original form)](../data/Lancaster-County-NE-Real-Estate-AppraisalCard-28749-2025-147568-pg1-text.pdf). 
 Open these up in your favorite PDF editor and try to highlight the text in each. How does it work?
 
-Many free and open-source OCR programs are built using the `tesseract` OCR engine.
-Tesseract itself gives you much more control over the process, but requires converting each page of the PDF to an image (usually [PNG](../data/Lancaster-County-NE-Real-Estate-AppraisalCard-28749-2025-147568-pg1-image-1.png)) first, recognizing the text on each page, and then combining the text together to get [a text document](../data/Lancaster-County-NE-Real-Estate-AppraisalCard-28749-2025-147568-pg1-text-1.txt) (click the link to see the resulting text file).
-This text document means you can search the PDF for text, but it doesn't provide all of the features that a hybrid PDF with both an image and a text layer provides -- the text isn't associated with the $(x,y)$ location on the page(s). 
- the image-only PDF to [PNG] and then using `tesseract` with the english-language flag to OCR
+We can also examine the format of a PDF file using R and python libraries. 
 
-When I need OCR, I prefer to use a program called [`ocrmypdf`](https://github.com/ocrmypdf/OCRmyPDF) that is based on tesseract and available for most distributions.
-The output of `ocrmypdf` is a [hybrid PDF](../data/Lancaster-County-NE-Real-Estate-AppraisalCard-28749-2025-147568-pg1-hybrid-ocrmypdf.pdf) that has the text and image data superimposed (the text is invisible until you highlight it). 
+::: panel-tabset
+
+#### R {-}
+You'll need the `pdftools` package, which you can install with `install.packages("pdftools")`. 
+This may require you to install `libpoppler` on Linux <i class="fa-brands fa-linux" aria-hidden="true"></i>, but versions for other operating systems should be self-contained. 
+
+The `pdf_info` function gives us information from the PDF header, and the `pdf_text` function tries to extract the text, if it exists. 
+
+```{r}
+library(pdftools)
+
+pdf_info("../data/Lancaster-County-NE-Real-Estate-AppraisalCard-28749-2025-147568-pg1-text.pdf")$version
+pdf_text("../data/Lancaster-County-NE-Real-Estate-AppraisalCard-28749-2025-147568-pg1-text.pdf") |>
+  str_split("\n") |>
+  unlist() |>
+  head()
+
+
+pdf_info("../data/Lancaster-County-NE-Real-Estate-AppraisalCard-28749-2025-147568-pg1-image.pdf")$version
+pdf_text("../data/Lancaster-County-NE-Real-Estate-AppraisalCard-28749-2025-147568-pg1-image.pdf") 
+```
+
+Notice that the text does not exist for the image-based PDF. 
+
+#### Python {-}
+
+You will need the `pdfplumber` package [@singer-vinePdfplumber2025], which you can install with pip. 
+
+The `pdf` object contains `metadata` and `pages`, and page text (if it exists) can be accessed with the `pdf.pages[i].extract_text()` method.
+
+```{python}
+import pdfplumber
+with pdfplumber.open("../data/Lancaster-County-NE-Real-Estate-AppraisalCard-28749-2025-147568-pg1-text.pdf") as pdf:
+  metadata = pdf.metadata
+  first_page =  pdf.pages[0]
+  text = first_page.extract_text()
+
+pdf.close()
+metadata
+text.split("\n")[0:5]
+
+with pdfplumber.open("../data/Lancaster-County-NE-Real-Estate-AppraisalCard-28749-2025-147568-pg1-image.pdf") as pdf:
+  metadata = pdf.metadata
+  first_page =  pdf.pages[0]
+  text = first_page.extract_text()
+
+pdf.close()
+metadata
+text.split("\n")[0:5]
+```
 
 :::
+
+Now, I created the image version of the PDF by opening the PDF in an image editor and saving the resulting file as PDF within that image editor, so it's not surprising that the text layer is gone in that version of the file. 
+
+::: {.callout collapse=true}
+#### Preview: OCR
+
+Most free OCR tools are based on the `tesseract` library, which you can access using `pytesseract` in python or the `tesseract` R package. 
+You can also run `tesseract` from the command line, if you [install the library](https://tesseract-ocr.github.io/tessdoc/Installation.html) for your operating system and language. 
+
+::: panel-tabset
+
+##### Bash {-}
+
+For the sake of shorter commands, let's assume I'm working with a 1-page PDF file named `file.pdf` and want to create `file.txt` which contains the text of the image-based PDF.
+
+```{bash, eval = F}
+# Convert PDF to PNG to work with Tesseract
+# If file has more than one page, 
+# this will create file-1.png ... file-n.png images
+pdftoppm -png file.pdf file
+
+# Extract the text
+tesseract  -l eng file-1.png file-1.txt
+```
+
+Here are the [PNG](../data/Lancaster-County-NE-Real-Estate-AppraisalCard-28749-2025-147568-pg1-image-1.png) and [text file](../data/Lancaster-County-NE-Real-Estate-AppraisalCard-28749-2025-147568-pg1-text-1.txt) created by using tesseract on one of the Lancaster county appraisal data sheets. 
+Note that with this text document, you can search the PDF for text, but it doesn't provide all of the features that a hybrid PDF with both an image and a text layer provides -- the text isn't associated with the $(x,y)$ location on the page(s). 
+
+##### R {-}
+
+On Mac and Linux, you will likely need to install some system packages to make the `tesseract` package installable. 
+```
+Try installing:
+ * deb: libtesseract-dev libleptonica-dev (Debian, Ubuntu, etc)
+ * rpm: tesseract-devel leptonica-devel (Fedora, CentOS, RHEL)
+ * brew: tesseract (Mac OSX)
+```
+
+```{r}
+# install.packages("tesseract")
+library(tesseract)
+library(pdftools)
+
+pdf_convert("../data/file.pdf", dpi = 600)
+eng <- tesseract("eng")
+
+text <- ocr("../data/file-1.png", engine = eng)
+text <- str_split(text, "\n", simplify = T)
+text[1,1:5]
+```
+
+
+##### Python {-}
+
+If you already have the image created, it's simple to get the text out with `pytesseract`.
+
+```{python}
+from PIL import Image
+import pytesseract
+
+pytesseract.image_to_string(Image.open('../data/file-1.png')).split("\n")[0:5]
+```
+
+If you don't have the image created, you have to first create an image (`imgBlob`) for each page, and then run `image_to_string` on that image. 
+Note that this method does not require that you write the image out to a separate file: the image is only stored in memory.
+This might be preferable over the bash method, which produces one file for each PDF page. 
+
+```{python}
+from pdf2image import convert_from_path
+
+pages = convert_from_path("../data/file.pdf")
+for pageNum,imgBlob in enumerate(pages):
+  text = pytesseract.image_to_string(imgBlob, lang='eng')
+  with open(f'../data/file-py-{pageNum}.txt', 'a') as the_file:
+    the_file.write(text)
+```
+
+Here is the [text file](../data/file-py-0.txt) created by Python using `pytesseract`. 
+
+:::
+
+:::
+
+
+::: {.callout collapse=true}
+#### Preview: Creating Hybrid PDFs
+
+When I need OCR and don't necessarily want to bother with R, I prefer to use a program called [`ocrmypdf`](https://github.com/ocrmypdf/OCRmyPDF) that is based on tesseract and available for most distributions.
+I started using `ocrmypdf` before I realized that it's actually a python package that can just be called from the Linux command line. 
+
+```{bash, eval=F}
+ocrmypdf -l eng ../data/file.pdf ../data/file-ocrmypdf.pdf
+```
+
+
+The output of `ocrmypdf` is a [hybrid PDF](../data/file-ocrmypdf.pdf) that has the text and image data superimposed (the text is invisible until you highlight it). 
+
+
+:::
+
+::::
 
 
 ## Working with PDFs Programmatically
@@ -174,6 +321,10 @@ walk2(filelist, filesave, ~download.file(.x, destfile = .y, method = "wget", ext
 
 You can either run the code above (assuming you have `wget` on your machine), or you can [download a zip file of the PDFs](../data/bls-pdfs/bls-cpi-pdfs.zip). 
 
+
+:::: example
+
+#### Example: BLS 
 
 
 
