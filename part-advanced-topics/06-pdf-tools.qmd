@@ -108,6 +108,13 @@ It is also possible to have a PDF that has an image layer with a corresponding t
 Optical Character Recognition takes a PDF with only image layers and creates a text file (or layer, depending on the tool) by  identifying the characters in the document and converting those characters to text with a corresponding $(x,y)$ location in the document.
 Different OCR programs use different conventions for this process, and the quality of the image matters a lot as well - some images are just not good enough to produce a passable transcription of the text using automatic methods. 
 
+What about Tables? 
+In my opinion, the `pdftools` package documentation says it best...
+
+> Data scientists are often interested in data from tables. Unfortunately the pdf format is pretty dumb and does not have notion of a table (unlike for example HTML). Tabular data in a pdf file is nothing more than strategically positioned lines and text, which makes it difficult to extract the raw data... [@oomsPdftoolsTextExtraction2025]
+
+Table extraction from PDFs is a challenge: hopefully, this demonstration will help you understand why it's so challenging.
+
 :::: demo
 
 ### Demo: Types of PDF Files and Layers {-}
@@ -274,14 +281,27 @@ The output of `ocrmypdf` is a [hybrid PDF](../data/file-ocrmypdf.pdf) that has t
 
 ## Working with PDFs Programmatically
 
-### Reading Data from Text or Hybrid PDFs
+### Reading Tabular Data from Text or Hybrid PDFs
+
+As mentioned above, tabular data is a particular challenge to read from PDF files, as the PDF specification doesn't actually have any way to represent structured text. 
+There are two common open-source libraries recommended for extracting tabular data from PDFs - `tabula`, which is a Java library, and `camelot`, a Python library. 
+There are interfaces to the `tabula` library in both R and Python (`tabulapdf` and `tabula-py`, respectively), but there is no R interface to `camelot`, as far as I am aware. 
+
+Installation of `tabulapdf` in R depends on `rJava`, which can be a bit tricky, particularly on Windows. The [tabulapdf](https://github.com/ropensci/tabulapdf/) github page has more detailed instructions for [how to install Java for Windows using Chocolatey](https://github.com/ropensci/tabulapdf/#installing-java-on-windows-with-chocolatey). 
+
+:::: example
+
+#### Example: BLS 
 
 The Bureau of Labor Statistics provides monthly Consumer Price Index news releases. 
 An archive of these releases is available at https://www.bls.gov/bls/news-release/cpi.htm. 
-To demonstrate working with PDFs programmatically, we need to acquire a set of PDFs, and these seem like they will do.
+Let's acquire 2 years worth of monthly CPI reports, and focus on trying to extract the first table, "Consumer Price Index for All Urban Consumers (CPI-U): US city average, by expenditure category". 
 
 ::: {.callout collapse=true}
 #### Acquiring 2 years of BLS CPI news releases
+
+As this material is covered in @sec-data-web, I'm just going to provide the code to do this in R -- you can see equivalent python commands in @sec-data-web. 
+After having done this in R, I realized I probably could have accomplished the same task with a single `wget` command in `bash`, the lesson being that it is important to pick your tools wisely. 
 
 ```{r acquire-bls-pdfs, eval = F}
 library(rvest)
@@ -319,13 +339,341 @@ walk2(filelist, filesave, ~download.file(.x, destfile = .y, method = "wget", ext
 
 :::
 
+::: column-margin
+
+![A screenshot of Table 1 of the CPI monthly report from December 2023](../images/advanced/bls-cpi-table1-screenshot.png){.lightbox #fig-cpi-tab1-screenshot fig-alt="A screenshot of Table 1 of the BLS CPI report showing components of the consumer price index for urban consumers, averaged over US cities."}
+
+:::
+
 You can either run the code above (assuming you have `wget` on your machine), or you can [download a zip file of the PDFs](../data/bls-pdfs/bls-cpi-pdfs.zip). 
 
 
-:::: example
+::: panel-tabset
+##### R {-}
+```{r}
+# install.packages("tabulapdf")
+library(tabulapdf)
+library(pdftools)
+library(purrr)
+library(stringr)
 
-#### Example: BLS 
+files <- list.files(path = "../data/bls-pdfs", pattern = ".pdf$", full.names=T)
+
+find_page_number <- function(file) {
+  txt <- pdf_text(file)
+  txt_by_page <- map_chr(txt, ~paste(., collapse=" "))
+  which(str_detect(txt_by_page, "Table 1"))
+}
+
+page_numbers <- map_int(files, find_page_number)
+
+tables <- map2(files, page_numbers, ~extract_tables(.x, page = .y,  output = "tibble")[[1]])
+
+tables[[1]]
+```
+
+It appears that `tabulapdf` isn't separating the columns the way we'd prefer. 
+Let's see if we can fix that....
+
+There's a function, `locate_areas()`, that works interactively - it opens a viewer tab and you select the table using the mouse, as in @fig-tabulapdf-locate-area. 
+
+::: column-margin
+![A screenshot of one page of one of the PDFs, showing how `locate_areas` works.](../images/advanced/tabula-pdf-locate-area.png){#fig-tabulapdf-locate-area .lightbox fig-alt="A screenshot of the `tabulapdf` `locate_area()` function interactive window, showing a highlighted table region."}
+:::
+
+`locate_areas` provides a sequence of coordinates that are relatively consistent across multiple full-page tables, so we might try to use those coordinates to improve our table parsing. 
+
+```{r, eval = F}
+locate_areas(files[1], pages = rep(page_numbers[1], 5))
+```
 
 
+Here's what I got running this 5 times for the first PDF in the list -- this gives me boundaries for each column (without including the header). 
+
+```
+Listening on http://127.0.0.1:6481
+[[1]]
+     top     left   bottom    right 
+128.1042 209.2557 583.8484 244.2939 
+
+[[2]]
+     top     left   bottom    right 
+128.1042 289.0649 584.8223 327.9962 
+
+[[3]]
+     top     left   bottom    right 
+128.1042 369.8473 586.7699 410.7252 
+
+[[4]]
+     top     left   bottom    right 
+128.1042 452.5763 586.7699 489.5611 
+
+[[5]]
+     top     left   bottom    right 
+126.1566 535.3054 586.7699 575.2099 
+
+```
+
+We can actually run this for each column, keeping track of the left and right values, to get an even more precise way to read our data in. 
+Here are my rough column alignments, using `cpi_01112024.pdf` as a test. 
+
+- Table Start - 35 
+- Col2 - 209
+- Col3 - 244
+- Col4 - 289
+- Col5 - 328
+- Col6 - 370
+- Col7 - 411
+- Col8 - 453
+- Col9 - 490
+- Col10 - 535
+- Table End - 575
+
+
+```{r}
+tables <- map2(files, page_numbers, ~extract_tables(
+    .x, page = .y, 
+    guess = F,
+    col_names = F, 
+    area = list(c(128, 35, 586, 575)), 
+    columns = list(c(209, 244, 289, 328, 370, 411, 453, 490, 535))
+    )[[1]]
+  )
+tables[[1]]
+```
+
+Then, we can read in the dates that are present in the header row, assuming that the major dividers stay the same between reports.
+I used `locate_areas()` to get the coordinates of each header that we care about.
+
+::: {.callout collapse=true}
+###### `locate_areas()` output
+
+```
+> locate_areas(files[1], pages = page_numbers[1])
+
+Listening on http://127.0.0.1:7339
+[[1]]
+      top      left    bottom     right 
+ 89.15168  36.98473 127.13037 572.29009 
+```
+ 
+:::
+```{r}
+headers <- map2( # <1>
+  files, page_numbers,  # <1>
+  ~extract_tables( # <1>
+    .x, page = .y,  # <1>
+    guess = F, # <1>
+    col_names = F,  # <1>
+    area = list(c(89, 35, 128, 575)),  # <1>
+    columns = list(c(209, 244, 289, 328, 370, 411, 453, 490, 535)) # <1>
+  )[[1]] # <1>
+)  # <1>
+
+fix_headers <- function(tbl) { # <2>
+modifiers <- c("", "Rel_imp.", rep("Unadj_idx.", 3), rep("Unadj_pct_chg.", 2), rep("Seas_adj_pct_chg.", 3)) # <3>
+  
+  vars <- c(tbl[1,1],   # <4>
+    paste(unlist(tbl[2:3, 2]), collapse=""), # <4>
+    paste(unlist(tbl[2:3, 3]), collapse=""), # <4>
+    paste(unlist(tbl[2:3, 4]), collapse=""), # <4>
+    paste(unlist(tbl[2:3, 5]), collapse=""), # <4>
+    paste(unlist(tbl[1:4, 6]), collapse=""), # <4>
+    paste(unlist(tbl[1:4, 7]), collapse=""), # <4>
+    paste(unlist(tbl[1:4, 8]), collapse=""), # <4>
+    paste(unlist(tbl[1:4, 9]), collapse=""), # <4>
+    paste(unlist(tbl[1:4, 10]), collapse="") # <4>
+    ) |> 
+    str_remove_all("\\.") |> # <5>
+    str_replace_all("[ -]", "_") # <5>
+  
+  paste0(modifiers, vars) # <6>
+}
+
+headers_fixed = map(headers, fix_headers) # <7>
+
+library(magrittr)
+tables <- map2(tables, headers_fixed, ~set_names(.x, .y)) # <8>
+
+tables[[1]]
+```
+1. Pull headers out using roughly the same command as we used to get the tables, but with a different top and bottom area.
+2. Write a function to clean the headers up a bit
+3. `modifiers` are the top row of the variable names that aren't captured by our headers object. They're consistent from report to report. We'll separate the modifier from the dates using `.`, for easier cleaning.
+4. Extract only the components of the headers object that are needed -- this depends on whether we're talking about a single month-to-month comparison, or a time span. In the first column, we only need the "expenditure category" object. 
+5. Remove all `.` characters from the names so they don't mess up our delimiter, and replace spaces and dashes with `_`. 
+6. Paste the two vectors together to get the names.
+7. Apply the function to each header
+8. Set the names of the variables in each table to the corresponding header.
+
+Then, we just need to clean things up a bit more.
+
+```{r}
+library(lubridate)
+library(dplyr)
+library(tidyr)
+report_date <- str_replace(basename(files), "cpi_(.*)\\.pdf", "\\1") |> mdy() # <1>
+
+cpi_data <- map2(tables, report_date, ~mutate(.x, report_date = .y)) # <2>
+
+cpi_data <- map(
+  cpi_data, 
+  ~pivot_longer(., -c(Expenditure_category, report_date), # <3>
+                names_to="var",  # <3>
+                values_to = "val") |> # <3>
+    separate(var, c("varname", "vardate"), sep = "\\.") |> # <4>
+    pivot_wider(id_cols = c("Expenditure_category", "report_date", "vardate"), names_from = "varname", values_from = "val") # <5>
+)
+
+cpi_data <- cpi_data |>
+  bind_rows() |>  # <6>
+  mutate(Expenditure_category = str_remove_all(Expenditure_category, "[\\. ]{1,}$") |>
+           str_trim())  # <7>
+
+dim(cpi_data)
+cpi_data
+```
+1. Determine the date of the report from the filename
+2. Add a column with the corresponding report date to each table
+3. Convert each table to long form with expenditure category and report date as ID columns. 
+4. Split the variable names from the period over which the variable is calculated. In theory, we should be able to determine the lag for each of these and not care about the date, but I don't trust that the report has been that consistent over 2 years... paranoia. 
+5. Pivot wider, so that there's a column for each variable name.
+6. Bind all the tables together into a single table
+7. Clean up the expenditure category names so that the dots are gone. 
+
+We could probably get this data cleaner -- the lagged columns should be specified better, but this will do for now. 
+Let's at least do something interesting with this data that wouldn't have been possible without reading data in from the tables. 
+
+```{r}
+library(ggplot2)
+cpi_data |>
+  filter(Expenditure_category %in% c("Energy", "Food", "Shelter", "Medical care services", "commodities", "Transportation services")) |>
+  mutate(Category = str_replace_all(Expenditure_category, c("commodities"= "Non-food Goods", "Medical care services" = "Medical", "Transportation services" ="Transportation")) |>
+           factor(levels = c("Shelter", "Non-food Goods", "Energy", "Food", "Medical", "Transportation"))) |>
+  select(Category, report_date, Rel_importance) |>
+  na.omit() |>
+  ggplot(aes(x = report_date, y = Rel_importance, color = Category)) + geom_line() + 
+  xlab("Date") + ylab("Relative Importance in CPI-U Calculation") + 
+  theme_bw()
+```
+
+
+##### Python {-}
+
+If we learned anything from doing this in R, it's that it probably won't work the first time. 
+So this code saves a bit of evaluation time by using some of the info we got from R, like the page numbers (I've adjusted these to match python indexing). 
+```{python}
+import pdfplumber
+import tabula
+from glob import glob
+import numpy as np
+
+files = glob("../data/bls-pdfs/*.pdf")
+
+def find_page_number(file):
+  pdf = pdfplumber.open(file)
+  has_tb1 = ["Table 1" in i.extract_text() for i in pdf.pages]
+  pdf.close()
+  return int(np.where(has_tb1)[0][0])
+
+# page_numbers = [find_page_number(i) for i in files]
+# page_numbers = [i[0] for i in page_numbers]
+page_numbers = [8, 8, 7, 8, 8, 8, 7, 8, 9, 8, 8, 7, 8, 8, 8, 9, 8, 8, 8, 7, 7, 9, 8]
+```
+
+```{python}
+tables = tabula.read_pdf(files[0], pages=page_numbers[0]+1)
+tables
+```
+Ok, so this time, we get 5 columns, which isn't quite right - it seems as if the major headers are determining the column structure. 
+
+Let's see if we can define the table area and help things out. 
+
+
+```{python}
+tbl = tabula.read_pdf(files[0], pages=page_numbers[0]+1, area=[128, 35, 586, 575], pandas_options={'header': None})[0]
+tbl
+```
+
+```{python}
+from itertools import chain
+import pandas as pd
+
+header = tabula.read_pdf(files[0], pages=page_numbers[0]+1, area=[89, 35, 128, 575], pandas_options={'header': None})[0]
+
+def fix_headers(tbl):
+  modifiers=[["", "Rel_imp."], ["Unadj_idx."]*3, ["Unadj_pct_chg."]*2, ["Seas_adj_pct_chg."]*3]
+  modifiers=list(chain.from_iterable(modifiers))
+  # https://stackoverflow.com/questions/11860476/how-to-unnest-a-nested-list
+  
+  spans=pd.Series([tbl.loc[0,0], 
+  ''.join(tbl.loc[1:2,1]),
+  ''.join(tbl.loc[1:2,2]),
+  ''.join(tbl.loc[1:2,3]),
+  ''.join(tbl.loc[1:2,4]),
+  ''.join(tbl.loc[0:3,5]),
+  ''.join(tbl.loc[0:3,6]),
+  ''.join(tbl.loc[0:3,7]),
+  ''.join(tbl.loc[0:3,8]),
+  ''.join(tbl.loc[0:3,9])])
+  spans=spans.str.replace("\.", "", regex = True)
+  spans=spans.str.replace("[ -]", "_", regex = True)
+  
+  return modifiers + spans
+
+header = fix_headers(header)
+
+
+def read_table_1(file, page_number): 
+  tbl=tabula.read_pdf(file, pages=page_number+1, 
+                      area=[128, 35, 586, 575], 
+                      pandas_options={'header': None})[0]
+  header=tabula.read_pdf(file, pages=page_number+1, 
+                         area=[89, 35, 128, 575], 
+                         pandas_options={'header': None})[0]
+  header=fix_headers(header)
+  tbl = tbl.rename(header, axis=1)
+  return tbl
+
+tables = [read_table_1(file, page_numbers[i]) for i,file in enumerate(files)]
+```
+
+
+fix_headers <- function(tbl) { # <2>
+modifiers <- c("", "Rel_imp.", rep("Unadj_idx.", 3), rep("Unadj_pct_chg.", 2), rep("Seas_adj_pct_chg.", 3)) # <3>
+  
+  vars <- c(tbl[1,1],   # <4>
+    paste(unlist(tbl[2:3, 2]), collapse=""), # <4>
+    paste(unlist(tbl[2:3, 3]), collapse=""), # <4>
+    paste(unlist(tbl[2:3, 4]), collapse=""), # <4>
+    paste(unlist(tbl[2:3, 5]), collapse=""), # <4>
+    paste(unlist(tbl[1:4, 6]), collapse=""), # <4>
+    paste(unlist(tbl[1:4, 7]), collapse=""), # <4>
+    paste(unlist(tbl[1:4, 8]), collapse=""), # <4>
+    paste(unlist(tbl[1:4, 9]), collapse=""), # <4>
+    paste(unlist(tbl[1:4, 10]), collapse="") # <4>
+    ) |> 
+    str_remove_all("\\.") |> # <5>
+    str_replace_all("[ -]", "_") # <5>
+  
+  paste0(modifiers, vars) # <6>
+}
+
+headers_fixed = map(headers, fix_headers) # <7>
+
+library(magrittr)
+tables <- map2(tables, headers_fixed, ~set_names(.x, .y)) # <8>
+
+:::
+
+::::
+
+
+::: learnmore
+## Other PDF Options to Explore
+
+- `parsemypdf` [@srivastavaGenieincodebottleParsemypdf2025], a collection of AI-based parsing libraries
+
+:::
 
 ## References {-}
