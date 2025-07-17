@@ -134,18 +134,23 @@ The `pdf_info` function gives us information from the PDF header, and the `pdf_t
 
 ```{r}
 library(pdftools)
+library(stringr)
 
 pdf_info("../data/Lancaster-County-NE-Real-Estate-AppraisalCard-28749-2025-147568-pg1-text.pdf")$version
 pdf_text("../data/Lancaster-County-NE-Real-Estate-AppraisalCard-28749-2025-147568-pg1-text.pdf") |>
-  str_split("\n") |>
-  unlist() |>
-  head()
+  str_split("\n") |>  # <1>
+  unlist() |> # <2>
+  head() # <3>
+```
+1. Split text into lines
+2. Remove from list structure -- make a vector
+3. Show first few lines
 
 
+```{r}
 pdf_info("../data/Lancaster-County-NE-Real-Estate-AppraisalCard-28749-2025-147568-pg1-image.pdf")$version
 pdf_text("../data/Lancaster-County-NE-Real-Estate-AppraisalCard-28749-2025-147568-pg1-image.pdf") 
 ```
-
 Notice that the text does not exist for the image-based PDF. 
 
 #### Python {-}
@@ -155,23 +160,34 @@ You will need the `pdfplumber` package [@singer-vinePdfplumber2025], which you c
 The `pdf` object contains `metadata` and `pages`, and page text (if it exists) can be accessed with the `pdf.pages[i].extract_text()` method.
 
 ```{python}
-import pdfplumber
-with pdfplumber.open("../data/Lancaster-County-NE-Real-Estate-AppraisalCard-28749-2025-147568-pg1-text.pdf") as pdf:
-  metadata = pdf.metadata
-  first_page =  pdf.pages[0]
-  text = first_page.extract_text()
+import pdfplumber # <1>
+with pdfplumber.open("../data/Lancaster-County-NE-Real-Estate-AppraisalCard-28749-2025-147568-pg1-text.pdf") as pdf: # <2>
+  metadata = pdf.metadata # <3>
+  first_page =  pdf.pages[0] # <4>
+  text = first_page.extract_text() # <5>
+  pdf.close()  # <6>
 
-pdf.close()
 metadata
-text.split("\n")[0:5]
+text.split("\n")[0:5]  # <7>
+```
+1. Use the `pdfplumber` library
+2. Open the file and call it `pdf`
+3. Get the metadata
+4. Get the data for the first page
+5. Extract the text from the first page
+6. Close the file (important to release memory)
+7. Split the text by `\n` and show the first few lines
 
+
+```{python}
 with pdfplumber.open("../data/Lancaster-County-NE-Real-Estate-AppraisalCard-28749-2025-147568-pg1-image.pdf") as pdf:
   metadata = pdf.metadata
   first_page =  pdf.pages[0]
   text = first_page.extract_text()
+  pdf.close()
 
-pdf.close()
 metadata
+
 text.split("\n")[0:5]
 ```
 
@@ -219,13 +235,14 @@ Try installing:
 library(tesseract)
 library(pdftools)
 
-pdf_convert("../data/file.pdf", dpi = 600)
+pdf_convert("../data/file.pdf", dpi = 600) # <1>
 eng <- tesseract("eng")
 
 text <- ocr("../data/file-1.png", engine = eng)
 text <- str_split(text, "\n", simplify = T)
 text[1,1:5]
 ```
+1. Testing
 
 
 ##### Python {-}
@@ -350,6 +367,7 @@ You can either run the code above (assuming you have `wget` on your machine), or
 
 ::: panel-tabset
 ##### R {-}
+
 ```{r}
 # install.packages("tabulapdf")
 library(tabulapdf)
@@ -365,11 +383,12 @@ find_page_number <- function(file) {
   which(str_detect(txt_by_page, "Table 1"))
 }
 
-page_numbers <- map_int(files, find_page_number)
+# page_numbers <- map_int(files, find_page_number)
+page_numbers <- c(9, 10, 8, 9, 8, 8, 9, 8, 9, 9, 8, 9, 9, 9, 9, 9, 9, 9, 9, 10, 9, 10, 9)
 
-tables <- map2(files, page_numbers, ~extract_tables(.x, page = .y,  output = "tibble")[[1]])
+tables <- extract_tables(files[1], page = page_numbers[1],  output = "tibble")[[1]]
 
-tables[[1]]
+head(tables)
 ```
 
 It appears that `tabulapdf` isn't separating the columns the way we'd prefer. 
@@ -431,6 +450,20 @@ Here are my rough column alignments, using `cpi_01112024.pdf` as a test.
 
 
 ```{r}
+tables <- extract_tables(
+  files[1], page = page_numbers[1], 
+  guess = F,
+  col_names = F, 
+  area = list(c(128, 35, 586, 575)), 
+  columns = list(c(209, 244, 289, 328, 370, 411, 453, 490, 535))
+)[[1]]
+
+head(tables)
+```
+
+Ok, that looks good - let's apply it to the rest of the reports now.
+
+```{r}
 tables <- map2(files, page_numbers, ~extract_tables(
     .x, page = .y, 
     guess = F,
@@ -439,8 +472,8 @@ tables <- map2(files, page_numbers, ~extract_tables(
     columns = list(c(209, 244, 289, 328, 370, 411, 453, 490, 535))
     )[[1]]
   )
-tables[[1]]
 ```
+
 
 Then, we can read in the dates that are present in the header row, assuming that the major dividers stay the same between reports.
 I used `locate_areas()` to get the coordinates of each header that we care about.
@@ -546,13 +579,14 @@ Let's at least do something interesting with this data that wouldn't have been p
 
 ```{r}
 library(ggplot2)
+library(dplyr)
 cpi_data |>
   filter(Expenditure_category %in% c("Energy", "Food", "Shelter", "Medical care services", "commodities", "Transportation services")) |>
   mutate(Category = str_replace_all(Expenditure_category, c("commodities"= "Non-food Goods", "Medical care services" = "Medical", "Transportation services" ="Transportation")) |>
            factor(levels = c("Shelter", "Non-food Goods", "Energy", "Food", "Medical", "Transportation"))) |>
-  select(Category, report_date, Rel_importance) |>
+  select(Category, report_date, Rel_imp) |>
   na.omit() |>
-  ggplot(aes(x = report_date, y = Rel_importance, color = Category)) + geom_line() + 
+  ggplot(aes(x = report_date, y = Rel_imp, color = Category)) + geom_line() + 
   xlab("Date") + ylab("Relative Importance in CPI-U Calculation") + 
   theme_bw()
 ```
@@ -638,31 +672,6 @@ def read_table_1(file, page_number):
 tables = [read_table_1(file, page_numbers[i]) for i,file in enumerate(files)]
 ```
 
-
-fix_headers <- function(tbl) { # <2>
-modifiers <- c("", "Rel_imp.", rep("Unadj_idx.", 3), rep("Unadj_pct_chg.", 2), rep("Seas_adj_pct_chg.", 3)) # <3>
-  
-  vars <- c(tbl[1,1],   # <4>
-    paste(unlist(tbl[2:3, 2]), collapse=""), # <4>
-    paste(unlist(tbl[2:3, 3]), collapse=""), # <4>
-    paste(unlist(tbl[2:3, 4]), collapse=""), # <4>
-    paste(unlist(tbl[2:3, 5]), collapse=""), # <4>
-    paste(unlist(tbl[1:4, 6]), collapse=""), # <4>
-    paste(unlist(tbl[1:4, 7]), collapse=""), # <4>
-    paste(unlist(tbl[1:4, 8]), collapse=""), # <4>
-    paste(unlist(tbl[1:4, 9]), collapse=""), # <4>
-    paste(unlist(tbl[1:4, 10]), collapse="") # <4>
-    ) |> 
-    str_remove_all("\\.") |> # <5>
-    str_replace_all("[ -]", "_") # <5>
-  
-  paste0(modifiers, vars) # <6>
-}
-
-headers_fixed = map(headers, fix_headers) # <7>
-
-library(magrittr)
-tables <- map2(tables, headers_fixed, ~set_names(.x, .y)) # <8>
 
 :::
 
