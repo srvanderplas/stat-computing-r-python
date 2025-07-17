@@ -32,6 +32,13 @@ FindRequirements() {
   sed -i -e 's/^sklearn$/scikit-learn/g' pyenv/py-imports-clean
   # replace cv2 with opencv
   sed -i -e 's/^cv2/opencv/g' pyenv/py-imports-clean
+  # replace tabula with tabula-py
+  sed -i -e 's/^tabula$/tabula-py/g' pyenv/py-imports-clean
+  # replace camelot with camelot-py
+  sed -i -e 's/^camelot$/camelot-py/g' pyenv/py-imports-clean
+  # replace . and _ with -
+  sed -i -e 's/[\._]/-/g' pyenv/py-imports-clean
+
 
   # Python system packages assembled from here: https://docs.python.org/3/library/index.html
   # Need to not install these, since python/pip will error out :(
@@ -39,6 +46,8 @@ FindRequirements() {
 
   # Remove temp files created when assembling packages
   rm pyenv/py-imports pyenv/py-imports-clean
+  # set_difference pyenv/py-imports-install pyenv/py-problems > pyenv/py-imports-install
+
   mv pyenv/py-imports-install pyenv/requirements.txt
 }
 
