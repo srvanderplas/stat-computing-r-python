@@ -763,22 +763,198 @@ plot.set(xlabel="Date", ylabel="Unadjusted Index")
 plt.show()
 ```
 
+##### Camelot (Python) {-}
+
+If we learned anything from doing this in R, it's that it probably won't work the first time. 
+So this code saves a bit of evaluation time by using some of the info we got from R, like the page numbers (I've adjusted these to match python indexing). 
 
 
-def read_table_1(file, page_number): 
-  tbl=tabula.read_pdf(file, pages=page_number+1, 
-                      area=[128, 35, 586, 575], 
-                      pandas_options={'header': None})[0]
-  header=tabula.read_pdf(file, pages=page_number+1, 
-                         area=[89, 35, 128, 575], 
-                         pandas_options={'header': None})[0]
-  header=fix_headers(header)
-  tbl = tbl.rename(header, axis=1)
-  return tbl
+```{python}
+import pdfplumber
+from glob import glob
+import numpy as np
 
-tables = [read_table_1(file, page_numbers[i]) for i,file in enumerate(files)]
+files = glob("../data/bls-pdfs/*.pdf")
+
+def find_page_number(file):
+  pdf = pdfplumber.open(file)
+  has_tb1 = ["Table 1" in i.extract_text() for i in pdf.pages]
+  pdf.close()
+  return int(np.where(has_tb1)[0][0])
+
+# page_numbers = [find_page_number(i) for i in files]
+# page_numbers = [i[0] for i in page_numbers]
+page_numbers = [8, 8, 7, 8, 8, 8, 7, 8, 9, 8, 8, 7, 8, 8, 8, 9, 8, 8, 8, 7, 7, 9, 8]
+
+# %pip install camelot-py
+import camelot
+
+tables = camelot.read_pdf(files[0])
+
+
 ```
 
+
+```{python}
+import pdfplumber
+import tabula
+from glob import glob
+import numpy as np
+
+files = glob("../data/bls-pdfs/*.pdf")
+
+def find_page_number(file):
+  pdf = pdfplumber.open(file)
+  has_tb1 = ["Table 1" in i.extract_text() for i in pdf.pages]
+  pdf.close()
+  return int(np.where(has_tb1)[0][0])
+
+# page_numbers = [find_page_number(i) for i in files]
+# page_numbers = [i[0] for i in page_numbers]
+page_numbers = [8, 8, 7, 8, 8, 8, 7, 8, 9, 8, 8, 7, 8, 8, 8, 9, 8, 8, 8, 7, 7, 9, 8]
+```
+
+```{python}
+tables = tabula.read_pdf(files[0], pages=page_numbers[0]+1)
+tables
+```
+
+Ok, so this time, we get 5 columns, which isn't quite right - it seems as if the major headers are determining the column structure. 
+
+Let's see if we can define the table area and help things out. 
+
+
+```{python}
+tbl = tabula.read_pdf(files[0], pages=page_numbers[0]+1, area=[128, 35, 586, 575], pandas_options={'header': None})[0]
+tbl
+```
+
+```{python}
+from itertools import chain
+import pandas as pd
+
+header = tabula.read_pdf(files[0], pages=page_numbers[0]+1, area=[89, 35, 128, 575], pandas_options={'header': None})[0]
+
+def fix_headers(tbl): # <1>
+  modifiers=[["", "Rel_imp."], ["Unadj_idx."]*3, ["Unadj_pct_chg."]*2, ["Seas_adj_pct_chg."]*3] # <2>
+  modifiers=list(chain.from_iterable(modifiers)) # <3>
+  # https://stackoverflow.com/questions/11860476/how-to-unnest-a-nested-list
+  
+  spans=pd.Series([tbl.loc[0,0],  # <4>
+  ''.join(tbl.loc[1:2,1]),  # <4>
+  ''.join(tbl.loc[1:2,2]),  # <4>
+  ''.join(tbl.loc[1:2,3]),  # <4>
+  ''.join(tbl.loc[1:2,4]),  # <4>
+  ''.join(tbl.loc[0:3,5]),  # <4>
+  ''.join(tbl.loc[0:3,6]),  # <4>
+  ''.join(tbl.loc[0:3,7]),  # <4>
+  ''.join(tbl.loc[0:3,8]),  # <4>
+  ''.join(tbl.loc[0:3,9])])  # <4>
+  spans=spans.str.replace("\.", "", regex = True)  # <5>
+  spans=spans.str.replace("[ -]", "_", regex = True)  # <5>
+  
+  return modifiers + spans
+
+header = fix_headers(header)  # <6>
+header
+
+def read_table_1(file, page_number):   # <7>
+  tbl    = tabula.read_pdf(file, pages=page_number+1, area=[128, 35, 586, 575], pandas_options={'header': None})[0]  # <8>
+  header = tabula.read_pdf(file, pages=page_number+1, area=[ 89, 35, 128, 575], pandas_options={'header': None})[0]   # <9>
+  header=fix_headers(header)  # <10>
+  tbl = tbl.rename(header, axis=1)  # <11>
+  return tbl
+
+tables = [read_table_1(file, page_numbers[i]) for i,file in enumerate(files)]   # <12>
+tables[2]
+```
+1. Define a function to fix header text
+2. First, create a nested list of modifiers that will repeat as many times as there are nested columns
+3. Unnest the list of modifiers
+4. Put the pieces of each header together properly
+5. Clean up the header pieces a bit
+6. Apply the function to one header to see if it works
+7. Write a function to read table 1 from each report
+8. First, read the contents of the table
+9. Then, read in the header from the table
+10. Fix the header using the `fix_header` function
+11. Rename the columns of the table contents with the header values.
+
+Then we just need to clean things up a bit more.
+
+```{python}
+import pandas as pd
+import os
+
+report_date = pd.Series([os.path.basename(i) for i in files]) # <1>
+report_date = report_date.str.replace("cpi_|\.pdf$", "", regex=True) # <1>
+report_date = pd.to_datetime(report_date, format="%m%d%Y") # <1>
+
+cpi_data = pd.DataFrame()
+for i,tbl in enumerate(tables):
+  tbl['report_date'] = report_date[i] # <2>
+  tbl = tbl.melt(id_vars=['Expenditure_category', 'report_date'], value_name='val', var_name='var') # <3>
+  cols = pd.DataFrame(tbl['var'].str.split("\.").to_list(), columns=['varname', 'vardate'])
+  tbl = pd.concat([tbl, cols], axis = 1) # <4>
+  tbl = tbl.set_index(['report_date', 'Expenditure_category', 'vardate']) # <5>
+  tbl = tbl.drop(['var'], axis=1) # <5>
+  tbl_wide = tbl.pivot(columns='varname', values = 'val') # <5>
+  tbl_wide = tbl_wide.reset_index() # <5>
+  cpi_data = pd.concat([cpi_data, tbl_wide], axis=0) # <6>
+
+cpi_data['Expenditure_category'] = cpi_data['Expenditure_category'].str.replace("[ \.]{1,}$", "", regex=True) # <7>
+
+cpi_data.shape
+cpi_data.head
+```
+1. Determine the date of the report from the filename
+2. Add a column with the corresponding report date to each table
+3. Convert each table to long form with expenditure category and report date as ID columns. 
+4. Split the variable names from the period over which the variable is calculated. In theory, we should be able to determine the lag for each of these and not care about the date, but I don't trust that the report has been that consistent over 2 years... paranoia. 
+5. Pivot wider, so that there's a column for each variable name.
+6. Bind all the tables together into a single table
+7. Clean up the expenditure category names so that the dots are gone. 
+
+
+We could probably get this data cleaner -- the lagged columns should be specified better, but this will do for now. 
+Let's at least do something interesting with this data that wouldn't have been possible without reading data in from the tables. 
+
+```{python}
+#| fig-width: 8
+#| fig-height: 4
+#| label: py-cpi-u-calc-pic
+#| fig-cap: Chart of the Unadjusted index values relating to shelter, goods, energy, food, medical, and transportation costs in the CPI-U calculation. 
+#| fig-alt: "A line chart with date on the x-axis spanning from June 2022 to June 2025 and relative importance in the CPI-U calculation on the y-axis, ranging from approximately 170 to 625. Six lines are shown: Medical is the highest and has a slight increase over the period between June 2023 and June 2025, reaching just over 600. Transit is the next highest, and starts at around 360, increasing steadily with only a few wobbles to 400 by June 2025. Shelter costs are just below Transit, increasing from 350 to about 400 over the period of the graphs in almost an entirely linear fashion. Food increases slightly from 300 to about 325. Energy starts at just above 300 and oscillates in an irregular fashion over the 3-year period. Finally, goods are almost entirely flat at perhaps 175."
+
+
+
+tmp = cpi_data.query("~vardate.str.contains(r'_')")
+tmp = tmp.assign(vardate = pd.to_datetime(tmp['vardate'], format="%b%Y"))
+
+tmp2 = tmp.query('Expenditure_category.isin(["Energy", "Food", "Shelter", "Medical care services", "commodities", "Transportation services"])')
+
+tmp2 = tmp2.assign(year = lambda x: x['vardate'].dt.year,
+                   days = lambda x: (pd.to_datetime(x['year']+1, format='%Y') - 
+                          pd.to_datetime(x['year'], format='%Y')).dt.days,
+                   var_dec_date = lambda x: x.year + (x['vardate']-pd.to_datetime(x.year, format='%Y'))/ (x.days * pd.to_timedelta(1, unit="D")))
+
+cat_repl = {'Medical care services':'Medical', 'commodities':'Goods', 'Transportation services':'Transit'}
+tmp2=tmp2.rename(columns = {'Expenditure_category':'Category', 'var_dec_date': 'date'})
+for old,new in cat_repl.items():
+  tmp2.loc[:,'Category'] = tmp2.Category.str.replace(old, new, regex=False)
+
+tmp_plot = tmp2[['date', 'Unadj_idx', 'Category']]
+tmp_plot = tmp_plot.drop_duplicates()
+tmp_plot = tmp_plot.assign(Unadj_idx = lambda x: pd.to_numeric(x.Unadj_idx))
+
+import seaborn.objects as so
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+plot = sns.lineplot(data = tmp_plot, x = 'date', y = 'Unadj_idx', hue = 'Category')
+plot.set(xlabel="Date", ylabel="Unadjusted Index")
+plt.show()
+```
 
 :::
 
@@ -786,6 +962,7 @@ tables = [read_table_1(file, page_numbers[i]) for i,file in enumerate(files)]
 
 
 ::: learnmore
+
 ## Other PDF Options to Explore
 
 - `parsemypdf` [@srivastavaGenieincodebottleParsemypdf2025], a collection of AI-based parsing libraries
