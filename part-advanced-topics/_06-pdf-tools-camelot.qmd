@@ -1,0 +1,39 @@
+
+##### Camelot (Python) {-}
+
+If we learned anything from doing this in R, it's that it probably won't work the first time.
+So this code saves a bit of evaluation time by using some of the info we got from R, like the page numbers (I've adjusted these to match python indexing).
+
+
+```{python}
+import pdfplumber
+from glob import glob
+import numpy as np
+
+files = glob("../data/bls-pdfs/*.pdf")
+
+def find_page_number(file):
+  pdf = pdfplumber.open(file)
+  has_tb1 = ["Table 1" in i.extract_text() for i in pdf.pages]
+  pdf.close()
+  return int(np.where(has_tb1)[0][0])
+
+# page_numbers = [find_page_number(i) for i in files]
+# page_numbers = [i[0] for i in page_numbers]
+page_numbers = [8, 8, 7, 8, 8, 8, 7, 8, 9, 8, 8, 7, 8, 8, 8, 9, 8, 8, 8, 7, 7, 9, 8]
+
+# %pip install camelot-py[base]
+import camelot
+import matplotlib.pyplot as plt
+tables = camelot.read_pdf(files[0], pages='9')
+tables
+tables[0].parsing_report
+tables[0].df
+
+camelot.plot(tables[0], kind='grid')
+plt.show()
+
+camelot.plot(tables[0], kind='contour')
+plt.show()
+
+```
