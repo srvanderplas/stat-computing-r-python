@@ -10,7 +10,7 @@ In this chapter, you'll learn about PDF document structure, as well as how to us
 
 ::: column-margin
 
-![DOWNSIDES: Adobe people may periodically email your newsroom to ask you to call it an 'Adobe® PDF document,' but they'll reverse course once they learn how sarcastically you can pronounce the registered trademark symbol.<br>CC-A-NC2.5 by Randall Munroe. [source](https://xkcd.com/2304/)](../images/advanced/xkcd-2304-preprint.png){fig-alt='The image is a comic strip depicting a person sitting at a news desk. The person has simplistic features with a round head, short hair, and no facial features drawn. A speech bubble above them says "According to a new PDF..." Behind them is a sign reading "Breaking News." Crossed out phrases above them include "According to a new preprint...", "...an unpublished study...", and "According to a new paper uploaded to a preprint server, but which has not undergone peer review...". Below the main image, there\'s a section titled "Benefits of just saying \'a PDF\':" followed by three bullet points. • AVOIDS IMPLICATIONS ABOUT PUBLICATION STATUS • IMMEDIATELY RAISES QUESTIONS ABOUT AUTHOR(S) • STILL IMPLIES "THIS DOCUMENT WAS PROBABLY PREPARED BY A PROFESSIONAL, BECAUSE NO NORMAL HUMAN TRYING TO COMMUNICATE IN 2020 WOULD CHOOSE THIS RIDICULOUS FORMAT".'}
+![DOWNSIDES: Adobe people may periodically email your newsroom to ask you to call it an 'Adobe® PDF document,' but they'll reverse course once they learn how sarcastically you can pronounce the registered trademark symbol.<br>CC-A-NC2.5 by Randall Munroe. [source](https://xkcd.com/2304/)](../images/advanced/xkcd-2304-preprint.png){.lightbox fig-alt='The image is a comic strip depicting a person sitting at a news desk. The person has simplistic features with a round head, short hair, and no facial features drawn. A speech bubble above them says "According to a new PDF..." Behind them is a sign reading "Breaking News." Crossed out phrases above them include "According to a new preprint...", "...an unpublished study...", and "According to a new paper uploaded to a preprint server, but which has not undergone peer review...". Below the main image, there\'s a section titled "Benefits of just saying \'a PDF\':" followed by three bullet points. • AVOIDS IMPLICATIONS ABOUT PUBLICATION STATUS • IMMEDIATELY RAISES QUESTIONS ABOUT AUTHOR(S) • STILL IMPLIES "THIS DOCUMENT WAS PROBABLY PREPARED BY A PROFESSIONAL, BECAUSE NO NORMAL HUMAN TRYING TO COMMUNICATE IN 2020 WOULD CHOOSE THIS RIDICULOUS FORMAT".'}
 
 :::
 
@@ -73,7 +73,7 @@ One common example of this is the sequence of characters `ff` or `fi` in a docum
 
 ::: demo
 
-### Demo: Hybrid PDF Fun {-}
+### Demo: PDF Fun {-}
 
 Consider a [Home appraisal record from Lancaster County, NE](../data/Lancaster-County-NE-Real-Estate-AppraisalCard-28719-2025-147568.pdf). 
 Opening the card in a PDF reader and selecting all the text yields a [disorganized text file](../data/Lancaster-County-NE-Real-Estate-AppraisalCard-28719-2025-147568.txt) (and this PDF is actually created using modern methods and relatively clean!)
@@ -99,8 +99,13 @@ The scope of the actual problem only becomes visible when you look at a second [
 :::
 
 Hopefully you're beginning to understand how challenging this whole extracting data from PDFs thing can be!
+What we would really want to do here is detect the column boundaries somehow, and then read the data in from each table column-wise - this would be easier than postprocessing it, and we can also get coordinates for x and y to help us determine which data correspond to the same rows.
+Hold on to that thought -- we'll come back to it.
 
-### PDF Layers
+
+## Types of PDF Files
+
+### Layers
 
 Practically, we can think of PDFs as having a text layer, an image layer, or both (hybrid PDFs). 
 A PDF with a text layer will allow you to select embedded text and copy it into a text file, while a PDF that just has an image layer does not. 
@@ -108,19 +113,28 @@ It is also possible to have a PDF that has an image layer with a corresponding t
 Optical Character Recognition takes a PDF with only image layers and creates a text file (or layer, depending on the tool) by  identifying the characters in the document and converting those characters to text with a corresponding $(x,y)$ location in the document.
 Different OCR programs use different conventions for this process, and the quality of the image matters a lot as well - some images are just not good enough to produce a passable transcription of the text using automatic methods. 
 
-What about Tables? 
-In my opinion, the `pdftools` package documentation says it best...
 
-> Data scientists are often interested in data from tables. Unfortunately the pdf format is pretty dumb and does not have notion of a table (unlike for example HTML). Tabular data in a pdf file is nothing more than strategically positioned lines and text, which makes it difficult to extract the raw data... [@oomsPdftoolsTextExtraction2025]
+Thus, if we want to think about classifying PDF files by type, we might come up with the following groups:
 
-Table extraction from PDFs is a challenge: hopefully, this demonstration will help you understand why it's so challenging.
+- A PDF file that has an image layer, but no text layer. (This is sometimes called a "raster" PDF, because an image that's made up of pixels is a raster image.)
+- A PDF file that has a text layer but no image layer is unsurprisingly called a **text** PDF.
+- Many files have both text and images; these are **hybrid** PDFs.
+
+How we ingest data from PDF files depends heavily on the type of PDF we have.
+
 
 :::: demo
 
-### Demo: Types of PDF Files and Layers {-}
+#### Demo: Types of PDF Files {-}
 
-For this demo, I've converted the first page of one of the Lancaster county, NE property appraisal PDFs into an [image only PDF](../data/Lancaster-County-NE-Real-Estate-AppraisalCard-28749-2025-147568-pg1-image.pdf) and a [text-based PDF (the original form)](../data/Lancaster-County-NE-Real-Estate-AppraisalCard-28749-2025-147568-pg1-text.pdf). 
+For this demo, I've converted the first page of one of the Lancaster county, NE property appraisal PDFs into:
+
+- an [image only PDF](../data/Lancaster-County-NE-Real-Estate-AppraisalCard-28749-2025-147568-pg1-image.pdf) and 
+- a [text-based PDF](../data/Lancaster-County-NE-Real-Estate-AppraisalCard-28749-2025-147568-pg1-text.pdf) (the original form). 
+
+::: callout
 Open these up in your favorite PDF editor and try to highlight the text in each. How does it work?
+:::
 
 We can also examine the format of a PDF file using R and python libraries. 
 
@@ -132,6 +146,7 @@ This may require you to install `libpoppler` on Linux <i class="fa-brands fa-lin
 
 The `pdf_info` function gives us information from the PDF header, and the `pdf_text` function tries to extract the text, if it exists. 
 
+##### Text-Based PDF {-}
 ```{r}
 library(pdftools)
 library(stringr)
@@ -146,12 +161,11 @@ pdf_text("../data/Lancaster-County-NE-Real-Estate-AppraisalCard-28749-2025-14756
 2. Remove from list structure -- make a vector
 3. Show first few lines
 
-
+##### Image-Based PDF {-}
 ```{r}
 pdf_info("../data/Lancaster-County-NE-Real-Estate-AppraisalCard-28749-2025-147568-pg1-image.pdf")$version
 pdf_text("../data/Lancaster-County-NE-Real-Estate-AppraisalCard-28749-2025-147568-pg1-image.pdf") 
 ```
-Notice that the text does not exist for the image-based PDF. 
 
 #### Python {-}
 
@@ -159,6 +173,7 @@ You will need the `pdfplumber` package [@singer-vinePdfplumber2025], which you c
 
 The `pdf` object contains `metadata` and `pages`, and page text (if it exists) can be accessed with the `pdf.pages[i].extract_text()` method.
 
+##### Text-Based PDF {-}
 ```{python}
 import pdfplumber # <1>
 with pdfplumber.open("../data/Lancaster-County-NE-Real-Estate-AppraisalCard-28749-2025-147568-pg1-text.pdf") as pdf: # <2>
@@ -179,6 +194,7 @@ text.split("\n")[0:5]  # <7>
 7. Split the text by `\n` and show the first few lines
 
 
+##### Image-Based PDF {-}
 ```{python}
 with pdfplumber.open("../data/Lancaster-County-NE-Real-Estate-AppraisalCard-28749-2025-147568-pg1-image.pdf") as pdf:
   metadata = pdf.metadata
@@ -193,13 +209,30 @@ text.split("\n")[0:5]
 
 :::
 
-Now, I created the image version of the PDF by opening the PDF in an image editor and saving the resulting file as PDF within that image editor, so it's not surprising that the text layer is gone in that version of the file. 
+Notice that the text does not exist for the image-based PDF. 
+I created the image version of the PDF by opening the PDF in an image editor and saving the resulting file as PDF within that image editor, so it's not surprising that the text layer is not present in that version of the file. 
+::::
 
-::: {.callout collapse=true}
-#### Preview: OCR
+### The Trouble with Text Layers
 
-Most free OCR tools are based on the `tesseract` library, which you can access using `pytesseract` in python or the `tesseract` R package. 
+> Data scientists are often interested in data from tables. Unfortunately the pdf format is pretty dumb and does not have notion of a table (unlike for example HTML). Tabular data in a pdf file is nothing more than strategically positioned lines and text, which makes it difficult to extract the raw data... [@oomsPdftoolsTextExtraction2025]
+
+The quote above gives you some idea of the challenge of extracting text from a PDF, but it's likely you've already come across this challenge when trying to copy text out of a PDF and into some other program for editing. 
+Incidentally, the PDF representation of text is also a reason why some groups are shifting away from the format entirely -- it is difficult to make PDF documents accessible to screen readers, because the text isn't inherently ordered in any way^[In the US, the Department of Justice's [interpretation of Title II of the Americans with Disabilities Act](https://www.ada.gov/law-and-regs/regulations/title-ii-2010-regulations/) requires state and government services (including education) to meet digital accessibility standards. Many universities directed professors to shift materials to Word or HTML instead of PDF, as making PDFs accessible requires proprietary Adobe software.]
+
+
+Text extraction from PDFs can be annoying, but extracting structured text in tables is an even harder challenge. 
+Hopefully, the next few demonstrations will help you appreciate why it's so challenging, as well as introducing you to the tools you may need to convert image layers to text layers.
+
+### Converting Images to Text Using Optical Character Recognition
+
+In order to covert image layers to text layers, we need to use Optical Character Recognition (OCR). 
+
+Most free OCR tools are based on the `tesseract` library [@weilTesseract2025], which you can access using `pytesseract` in python [@leePytesseractPythontesseractPython2024] or the `tesseract` R package [@tesseract-r] 
 You can also run `tesseract` from the command line, if you [install the library](https://tesseract-ocr.github.io/tessdoc/Installation.html) for your operating system and language. 
+
+:::: demo
+#### Demo: Optical Character Recognition {-}
 
 ::: panel-tabset
 
@@ -208,21 +241,39 @@ You can also run `tesseract` from the command line, if you [install the library]
 For the sake of shorter commands, let's assume I'm working with a 1-page PDF file named `file.pdf` and want to create `file.txt` which contains the text of the image-based PDF.
 
 ```{bash, eval = F}
-# Convert PDF to PNG to work with Tesseract
-# If file has more than one page, 
-# this will create file-1.png ... file-n.png images
-pdftoppm -png file.pdf file
-
-# Extract the text
-tesseract  -l eng file-1.png file-1.txt
+pdftoppm -png ../data/file.pdf file # <1>
+tesseract  -l eng ../data/file-1.png ../data/file-1-bash # <2>
 ```
+1. Convert PDF to PNG to work with Tesseract. If the PDF file has more than one page, this will create `file-1.png` ... `file-n.png` images that can be fed into tesseract using a bash for loop. 
+2. Extract the text to a text file. 
 
-Here are the [PNG](../data/Lancaster-County-NE-Real-Estate-AppraisalCard-28749-2025-147568-pg1-image-1.png) and [text file](../data/Lancaster-County-NE-Real-Estate-AppraisalCard-28749-2025-147568-pg1-text-1.txt) created by using tesseract on one of the Lancaster county appraisal data sheets. 
-Note that with this text document, you can search the PDF for text, but it doesn't provide all of the features that a hybrid PDF with both an image and a text layer provides -- the text isn't associated with the $(x,y)$ location on the page(s). 
+::: {.callout collapse=true}
+###### Output {-}
+:::: columns
+::: column
+###### PNG {-}
+[Link to the PNG file](../data/file-1-bash.png)
+![](../data/Lancaster-County-NE-Real-Estate-AppraisalCard-28749-2025-147568-pg1-image-1.png){.lightbox fig-alt="A detailed Lancaster County Appraisal Card for a property detailing owner, sales, inspection, and value information. The document presents comprehensive information about a property for tax year 2025, with a run date of July 15, 2025. The document is formatted into several sections, including owner information, sales information, property address, general property information, inspection history, appeal history, assessed value history, appraised values, and market land information. The owner section lists \"EASTDALE RENTALS LLC\" with mailing details. Sales information includes several dates of transactions, instrument types, and amounts related to property sales and transfers. The property site address is listed as 2250 Sheldon St, Lincoln, NE 68503. The general property information provides details like property class, zoning, neighborhood, and school code base. An inspection history section lists dates and reasons for inspections, along with the appraiser involved and contact code. Recent appeal history and assessed value history show changes in land and building values over recent years. Appraised values include current and prior values, detailing land, building, and total values. The legal description notes the property location in \"ENGLISH ADDITION, BLOCK 2, Lot 23.\""}
+:::
+::: column
+###### Text {-}
+[Link to the text file](../data/file-1-bash.txt) 
+```{bash}
+#| echo: false
+cat ../data/file-1-bash.txt
+```
+:::
+::::
+:::
+
+After OCR, you can search for text in the text output, but it doesn't provide all of the features that a hybrid PDF with both an image and a text layer provides -- the text isn't associated with the $(x,y)$ location on the page(s). 
+Also, note that the OCR isn't perfect: because the word "Flags:" under Exemptions in the left column is partially obscured, it is transcribed as "Flaas:", which isn't an english word. 
+Using OCR can introduce errors in to the data in ways that are not necessarily predictable (though, predictable issues include confusing capital O for 0, lowercase L for 1, and so on). 
+However, OCR is miles better than doing things manually!
 
 ##### R {-}
 
-On Mac and Linux, you will likely need to install some system packages to make the `tesseract` package installable. 
+On <i class="fa-brands fa-apple" aria-hidden="true"></i> Mac and <i class="fa-brands fa-linux" aria-hidden="true"></i> Linux, you will likely need to install some system packages to make the `tesseract` package installable. 
 ```
 Try installing:
  * deb: libtesseract-dev libleptonica-dev (Debian, Ubuntu, etc)
@@ -230,80 +281,156 @@ Try installing:
  * brew: tesseract (Mac OSX)
 ```
 
+The <i class="fa-brands fa-windows" aria-hidden="true"></i> Windows R package should contain the dependencies required. 
+
 ```{r}
 # install.packages("tesseract")
 library(tesseract)
 library(pdftools)
+library(stringr)
 
-pdf_convert("../data/file.pdf", dpi = 600) # <1>
-eng <- tesseract("eng")
-
-text <- ocr("../data/file-1.png", engine = eng)
-text <- str_split(text, "\n", simplify = T)
-text[1,1:5]
+pdf_convert(pdf = "../data/file.pdf", filenames = "../data/file-%d-r.%s") # <1>
+text <- ocr("../data/file-1-r.png", engine = tesseract("eng")) # <2>
+writeLines(text, "../data/file-1-r.txt")
 ```
-1. Testing
+1. Convert the pdf to an image. Provide placeholder `%d` in the string for the number, and `%s` in the string for the extension. 
+2. Run OCR on the image using the english language engine
 
+::: {.callout collapse=true}
+###### Output Text {-}
+[Link to the text file created with R](../data/file-1-r.txt) 
+```{bash}
+#| echo: false
+cat ../data/file-1-r.txt
+```
+:::
+
+Why is this OCR version so much worse than the version using Bash? They're using the same `tesseract` library under the hood!
+
+A look at the documentation of `pdftoppm` suggests that the default resolution is 150 DPI for image conversion, where the default resolution used by `pdf_convert` in R is 72 DPI. 
+If we pass in 150 DPI, what happens?
+
+```{r}
+library(tesseract)
+library(pdftools)
+library(stringr)
+
+pdf_convert(pdf = "../data/file.pdf", dpi  = 150, filenames = "../data/file-%d-r-150dpi.%s")
+text <- ocr("../data/file-1-r-150dpi.png", engine = tesseract("eng"))
+writeLines(text, "../data/file-1-r-150dpi.txt")
+```
+::: {.callout collapse=true}
+###### Output Text at 150 DPI {-}
+[Link to the text file created with R at 150 DPI](../data/file-1-r-150dpi.txt) 
+```{bash}
+#| echo: false
+cat ../data/file-1-r-150dpi.txt
+```
+:::
 
 ##### Python {-}
 
-If you already have the image created, it's simple to get the text out with `pytesseract`.
+If you don't have the image created, you have to first create an image (`imgBlob`) for each page, and then run `image_to_string` on that image. 
+Note that this method does not require that you write the image out to a separate file: the image is only stored in memory.
+This might be preferable to the bash method, which produces one file for each PDF page and will use up disk space unless you delete the intermediate files at some point after the text extraction is complete. 
 
 ```{python}
 from PIL import Image
 import pytesseract
-
-pytesseract.image_to_string(Image.open('../data/file-1.png')).split("\n")[0:5]
-```
-
-If you don't have the image created, you have to first create an image (`imgBlob`) for each page, and then run `image_to_string` on that image. 
-Note that this method does not require that you write the image out to a separate file: the image is only stored in memory.
-This might be preferable over the bash method, which produces one file for each PDF page. 
-
-```{python}
 from pdf2image import convert_from_path
 
-pages = convert_from_path("../data/file.pdf")
-for pageNum,imgBlob in enumerate(pages):
-  text = pytesseract.image_to_string(imgBlob, lang='eng')
-  with open(f'../data/file-py-{pageNum}.txt', 'a') as the_file:
-    the_file.write(text)
+pages = convert_from_path("../data/file.pdf") # <1>
+
+for pageNum,imgBlob in enumerate(pages): 
+  text = pytesseract.image_to_string(imgBlob, lang='eng') # <2>
+  with open(f'../data/file-{pageNum+1}-py.txt', 'a') as the_file: # <3>
+    the_file.write(text) # <3>
 ```
+1. Read in the PDF (by default, uses 200 dpi)
+2. Run OCR on each page of the PDF
+3. Write a file for each page of the PDF containing the text from OCR.
 
-Here is the [text file](../data/file-py-0.txt) created by Python using `pytesseract`. 
 
-:::
+If you already have the image created, it's simple to get the text out with `pytesseract`, using `Image.open(<file>)` instead of `convert_from_path()`. 
 
-:::
+```{python}
+pytesseract.image_to_string(Image.open('../data/file-1.png')).split("\n")[0:5] 
+```
 
 
 ::: {.callout collapse=true}
-#### Preview: Creating Hybrid PDFs
+###### Output Text {-}
+[Link to the text file created with Python](../data/file-1-py.txt) 
+```{bash}
+#| echo: false
+cat ../data/file-1-py.txt
+```
+:::
+
+:::
+
+##### Assessment of OCR Methods {-}
+
+What is interesting is that even when controlling the DPI, the OCR programs in each language generate different text files. Bash and python are fairly similar, but R's text file is ordered by horizontal lines, not columns. 
+It seems likely that we could probably fix the issue if we got the right set of options, but a more straightforward option might be to crop the images into separate chunks for each table and section. That might produce cleaner and more interpretable OCR'd images. 
+If we wanted to process many of these files and ingest the information into a database, then we would need to ensure that we could determine how to crop the images 
+
+::::
+
+In many cases, we don't want to deal with only a text file - we want the context of the image, but we'd like to be able to see the text, use Ctrl/Cmd-F to find the right page, and copy the text back out of the file.
+
+Consider [Hamlet](../data/hamlet-shakespeare.pdf), which I downloaded from [The Internet Archive](https://ia801907.us.archive.org/1/items/hamletby00shakuoft/hamletby00shakuoft.pdf) - it has the original text, but it also has a text layer that allows you to search through the document and find, for instance, the 11 instances of the word "skull", four of which are on page 82. 
+In general, the text layer is either not displayed, or, more commonly, situated behind the image layer, allowing the reader to access the words without showing the text over top of the image. 
+How are these hybrid PDF documents created?
+
+::: demo
+#### Demo: Creating Hybrid PDFs {-}
 
 When I need OCR and don't necessarily want to bother with R, I prefer to use a program called [`ocrmypdf`](https://github.com/ocrmypdf/OCRmyPDF) that is based on tesseract and available for most distributions.
 I started using `ocrmypdf` before I realized that it's actually a python package that can just be called from the Linux command line. 
+In any case, it's possible to use this command within R or Python, but once you have the python package installed and the binary in your system path, it's just as easy to use the program from the terminal -- everything else is just overhead.
+
+Let's OCR the Lancaster county, NE home appraisal image PDF and see what we come up with.
 
 ```{bash, eval=F}
 ocrmypdf -l eng ../data/file.pdf ../data/file-ocrmypdf.pdf
 ```
 
 
-The output of `ocrmypdf` is a [hybrid PDF](../data/file-ocrmypdf.pdf) that has the text and image data superimposed (the text is invisible until you highlight it). 
-
+The output of `ocrmypdf` is a [hybrid PDF](../data/file-ocrmypdf.pdf) that has the text and image data superimposed (the text is not visible until you highlight it). 
 
 :::
-
-::::
 
 
 ## Working with PDFs Programmatically
 
+### Reading Text from Raster-based PDFs
+In many real-world situations, we may not need to read tabular data out of a PDF. 
+For instance, Google's [Library Project](https://support.google.com/websearch/answer/9690276?hl=en) scanned millions of books, allowing them to show [the frequency of a word's use over time](https://books.google.com/ngrams/graph?content=delved&year_start=1800&year_end=2022&corpus=en&smoothing=3&case_insensitive=false). 
+This wouldn't be possible without a very good OCR library (which is one reason Google took over `tesseract` when IBM open-sourced it). 
+
+The primary challenges when the goal is reading in text from an OCR'd PDF are:
+
+1. If documents are the result of lower-quality scans, noise removal, background removal, and brightness/contrast adjustments may be necessary before the OCR step. 
+2. Ensuring word order is maintained across lines
+3. Removing page numbers and header/footer information
+
+:::: demo
+#### Demo: Trial Transcripts
+
+Let's start out with a relatively simple case, based on a real problem I tried to tackle in 2022. 
+We have a number of court trial transcripts, and we want to systematically search for certain phrases to determine how common they are. 
+We'll ignore, for now, the problem of actually understanding what the words are saying and classifying that properly (that would require language or topic modeling), and focus on the problem of even getting the trial transcripts converted into plain text in a format which is readable.
+
+
+:::
+
 ### Reading Tabular Data from Text or Hybrid PDFs
 
 As mentioned above, tabular data is a particular challenge to read from PDF files, as the PDF specification doesn't actually have any way to represent structured text. 
-There are two common open-source libraries recommended for extracting tabular data from PDFs - `tabula`, which is a Java library, and `camelot`, a Python library. 
+There are two common open-source libraries recommended for extracting tabular data from PDFs - `tabula`, which is a Java library [@aristaranTabulapdfTabula2025], and `camelot`, a Python library [@vinayak-mehtaCamelotPDFTable2025]. 
 There are interfaces to the `tabula` library in both R and Python (`tabulapdf` and `tabula-py`, respectively), but there is no R interface to `camelot`, as far as I am aware. 
-In this chapter, I will focus primarily on `tabula`, since it works across both R and Python, but if you ever run into issues using it, consider `camelot` as well -- it has some cool features. 
+In this chapter, I will focus primarily on `tabula`, since it works across both R and Python, but if you ever run into issues using it, consider `camelot` as well -- it has some cool features [@dennisTabulapyVsCamelot2024]. 
 
 Installation of `tabulapdf` in R depends on `rJava`, which can be a bit tricky, particularly on Windows. The [tabulapdf](https://github.com/ropensci/tabulapdf/) github page has more detailed instructions for [how to install Java for Windows using Chocolatey](https://github.com/ropensci/tabulapdf/#installing-java-on-windows-with-chocolatey). 
 
