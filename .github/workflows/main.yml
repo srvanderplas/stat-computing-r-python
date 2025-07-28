@@ -85,7 +85,9 @@ jobs:
 
 
     - name: Setup Python/venv with reqs file in reticulate
-      if: ${{ steps.restore-pyenv-cache.outputs.cache-hit != 'true'  && steps.restore-venv-cache.outputs.cache-hit != 'true' && steps.restore-reticulate-cache.outputs.cache-hit != 'true' }}
+      if: ${{ steps.restore-pyenv-cache.outputs.cache-hit != 'true'  &&
+          steps.restore-venv-cache.outputs.cache-hit != 'true' &&
+          steps.restore-reticulate-cache.outputs.cache-hit != 'true' }}
       id: setup-reticulate-venv
       shell: Rscript {0}
       run: |
@@ -97,8 +99,10 @@ jobs:
         reticulate::py_config()
         # Set reticulate_python env var
         writeLines(
-            paste0("RETICULATE_PYTHON=", reticulate::virtualenv_python("venv")),
-            Sys.getenv("GITHUB_ENV"))
+            paste0("RETICULATE_PYTHON=",
+                    reticulate::virtualenv_python("venv")),
+            Sys.getenv("GITHUB_ENV")
+        )
         # Paste string to describe cache
         writeLines(
             paste0("PY_CACHE_STR=python",
@@ -106,20 +110,11 @@ jobs:
                 readLines(".python-version"),
                 digest::digest(readLines("pyenv/requirements.txt")),
                 sep = "-"
-            )),
-            Sys.getenv("GITHUB_ENV"))
+              )
+            ),
+            Sys.getenv("GITHUB_ENV")
+        )
 
-
-    - name: Setup Python/venv bash integration
-      shell: /bin/bash {0}
-      run: |
-        export PYENV_ROOT="$HOME/.pyenv"
-        [[ -d $PYENV_ROOT/bin ]] && export PATH="$PYENV_ROOT/bin:$PATH"
-        eval "$(pyenv init - bash)"
-        # Restart your shell for the changes to take effect.
-        # Load pyenv-virtualenv automatically by adding
-        # the following to ~/.bashrc:
-        echo 'eval "$(pyenv virtualenv-init -)"' >> .bashrc
 
     - name: Reticulate checks
       shell: Rscript {0}
