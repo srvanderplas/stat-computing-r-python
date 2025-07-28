@@ -56,6 +56,42 @@ jobs:
             )),
             Sys.getenv("GITHUB_ENV"))
 
+    - name: Setup Python
+      id: setup-python
+      shell: Rscript {0}
+      run: |
+        reticulate::install_python(version=readLines(".python-version"))
+
+    - name: Setup Python/venv with reqs file in reticulate
+      if: ${{ steps.restore-pyenv-cache.outputs.cache-hit != 'true'  &&
+          steps.restore-venv-cache.outputs.cache-hit != 'true' &&
+          steps.restore-reticulate-cache.outputs.cache-hit != 'true' }}
+      id: setup-reticulate-venv
+      shell: Rscript {0}
+      run: |
+        reticulate::py_install(c("virtualenv"))
+        reticulate::virtualenv_root()
+        reticulate::virtualenv_create("venv", requirements="pyenv/requirements.txt")
+        reticulate::use_virtualenv("venv")
+        reticulate::py_config()
+        # Set reticulate_python env var
+        writeLines(
+            paste0("RETICULATE_PYTHON=",
+                    reticulate::virtualenv_python("venv")),
+            Sys.getenv("GITHUB_ENV")
+        )
+        # Paste string to describe cache
+        writeLines(
+            paste0("PY_CACHE_STR=python",
+              paste(
+                readLines(".python-version"),
+                digest::digest(readLines("pyenv/requirements.txt")),
+                sep = "-"
+              )
+            ),
+            Sys.getenv("GITHUB_ENV")
+        )
+
     - name: Restore reticulate cache
       id: restore-reticulate-cache
       uses: actions/cache@v4
@@ -82,38 +118,6 @@ jobs:
           ${{ env.PYENV_PATHS_ROOT }}
         key: reticulate-venv-${{ env.PY_CACHE_STR }}
         restore-keys: reticulate-venv-
-
-
-    - name: Setup Python/venv with reqs file in reticulate
-      if: ${{ steps.restore-pyenv-cache.outputs.cache-hit != 'true'  &&
-          steps.restore-venv-cache.outputs.cache-hit != 'true' &&
-          steps.restore-reticulate-cache.outputs.cache-hit != 'true' }}
-      id: setup-reticulate-venv
-      shell: Rscript {0}
-      run: |
-        reticulate::install_python(version=readLines(".python-version"))
-        reticulate::py_install(c("virtualenv"))
-        reticulate::virtualenv_root()
-        reticulate::virtualenv_create("venv", requirements="pyenv/requirements.txt")
-        reticulate::use_virtualenv("venv")
-        reticulate::py_config()
-        # Set reticulate_python env var
-        writeLines(
-            paste0("RETICULATE_PYTHON=",
-                    reticulate::virtualenv_python("venv")),
-            Sys.getenv("GITHUB_ENV")
-        )
-        # Paste string to describe cache
-        writeLines(
-            paste0("PY_CACHE_STR=python",
-              paste(
-                readLines(".python-version"),
-                digest::digest(readLines("pyenv/requirements.txt")),
-                sep = "-"
-              )
-            ),
-            Sys.getenv("GITHUB_ENV")
-        )
 
 
     - name: Reticulate checks
