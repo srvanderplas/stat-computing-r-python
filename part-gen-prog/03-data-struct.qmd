@@ -5,12 +5,12 @@
 
 This chapter introduces some of the most important structures for storing and working with data: vectors, matrices, lists, and data frames. 
 
-## Objectives {.intro} {-}
+## Objectives {-}
 
 - Understand the differences between lists, vectors, data frames, matrices, and arrays in R and python
 - Be able to use location-based indexing in R or python to pull out subsets of a complex data object
 
-::: {.callout-caution .intro}
+::: setup
 ## Python Package Installation 
 
 You will need the `numpy` and `pandas` packages for this section. Pick one of the following ways to install python packages:
@@ -18,7 +18,9 @@ You will need the `numpy` and `pandas` packages for this section. Pick one of th
 ::: panel-tabset
 ### System Terminal
 
-```{bash, eval = F}
+```{bash}
+#| eval: false
+#| label: bash-install-python-pkgs
 pip3 install numpy pandas lxml
 ```
 
@@ -26,7 +28,9 @@ pip3 install numpy pandas lxml
 
 This package installation method requires that you have a virtual environment set up (that is, if you are on Windows, don't try to install packages this way).
 
-```{r, eval = F}
+```{r}
+#| eval: false
+#| label: r-install-python-pkgs
 reticulate::py_install(c("numpy", "pandas", "lxml"))
 ```
 
@@ -34,7 +38,9 @@ reticulate::py_install(c("numpy", "pandas", "lxml"))
 
 In a python chunk (or the python terminal), you can run the following command. This depends on something called ["IPython magic"](https://ipython.readthedocs.io/en/stable/index.html#) commands, so if it doesn't work for you, try the System Terminal method instead.
 
-```{python, eval = F}
+```{python}
+#| eval: false
+#| label: py-install-python-pkgs
 %pip3 install numpy pandas lxml
 ```
 
@@ -111,7 +117,8 @@ Each element in a vector has an **index** - an integer telling you what the item
 
 In R, we create vectors with the `c()` function, which stands for "concatenate" - basically, we stick a bunch of objects into a row.
 
-```{r vector-creation-r}
+```{r}
+#| label: vector-creation-r
 digits_pi <- c(3, 1, 4, 1, 5, 9, 2, 6, 5, 3, 5)
 
 # Access individual entries
@@ -134,7 +141,8 @@ To add a python module, we use the syntax `import <name> as <nickname>`.
 Many modules have conventional (and very short) nicknames - for `numpy`, we will use `np` as the nickname. 
 Any functions we reference in the `numpy` module will then be called using `np.fun_name()` so that python knows where to find them.[^05-vectors-2]
 
-```{python vector-creation-python-1}
+```{python}
+#| label: vector-creation-python-1
 import numpy as np
 digits_list = [3,1,4,1,5,9,2,6,5,3,5]
 digits_pi = np.array(digits_list)
@@ -146,7 +154,9 @@ digits_pi[2]
 
 ```
 
-```{python vector-creation-python-2, error = T}
+```{python}
+#| label: vector-creation-python-2
+#| error: true
 # Python is 0 indexed - a list of 11 things goes from 0 to 10
 digits_pi[0]
 digits_pi[11] 
@@ -164,7 +174,9 @@ Python has multiple things that look like vectors, including the `pandas` librar
 A **Series** is a one-dimensional array-like object containing a sequence of values and an associated array of labels (called its index).
 
 
-```{python series-pandas-1, error = F}
+```{python}
+#| label: series-pandas-1
+#| error: false
 import pandas as pd
 
 digits_pi = pd.Series([3,1,4,1,5,9,2,6,5,3,5])
@@ -175,7 +187,9 @@ digits_pi[1]
 digits_pi[2]
 ```
 
-```{python series-pandas-2, error = T}
+```{python}
+#| label: series-pandas-2
+#| error: true
 # Python is 0 indexed - a list of 11 things goes from 0 to 10
 digits_pi[0]
 digits_pi[11] # This errors out
@@ -195,13 +209,16 @@ print(digits_pi)
 The Series object has a list of labels in the first printed column, and a list of values in the second. 
 If we want, we can specify the labels manually to use as e.g. plot labels later:
 
-```{python series-pandas-3}
+```{python}
+#| label: series-pandas-3
 import pandas as pd
 weekdays = pd.Series(['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], index = ['S', 'M', 'T', 'W', 'R', 'F', 'Sat'])
 
 ```
 
-```{python series-pandas-4, error = T}
+```{python}
+#| label: series-pandas-4
+#| error: true
 # access individual objs
 weekdays.iloc[0]
 weekdays.iloc[1]
@@ -225,7 +242,8 @@ We can pull out items in a vector by indexing, but we can also replace specific 
 ::: panel-tabset
 #### R {.unnumbered}
 
-```{r cat-vector-indexing}
+```{r}
+#| label: cat-vector-indexing
 favorite_cats <- c("Grumpy", "Garfield", "Jorts", "Jean")
 
 favorite_cats
@@ -237,7 +255,8 @@ favorite_cats
 
 #### Python {.unnumbered}
 
-```{python cat-vector-indexing-py}
+```{python}
+#| label: cat-vector-indexing-py
 favorite_cats = ["Grumpy", "Garfield", "Jorts", "Jean"]
 
 favorite_cats
@@ -272,7 +291,8 @@ This constraint will return when we talk about data frames, but for now, just ke
 ::: panel-tabset
 #### R {.unnumbered}
 
-```{r logical-vector-indexing-r}
+```{r}
+#| label: logical-vector-indexing-r
 # Define a character vector
 weekdays <- c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday")
 weekend <- c("Sunday", "Saturday")
@@ -292,7 +312,8 @@ weekdays[school_days] # print out all school days
 
 #### Python {.unnumbered}
 
-```{python logical-vector-indexing-python}
+```{python}
+#| label:  logical-vector-indexing-python
 import numpy as np
 
 animals = np.array(["Cat", "Dog", "Snake", "Lizard", "Tarantula", "Hamster", "Gerbil", "Otter"])
@@ -494,7 +515,7 @@ Cartesian Product | Combination of each element in A with each element in B | $e
 
 
 ```{r}
-A = c(1:10)
+A = c(1:4)
 B = c(1:5) * 2 # evens
 
 union(A, B)
@@ -505,10 +526,11 @@ expand.grid(A, B) # this is a data frame
 ```
 
 ##### Python
+
 ```{python}
 import numpy as np
 
-A = np.array(range(1, 11))
+A = np.array(range(1, 5))
 B = np.array(range(1, 6)) * 2
 
 np.union1d(A, B)
@@ -545,25 +567,30 @@ As vectors are a collection of things of a single type, what happens if we try t
 ::: panel-tabset
 #### R {.unnumbered}
 
-```{r vector-type-conversion-r}
-c(2L, FALSE, 3.1415, "animal") # all converted to strings
-
-c(2L, FALSE, 3.1415) # converted to numerics
-
-c(2L, FALSE) # converted to integers 
+```{r}
+#| label:  vector-type-conversion-r
+c(2L, FALSE, 3.1415, "animal") # <1>
+c(2L, FALSE, 3.1415) # <2>
+c(2L, FALSE) # <3>
 ```
+1. all converted to strings
+2. converted to numerics
+3. converted to integers
 
 #### Python {.unnumbered}
 
-```{python vector-type-conversion-python}
+```{python}
+#| label:  vector-type-conversion-python
 import numpy as np
 
-np.array([2, False, 3.1415, "animal"]) # all converted to strings
-
-np.array([2, False, 3.1415]) # converted to floats
- 
-np.array([2, False]) # converted to integers
+np.array([2, False, 3.1415, "animal"]) # <1>
+np.array([2, False, 3.1415]) # <2>
+np.array([2, False]) # <3>
 ```
+1. all converted to strings
+2. converted to numerics
+3. converted to integers
+
 :::
 
 As a reminder, this is an example of **implicit** type conversion - R and python decide what type to use for you, going with the type that doesn't lose data but takes up as little space as possible.
@@ -598,7 +625,7 @@ Extra challenge: Pick out numbers which are multiples of 2 or 3, but not multipl
 
 #### General Solution {.unnumbered}
 
-This operation is **xor**, a.k.a. exclusive or. That is, X or Y, but not X AND Y.
+This operation is **xor**, a.k.a. exclusive or. That is, X or Y, but not both X AND Y.
 
 We can write xor as `(X OR Y) & !(X AND Y)` -- or we can use a predefined function: `xor()` in R, `^` in python.
 
@@ -639,14 +666,16 @@ A **list** is a one-dimensional column of heterogeneous data - the things stored
 ::: panel-tabset
 ### R {.unnumbered}
  
-```{r list-r}
+```{r}
+#| label:  list-r
 x <- list("a", 3, FALSE)
 x
 ```
 
 ### Python {.unnumbered}
 
-```{python list-py}
+```{python}
+#| label:  list-py
 x = ["a", 3, False]
 x
 ```
@@ -669,15 +698,20 @@ In R, we count from 1.
 
 #### R code {.unnumbered}
 
-```{r, error = T}
+```{r}
+#| error: true
 x <- list("a", 3, FALSE)
 
-x[1] # This returns a list
-x[1:2] # This returns multiple elements in the list
+x[1] # <1>
+x[1:2] # <2>
 
-x[[1]] # This returns the item
-x[[1:2]] # This doesn't work - you can only use [[]] with a single index
+x[[1]] # <3>
+x[[1:2]] # <4>
 ```
+1. This returns a list
+2. This returns multiple elements in the list
+3. This returns the item
+4. This doesn't work - you can only use [[]] with a single index
 
 In R, list indexing with `[]` will return a list with the specified elements.
 
@@ -700,6 +734,7 @@ x[0:2]
 ```
 
 In Python, we can use single brackets to get an object or a list back out, but we have to know how **slices** work. Essentially, in Python, `0:2` indicates that we want objects 0 and 1, but want to stop at 2 (not including 2). If you use a slice, Python will return a list; if you use a single index, python just returns the value in that location in the list.
+
 :::
 
 We'll talk more about indexing as it relates to vectors, but indexing is a general concept that applies to just about any multi-value object.
@@ -711,6 +746,7 @@ If I have rosters for two classes and I want to make a list of all of my student
 
 ::: panel-tabset
 #### R
+
 ```{r}
 class1 <- c("Benjamin Sisko", "Odo", "Julian Bashir", "Jadzia Dax", "Miles O'Brien", "Quark", "Kira Nerys", "Elim Garak")
 class2 <- c("Jean-Luc Picard", "William Riker", "Geordi La Forge", "Worf", "Miles O'Brien", "Beverly Crusher", "Deanna Troi", "Data")
@@ -722,6 +758,7 @@ unique(students) # get only unique names
 ```
 
 #### Python
+
 ```{python}
 class1 = ["Benjamin Sisko", "Odo", "Julian Bashir", "Jadzia Dax", "Miles O'Brien", "Quark", "Kira Nerys", "Elim Garak"]
 class2 = ["Jean-Luc Picard", "William Riker", "Geordi La Forge", "Worf", "Miles O'Brien", "Beverly Crusher", "Deanna Troi", "Data"]
@@ -744,7 +781,8 @@ A **matrix** is the next step after a vector - it's a set of values arranged in 
 
 ### R {.unnumbered}
 
-```{r matrix-r}
+```{r}
+#| label: matrix-r
 # Minimal matrix in R: take a vector, 
 # tell R how many rows you want 
 matrix(1:12, nrow = 3)
@@ -765,6 +803,7 @@ diag(rep(1, times = 4))
 In python, matrices are just a special case of a class called `ndarray` - n-dimensional arrays.
 
 ```{python}
+#| label: matrix-py
 import numpy as np
 # Minimal ndarray in python by typing in the values in a structured format
 np.array([[0,  1,  2],
@@ -842,7 +881,7 @@ If you have two matrices of dimension $(a \times b)$ and $(c \times d)$, then $b
 ::: panel-tabset
 #### R {.unnumbered}
 
-```{r, results = 'show'}
+```{r}
 x <- matrix(c(1, 2, 3, 4), nrow = 2, byrow = T)
 y <- matrix(c(5, 6), nrow = 2)
 
@@ -938,7 +977,9 @@ Let's see what happens when we work with the data above as a set of vectors/Seri
 
 (I'm going to cheat and read this in using pandas functions we haven't learned yet to demonstrate why this stuff matters.)
 
-```{python read-state-pops, cache = T}
+```{python}
+#| label:  read-state-pops
+#| cache: true
 import pandas as pd
 
 data = pd.read_csv("https://raw.githubusercontent.com/srvanderplas/stat-computing-r-python/main/data/population2024.csv")
@@ -952,7 +993,9 @@ population2020 = pd.Series(data['2020 Population'].values, index = data['State']
 
 Suppose that we want to sort each population vector by the population in that year.
 
-```{python vector-analysis-python, dependson = 'read-state-pops'}
+```{python}
+#| label: vector-analysis-python
+#| dependson: 'read-state-pops'
 import pandas as pd
 
 data = pd.read_csv("https://raw.githubusercontent.com/srvanderplas/stat-computing-r-python/main/data/population2024.csv")
@@ -972,7 +1015,8 @@ In these situations, sorting by one value can actually destroy the connection be
 
 #### R
 
-```{r vector-analysis-r}
+```{r}
+#| label: vector-analysis-r
 df <- read.csv("https://raw.githubusercontent.com/srvanderplas/stat-computing-r-python/main/data/population2024.csv")
 
 # Use vectors instead of the data frame
@@ -1007,14 +1051,17 @@ We will cover functions from both base R and the `tibble` package in this chapte
 In Python, we will use the `pandas` library, which is conventionally abbreviated `pd`. So before you use any data frames in python, you will need to add the following line to your code: `import pandas as pd`.
 
 ::: callout-demo
+
 #### Examining Data Frames
+
 ::: panel-tabset
 
 ##### R {- .unnumbered}
 
 When you examine the structure of a data frame, as shown below, you get each column shown in a row, with its type and the first few values in the column. The `head(n)` command shows the first $n$ rows of a data frame (enough to see what's there, not enough to overflow your screen).
 
-```{r dataframes}
+```{r}
+#| label: dataframes
 data(mtcars) # Load the data -- included in base R
 head(mtcars) # Look at the first 6 rows
 str(mtcars) # Examine the structure of the object
@@ -1023,7 +1070,8 @@ str(mtcars) # Examine the structure of the object
 You can change column values or add new columns easily using assignment. 
 The `summary()` function can be used on specific columns to perform summary operations (a 5-number summary useful for making e.g. boxplots is provided by default).
 
-```{r dfcols-sum}
+```{r}
+#| label: dfcols-sum
 mtcars$gpm <- 1/mtcars$mpg # gpm is sometimes used to assess efficiency
 
 summary(mtcars$gpm)
@@ -1034,7 +1082,8 @@ Often, it is useful to know the dimensions of a data frame.
 The number of rows can be obtained by using `nrow(df)` and similarly, the columns can be obtained using `ncol(df)` (or, get both with `dim()`). 
 There is also an easy way to get a summary of each column in the data frame, using `summary()`.
 
-```{r summary-mtcars}
+```{r}
+#| label: summary-mtcars
 summary(mtcars)
 dim(mtcars)
 nrow(mtcars)
@@ -1048,7 +1097,8 @@ Missing variables in an R data frame are indicated with `NA`.
 When you examine the structure of a data frame, as shown below, you get each column shown in a row, with its type and the first few values in the column. 
 The `df.head(n)` command shows the first $n$ rows of a data frame (enough to see what's there, not enough to overflow your screen).
 
-```{python dataframes-py}
+```{python}
+#| label:  dataframes-py
 mtcars = pd.read_csv("https://vincentarelbundock.github.io/Rdatasets/csv/datasets/mtcars.csv")
 
 mtcars.head(5)
@@ -1061,7 +1111,8 @@ It's also easy to access specific columns to perform summary operations.
 You can access a column named xyz using `df.xyz` or using `df["xyz"]`. 
 To create a new column, you must use `df["xyz"]`.
 
-```{python dfcols-sum-py}
+```{python}
+#| label:  dfcols-sum-py
 mtcars["gpm"] = 1/mtcars.mpg # gpm is sometimes used to assess efficiency
 
 mtcars.gpm.describe()
@@ -1072,7 +1123,8 @@ Often, it is useful to know the dimensions of a data frame.
 The dimensions of a data frame (rows x columns) can be accessed using `df.shape`. 
 There is also an easy way to get a summary of each column in the data frame, using `df.describe()`.
 
-```{python summary-mtcars-py}
+```{python}
+#| label: summary-mtcars-py
 mtcars.describe()
 mtcars.shape
 ```
@@ -1085,6 +1137,7 @@ Missing variables in a pandas data frame are indicated with `nan` or `NULL`.
 
 
 :::{.callout-tip}
+
 #### Try it out {.unnumbered}
 
 ::: panel-tabset
@@ -1093,7 +1146,8 @@ Missing variables in a pandas data frame are indicated with `nan` or `NULL`.
 
 The dataset `state.x77` contains information on US state statistics in the 1970s. By default, it is a matrix, but we can easily convert it to a data frame, as shown below.
 
-```{r state-facts-tryitout}
+```{r}
+#| label: state-facts-tryitout
 data(state)
 state_facts <- data.frame(state.x77)
 state_facts <- cbind(state = row.names(state_facts), state_facts, stringsAsFactors = F) 
@@ -1110,7 +1164,8 @@ write.csv(state_facts, file = "../data/state_facts.csv", row.names = F)
 
 We can write out the built in R data and read it in using `pd.read_csv`, which creates a DataFrame in pandas.
 
-```{python state-facts-tryitout-py}
+```{python}
+#| label: state-facts-tryitout-py
 import pandas as pd
 
 state_facts = pd.read_csv("https://raw.githubusercontent.com/srvanderplas/stat-computing-r-python/main/data/state_facts.csv")
@@ -1127,7 +1182,8 @@ state_facts = pd.read_csv("https://raw.githubusercontent.com/srvanderplas/stat-c
 
 ##### R Solution {- .unnumbered}
 
-```{r state-facts-tryitout-solutions}
+```{r}
+#| label:  state-facts-tryitout-solutions-r
 # 3 ways to get rows and columns
 str(state_facts)
 dim(state_facts)
@@ -1148,7 +1204,8 @@ state_facts$state[which.min(state_facts$PopDensity)]
 
 ##### Python Solution {- .unnumbered}
 
-```{python state-facts-tryitout-solutions-py}
+```{python}
+#| label:  state-facts-tryitout-solutions-py
 # Ways to get rows and columns
 state_facts.shape
 state_facts.index.size # rows
@@ -1186,7 +1243,8 @@ This tends to be useful for small data sets, but it is more common to read data 
 ##### R {- .unnumbered}
 
 
-```{r math-lsd-r}
+```{r}
+#| label:  math-lsd-r
 math_and_lsd <- data.frame(
   lsd_conc = c(1.17, 2.97, 3.26, 4.69, 5.83, 6.00, 6.41),
   test_score = c(78.93, 58.20, 67.47, 37.47, 45.65, 32.92, 29.97))
@@ -1201,7 +1259,8 @@ math_and_lsd
 
 ##### Python {- .unnumbered}
 
-```{python math-lsd-py}
+```{python}
+#| label:  math-lsd-py
 math_and_lsd = pd.DataFrame({
   "lsd_conc": [1.17, 2.97, 3.26, 4.69, 5.83, 6.00, 6.41],
   "test_score": [78.93, 58.20, 67.47, 37.47, 45.65, 32.92, 29.97]})
@@ -1230,7 +1289,8 @@ One source of (relatively neat) data is the [TidyTuesday github repository](http
 ##### Base R
 In Base R, we can read the data in using the `read.csv` function
 
-```{r read-airmen-r-base}
+```{r}
+#| label:  read-airmen-r-base
 airmen <- read.csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2022/2022-02-08/airmen.csv')
 head(airmen)
 ```
@@ -1238,7 +1298,8 @@ head(airmen)
 ##### `readR` package
 If we want instead to create a tibble, we can use the `readr` package's `read_csv` function, which is a bit more robust and has a few additional features.
 
-```{r read-airmen-r-readr}
+```{r}
+#| label:  read-airmen-r-readr
 library(readr)
 airmen <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2022/2022-02-08/airmen.csv')
 head(airmen)
@@ -1247,7 +1308,8 @@ head(airmen)
 ##### Pandas
 In `pandas`, we can read the csv using `pd.read_csv`
 
-```{python read-airmen-python}
+```{python}
+#| label:  read-airmen-python
 import pandas as pd
 
 airmen = pd.read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2022/2022-02-08/airmen.csv")
@@ -1270,7 +1332,8 @@ Notice that the type of summary depends on the data type.
 ::: panel-tabset
 ##### R
 
-```{r summary-airmen-r}
+```{r}
+#| label: summary-airmen-r
 summary(airmen)
 
 library(skimr) # Fancier summaries
@@ -1280,7 +1343,8 @@ skim(airmen)
 ##### Python
 
 
-```{python summary-airmen-python}
+```{python}
+#| label:  summary-airmen-python
 # All variables - strings are summarized with NaNs
 airmen.describe(include = 'all')
 
