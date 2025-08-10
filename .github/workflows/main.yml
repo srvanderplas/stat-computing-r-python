@@ -4,9 +4,10 @@ on:
   pull_request:
 
 jobs:
-  quarto-render-and-deploy:
-    runs-on: ubuntu-latest
-    container: rocker/verse:4.5
+quarto-render-and-deploy:
+  runs-on: ubuntu-latest
+  container:
+    image: ghcr.io/USERNAME/quarto-reticulate:latest
     env:
       NEWSAPI_KEY: ${{ secrets.NEWSAPI_KEY }}
       GH_APP_ID: ${{ secrets.GH_APP_ID }}
@@ -15,122 +16,18 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GH_PAT: ${{ secrets.GH_PAT }}
       GITHUB_PAT: ${{ secrets.GH_PAT }}
-      PYENV_PATHS_ROOT: '~/.pyenv'
-      PYENV_PATHS_VENV: '~/.virtualenvs/venv'
-      PYENV_PATHS_RETICULATE: '~/.local/share/r-reticulate'
+      PYENV_PATHS_ROOT: /root/.pyenv
+      PYENV_PATHS_VENV: /root/.virtualenvs/venv
+      PYENV_PATHS_RETICULATE: /root/.local/share/r-reticulate
 
-    steps:
+  steps:
     - uses: actions/checkout@v4
 
-    - name: Install system dependencies
-      if: runner.os == 'Linux'
+    # The entrypoint script inside the container will handle Python setup
+    - name: Show environment info
       run: |
-        sudo apt update
-        sudo apt upgrade
-        sudo apt install make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev curl libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev
-        sudo apt install -y libtesseract-dev libpoppler-cpp-dev tesseract-ocr libtesseract-dev libleptonica-dev libpng-dev libjpeg-dev libtiff-dev imagemagick gdal-bin libgdal-dev libsecret-1-dev default-jdk openjdk-11-jdk libglpk-dev libudunits2-dev
-        type -p curl >/dev/null || (sudo apt update && sudo apt install curl -y)
-        curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | sudo dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
-        && sudo chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg \
-        && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | sudo tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
-        && sudo apt update \
-        && sudo apt install gh -y
-        export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64/
-
-
-      shell: /bin/bash {0}
-
-    - name: Renv setup
-      uses: r-lib/actions/setup-renv@v2
-
-    - name: Renv and R install status
-      shell: Rscript {0}
-      run: |
-        renv::status()
-        renv::diagnostics()
-        # Paste string to describe cache
-        writeLines(
-            paste0("PY_CACHE_STR=python",
-              paste(
-                readLines(".python-version"),
-                digest::digest(readLines("pyenv/requirements.txt")),
-                sep = "-"
-            )),
-            Sys.getenv("GITHUB_ENV"))
-
-    - name: Setup Python
-      id: setup-python
-      shell: Rscript {0}
-      run: |
-        reticulate::install_python(version=readLines(".python-version"))
-
-    - name: Setup Python/venv with reqs file in reticulate
-      if: ${{ steps.restore-pyenv-cache.outputs.cache-hit != 'true'  &&
-          steps.restore-venv-cache.outputs.cache-hit != 'true' &&
-          steps.restore-reticulate-cache.outputs.cache-hit != 'true' }}
-      id: setup-reticulate-venv
-      shell: Rscript {0}
-      run: |
-        reticulate::py_install(c("virtualenv"))
-        reticulate::virtualenv_root()
-        reticulate::virtualenv_create("venv", requirements="pyenv/requirements.txt")
-        reticulate::use_virtualenv("venv")
-        reticulate::py_config()
-        # Set reticulate_python env var
-        writeLines(
-            paste0("RETICULATE_PYTHON=", reticulate::virtualenv_python("venv")),
-            Sys.getenv("GITHUB_ENV")
-        )
-        # Paste string to describe cache
-        writeLines(
-            paste0("PY_CACHE_STR=python",
-              paste(
-                readLines(".python-version"),
-                digest::digest(readLines("pyenv/requirements.txt")),
-                sep = "-"
-              )
-            ),
-            Sys.getenv("GITHUB_ENV")
-        )
-
-    - name: Restore reticulate cache
-      id: restore-reticulate-cache
-      uses: actions/cache@v4
-      with:
-        path: |
-          ${{ env.PYENV_PATHS_RETICULATE }}
-        key: local-share-reticulate-${{ env.PY_CACHE_STR }}
-        restore-keys: local-share-reticulate-
-
-    - name: Restore venv cache
-      id: restore-venv-cache
-      uses: actions/cache@v4
-      with:
-        path: |
-          ${{ env.PYENV_PATHS_VENV }}
-        key: pyenv-${{ env.PY_CACHE_STR }}
-        restore-keys: pyenv-
-
-    - name: Restore pyenv cache
-      id: restore-pyenv-cache
-      uses: actions/cache@v4
-      with:
-        path: |
-          ${{ env.PYENV_PATHS_ROOT }}
-        key: reticulate-venv-${{ env.PY_CACHE_STR }}
-        restore-keys: reticulate-venv-
-
-
-    - name: Reticulate checks
-      shell: Rscript {0}
-      run: |
-        devtools::session_info()
-        reticulate::py_config()
-
-    - uses: quarto-dev/quarto-actions/setup@v2
-      with:
-        version: 1.6.39
-        tinytex: true
+        Rscript -e "devtools::session_info()"
+        Rscript -e "reticulate::py_config()"
 
     - name: Render Quarto Project
       shell: /bin/bash {0}
