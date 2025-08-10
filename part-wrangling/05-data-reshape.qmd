@@ -69,7 +69,10 @@ Tidy data makes it easier to collaborate with others and analyze new data using 
 ::: callout-demo
 ### Examples: Messy Data {.unnumbered}
 
-```{r tidypkgs, message = F, include = F}
+```{r}
+#| label: tidypkgs
+#| message: !expr F
+#| include: !expr F
 library(dplyr) # Data wrangling
 library(tidyr) # Data rearranging
 library(tibble) # data table
@@ -80,7 +83,9 @@ These datasets all display the same data: TB cases documented by the WHO in Afgh
 ::: panel-tabset
 #### Table 1 {.unnumbered}
 
-```{r tidy1, echo = F}
+```{r}
+#| label: tidy1
+#| echo: !expr F
 knitr::kable(table1, caption = "Table 1")
 ```
 
@@ -88,7 +93,9 @@ Here, each observation is a single row, each variable is a column, and everythin
 
 #### 2 {.unnumbered}
 
-```{r tidy2, echo = F}
+```{r}
+#| label: tidy2
+#| echo: !expr F
 knitr::kable(table2, caption = "Table 2")
 ```
 
@@ -96,7 +103,9 @@ Here, we have 4 columns again, but we now have 12 rows: one of the columns is an
 
 #### 3 {.unnumbered}
 
-```{r tidy3, echo = F}
+```{r}
+#| label: tidy3
+#| echo: !expr F
 knitr::kable(table3, caption = "Table 3")
 ```
 
@@ -104,7 +113,9 @@ This form has only 3 columns, because the rate variable (which is a character) s
 
 #### 4 {.unnumbered}
 
-```{r tidy4, echo = F}
+```{r}
+#| label: tidy4
+#| echo: !expr F
 knitr::kable(table4a, caption = "Table 4a")
 knitr::kable(table4b, caption = "Table 4b")
 ```
@@ -113,7 +124,9 @@ In this form, we have two tables - one for population, and one for cases. Each y
 
 #### 5 {.unnumbered}
 
-```{r tidy5, echo = F}
+```{r}
+#| label: tidy5
+#| echo: !expr F
 knitr::kable(table5, caption = "Table 5")
 ```
 
@@ -133,7 +146,9 @@ What would you have to do in order to compute a standardized TB infection rate p
 
 #### Table 1 {.unnumbered}
 
-```{r tidy1-2, echo = F}
+```{r}
+#| label: tidy1-2
+#| echo: !expr F
 knitr::kable(table1, caption = "Table 1")
 ```
 
@@ -142,7 +157,9 @@ Computing a standardized infection rate is as simple as creating the variable ra
 
 #### 2 {.unnumbered}
 
-```{r tidy2-2, echo = F}
+```{r}
+#| label: tidy2-2
+#| echo: !expr F
 knitr::kable(table2, caption = "Table 2")
 ```
 
@@ -151,7 +168,9 @@ Computing a standardized infection rate requires moving cases and population so 
 
 #### 3 {.unnumbered}
 
-```{r tidy3-2, echo = F}
+```{r}
+#| label: tidy3-2
+#| echo: !expr F
 knitr::kable(table3, caption = "Table 3")
 ```
 
@@ -160,7 +179,9 @@ In Table 3, you'd have to separate the numerator and denominator of each cell, c
 
 #### 4 {.unnumbered}
 
-```{r tidy4-2, echo = F}
+```{r}
+#| label: tidy4-2
+#| echo: !expr F
 knitr::kable(table4a, caption = "Table 4a")
 knitr::kable(table4b, caption = "Table 4b")
 ```
@@ -171,7 +192,9 @@ Then you could proceed as in 1.
 
 #### 5 {.unnumbered}
 
-```{r tidy5-2, echo = F}
+```{r}
+#| label: tidy5-2
+#| echo: !expr F
 knitr::kable(table5, caption = "Table 5")
 ```
 
@@ -218,7 +241,8 @@ In many cases, the data come in what we might call "wide" form - some of the col
 
 Tables 4a and 4b are good examples of data which is in "wide" form and should be in long(er) form: the years, which are variables, are column names, and the values are cases and population respectively.
 
-```{r longer-pivot-demo}
+```{r}
+#| label: longer-pivot-demo
 table4a
 table4b
 ```
@@ -232,7 +256,8 @@ Once our data are in long form, we can (if necessary) separate values that once 
 
 #### R
 
-```{r tidyr-pivot-longer-demo2}
+```{r}
+#| label: tidyr-pivot-longer-demo2
 tba <- table4a %>% 
   pivot_longer(-country, names_to = "year", values_to = "cases")
 tbb <- table4b %>% 
@@ -259,7 +284,8 @@ If we wanted to avoid the table join, we could do this process another way: firs
 Then, we could bind the two tables together by row (so stack them on top of each other).
 We could then do a wide-to-long pivot, followed by a long-to-wide pivot to get our data into tidy form.
 
-```{r tidyr-pivot-longer-id}
+```{r}
+#| label: tidyr-pivot-longer-id
 # Create ID columns
 table4a.x <- table4a %>% mutate(id = "cases")
 table4b.x <- table4b %>% mutate(id = "population")
@@ -289,7 +315,8 @@ Otherwise, it functions nearly exactly the same as `pivot_longer`; the biggest d
 
 As in R, we can choose to either do a melt/pivot_longer operation on each table and then join the tables together, or we can concatenate the rows and do a melt/pivot_longer operation followed by a pivot/pivot_wider operation.
 
-```{python pivot-longer-py2}
+```{python}
+#| label: pivot-longer-py2
 import pandas as pd
 
 # Get tables from R
@@ -306,7 +333,8 @@ table4_tidy = pd.merge(tba, tbb, on = ["country", "year"], how = 'left')
 
 Here's the melt/pivot_longer + pivot/pivot_wider version:
 
-```{python pivot-longer-py}
+```{python}
+#| label: pivot-longer-py
 import pandas as pd
 
 # Get tables from R
@@ -343,14 +371,16 @@ Table 2 is an example of a table that is in long format but needs to be converte
 
 #### R
 
-```{r pivot-wider-demo}
+```{r}
+#| label: pivot-wider-demo
 table2 %>%
   pivot_wider(names_from = type, values_from = count)
 ```
 
 #### Python
 
-```{python pivot-wider-py}
+```{python}
+#| label: pivot-wider-py
 table2 = r.table2
 
 pd.pivot(table2, index = ['country', 'year'], columns = ['type'], values = 'count').reset_index()
@@ -372,7 +402,8 @@ I'll do some of it, but in this section, you're going to do the rest.
 
 You don't have to understand what this code is doing just yet.
 
-```{r tryitout-who-surveillance}
+```{r}
+#| label: tryitout-who-surveillance
 library(readxl)
 library(purrr) # This uses the map() function as a replacement for for loops. 
 # It's pretty sweet
@@ -406,13 +437,15 @@ Download the exported data [here](../data/2020_who_disease_incidence.csv) and im
 
 Can you make a line plot of cases of measles in Bangladesh over time?
 
-```{r print-data}
+```{r}
+#| label: print-data
 head(disease_incidence)
 ```
 
 #### R solution
 
-```{r tryitout-surveillance-cleaning}
+```{r}
+#| label: tryitout-surveillance-cleaning
 library(ggplot2)
 library(readr)
 library(tidyr)
@@ -432,7 +465,9 @@ filter(who_disease_long, Country == "Bangladesh", Disease == "measles") %>%
 
 #### Python solution
 
-```{python tryitout-surveillance-cleaning-py, eval = F}
+```{python}
+#| label: tryitout-surveillance-cleaning-py
+#| eval: !expr F
 import pandas as pd
 from plotnine import *
 
@@ -471,7 +506,8 @@ Before we can start cleaning, we have to read in the data:
 
 ::: panel-tabset
 #### R
-```{r web-gas-data-reading}
+```{r}
+#| label: web-gas-data-reading
 library(rvest) # scrape data from the web
 library(xml2) # parse xml data
 url <- "https://www.eia.gov/dnav/pet/hist/LeafHandler.ashx?n=pet&s=emm_epm0u_pte_nus_dpg&f=w"
@@ -480,18 +516,21 @@ htmldoc <- read_html(url)
 gas_prices_html <- html_table(htmldoc, fill = T, trim = T)[[5]][,1:11]
 ```
 
-```{r gas-price-data-head}
+```{r}
+#| label: gas-price-data-head
 #| echo: false
 knitr::kable(head(gas_prices_html), caption = "First 6 rows of gas prices data as read into R")
 ```
 
 #### Python
-```{python web-gas-data-reading-py}
+```{python}
+#| label: web-gas-data-reading-py
 import pandas as pd
 gas_prices_html = pd.read_html("https://www.eia.gov/dnav/pet/hist/LeafHandler.ashx?n=pet&s=emm_epm0u_pte_nus_dpg&f=w")[4]
 ```
 
-```{python gas-price-data-head-py}
+```{python}
+#| label: gas-price-data-head-py
 #| results: "asis"
 #| echo: false
 
@@ -559,7 +598,8 @@ How do your steps compare to the steps you used for the manual approach?
 
 #### R solution
 
-```{r tidyverse-gas-data}
+```{r}
+#| label: tidyverse-gas-data
 library(dplyr)
 library(stringr)
 library(tidyr)
@@ -588,7 +628,8 @@ gas_prices_raw <- gas_prices_html %>%
 head(gas_prices_raw)
 ```
 
-```{r gas-prices-solution-step2-r}
+```{r}
+#| label: gas-prices-solution-step2-r
 # gas_prices_raw <- select(gas_prices_raw, -c(X, Date))
 gas_prices_long <- pivot_longer(gas_prices_raw, -Year.Month,
                                 names_to = "variable", values_to = "value")
@@ -596,18 +637,21 @@ gas_prices_long <- pivot_longer(gas_prices_raw, -Year.Month,
 head(gas_prices_long)
 ```
 
-```{r gas-prices-solution-step3-r}
+```{r}
+#| label: gas-prices-solution-step3-r
 gas_prices_sep <- separate(gas_prices_long, variable, into = c("extra", "week", "variable"), sep = "\\.") %>%
   select(-extra)
 head(gas_prices_sep)
 ```
 
-```{r gas-prices-solution-step4-r}
+```{r}
+#| label: gas-prices-solution-step4-r
 gas_prices_wide <- pivot_wider(gas_prices_sep, id_cols = c("Year.Month", "week"), names_from = variable, values_from = value)
 head(gas_prices_wide)
 ```
 
-```{r gas-prices-solution-step5-r}
+```{r}
+#| label: gas-prices-solution-step5-r
 gas_prices_date <- gas_prices_wide %>%
   filter(nchar(Value) > 0) %>%
   separate(Year.Month, into = c("Year", "Month"), sep = "-") %>%
@@ -617,7 +661,8 @@ gas_prices_date <- gas_prices_wide %>%
 head(gas_prices_date)
 ```
 
-```{r gas-prices-solution-step6-r}
+```{r}
+#| label: gas-prices-solution-step6-r
 library(lubridate)
 gas_prices <- gas_prices_date %>%
   mutate(Date = ymd(Date),
@@ -629,7 +674,8 @@ head(gas_prices)
 
 #### Python solution
 
-```{python gas-data-py}
+```{python}
+#| label: gas-data-py
 import numpy as np
 
 def fix_gas_names(x):
@@ -663,24 +709,28 @@ gas_prices_raw = gas_prices_raw.iloc[:,0:11]
 gas_prices_raw.head()
 ```
 
-```{python gas-prices-solution-step2-py}
+```{python}
+#| label: gas-prices-solution-step2-py
 gas_prices_long = pd.melt(gas_prices_raw, id_vars = 'Year-Month', var_name = 'variable')
 gas_prices_long.head()
 ```
 
-```{python gas-prices-solution-step3-py}
+```{python}
+#| label: gas-prices-solution-step3-py
 gas_prices_sep = gas_prices_long
 gas_prices_sep[["extra", "week", "variable"]] = gas_prices_sep.variable.str.split(r'\.', expand = True)
 gas_prices_sep = gas_prices_sep.drop('extra', axis = 1)
 gas_prices_sep.head()
 ```
 
-```{python gas-prices-solution-step4-py}
+```{python}
+#| label: gas-prices-solution-step4-py
 gas_prices_wide = pd.pivot(gas_prices_sep, index=['Year-Month', 'week'], columns = 'variable', values = 'value')
 gas_prices_wide.head()
 ```
 
-```{python gas-prices-solution-step5-py}
+```{python}
+#| label: gas-prices-solution-step5-py
 gas_prices_date = gas_prices_wide.dropna(axis = 0, subset = ['Date', 'Value']).reset_index()
 gas_prices_date[['Year', 'Month']] = gas_prices_date['Year-Month'].str.split(r'-', expand = True)
 gas_prices_date['Date'] = gas_prices_date.Year + '/' + gas_prices_date.Date
@@ -689,7 +739,8 @@ gas_prices_date['Date'] = pd.to_datetime(gas_prices_date.Date)
 gas_prices_date.head()
 ```
 
-```{python gas-prices-solution-step6-py}
+```{python}
+#| label: gas-prices-solution-step6-py
 
 gas_prices = gas_prices_date.drop(["Year-Month", "Year", "Month", "week"], axis = 1)
 gas_prices['Price_per_gallon'] = gas_prices.Value

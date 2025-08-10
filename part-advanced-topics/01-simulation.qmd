@@ -219,7 +219,8 @@ summary(regression)
 
 ##### Python
 
-```{python, collapse = T}
+```{python}
+#| collapse: !expr T
 import random
 
 import pandas as pd
@@ -278,7 +279,8 @@ I find it helpful to make a function to simulate the data and calculate the nece
 I always save the original simulated data, even when it's not explicitly necessary, because I want to know exactly what results contributed, and this is the easiest way to get it. 
 This is *not* the most memory efficient way to go, so if you are concerned about overflowing your computer's memory, you might omit saving the data once you're confident the simulation function works as planned.
 
-```{r t-dist-bias-sim-r}
+```{r}
+#| label: t-dist-bias-sim-r
 library(tibble)
 library(purrr)
 library(tidyr)
@@ -315,7 +317,8 @@ result_sum <- results |>
 Now that I have the simulation summaries, I can think about plotting the results to focus on the difference in Bias/MSE between estimators under different parameter sets.
 As our goal is to determine whether mean or median is preferable, we should focus on making that comparison as easy as possible by plotting mean and median lines on the same plot. 
 
-```{r t-dist-bias-sim-results-r-chart}
+```{r}
+#| label: t-dist-bias-sim-results-r-chart
 #| fig-cap: "Summary chart of t-distribution estimator simulation results. Across $n$ and $\nu$, we see that the bias is around zero - that is, both mean and median are unbiased estimators (which is sensible given that the $t$-distribution is symmetrical). We see that when $\nu=2$, the variance component is much higher than $\nu=5,10,30$, and as MSE is the sum of the bias and variance, the MSE is also higher in this case. At $\nu=5$, the mean and median perform fairly similarly; but for $\nu=2$, the median has lower variance and thus lower MSE than the mean, which is due to the very heavy tails of the $t$-distribution with low degrees of freedom; the mean is influenced by the higher chances of extreme observations. Thus, when $\nu=2$, we would prefer the median as an estimator. When $\nu=10,30$, however, the mean has lower variance and thus MSE than the median across all values of $n$, indicating that when there are sufficient degrees of freedom, we should prefer the mean as an estimator."
 #| fig-alt: "A chart showing lines comparing the mean and median performance under simulation. The chart has three columns and four rows, with columns corresponding to the bias, variance, and mse and rows to  degrees of freedom (2, 5, 10, 30) shown as rows. The y-axis of each subplot is the expected value of the corresponding measurement (bias, variance, mse), and the x-axis of each subplot is the number of observations in the sample (10, 20, 30, 50). In each subplot, there are two lines showing the mean and median. The first row is allocated much more space than subsequent rows, with y values ranging between 0 and .75, while subsequent rows range between 0 and 0.15. The lines representing bias (first column) are very flat and close to 0, though there is more variability around the 0 line when degrees of freedom = 2. The variance and MSE tend to decrease as n increases across all panels, but again when DF=2, there is more variability and the trend is less clear. When DF=2, the mean line is higher than the median line for the variance and MSE over all values of n, indicating that the variance of the mean is higher than the variance of the median (the MSE is the bias + variance, and is technically redundant here). When DF=5 and we look at the variance or MSE, the lines are very close and it is difficult to determine which estimator would be better. When DF=10 or DF=20 and we consider the variance or MSE, the median line is higher than the mean across all values of n, indicating that in these situations we would prefer the mean as an estimator over the median."
 library(ggplot2)
@@ -332,7 +335,8 @@ result_sum |>
 
 ##### Python
 
-```{python t-dist-bias-sim-py}
+```{python}
+#| label: t-dist-bias-sim-py
 from scipy.stats import t # t distribution class
 import numpy as np # mean, median
 import pandas as pd
@@ -375,7 +379,8 @@ Now that I have the simulation summaries, I can think about plotting the results
 As our goal is to determine whether mean or median is preferable, we should focus on making that comparison as easy as possible by plotting mean and median lines on the same plot. 
 
 
-```{python t-dist-bias-sim-results-py-chart}
+```{python}
+#| label: t-dist-bias-sim-results-py-chart
 #| fig-cap: "Summary chart of t-distribution estimator simulation results. Across $n$ and $\nu$, we see that the bias is around zero - that is, both mean and median are unbiased estimators (which is sensible given that the $t$-distribution is symmetrical). We see that when $\nu=2$, the variance component is much higher than $\nu=5,10,30$, and as MSE is the sum of the bias and variance, the MSE is also higher in this case. At $\nu=5$, the mean and median perform fairly similarly; but for $\nu=2$, the median has lower variance and thus lower MSE than the mean, which is due to the very heavy tails of the $t$-distribution with low degrees of freedom; the mean is influenced by the higher chances of extreme observations. Thus, when $\nu=2$, we would prefer the median as an estimator. When $\nu=10,30$, however, the mean has lower variance and thus MSE than the median across all values of $n$, indicating that when there are sufficient degrees of freedom, we should prefer the mean as an estimator."
 #| fig-alt: "A chart showing lines comparing the mean and median performance under simulation. The chart has three columns and four rows, with columns corresponding to the bias, variance, and mse and rows to  degrees of freedom (2, 5, 10, 30) shown as rows. The y-axis of each subplot is the expected value of the corresponding measurement (bias, variance, mse), and the x-axis of each subplot is the number of observations in the sample (10, 20, 30, 50). In each subplot, there are two lines showing the mean and median. The first row has a much higher range than subsequent rows, with y values ranging between 0 and .75, while subsequent rows range between 0 and 0.15. The lines representing bias (first column) are very flat and close to 0, though there is more variability around the 0 line when degrees of freedom = 2. The variance and MSE tend to decrease as n increases across all panels, but again when DF=2, there is more variability and the trend is less clear. When DF=2, the mean line is higher than the median line for the variance and MSE over all values of n, indicating that the variance of the mean is higher than the variance of the median (the MSE is the bias + variance, and is technically redundant here). When DF=5 and we look at the variance or MSE, the lines are very close and it is difficult to determine which estimator would be better. When DF=10 or DF=20 and we consider the variance or MSE, the median line is higher than the mean across all values of n, indicating that in these situations we would prefer the mean as an estimator over the median."
 import seaborn.objects as so
@@ -437,7 +442,8 @@ Steps:
 This procedure can often be done in a vectorized manner, if the CDF and inverse CDF (or quantile function) are written with vectorization in mind. 
 
 
-```{r inverse-prob-sketch}
+```{r}
+#| label: inverse-prob-sketch
 #| fig-width: 8
 #| fig-height: 3
 #| echo: false
@@ -489,7 +495,8 @@ Rejection sampling operates by generating random samples from a proposal distrib
 It is easiest to illustrate how this works by showing a probability distribution with a defined domain (say, $[0,10]$). 
 In this case, I've created a nonstandard probability distribution by sketching a bimodal distribution on the interval and converting it to a polynomial. 
 
-```{r rejection-sample-crude-sketch}
+```{r}
+#| label: rejection-sample-crude-sketch
 #| fig-width: 8
 #| fig-height: 3
 #| echo: false
@@ -731,7 +738,8 @@ head(sim)
 sim$data[[1]]
 ```
 
-```{r, include = F}
+```{r}
+#| include: !expr F
 options(digits = 3)
 ```
 
@@ -970,7 +978,8 @@ More precisely, if $u_i \sim U(0,1)$, where \sum\_{i=1}\^k u_i \> 1, what is the
 
 #### R Code
 
-```{r, include = F}
+```{r}
+#| include: !expr F
 options(digits = 8)
 ```
 
@@ -995,7 +1004,8 @@ mean(res$k)
 
 If we want to see whether the result converges to something, we can increase the number of trials we run:
 
-```{r, cache = T}
+```{r}
+#| cache: !expr T
 set.seed(20417023)
 
 sim_res <- tibble(samp = replicate(250000, sim_fcn(), simplify = T)) 
@@ -1033,7 +1043,8 @@ res = pd.DataFrame({"k": [sim_fcn() for _ in range(1000)]})
 
 If we want to see whether the result converges to something, we can increase the number of trials we run:
 
-```{python, cache = T}
+```{python}
+#| cache: !expr T
 random.seed(20417023)
 
 sim_res = pd.DataFrame({"k": [sim_fcn() for _ in range(250000)]})
@@ -1067,7 +1078,8 @@ Monte Carlo methods are often used to approximate the value of integrals which d
 
 Suppose you want to integrate $$\int_0^1 x^2 \sin \left(\frac{1}{x}\right) dx$$
 
-```{r, echo = F}
+```{r}
+#| echo: !expr F
 #| fig-width: 4
 #| fig-height: 4
 #| out-width: 50%
@@ -1132,7 +1144,8 @@ mean(riemann$y)
 
 Let's say that you want to find an estimate for $\pi$, and you know that a circle with radius 1 has an area of exactly that. You also know, that all of the points on this circle can be written as $x^2 + y^2 \le 1$. 
 
-```{r, echo = F}
+```{r}
+#| echo: !expr F
 #| fig-width: 4
 #| fig-height: 4
 #| out-width: 50%
@@ -1154,7 +1167,8 @@ $$
 Instead, we note that the circle is encapsulated in a square with side length 2. We can reach all points in that square by using two independent uniform random random variables over the interval $[-1,1]$, i.e. when we generate two random values from U[-1,1], and use one as the $x$ coordinate and one as the $y$ coordinate, we get a point in the square. 
 If the sum of the squares of the coordinates are less than 1, the point will also fall inside the circle. If not, the point falls in one of the four corners of the square that are outside the circle.
 
-```{r, echo = F}
+```{r}
+#| echo: !expr F
 #| fig-width: 4
 #| fig-height: 4
 #| out-width: 50%

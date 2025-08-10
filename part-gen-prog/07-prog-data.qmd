@@ -39,14 +39,16 @@ The Tate Art Museum assembled a collection of 70,000 artworks (last updated in 2
 
 #### R {-}
 
-```{r read-art-data}
+```{r}
+#| label: read-art-data
 library(readr)
 artwork <- read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-01-12/artwork.csv')
 ```
 
 #### Python {-}
 
-```{python read-art-data-py}
+```{python}
+#| label: read-art-data-py
 import pandas as pd
 artwork = pd.read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-01-12/artwork.csv')
 ```
@@ -63,13 +65,15 @@ When you first access a new dataset, it's fun to explore it a bit. I've shown a 
 
 You may need to run `install.packages("skimr")` in the R terminal if you have not used the package before.
 
-```{r summary-data}
+```{r}
+#| label: summary-data
 library(skimr)
 skim(artwork)
 ```
 
 #### Python (pandas) {-}
-```{python summary-data-pandas}
+```{python}
+#| label: summary-data-pandas
 # Base pandas
 artwork.describe()
 ```
@@ -78,7 +82,8 @@ artwork.describe()
 
 You may need to run `pip install skimpy` in the terminal if you have not used the package before.
 
-```{python summary-data-skimpy}
+```{python}
+#| label: summary-data-skimpy
 
 # Skimpy package - like skimr
 from skimpy import skim
@@ -94,7 +99,8 @@ First, let's pull out the year for each piece of artwork in the dataset and see 
 
 #### R {-}
 
-```{r access-col-data-head}
+```{r}
+#| label: access-col-data-head
 head(artwork$year)
 ```
 
@@ -102,7 +108,8 @@ We reference a column of the dataset by name using `dataset_name$column_name`, a
 
 #### Python {-}
 
-```{python access-col-data-head-py}
+```{python}
+#| label: access-col-data-head-py
 artwork.year.head()
 ```
 
@@ -121,27 +128,31 @@ When we have output like this, it is useful to summarize the output in some way:
 
 #### R {-}
 
-```{r summary-data-col}
+```{r}
+#| label: summary-data-col
 summary(artwork$year)
 ```
 
 That's much less output, but we might want to instead make a chart:
 
-```{r hist-data-col}
+```{r}
+#| label: hist-data-col
 hist(artwork$year, breaks = 30)
 ```
 
 #### Python {-}
 
 
-```{python summary-data-col-py}
+```{python}
+#| label: summary-data-col-py
 artwork.year.describe()
 ```
 
 The `df.describe()` command provides us with a 5-number summary and then some additional statistics. 
 
 We can also create a chart:
-```{python hist-data-col-py}
+```{python}
+#| label: hist-data-col-py
 artwork.year.hist(bins = 30)
 ```
 
@@ -157,7 +168,10 @@ We might be interested in the aspect ratio of the artwork - let's take a look at
 
 #### R {-}
 
-```{r hist-dims-art, fig.height = 4, fig.width = 12}
+```{r}
+#| label: hist-dims-art
+#| fig-height: 4
+#| fig-width: 12
 par(mfrow=c(1, 3)) # 3 plots on one row
 hist(artwork$width, main = "width", breaks = 30)
 hist(artwork$depth, main = "depth", breaks = 30)
@@ -166,7 +180,8 @@ hist(artwork$height, main = "height", breaks = 30)
 
 #### Python {-}
 
-```{python hist-dims-art-py}
+```{python}
+#| label: hist-dims-art-py
 import matplotlib.pyplot as plt
 
 fig, axes = plt.subplots(nrows=1, ncols=3) # 3 subplots
@@ -195,13 +210,15 @@ Let's make a table of the units column so that we can see what the frequency of 
 
 #### R {-}
 
-```{r table-art-units}
+```{r}
+#| label: table-art-units
 table(artwork$units, useNA = 'ifany')
 ```
 
 #### Python {-}
 
-```{python table-art-units-py}
+```{python}
+#| label: table-art-units-py
 artwork.units.value_counts(dropna=False)
 ```
 
@@ -217,7 +234,10 @@ Everything that has specified units is in mm. That makes things easier.
 
 To define a new variable that exists on its own, we might do something like this:
 
-```{r hist-aspect-ratio-calc, fig.show = 'hold', collapse = T}
+```{r}
+#| label: hist-aspect-ratio-calc
+#| collapse: !expr T
+#| fig-show: hold
 aspect_hw <- artwork$height/artwork$width
 par(mfrow = c(1, 2))
 hist(aspect_hw, breaks = 30)
@@ -227,7 +247,9 @@ hist(log(aspect_hw), breaks = 30)
 
 #### Python {-}
 
-```{python hist-aspect-ratio-calc-py, fig.show = "hold"}
+```{python}
+#| label: hist-aspect-ratio-calc-py
+#| fig-show: hold
 import numpy as np
 
 fig, axes = plt.subplots(nrows=1, ncols=2) # 2 subplots
@@ -252,13 +274,15 @@ The better way to define a new variable is to add a new **column** to the data f
 
 To define a new variable that exists on its own, we might do something like this:
 
-```{r art-assign-column-var}
+```{r}
+#| label: art-assign-column-var
 artwork$aspect_hw <- artwork$height/artwork$width
 ```
 
 
 #### Python {-}
-```{python art-assign-column-var-py}
+```{python}
+#| label: art-assign-column-var-py
 artwork['aspect_hw'] = artwork.height/artwork.width
 ```
 
@@ -297,7 +321,8 @@ New York City provides a whole host of open-data resources, including a [dataset
 
 #### R {-}
 
-```{r read-dog-data}
+```{r}
+#| label: read-dog-data
 library(readr)
 
 if (!file.exists("../data/NYC_dogs.csv")) {
@@ -315,7 +340,8 @@ head(dogs)
 
 #### Python {-}
 
-```{python read-dog-data-py}
+```{python}
+#| label: read-dog-data-py
 from os.path import exists # to test whether files exist
 import pandas as pd
 import requests # to download a file
@@ -343,7 +369,8 @@ We will use the `lubridate` package to do this, because it is designed to make w
 
 You may need to run `install.packages("lubridate")` in the R console if you have not used the package before.
 
-```{r dog-data-dates}
+```{r}
+#| label: dog-data-dates
 library(lubridate)
 head(dogs$LicenseExpiredDate) # Dates are in month-day-year format
 
@@ -357,7 +384,8 @@ head(dogs$LicenseExpiredDate)
 
 You may need to run `pip install datetime` in the terminal if you have not used the package before. 
 
-```{python dog-data-dates-py}
+```{python}
+#| label: dog-data-dates-py
 from datetime import date
 
 dogs[['LicenseExpiredDate','LicenseIssuedDate']].head() # Before
@@ -383,7 +411,8 @@ It might be interesting to see when licenses have been issued over time, so let'
 
 You may need to run `install.packages("ggplot2")` in the R console if you have not used ggplot2 before.
 
-```{r dog-license-hist}
+```{r}
+#| label: dog-license-hist
 library(ggplot2)
 
 ggplot(
@@ -398,7 +427,8 @@ ggplot(
 
 You may need to run `pip install plotnine` in the terminal if you have not used the package before. 
 
-```{python dog-license-hist-py}
+```{python}
+#| label: dog-license-hist-py
 from plotnine import *
 
 (
@@ -420,7 +450,8 @@ I'm also curious about how long a license tends to be held for - we can get this
 
 #### R
 
-```{r dog-license-length}
+```{r}
+#| label: dog-license-length
 dogs$LicenseLength <- dogs$LicenseExpiredDate - dogs$LicenseIssuedDate
 summary(dogs$LicenseLength)
 head(dogs$LicenseLength)
@@ -428,7 +459,8 @@ head(dogs$LicenseLength)
 
 We can see that directly subtracting date-times gives us a license length in days. That's useful enough, I guess, but it might be more useful in years... unfortunately, that's not an option for `difftime()`
 
-```{r dog-license-length-2}
+```{r}
+#| label: dog-license-length-2
 library(ggplot2)
 dogs$LicenseLength <- difftime(dogs$LicenseExpiredDate, dogs$LicenseIssuedDate, units = "weeks")
 
@@ -439,7 +471,8 @@ ggplot(data = dogs, aes(x = LicenseLength / 52 )) + geom_histogram() +
 
 #### Python
 
-```{python dog-license-length-py}
+```{python}
+#| label: dog-license-length-py
 dogs["License_length"] = dogs.LicenseExpiredDate - dogs.LicenseIssuedDate
 
 dogs.License_length.describe()
@@ -450,7 +483,8 @@ dogs["License_length_yr"] = dogs.License_length.dt.days/365.25
 ```
 
 
-```{python dog-license-length2-py}
+```{python}
+#| label: dog-license-length2-py
 (
   ggplot(mapping = aes(x = "License_length_yr"), data = dogs) + 
   geom_histogram(bins = 30)+
@@ -467,7 +501,11 @@ Another question that I have when looking at this dataset is a bit more superfic
 
 To look at this, we'll need a bit more data. I found a list of NYC zip codes by borough, which we can merge in with the data we already have to get puppy registrations by borough. Then, we can see if e.g. the top 10 breeds are different for different boroughs. To simplify this, I'm going to link to a file to merge in, and not show you the specifics of how I read the table from [this site](https://www.nycbynatives.com/nyc_info/new_york_city_zip_codes.php).
 
-```{r get-nyc-zip-borough, echo = F, include = F, eval = F}
+```{r}
+#| label: get-nyc-zip-borough
+#| echo: !expr F
+#| include: !expr F
+#| eval: !expr F
 library(xml2)
 library(readr)
 page <- read_html("https://www.nycbynatives.com/nyc_info/new_york_city_zip_codes.php")
@@ -487,7 +525,8 @@ write_csv(nyc_zip_borough, file = file.path("../", "data", "nyc_zip_borough.csv"
 
 #### R {-}
 
-```{r merge-dog-borough-info}
+```{r}
+#| label: merge-dog-borough-info
 borough_zip <- read_csv("https://raw.githubusercontent.com/srvanderplas/stat-computing-r-python/main/data/nyc_zip_borough.csv")
 
 # Remove the Borough column from dogs
@@ -499,7 +538,8 @@ head(dogs)
 
 #### Python {-}
 
-```{python merge-dog-borough-info-py}
+```{python}
+#| label: merge-dog-borough-info-py
 borough_zip = pd.read_csv("https://raw.githubusercontent.com/srvanderplas/stat-computing-r-python/main/data/nyc_zip_borough.csv")
 dogs = dogs.drop('Borough', axis = 1) # drop borough column
 dogs = pd.merge(dogs, borough_zip, on = 'ZipCode')
@@ -515,7 +555,8 @@ Now that we have borough, let's write a function that will take a dataset and sp
 
 #### R {-}
 
-```{r dog-top-5-breeds-function}
+```{r}
+#| label: dog-top-5-breeds-function
 top_5_breeds <- function(data) {
   # Inside the function, our dataset is called data, not dogs
   tmp <- table(data$BreedName) 
@@ -525,7 +566,8 @@ top_5_breeds <- function(data) {
 
 #### Python {-}
 
-```{python dog-top-5-breeds-function-py}
+```{python}
+#| label: dog-top-5-breeds-function-py
 
 def top_5_breeds(data):
   tmp = pd.value_counts(data.BreedName)
@@ -541,7 +583,8 @@ Now, using that function, lets write a for loop that loops through the 5 borough
 ::: panel-tabset
 
 #### R {-}
-```{r dog-for-loop-breeds}
+```{r}
+#| label: dog-for-loop-breeds
 boroughs <- unique(borough_zip$Borough) # get a list of the 5 boroughs
 for (i in boroughs) {
   # Get subset of data frame corresponding to the Borough
@@ -561,7 +604,8 @@ for (i in boroughs) {
 
 #### Python {-}
 
-```{python dog-for-loop-breeds-py}
+```{python}
+#| label: dog-for-loop-breeds-py
 boroughs = borough_zip.Borough.unique()
 for i in boroughs:
   # get subset of data frame corresponding to the borough
@@ -593,7 +637,8 @@ If we wanted to save these results as a summary data frame, we could totally do 
 
 #### R {-}
 
-```{r dog-for-loop-breeds2}
+```{r}
+#| label: dog-for-loop-breeds2
 breeds_by_borough <- data.frame() # create a blank data frame
 
 for (i in boroughs) {
@@ -616,7 +661,8 @@ breeds_by_borough
 
 We could even sort our data by the rank and Borough for easier comparisons:
 
-```{r dog-sort-results}
+```{r}
+#| label: dog-sort-results
 
 breeds_by_borough[order(breeds_by_borough$rank, 
                         breeds_by_borough$Borough),]
@@ -625,7 +671,8 @@ breeds_by_borough[order(breeds_by_borough$rank,
 
 #### Python {-}
 
-```{python dog-for-loop-breeds2-py}
+```{python}
+#| label: dog-for-loop-breeds2-py
 breeds_by_borough = pd.DataFrame() # Create a blank dataframe
 
 for i in boroughs:
@@ -653,7 +700,8 @@ breeds_by_borough.tail()
 
 We could even sort our data by the rank and Borough for easier comparisons:
 
-```{python dog-sort-results-py}
+```{python}
+#| label: dog-sort-results-py
 
 breeds_by_borough.sort_values(['rank', 'Borough'])
 
@@ -684,7 +732,8 @@ Look at the name, age, or gender of dogs registered in NYC and see if you can co
 
 #### R {-}
 
-```{r read-tarantino-data-r}
+```{r}
+#| label: read-tarantino-data-r
 library(readr)
 
 tarantino <- read_csv("https://raw.githubusercontent.com/fivethirtyeight/data/master/tarantino/tarantino.csv")
@@ -693,7 +742,8 @@ head(tarantino)
 
 #### Python {-}
 
-```{python read-tarantino-data-py}
+```{python}
+#| label: read-tarantino-data-py
 import pandas as pd
 
 tarantino = pd.read_csv("https://raw.githubusercontent.com/fivethirtyeight/data/master/tarantino/tarantino.csv")
@@ -711,7 +761,8 @@ tarantino.head()
 
 You may need to run `install.packages("ggplot2")` in the R console if you have not used ggplot2 before.
 
-```{r tarantino-hist}
+```{r}
+#| label: tarantino-hist
 library(ggplot2)
 
 ggplot(
@@ -727,7 +778,8 @@ ggplot(
 
 You may need to run `pip install plotnine` in the terminal if you have not used the package before. 
 
-```{python tarantino-hist-py}
+```{python}
+#| label: tarantino-hist-py
 from plotnine import *
 
 plot = ggplot(data = tarantino, mapping = aes(x = 'minutes_in', color = "type")) 
@@ -756,7 +808,8 @@ To do this, we have to:
 #### R {-}
 
 
-```{r tarantino-stacked-bar}
+```{r}
+#| label: tarantino-stacked-bar
 library(ggplot2)
 library(dplyr)
 # Step 1
@@ -783,7 +836,8 @@ ggplot(
 
 #### Python {-}
 
-```{python tarantino-stacked-bar-py}
+```{python}
+#| label: tarantino-stacked-bar-py
 from plotnine import *
 
 # Step 1 - remove deaths

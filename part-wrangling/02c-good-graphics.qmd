@@ -20,7 +20,8 @@ We call these features that just "pop" without active work **preattentive** feat
 
 Take a look at @fig-preattentive1; can you spot the point that is different?
 
-```{r preattentive1}
+```{r}
+#| label: preattentive1
 #| echo: false
 #| fig-width: 4
 #| fig-height: 4
@@ -65,7 +66,13 @@ Some people suggest utilizing this to pack more dimensions into multivariate vis
 
 As awesome as it is to be able to use preattentive features to process information, we should not use combinations of preattentive features to show different variables. Take a look at @fig-preattentive2 - part (a) shows the same grouping in color and shape, part (b) shows color and shape used to encode different variables. 
 
-```{r preattentive2,echo=FALSE,include=T, fig.width=4, fig.height=4, out.width = "49.5%"}
+```{r}
+#| label: preattentive2
+#| echo: false
+#| include: !expr T
+#| fig-width: 4
+#| fig-height: 4
+#| out-width: 49.5%
 #| echo: false
 #| fig-width: 4
 #| fig-height: 4
@@ -285,7 +292,10 @@ I could use a bar chart (showing only 4 countries for space):
 ::: panel-tabset
 #### R {.unnumbered}
 
-```{r chart-emphasis-bar-r, fig.height = 4, fig.width = 6}
+```{r}
+#| label: chart-emphasis-bar-r
+#| fig-height: 4
+#| fig-width: 6
 library(gapminder)
 
 library(dplyr)
@@ -301,7 +311,10 @@ gapminder %>%
 
 #### Python {.unnumbered}
 
-```{python chart-emphasis-bar-py, fig.height = 4, fig.width = 6}
+```{python}
+#| label: chart-emphasis-bar-py
+#| fig-height: 4
+#| fig-width: 6
 # %pip install gapminder
 from gapminder import gapminder
 import pandas as pd
@@ -332,7 +345,10 @@ Or, I could use a line chart
 ::: panel-tabset
 #### R {.unnumbered}
 
-```{r chart-emphasis-line-r, fig.height = 4, fig.width = 6}
+```{r}
+#| label: chart-emphasis-line-r
+#| fig-height: 4
+#| fig-width: 6
 gapminder %>%
   filter(year %in% c(1982, 2007)) %>%
   filter(country %in% c("Korea, Rep.", "China", "Afghanistan", "India")) %>%
@@ -343,7 +359,10 @@ gapminder %>%
 
 #### Python {.unnumbered}
 
-```{python chart-emphasis-line-py, fig.height = 4, fig.width = 6}
+```{python}
+#| label: chart-emphasis-line-py
+#| fig-height: 4
+#| fig-width: 6
 subdata2 = my_gap_82_07[my_gap_82_07.country.\
     isin(["Korea, Rep.", "China", "Afghanistan", "India"])]
 
@@ -367,7 +386,10 @@ Or, I could use a box plot
 ::: panel-tabset
 #### R {.unnumbered}
 
-```{r chart-emphasis-boxplot-r, fig.height = 4, fig.width = 6}
+```{r}
+#| label: chart-emphasis-boxplot-r
+#| fig-height: 4
+#| fig-width: 6
 gapminder |>
   filter(year %in% c(1982, 2007)) |>
   ggplot(aes(x = factor(year), y = lifeExp)) + 
@@ -377,7 +399,10 @@ gapminder |>
 
 #### Python {.unnumbered}
 
-```{python chart-emphasis-boxplot-py, fig.height = 4, fig.width = 6}
+```{python}
+#| label: chart-emphasis-boxplot-py
+#| fig-height: 4
+#| fig-width: 6
 import seaborn as sns
 
 subdata3 = my_gap_82_07.assign(yearFactor=pd.Categorical(my_gap_82_07.year))
@@ -424,7 +449,8 @@ Sometimes, these shortcuts work well, but not always.
 When you design a chart, it's good to consider what mental tasks viewers of your chart need to perform. 
 Then, ask yourself whether there is an equivalent way to represent the data that requires fewer mental operations, or a different representation that requires **easier** mental calculations.
 
-```{r accuracy-guidelines}
+```{r}
+#| label: accuracy-guidelines
 #| fig-cap: Which of the lines is the longest? Shortest? It is much easier to determine the relative length of the line when the ends are aligned. The three lines have the same length in both panels, but the operation is much more difficult when the lines do not start or end at the same place.
 #| fig-alt: A chart with two panels. The left panel is labeled 'Aligned scale' and features three lines of different lengths which all start at the bottom of the chart. The right panel is labeled 'Unaligned scale' and features three lines of different lengths which start at different locations.  It is easier to compare the lengths of the lines in the left panel, since they all start in the same place.
 #| fig-width: 8
@@ -458,7 +484,8 @@ This is one reason why pie charts tend not to be a good general option -- people
 When there are a limited number of categories (2-4) and you have data that is easily compared to quarters of a circle, it may be justifiable to use a pie chart over a stacked bar chart - some studies have shown that pie charts are preferable under these conditions. 
 As a general rule, though, we have an easier time comparing position than angle or area. 
 
-```{r pie-vs-bar}
+```{r}
+#| label: pie-vs-bar
 #| echo: false
 #| fig-width: 4
 #| fig-height: 4
@@ -500,7 +527,9 @@ In general, showing information in 3 dimensions when 2 will suffice can be misle
 Just *how* misleading depends a lot on the type of chart you're using.
 Most of the time, the addition of an extra dimension causes an increase in chart area allocated to the item that is disproportionate to the actual numerical value being represented.
 
-```{r disproportionate-pixels, include = F}
+```{r}
+#| label: disproportionate-pixels
+#| include: !expr F
 imgs <- list.files("../images/wrangling", "3d_pie", full.names = T)
 tmp <- tibble(portfolio = c("Cash", "Bond", "Stocks"),
               pct = c(.05, .35, .5),

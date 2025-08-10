@@ -9,7 +9,8 @@
 
 You will need the `seaborn` and `matplotlib` (python) and `ggplot2` (R) packages for this section. 
 
-```{r, eval = F}
+```{r}
+#| eval: !expr F
 install.packages("ggplot2")
 ```
 
@@ -18,7 +19,8 @@ To install python graphing libraries, pick one of the following methods (you can
 ::: panel-tabset
 ### System Terminal
 
-```{bash, eval = F}
+```{bash}
+#| eval: !expr F
 pip3 install matplotlib seaborn
 ```
 
@@ -26,7 +28,8 @@ pip3 install matplotlib seaborn
 
 This package installation method requires that you have a virtual environment set up (that is, if you are on Windows, don't try to install packages this way).
 
-```{r, eval = F}
+```{r}
+#| eval: !expr F
 reticulate::py_install(c("matplotlib", "seaborn"))
 ```
 
@@ -34,7 +37,8 @@ reticulate::py_install(c("matplotlib", "seaborn"))
 
 In a python chunk (or the python terminal), you can run the following command. This depends on something called "IPython magic" commands, so if it doesn't work for you, try the System Terminal method instead.
 
-```{python, eval = F}
+```{python}
+#| eval: !expr F
 %pip install matplotlib seaborn
 ```
 
@@ -169,7 +173,8 @@ Let's start out by looking at the proportion of Pokemon added in each of the 9 g
 ::: panel-tabset
 
 #### R setup {-}
-```{r poke-read-data-r}
+```{r}
+#| label: poke-read-data-r
 #| message: false
 library(readr)
 library(dplyr)
@@ -182,7 +187,8 @@ poke <- read_csv("https://raw.githubusercontent.com/srvanderplas/datasets/main/c
 ```
 
 #### Python setup {-}
-```{python poke-read-data-py}
+```{python}
+#| label: poke-read-data-py
 import pandas as pd
 poke = pd.read_csv("https://raw.githubusercontent.com/srvanderplas/datasets/main/clean/pokemon_gen_1-9.csv")
 poke['generation'] = pd.Categorical(poke.gen)
@@ -202,7 +208,8 @@ The first, and most basic EDA command in R is `summary()`.
 For numeric variables, `summary` provides 5-number summaries plus the mean. 
 For categorical variables, `summary` provides the length of the variable and the Class and Mode. For factors, `summary` provides a table of the most common values, as well as a catch-all "other" category.
 
-```{r readr-eda}
+```{r}
+#| label: readr-eda
 # Make types into factors to demonstrate the difference
 poke <- tidyr::separate(poke, type, into = c("type_1", "type_2"), sep = ",")
 poke$type_1 <- factor(poke$type_1)
@@ -219,7 +226,8 @@ We also look for extreme values.
 There is at least one pokemon who appears to have a weight of 999.90 kg. 
 Let's investigate further:
 
-```{r poke-weight}
+```{r}
+#| label: poke-weight
 poke[poke$weight_kg > 999,] 
 # Show any rows where weight_kg is extreme
 ```
@@ -235,7 +243,8 @@ a 5-number summary for numeric variables. For categorical variables,
 `describe()` provides the number of unique values, the most common
 value, and the frequency of that common value.
 
-```{python poke}
+```{python}
+#| label: poke
 # Split types into two columns
 poke[['type_1', 'type_2']] = poke.type.str.split(",", expand = True)
 # Make each one categorical
@@ -255,7 +264,8 @@ poke['type_2'].describe()
 An R package that is incredibly useful for this type of dataset
 exploration is `skimr`.
 
-```{r skimr-poke-demo}
+```{r}
+#| label: skimr-poke-demo
 library(skimr)
 skim(poke)
 ```
@@ -268,7 +278,8 @@ distribution.
 
 There is a similar package to `skimr` in R called `skimpy` in Python.
 
-```{python skimpy-poke-demo}
+```{python}
+#| label: skimpy-poke-demo
 from skimpy import skim
 skim(poke)
 ```
@@ -295,7 +306,8 @@ as generation, which will always be a whole number). We can even
 generate cross-tabular views for a combination of two variables (or
 theoretically more, but this gets hard to read and track).
 
-```{r poke-distribution}
+```{r}
+#| label: poke-distribution
 table(poke$generation)
 
 table(poke$type_1, poke$type_2)
@@ -303,7 +315,8 @@ table(poke$type_1, poke$type_2)
 
 ###### Python {.unnumbered}
 
-```{python poke-distribution-py}
+```{python}
+#| label: poke-distribution-py
 import numpy as np
 # For only one factor, use .groupby('colname')['colname'].count()
 poke.groupby(['generation'])['generation'].count()
@@ -318,7 +331,8 @@ pd.crosstab(index = poke['type_1'], columns = poke['type_2'])
 ::: panel-tabset
 ###### Base R {.unnumbered}
 
-```{r poke-distribution-plots}
+```{r}
+#| label: poke-distribution-plots
 plot(table(poke$generation)) # bar plot
 ```
 
@@ -329,7 +343,8 @@ generation (despite appearances) is categorical by declaring it a factor
 variable. This ensures that we get a break on the x-axis at each
 generation.
 
-```{r poke-dist-plots-ggplot2}
+```{r}
+#| label: poke-dist-plots-ggplot2
 library(ggplot2)
 
 ggplot(poke, aes(x = factor(generation))) +
@@ -343,7 +358,8 @@ ggplot(poke, aes(x = factor(generation))) +
 We generate a bar chart using the contingency table we generated earlier
 combined with matplotlib's `plt.bar()`.
 
-```{python matplotlib-categorical-chart}
+```{python}
+#| label: matplotlib-categorical-chart
 import matplotlib.pyplot as plt
 
 tab = poke.groupby(['generation'])['generation'].count()
@@ -393,14 +409,20 @@ By default, R uses ranges of $(a, b]$ in histograms, so we specify which
 breaks will give us a desirable result. If we do not specify breaks, R
 will pick them for us.
 
-```{r poke-hp-out, out.width = "48%", fig.show = "hold"}
+```{r}
+#| label: poke-hp-out
+#| out-width: 48%
+#| fig-show: hold
 hist(poke$hp)
 ```
 
 For continuous variables, we can use histograms, or we can examine
 kernel density plots.
 
-```{r poke-graphs-base-cts, fig.show = "hold", collapse = T}
+```{r}
+#| label: poke-graphs-base-cts
+#| collapse: !expr T
+#| fig-show: hold
 #| fig-width: 3
 #| fig-height: 3
 #| layout-ncol: 2
@@ -434,11 +456,13 @@ poke$weight_kg %>%
 
 ##### Python: matplotlib {.unnumbered}
 
-```{python, include = F}
+```{python}
+#| include: !expr F
 plt.clf()
 ```
 
-```{python poke-graphs-matplotlib-cts}
+```{python}
+#| label: poke-graphs-matplotlib-cts
 #| fig-width: 6
 #| fig-height: 6
 #| fig-cap: Histogram and density plots of weight and log10 weight of different pokemon. The untransformed data are highly skewed, the transformed data are significantly less skewed.
@@ -468,7 +492,8 @@ plt.show()
 
 ##### R: ggplot2
 
-```{r poke-ggplot2-cts-r}
+```{r}
+#| label: poke-ggplot2-cts-r
 #| fig-show: hold
 #| collapse: true
 #| fig-align: center
@@ -501,7 +526,8 @@ unlike in base R and matplotlib.
 
 ##### Python: seaborn
 
-```{python poke-seaborn-cts-py}
+```{python}
+#| label: poke-seaborn-cts-py
 import seaborn as sns
 import matplotlib.pyplot as plt
 
@@ -532,7 +558,8 @@ cross-tabular view) using `geom_bar` with `position = 'fill'`, which
 scales each bar so that it ends at 1. I've flipped the axes using
 `coord_flip` so that you can read the labels more easily.
 
-```{r poke-dist-plots-ggplot2-mosaic}
+```{r}
+#| label: poke-dist-plots-ggplot2-mosaic
 library(ggplot2)
 
 ggplot(poke, aes(x = factor(type_1), fill = factor(type_2))) +
@@ -545,7 +572,8 @@ Another way to look at this data is to bin it in x and y and shade the
 resulting bins by the number of data points in each bin. We can even add
 in labels so that this is at least as clear as the tabular view!
 
-```{r poke-dist-plots-ggplot2-tile}
+```{r}
+#| label: poke-dist-plots-ggplot2-tile
 ggplot(poke, aes(x = factor(type_1), y = factor(type_2))) +
   # Shade tiles according to the number of things in the bin
   geom_tile(aes(fill = after_stat(count)), stat = "bin2d") +
@@ -560,7 +588,8 @@ ggplot(poke, aes(x = factor(type_1), y = factor(type_2))) +
 
 Base R mosaic plots aren't nearly as pretty as the ggplot version, but I will at least show you how to create them. 
 
-```{r mosaic-base-r}
+```{r}
+#| label: mosaic-base-r
 plot(table(poke$type_1, poke$type_2)) 
 # mosaic plot - hard to read b/c too many categories
 ```
@@ -571,7 +600,8 @@ To get a mosaicplot, we need an additional library, called
 `statsmodels`, which we install with `pip install statsmodels` in the
 terminal.
 
-```{python mosaic-plot-poke-statsmodels}
+```{python}
+#| label: mosaic-plot-poke-statsmodels
 import matplotlib.pyplot as plt
 from statsmodels.graphics.mosaicplot import mosaic
 
@@ -605,7 +635,8 @@ and x2 (x1, x2, x1\*x2); single interaction terms are specified as e.g.
 To examine the relationship between a categorical variable and a
 continuous variable, we might look at box plots:
 
-```{r boxplot-graphs}
+```{r}
+#| label: boxplot-graphs
 #| out-width: 100%
 #| fig-align: center
 #| fig-show: hold
@@ -624,7 +655,8 @@ identifying things which may come up in the analysis later.
 
 ##### R: ggplot2 {.unnumbered}
 
-```{r boxplot-ggplot2}
+```{r}
+#| label: boxplot-ggplot2
 #| out-width: 100%
 #| fig-align: center
 #| fig-show: hold
@@ -640,7 +672,8 @@ ggplot(data = poke, aes(x = factor(generation), y = total)) +
 
 ##### Python: matplotlib {.unnumbered}
 
-```{python boxplot-matplotlib}
+```{python}
+#| label: boxplot-matplotlib
 #| fig-width: 10
 #| fig-height: 4
 import matplotlib.pyplot as plt
@@ -659,7 +692,8 @@ plt.show()
 ```
 
 
-```{python boxplot-matplotlib2}
+```{python}
+#| label: boxplot-matplotlib2
 
 plt.figure()
 
@@ -673,7 +707,8 @@ plt.show()
 ```
 ##### Python: seaborn  {.unnumbered}
 
-```{python boxplot-seaborn}
+```{python}
+#| label: boxplot-seaborn
 import seaborn as sns
 plt.figure()
 sns.boxplot(poke, x = "generation", y = "height_m", log_scale = True)
@@ -683,7 +718,8 @@ As a higher-level graphics library, `seaborn` allows you to transform the scale 
 This is a more natural presentation, as the values on the scale are (at least in theory) a bit easier to read. 
 In practice, I'd still probably customize the labels on the y-axis if I were hoping to use this for publication. 
 
-```{python boxplot-seaborn2}
+```{python}
+#| label: boxplot-seaborn2
 import seaborn as sns
 plt.figure()
 sns.boxplot(poke, x = "generation", y = "total")
@@ -702,7 +738,8 @@ To look at the relationship between numeric variables, we could compute
 a numeric correlation, but a plot may be more useful, because it allows
 us to see outliers as well.
 
-```{r base-scatter-cor}
+```{r}
+#| label: base-scatter-cor
 #| out-width: 48%
 #| fig-align: center
 #| collapse: true
@@ -714,14 +751,16 @@ cor(poke$defense, poke$attack)
 Sometimes, we discover that a numeric variable which may seem to be continuous is actually relatively quantized. 
 In other cases, like in the plot below, we may discover an interesting correlation that sticks out - the identity line $y=x$ seems to stand out from the cloud here.
 
-```{r base-scatter-quantized}
+```{r}
+#| label: base-scatter-quantized
 plot(x = poke$sp_attack, y = poke$attack, type = "p")
 ```
 
 A scatterplot matrix can also be a useful way to visualize relationships
 between several variables.
 
-```{r base-scatter-matrix}
+```{r}
+#| label: base-scatter-matrix
 #| fig-cap: "A scatterplot matrix of hit points, attack, defense, special attack, and special defense characteristics for all generation 1-8 Pokemon."
 #| fig-width: 8
 #| fig-height: 8
@@ -741,7 +780,8 @@ To look at the relationship between numeric variables, we could compute
 a numeric correlation, but a plot may be more useful, because it allows
 us to see outliers as well.
 
-```{r ggplot-scatter-cor}
+```{r}
+#| label: ggplot-scatter-cor
 library(ggplot2)
 ggplot(poke, aes(x = attack, y = defense)) + geom_point()
 ```
@@ -752,7 +792,8 @@ Changing the point transparency (alpha = .5) can also help with overplotting.
 
 In other cases, we might find that there is a prominent feature of a scatterplot (in this case, the line $y=x$ seems to stand out a bit from the overall point cloud). We can highlight this feature by adding a line at $y=x$ in red behind the points.
 
-```{r ggplot-scatter-quantized}
+```{r}
+#| label: ggplot-scatter-quantized
 #| out-width: "50%"
 #| fig-width: 4
 #| fig-height: 4
@@ -763,7 +804,8 @@ ggplot(poke, aes(x = attack, y = sp_attack)) +
   geom_jitter(alpha = 0.5)
 ```
 
-```{r ggplot-scatter-matrix}
+```{r}
+#| label: ggplot-scatter-matrix
 #| fig-width: 8
 #| fig-height: 8
 #| fig-cap: "A scatterplot matrix of hit points, attack, defense, special attack, and special defense characteristics for all generation 1-8 Pokemon."
@@ -780,7 +822,8 @@ ggpairs(poke[,c("hp", "attack", "defense", "sp_attack", "sp_defense")],
 
 Believe it or not, you don't have to go to `matplotlib` to get plots in python - you can get some plots from `pandas` directly, even if you are still using `matplotlib` under the hood (this is why you have to run `plt.show()` to get the plot to appear if you're working in markdown).
 
-```{python pandas-scatterplot}
+```{python}
+#| label: pandas-scatterplot
 import matplotlib.pyplot as plt
 
 poke.plot.scatter(x = 'attack', y = 'defense')
@@ -789,7 +832,8 @@ plt.show()
 
 Pandas also includes a nice scatterplot matrix method. 
 
-```{python pandas-scatterplot-matrix}
+```{python}
+#| label: pandas-scatterplot-matrix
 from pandas.plotting import scatter_matrix
 import matplotlib.pyplot as plt
 
@@ -798,7 +842,8 @@ scatter_matrix(poke.iloc[:,vars], alpha = 0.2, figsize = (6, 6), diagonal = 'kde
 plt.show()
 ```
 
-```{python seaborn-scatterplot-matrix}
+```{python}
+#| label: seaborn-scatterplot-matrix
 
 vars = [6, 7,14,15]
 
@@ -816,7 +861,8 @@ If you want summary statistics by group, you can get that using the
 more about in the next section. (I'm cheating a bit by mentioning it
 now, but it's just so useful!)
 
-```{python, include = F}
+```{python}
+#| include: !expr F
 # Clear python plot framework
 plt.clf()
 ```
@@ -832,21 +878,24 @@ Explore the variables present in [the Lancaster County Assessor Housing Sales Da
 Note that some variables may be too messy to handle with the things that you have seen thus far - that is ok. 
 As you find irregularities, document them - these are things you may need to clean up in the dataset before you conduct a formal analysis.
 
-```{r housing-tryitout-r-read-data}
+```{r}
+#| label: housing-tryitout-r-read-data
 if (!"readxl" %in% installed.packages()) install.packages("readxl")
 library(readxl)
 download.file("https://github.com/srvanderplas/datasets/blob/main/raw/Lancaster%20County,%20NE%20-%20Assessor.xlsx?raw=true", destfile = "../data/lancaster-housing.xlsx")
 housing_lincoln <- read_xlsx("../data/lancaster-housing.xlsx", sheet = 1, guess_max = 7000)
 ```
 
-```{python housing-tryitout-py-read-data}
+```{python}
+#| label: housing-tryitout-py-read-data
 import pandas as pd
 housing_lincoln = pd.read_excel("../data/lancaster-housing.xlsx")
 ```
 
 ### R solution {.unnumbered}
 
-```{r housing-tryitout-R}
+```{r}
+#| label: housing-tryitout-R
 housing_lincoln$TLA <- readr::parse_number(housing_lincoln$`TLA (Sqft)`)
 housing_lincoln$Assd_Value <- readr::parse_number(housing_lincoln$Assd_Value)
 
@@ -855,7 +904,8 @@ skim(housing_lincoln)
 
 Let's examine the numeric variables first:
 
-```{r housing-data-numeric-date}
+```{r}
+#| label: housing-data-numeric-date
 hist(housing_lincoln$Assd_Value)
 
 hist(housing_lincoln$Yr_Blt)
@@ -864,7 +914,8 @@ hist(housing_lincoln$Yr_Blt)
 Let's look at the years the houses were built and the Imp\_Types.
 We can find more data on what the Improvement Types mean [here](https://www.lincoln.ne.gov/files/sharedassets/intranet/county/clerk/protest-public/appraisal_card_code_sheet.pdf), where the various abbreviations are defined. 
 
-```{r housing-data-year}
+```{r}
+#| label: housing-data-year
 housing_lincoln$decade <- 10*floor(housing_lincoln$Yr_Blt/10)
 
 table(housing_lincoln$decade, useNA = 'ifany')
@@ -887,7 +938,8 @@ This makes sense - there are relatively few bungalows (BN), but R1 means 1 story
 
 ### Python solution {.unnumbered}
 
-```{python housing-tryitout-py}
+```{python}
+#| label: housing-tryitout-py
 housing_lincoln["TLA"] = housing_lincoln["TLA (Sqft)"].str.replace("[,\$]", "", regex = True)
 # For some reason, things without a comma just get NaN'd, so fix that
 housing_lincoln.loc[housing_lincoln["TLA"].isna(), "TLA"] = housing_lincoln.loc[housing_lincoln["TLA"].isna(), "TLA (Sqft)"]
@@ -906,7 +958,8 @@ skim(housing_lincoln)
 
 Let's examine the numeric and date variables first:
 
-```{python housing-numeric-py}
+```{python}
+#| label: housing-numeric-py
 housing_lincoln["TLA"].plot.hist()
 plt.show()
 
@@ -918,7 +971,8 @@ plt.show()
 Let's look at the years the houses were built and the Imp\_Types.
 We can find more data on what the Improvement Types mean [here](https://www.lincoln.ne.gov/files/sharedassets/intranet/county/clerk/protest-public/appraisal_card_code_sheet.pdf), where the various abbreviations are defined. 
 
-```{python housing-categorical-py}
+```{python}
+#| label: housing-categorical-py
 import numpy as np
 housing_lincoln['decade'] = 10*np.floor(housing_lincoln.Yr_Blt/10)
 
@@ -936,7 +990,8 @@ plt.show()
 
 We can also look at the square footage for each improvement type:
 
-```{python housing-cat-cts-py}
+```{python}
+#| label: housing-cat-cts-py
 housing_subcat = ["BN", "R1", "RA", "R2"]
 
 housing_sub = housing_lincoln.loc[housing_lincoln["Imp_Type"].isin(housing_subcat)]

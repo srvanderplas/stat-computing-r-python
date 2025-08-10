@@ -54,7 +54,10 @@ We'll demonstrate plotly's capabilities using the `volcanoes` data from [Tidy Tu
 
 #### R
 
-```{r volcano-data-setup-r, message = F, warning = F}
+```{r}
+#| label: volcano-data-setup-r
+#| message: !expr F
+#| warning: !expr F
 if (!"plotly" %in% installed.packages()) 
   install.packages("plotly")
 
@@ -79,7 +82,8 @@ trees <- read_csv(paste0(url_stub, "tree_rings.csv"))
 ```
 
 #### Python
-```{python volcano-data-setup-py}
+```{python}
+#| label: volcano-data-setup-py
 # Uncomment and run this line if you don't have plotly installed
 # %pip install plotly
 
@@ -110,7 +114,8 @@ Let's try out plotly while doing a bit of exploratory data analysis on this data
 ::: panel-tabset
 
 #### R
-```{r cleaning-up-volcano-r}
+```{r}
+#| label: cleaning-up-volcano-r
 volcano <- volcano %>%
   filter(tectonic_settings != "Unknown") %>%
   separate(tectonic_settings, into = c("zone", "crust"), 
@@ -123,7 +128,8 @@ volcano <- volcano %>%
 
 #### Python
 
-```{python cleaning-up-volcano-py}
+```{python}
+#| label: cleaning-up-volcano-py
 volcano2 = volcano.query("tectonic_settings != 'Unknown'")
 volcano2[['zone', 'crust']] = volcano2.tectonic_settings.\
                               str.split(" / ", expand = True)
@@ -173,7 +179,8 @@ file = 'plotly-python/boxplot-volcano.html'
 pl.io.write_html(fig, file = file, auto_open = False)
 ```
 
-```{r, echo = F}
+```{r}
+#| echo: !expr F
 htmltools::includeHTML(py$file)
 ```
 
@@ -232,7 +239,8 @@ fig = ff.create_distplot(type_list, group_labels = type_labels, show_hist=False)
 file = 'plotly-python/distplot-volcano.html'
 pl.io.write_html(fig, file = file, auto_open = False)
 ```
-```{r, echo = F}
+```{r}
+#| echo: !expr F
 library(reticulate)
 htmltools::includeHTML(py$file)
 ```
@@ -563,7 +571,8 @@ file = 'plotly-python/eruptplot-volcano.html'
 pl.io.write_html(fig, file = file, auto_open = False)
 ```
 
-```{r, echo = F}
+```{r}
+#| echo: !expr F
 htmltools::includeHTML(py$file)
 ```
 
@@ -578,7 +587,8 @@ fig = px.bar(
 file = 'plotly-python/vei-volcano.html'
 pl.io.write_html(fig, file = file, auto_open = False)
 ```
-```{r, echo = F}
+```{r}
+#| echo: !expr F
 htmltools::includeHTML(py$file)
 ```
 
@@ -595,7 +605,8 @@ fig = px.box(
 file = 'plotly-python/vei-duration-volcano.html'
 pl.io.write_html(fig, file = file, auto_open = False)
 ```
-```{r, echo = F}
+```{r}
+#| echo: !expr F
 htmltools::includeHTML(py$file)
 ```
 
@@ -628,7 +639,8 @@ fig = px.scatter_geo(volcano, lon = "longitude", lat = "latitude")
 file = 'plotly-python/scatter-volcano.html'
 pl.io.write_html(fig, file = file, auto_open = False)
 ```
-```{r, echo = F}
+```{r}
+#| echo: !expr F
 htmltools::includeHTML(py$file)
 ```
 :::
@@ -664,7 +676,8 @@ fig.update_traces(marker=dict(size=12, opacity = 0.25, color = 'red'),
 file = 'plotly-python/scatter-hover-volcano.html'
 pl.io.write_html(fig, file = file, auto_open = False)
 ```
-```{r, echo = F}
+```{r}
+#| echo: !expr F
 htmltools::includeHTML(py$file)
 ```
 
@@ -719,7 +732,8 @@ fig.update_traces(marker=dict(size=12, opacity = 0.25),
 file = 'plotly-python/scatter-hover-update-volcano.html'
 pl.io.write_html(fig, file = file, auto_open = False)
 ```
-```{r, echo = F}
+```{r}
+#| echo: !expr F
 htmltools::includeHTML(py$file)
 ```
 :::
@@ -826,7 +840,9 @@ Leaflet is another javascript library that allows for interactive data visualiza
 
 To explore the leaflet package, we'll start out playing with a [dataset of Bigfoot sightings](https://data.world/timothyrenner/bfro-sightings-data) assembled from the Bigfoot Field Researchers Organization's [Google earth tool](http://www.bfro.net/news/google_earth.asp)
 
-```{r leaflet-setup, echo = F}
+```{r}
+#| label: leaflet-setup
+#| echo: !expr F
 if (!"leaflet" %in% installed.packages()) install.packages("leaflet")
 
 library(leaflet)
@@ -834,7 +850,9 @@ library(readr)
 
 bigfoot_data <- read_csv("https://query.data.world/s/egnaxxvegdkzzrhfhdh4izb6etmlms")
 ```
-```{r leaflet-setup, eval = F}
+```{r}
+#| label: leaflet-setup
+#| eval: !expr F
 ```
 
 We can start out by plotting a map with the location of each sighting. I've colored the points in a seasonal color scheme, and added the description of each incident as a mouseover label.
@@ -884,7 +902,8 @@ squirrels %>%
 We can also plot regions, instead of just points. I downloaded a dataset released by the state of California, [Crotch's Bumble Bee Range - CDFW](https://catalog.data.gov/dataset/crotchs-bumble-bee-range-cdfw-ds3095-76d4f) [dataset](https://data-cdfw.opendata.arcgis.com/api/download/v1/items/088dd4ad591e46a1a62ab96e196d0740/geojson?layers=0), which shows the range of the Crotch's Bumble Bee (*Bombus crotchii*). 
 
 I've set this chunk to not evaluate because it causes the book to be painfully large.
-```{r, eval = F}
+```{r}
+#| eval: !expr F
 library(sf)
 bees <- st_read("../data/Crotch_s_Bumble_Bee_Range_-_CDFW_[ds3095].geojson")
 bees <- sf::st_transform(bees, 4326)

@@ -48,7 +48,8 @@ This allows the programmer to consider these relationships when constructing the
 
 As of January 2023, pie charts are [still not supported in plotnine](https://github.com/has2k1/plotnine/issues/10). So this demo will fall a bit flat. 
 
-```{python gg-bar-py}
+```{python}
+#| label: gg-bar-py
 from plotnine import *
 plt.cla() # clear out matplotlib buffer
 
@@ -58,7 +59,9 @@ ggplot(poke, aes(x = "1", fill = "generation")) + geom_bar(position = "stack")
 
 ### plotnine {.unnumbered}
 
-```{python  txhousing-p9-intro, warning = F}
+```{python}
+#| label: txhousing-p9-intro
+#| warning: !expr F
 from plotnine import *
 from plotnine.data import txhousing
 
@@ -68,7 +71,8 @@ ggplot(txhousing, aes(x = "date", y = "median")) + geom_point(alpha = .1)
 
 #### plotnine {.unnumbered}
 
-```{python, warning = F}
+```{python}
+#| warning: !expr F
 ggplot(txhousing, aes(x = "date", y = "median")) +\
 geom_point() +\
 xlab("Date") + ylab("Median Home Price") +\
@@ -78,7 +82,8 @@ ggtitle("Texas Housing Prices")
 
 #### plotnine {.unnumbered}
 
-```{python, warning = F}
+```{python}
+#| warning: !expr F
 ggplot(txhousing, aes(x = "date", y = "median")) + geom_point() +\
 geom_smooth(method = "lm", color = "blue") +\
 xlab("Date") + ylab("Median Home Price") +\
@@ -98,7 +103,8 @@ ggtitle("Texas Housing Prices")
 
 #### plotnine {.unnumbered}
 
-```{python, warning = F}
+```{python}
+#| warning: !expr F
 ggplot(txhousing, aes(x = "date", y = "median", color = "city")) +\
 geom_point() +\
 geom_smooth(method = "loess") +\
@@ -108,7 +114,8 @@ ggtitle("Texas Housing Prices")
 
 That's a really crowded graph! It's slightly easier if we just take the points away and only show the statistics, but there are still way too many cities to be able to tell what shade matches which city.
 
-```{python, warning = F}
+```{python}
+#| warning: !expr F
 ggplot(txhousing, aes(x = "date", y = "median", color = "city")) +\
 geom_smooth(method = "loess") +\
 theme(subplots_adjust={'right': 0.5}) +\
@@ -120,7 +127,8 @@ ggtitle("Texas Housing Prices")
 
 #### plotnine {.unnumbered}
 
-```{python, warning = F}
+```{python}
+#| warning: !expr F
 citylist = ["Houston", "Austin", "Dallas", "Fort Worth", "San Antonio"]
 housingsub = txhousing[txhousing['city'].isin(citylist)]
 
@@ -134,7 +142,8 @@ ggtitle("Texas Housing Prices")
 
 Here's the facetted version of the chart:
 
-```{python, warning = F}
+```{python}
+#| warning: !expr F
 ggplot(housingsub, aes(x = "date", y = "median")) +\
 geom_point() +\
 geom_smooth(method = "loess", color = "blue") +\
@@ -145,7 +154,8 @@ ggtitle("Texas Housing Prices")
 
 #### plotnine {.unnumbered}
 
-```{python, warning = F}
+```{python}
+#| warning: !expr F
 citylist = ["Houston", "Austin", "Dallas", "Fort Worth", "San Antonio"]
 housingsub = txhousing[txhousing['city'].isin(citylist)]
 
@@ -165,7 +175,8 @@ Not all of the features we used in R are available in plotnine in Python (in par
 
 #### plotnine {.unnumbered}
 
-```{python, warning = F}
+```{python}
+#| warning: !expr F
 houston = txhousing[txhousing.city=="Houston"]
 
 (
@@ -179,7 +190,8 @@ houston = txhousing[txhousing.city=="Houston"]
 
 In plotnine, we have to use [matplotlib marker syntax](https://matplotlib.org/stable/api/markers_api.html).
 
-```{python, warning = F}
+```{python}
+#| warning: !expr F
 
 (
   ggplot(houston, aes(x = "date", y = "inventory", color = "sales"))
@@ -194,7 +206,8 @@ Plotnine also defaults to different color schemes than ggplot2 -- just something
 
 What happens if we move the variables around and map date to the point color?
 
-```{python, warning = F}
+```{python}
+#| warning: !expr F
 (
 ggplot(houston, aes(x = "sales", y = "inventory", color = "date"))
   + geom_point()

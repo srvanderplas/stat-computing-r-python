@@ -11,7 +11,8 @@ This section is intended as a very light overview of how you might create charts
 
 You will need the `seaborn` (python) and `ggplot2` (R) packages for this section. 
 
-```{r, eval = F}
+```{r}
+#| eval: !expr F
 install.packages("ggplot2")
 ```
 
@@ -21,7 +22,8 @@ To install seaborn, pick one of the following methods (you can read more about t
 
 ### System Terminal
 
-```{bash, eval = F}
+```{bash}
+#| eval: !expr F
 pip3 install seaborn matplotlib
 ```
 
@@ -29,7 +31,8 @@ pip3 install seaborn matplotlib
 
 This package installation method requires that you have a virtual environment set up (that is, if you are on Windows, don't try to install packages this way).
 
-```{r, eval = F}
+```{r}
+#| eval: !expr F
 reticulate::py_install(c("seaborn", "matplotlib"))
 ```
 
@@ -37,7 +40,8 @@ reticulate::py_install(c("seaborn", "matplotlib"))
 
 In a python chunk (or the python terminal), you can run the following command. This depends on something called "IPython magic" commands, so if it doesn't work for you, try the System Terminal method instead.
 
-```{python, eval = F}
+```{python}
+#| eval: !expr F
 %pip install seaborn matplotlib
 ```
 
@@ -62,7 +66,8 @@ Let's work with Historically Black College and University enrollment.
 
 #### R
 
-```{r plotting-data-r}
+```{r}
+#| label: plotting-data-r
 hbcu_all <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2021/2021-02-02/hbcu_all.csv')
 
 library(ggplot2)
@@ -70,7 +75,8 @@ library(ggplot2)
 
 #### Python
 
-```{python plotting-data-python}
+```{python}
+#| label: plotting-data-python
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
@@ -95,7 +101,8 @@ If you pass a data frame in as the data argument, you can refer to columns in th
 
 #### R
 
-```{r line-graph-r}
+```{r}
+#| label: line-graph-r
 
 ggplot(hbcu_all, aes(x = Year, y = `4-year`)) + geom_line() +
   ggtitle("4-year HBCU College Enrollment")
@@ -104,14 +111,18 @@ ggplot(hbcu_all, aes(x = Year, y = `4-year`)) + geom_line() +
 
 #### Python
 
-```{python line-graph-python-p9, eval = F, include = F}
+```{python}
+#| label: line-graph-python-p9
+#| eval: !expr F
+#| include: !expr F
 
 ggplot(hbcu_all, aes(x = "Year", y = "4-year")) + geom_line() + \
  ggtitle("4-year HBCU College Enrollment")
 
 ```
 
-```{python line-graph-python-seaborn}
+```{python}
+#| label: line-graph-python-seaborn
 
 plot = sns.lineplot(hbcu_all, x = "Year", y = "4-year")
 plot.set_title("4-year HBCU College Enrollment")
@@ -135,23 +146,29 @@ You don't need to know exactly how this works, but it is helpful to see the diff
 ::: panel-tabset
 
 #### R
-```{r pivot-operation-r}
+```{r}
+#| label: pivot-operation-r
 library(tidyr)
 hbcu_long <- pivot_longer(hbcu_all, -Year, names_to = "type", values_to = "value")
 ```
 
 #### Python
-```{python pivot-operation-python}
+```{python}
+#| label: pivot-operation-python
 hbcu_long = pd.melt(hbcu_all, id_vars = ['Year'], value_vars = hbcu_all.columns[1:11])
 ```
 
 #### Original Data
-```{r pivot-operation-data, echo = F}
+```{r}
+#| label: pivot-operation-data
+#| echo: !expr F
 knitr::kable(head(hbcu_all))
 ```
 
 #### Long Data
-```{r pivot-operation-data-2, echo = F}
+```{r}
+#| label: pivot-operation-data-2
+#| echo: !expr F
 
 knitr::kable(head(hbcu_long))
 ```
@@ -174,21 +191,26 @@ Having the data in the right form to plot is very important if you want to get t
 ::: panel-tabset
 
 #### R
-```{r long-form-demo-r}
+```{r}
+#| label: long-form-demo-r
 
 ggplot(hbcu_long, aes(x = Year, y = value, color = type)) + geom_line() +
   ggtitle("HBCU College Enrollment")
 ```
 
 #### Python
-```{python long-form-demo-python-p9, eval = F, include = F}
+```{python}
+#| label: long-form-demo-python-p9
+#| eval: !expr F
+#| include: !expr F
 
 ggplot(hbcu_long, aes(x = "Year", y = "value", color = "variable")) + geom_line() + \
   ggtitle("HBCU College Enrollment") + \
   theme(subplots_adjust={'right':0.75}) # This moves the key so it takes up 25% of the area
 ```
 
-```{python long-form-demo-python-seaborn}
+```{python}
+#| label: long-form-demo-python-seaborn
 plot = sns.lineplot(hbcu_long, x = "Year", y = "value", hue = "variable")
 plot.set_title("4-year HBCU College Enrollment")
 plt.show()

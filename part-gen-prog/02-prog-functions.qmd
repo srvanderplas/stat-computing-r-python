@@ -364,7 +364,8 @@ Some R programmers have adopted the python philosophy of project-specific packag
 
 If you want to use `renv`, you can do that by following these steps:
 
-```{r, eval = F}
+```{r}
+#| eval: !expr F
 install.packages("renv")
 
 library(renv)
@@ -427,7 +428,8 @@ Items within `< >` (as well as the <> characters) are intended to be replaced wi
 
 In your system terminal, navigate to your project directory.
 
-```{bash, eval = F}
+```{bash}
+#| eval: !expr F
 cd <project-directory>
 pip3 install virtualenv # install virtual environments
 
@@ -443,7 +445,8 @@ pip install <pkg1> <pkg2> <pkg3>
 
 Then, in RStudio, you will want to run the following lines in the R terminal:
 
-```{r, eval = F}
+```{r}
+#| eval: !expr F
 install.packages("reticulate")
 library(reticulate)
 
@@ -461,7 +464,8 @@ Restart your R session before you start trying to work in python.
 Open your RStudio project.
 In your R terminal, run the following lines:
 
-```{r, eval = F}
+```{r}
+#| eval: !expr F
 install.packages("reticulate")
 library(reticulate)
 virtualenv_create(envname = "<env-name>",
@@ -507,7 +511,8 @@ Items within `< >` (as well as the <> characters) are intended to be replaced wi
 
 You must have conda installed for these instructions to work!
 
-```{bash, eval = F}
+```{bash}
+#| eval: !expr F
 cd <project-directory>
 # Create conda environment and install specific python version and packages 
 conda create --prefix ./<env-name> python=<python-version> <pkg1> <pkg2> <pkg3> 
@@ -518,7 +523,8 @@ conda activate ./<env-name>
 
 Then, in RStudio, you will want to run the following lines in the R terminal:
 
-```{r, eval = F}
+```{r}
+#| eval: !expr F
 install.packages("reticulate")
 library(reticulate)
 
@@ -535,7 +541,8 @@ Restart your R session before you start trying to work in python.
 Open your RStudio project.
 In your R terminal, run the following lines:
 
-```{r, eval = F}
+```{r}
+#| eval: !expr F
 install.packages("reticulate")
 library(reticulate)
 conda_create(envname = "<env-name>",
@@ -617,7 +624,8 @@ In python, you will typically want to install packages using a system terminal.
     - If you are using venv, `pip3 install <package name>` should install your package. 
     - If you are using conda, `conda install <package name>` is preferable, and if that doesn't work, then try using `pip3 install <package name>`.
 
-```{bash, eval = F}
+```{bash}
+#| eval: !expr F
 # If you're using virtualenv
 pip install <pkg1>
 
@@ -640,14 +648,16 @@ This is less elegant, but nearly foolproof because RStudio will install the pack
 2. Run this code (Cmd/Ctrl + Enter)
 3. **Comment the code out**, so that you aren't reinstalling the package every time you run the chunk. 
 
-```{python, eval = F}
+```{python}
+#| eval: !expr F
 %pip install <pkg1>
 ```
 
 A slightly less elegant but more robust way to do this is to use the `sys` package. 
 Loading the `sys` package ensures that you're using the version of python that your file will be compiled with to install the package.
 
-```{python, eval = F}
+```{python}
+#| eval: !expr F
 import sys
 # For pip installation
 !{sys.executable} -m pip install <pkg1>
@@ -667,7 +677,8 @@ Package management in R is a bit simpler than package management in python.
 In almost every case, you can install packages from CRAN with `install.packages("package name")`. 
 If your package is not on CRAN, and is instead on e.g. GitHub, you may have to use the `remotes` package to install it with `remotes::install_github("user/repo")`
 
-```{r, eval = F}
+```{r}
+#| eval: !expr F
 # CRAN packages
 install.packages("<pkg1>")
 
@@ -686,7 +697,8 @@ Suppose you want to install the `lme4` package in R and the corresponding `pymer
 
 ##### R
 
-```{r, eval = F}
+```{r}
+#| eval: !expr F
 install.packages("lme4") # <1>
 
 remotes::install_github("lme4/lme4", dependencies=TRUE) # <2>
@@ -699,7 +711,8 @@ You should only run one of these lines of code, and if you don't know which one 
 
 ##### Python (System console)
 
-```{bash, eval = F}
+```{bash}
+#| eval: !expr F
 pip install pymer4 # venv
 
 conda install pymer4 # conda
@@ -715,7 +728,8 @@ reticulate::py_install("pymer4")
 
 ##### Python (Ipython magic)
 
-```{python, eval=F}
+```{python}
+#| eval: !expr F
 %pip install pymer4
 ```
 
@@ -950,7 +964,8 @@ Would your answer change if there were more steps/functions required to get to t
 
 #### R solution
 
-```{r pipe-intro}
+```{r}
+#| label: pipe-intro
 data <- rnorm(100)
 mean(data)
 
@@ -968,7 +983,9 @@ rnorm(100) |> mean()
 
 In python, task 3 isn't really possible, because of the way Python function chaining works, but task 2 is basically the equivalent.
 
-```{python pipe-not-necessary-py, collapse = T}
+```{python}
+#| label: pipe-not-necessary-py
+#| collapse: !expr T
 import numpy as np
 import pandas as pd
 

@@ -95,7 +95,8 @@ In the interests of demonstrating the process on the same data, I've exported th
 This data set is included in the `dplyr` package, so we load that package and then use the `data()` function to load dataset into memory. 
 The loading isn't complete until we actually use the dataset though... so let's print the first few rows. 
 
-```{r starwars-data-explore}
+```{r}
+#| label: starwars-data-explore
 library(dplyr)
 data(starwars)
 starwars
@@ -128,7 +129,8 @@ The dplyr verb for selecting rows is `filter`.
 `filter` takes a set of one or more logical conditions, using bare column names and logical operators. 
 Each provided condition is combined using AND.
 
-```{r r-filter-data}
+```{r}
+#| label: r-filter-data
 # Get only the people
 filter(starwars, species == "Human")
 
@@ -139,7 +141,8 @@ filter(starwars, species == "Human", homeworld == "Tatooine")
 
 #### Python
 
-```{python py-filter-data}
+```{python}
+#| label: py-filter-data
 # Get only the people
 starwars.query("species == 'Human'")
 
@@ -154,7 +157,8 @@ starwars.query("species == 'Human' & homeworld == 'Tatooine'")
 
 In base R, you would perform a filtering operation using `subset`
 
-```{r r-filter-data2}
+```{r}
+#| label: r-filter-data2
 # Get only the people
 subset(starwars, species == "Human")
 
@@ -185,7 +189,8 @@ In base R or python, these tasks are still important, and so I'll do my best to 
 `row_number()` is a helper function that is only used inside of another dplyr function (e.g. filter). 
 You might want to keep only even rows, or only the first 10 rows in a table. 
 
-```{r filter-poke}
+```{r}
+#| label: filter-poke
 library(readr)
 library(dplyr)
 
@@ -203,7 +208,8 @@ There is an additional option with slicing - `start:(end+1):by`. So if we want t
 
 Because Python is 0-indexed, using `::2` will give us the opposite set of rows from that returned in R, which is 1-indexed.
 
-```{python filter-poke-py}
+```{python}
+#| label: filter-poke-py
 import pandas as pd
 
 poke = pd.read_csv("https://github.com/srvanderplas/datasets/raw/main/clean/pokemon_gen_1-9.csv")
@@ -216,7 +222,8 @@ If we want to get only odd rows, we can use the index `[1::2]`, which will start
 In base R, we'd use `seq()` to create an index vector instead of using the approach in filter and evaluating the whole index for a logical condition. 
 Alternately, we can use `subset`, which requires a logical condition, and use `1:nrow(poke)` to create an index which we then use for deciding whether each row is even or odd.
 
-```{r base-r-filter}
+```{r}
+#| label: base-r-filter
 poke[seq(1, nrow(poke), 2),]
 
 subset(poke, 1:nrow(poke) %% 2 == 0)
@@ -242,7 +249,8 @@ Another common operation is to sort your data frame by the values of one or more
 It is often used with a helper function, `desc()`, which reverses the order of a variable, sorting it in descending order. 
 Multiple arguments can be passed to `arrange` to sort the data frame by multiple columns hierarchically; each column can be modified with `desc()` separately.
 
-```{r arrange-poke-dplyr}
+```{r}
+#| label: arrange-poke-dplyr
 arrange(poke, desc(total))
 ```
 
@@ -250,7 +258,8 @@ arrange(poke, desc(total))
 
 In pandas, we use the `sort_values` function, which has an argument `ascending`. Multiple columns can be passed in to sort by multiple columns in a hierarchical manner.
 
-```{python arrange-poke-py}
+```{python}
+#| label: arrange-poke-py
 poke.sort_values(['total'], ascending = False)
 ```
 
@@ -260,7 +269,8 @@ poke.sort_values(['total'], ascending = False)
 The `sort()` function in R can be used to sort a vector, but when sorting a data frame we usually want to use the `order()` function instead. 
 This is because `sort()` orders the values of the argument directly, where `order()` returns a sorted index.
 
-```{r base-r-sort}
+```{r}
+#| label: base-r-sort
 x <- c(32, 25, 98, 45, 31, 19, 5)
 sort(x)
 order(x)
@@ -268,7 +278,8 @@ order(x)
 
 When working with a data frame, we want to sort the entire data frame's rows by the variables we choose; it is easiest to do this using an index to reorder the rows.
 
-```{r arrange-poke-baser}
+```{r}
+#| label: arrange-poke-baser
 poke[order(poke$total, decreasing = T),]
 ```
 :::
@@ -286,25 +297,29 @@ poke[order(poke$total, decreasing = T),]
 This is like a filter statement, but it's a shortcut built to handle a common task. 
 You could write a filter statement that would do this, but it would take a few more lines of code.
 
-```{r slice-poke-arrange}
+```{r}
+#| label: slice-poke-arrange
 slice_max(poke, order_by = total, n = 5)
 ```
 
 By default, `slice_max()` returns values tied with the nth value as well, which is why our result has 6 rows.
 
-```{r slice-poke-arrange-2}
+```{r}
+#| label: slice-poke-arrange-2
 slice_max(poke, order_by = total, n = 5, with_ties = F) 
 ```
 
 Of course, there is a similar `slice_min()` function as well:
 
-```{r slice-poke-arrange-3}
+```{r}
+#| label: slice-poke-arrange-3
 slice_min(poke, order_by = total, n = 5)
 ```
 
 `slice_max` and `slice_min` also take a `prop` argument that gives you a certain proportion of the values:
 
-```{r slice-poke-arrange-4}
+```{r}
+#| label: slice-poke-arrange-4
 slice_max(poke, order_by = total, prop = .01)
 ```
 
@@ -312,14 +327,16 @@ slice_max(poke, order_by = total, prop = .01)
 
 In Python, `nlargest` and `nsmallest` work roughly the same as `dplyr`'s `slice_max` and `slice_min` for integer counts.
 
-```{python slice-poke-nlargest}
+```{python}
+#| label: slice-poke-nlargest
 poke.nlargest(5, 'total')
 poke.nsmallest(5, 'total')
 ```
 
 To get proportions, though, we have to do some math:
 
-```{python slice-poke-nlargest-2}
+```{python}
+#| label: slice-poke-nlargest-2
 poke.nlargest(int(len(poke)*0.01), 'total')
 poke.nsmallest(int(len(poke)*0.01), 'total')
 ```
@@ -356,7 +373,9 @@ Use the [Pokemon data](https://github.com/srvanderplas/datasets/raw/main/clean/p
 
 #### R: `dplyr` {-}
 
-```{r poke-tryitout, message=FALSE}
+```{r}
+#| label: poke-tryitout
+#| message: false
 poke <- read_csv("https://github.com/srvanderplas/datasets/raw/main/clean/pokemon_gen_1-9.csv")
 
 filter(poke, str_detect(type, "Water"))[,c('gen', 'type', 'weight_kg')] 
@@ -365,7 +384,8 @@ filter(poke, str_detect(type, "Water"))[,c('gen', 'type', 'weight_kg')]
 `str_detect` looks for Water in the type entry -- Pokemon can have one or two types, and in type, these are separated by a comma. Instead of splitting the types apart (which we could do), it's easier to just check to see if water exists in the entire string.
 
 #### Python
-```{python poke-tryitout-py}
+```{python}
+#| label: poke-tryitout-py
 import pandas as pd
 poke = pd.read_csv("https://github.com/srvanderplas/datasets/raw/main/clean/pokemon_gen_1-9.csv")
 
@@ -374,7 +394,9 @@ poke.query("type.str.contains('Water')")[['gen', 'type', 'weight_kg']]
 
 #### Base R
 
-```{r poke-tryitout2, message = F}
+```{r}
+#| label: poke-tryitout2
+#| message: !expr F
 poke <- read_csv("https://github.com/srvanderplas/datasets/raw/main/clean/pokemon_gen_1-9.csv")
 
 subset(poke, grepl("Water", type))
@@ -444,7 +466,8 @@ There's one final selector -
 
 Let's try these selector functions out and see what we can accomplish!
 
-```{r nycflightsinstall}
+```{r}
+#| label: nycflightsinstall
 library(nycflights13)
 data(flights)
 str(flights)
@@ -461,13 +484,15 @@ You might want to try out your EDA (Exploratory Data Analysis) skills to see wha
 
 We could get a data frame of departure information for each flight:
 
-```{r select-departure}
+```{r}
+#| label: select-departure
 select(flights, flight, year:day, tailnum, origin, matches("dep"))
 ```
 
 Perhaps we want the plane and flight ID information to be the first columns:
 
-```{r select-rearrange}
+```{r}
+#| label: select-rearrange
 flights %>%
   select(carrier:dest, everything())
 ```
@@ -476,7 +501,9 @@ Note that `everything()` won't duplicate columns you've already added.
 
 Exploring the difference between bare name selection and `all_of()`/`any_of()`
 
-```{r select-bare-vs-names, error = T}
+```{r}
+#| label: select-bare-vs-names
+#| error: !expr T
 flights %>%
   select(carrier, flight, tailnum, matches("time"))
 
@@ -517,7 +544,8 @@ from nycflights13 import flights
 
 Select operations are not as easy in python as they are when using `dplyr::select()` with helpers, but of course you can accomplish the same tasks.
 
-```{python select-rearrange-py}
+```{python}
+#| label: select-rearrange-py
 cols = flights.columns
 
 # Rearrange column order by manual indexing
@@ -536,7 +564,8 @@ Suppose we want to get all columns containing the word 'time'.
 We could iterate through the list of columns (`flights.columns`) and add the column name any time we detect the word 'time' within. 
 That is essentially what the following code does: 
 
-```{python select-cols-helpers-py}
+```{python}
+#| label: select-cols-helpers-py
 # This gets all columns that contain time
 timecols = [col for col in flights.columns if 'time' in col]
 timecols
@@ -550,7 +579,9 @@ Explaining the code:
 
 #### Selecting columns in Python {-}
 
-```{python select-bare-vs-names-py, error = T}
+```{python}
+#| label: select-bare-vs-names-py
+#| error: !expr T
 # This gets all columns that contain time
 timecols = [col for col in flights.columns if 'time' in col]
 # Other columns
@@ -581,7 +612,8 @@ This is nowhere near as convenient, of course, but there are little shorthand wa
 `grepl` is a shorthand function for `grep`, which searches for a pattern in a vector of strings.
 `grepl` returns a logical vector indicating whether the pattern (`"dep"`, in this case) was found in the vector (`names(flights)`, in this case). 
 
-```{r select-departure-base-r}
+```{r}
+#| label: select-departure-base-r
 depcols <- names(flights)[grepl("dep", names(flights))]
 collist <- c("flight", "year", "month", "day", "tailnum", "origin", depcols)
 
@@ -590,7 +622,8 @@ flights[,collist]
 
 Perhaps we want the plane and flight ID information to be the first columns:
 
-```{r select-rearrange-base-r}
+```{r}
+#| label: select-rearrange-base-r
 new_order <- names(flights)
 new_order <- new_order[c(10:14, 1:9, 15:19)]
 
@@ -616,7 +649,8 @@ But, I'm covering relocate here mostly because it also comes with this amazing c
 
 ![relocate lets you rearrange columns (by Allison Horst)](../images/wrangling/dplyr_relocate.png){fig-alt="Cartoon of fuzzy monsters moving columns around in fork lifts, while one supervises. Stylized text reads “dplyr::relocate() - move columns around! Default: move to FRONT , or move to .before or .after a specified column."}
 
-```{r relocate-dplyr}
+```{r}
+#| label: relocate-dplyr
 # Move flight specific info to the front
 data(flights, package = "nycflights13")
 relocate(flights, carrier:dest, everything())
@@ -629,7 +663,8 @@ flights %>% relocate(where(is.numeric))
 
 There are similar ways to rearrange columns in pandas, but they are a bit harder to work with - you have to specify the column names (in some way) and then perform the operation yourself.
 
-```{python relocate-pandas}
+```{python}
+#| label: relocate-pandas
 import numpy as np
 cols = list(flights.columns.values) # get column names
 
@@ -666,7 +701,8 @@ Let's add a column that indicates how many types a pokemon has.
 
 ### Base R {-}
 
-```{r mutate-add-variables}
+```{r}
+#| label: mutate-add-variables
 poke <- read_csv("https://github.com/srvanderplas/datasets/raw/main/clean/pokemon_gen_1-9.csv")
 
 # This splits type_1,type_2 into two separate variables. 
@@ -693,7 +729,8 @@ I could reduce that to 2x with the `ifelse` function, but it's still a lot of ty
 
 ### R: `dplyr` {-}
 
-```{r mutate-dplyr}
+```{r}
+#| label: mutate-dplyr
 poke <- read_csv("https://github.com/srvanderplas/datasets/raw/main/clean/pokemon_gen_1-9.csv")
 
 poke <- poke %>%
@@ -715,7 +752,8 @@ The last 2 rows are just to organize the output - we keep only the two variables
 
 In python, this type of variable operation (replacing one value with another) can be most easily done with the replace function, which takes arguments (thing_to_replace, value_to_replace_with). 
 
-```{python mutate-python}
+```{python}
+#| label: mutate-python
 import pandas as pd
 poke = pd.read_csv("https://github.com/srvanderplas/datasets/raw/main/clean/pokemon_gen_1-9.csv")
 
@@ -790,7 +828,9 @@ Admittedly, that last computation is a bit silly, but it's mostly for demonstrat
 
 ### R: `dplyr`{-}
 
-```{r summarize, cache = F}
+```{r}
+#| label: summarize
+#| cache: !expr F
 poke <- read_csv("https://github.com/srvanderplas/datasets/raw/main/clean/pokemon_gen_1-9.csv")
 poke %>%
   mutate(name_chr = nchar(name)) %>%
@@ -803,7 +843,8 @@ In python, instead of a summarize function, there are a number of shorthand func
 You can also build custom summary functions [@whortonApplyingCustomFunctions2021], or use the `agg()` function to define multiple summary variables.
 `agg()` will even let you use different summary functions for each variable, just like `summarize`.
 
-```{python summarize-py}
+```{python}
+#| label: summarize-py
 import pandas as pd
 
 poke = pd.read_csv("https://github.com/srvanderplas/datasets/raw/main/clean/pokemon_gen_1-9.csv")
@@ -841,7 +882,9 @@ In tidy parlance, `group_by` is the verb that accomplishes the first task. `summ
 
 ### R: `dplyr`{-}
 
-```{r summarize2, cache = F}
+```{r}
+#| label: summarize2
+#| cache: !expr F
 poke <- read_csv("https://github.com/srvanderplas/datasets/raw/main/clean/pokemon_gen_1-9.csv")
 poke %>%
   mutate(name_chr = nchar(name)) %>%
@@ -851,7 +894,8 @@ poke %>%
 
 ### Python {-}
 
-```{python summarize2-py}
+```{python}
+#| label: summarize2-py
 import pandas as pd
 
 poke = pd.read_csv("https://github.com/srvanderplas/datasets/raw/main/clean/pokemon_gen_1-9.csv")
@@ -878,7 +922,8 @@ Let's try a non-trivial example, using the `storms` dataset that is part of the 
 
 #### R {-}
 
-```{r read-data-storms}
+```{r}
+#| label: read-data-storms
 library(dplyr)
 library(lubridate) # for the make_datetime() function
 data(storms)
@@ -891,7 +936,8 @@ storms <- storms %>%
 
 #### Python {-}
 
-```{python read-data-storms-py}
+```{python}
+#| label: read-data-storms-py
 import pandas as pd
 import numpy as np
 storms = pd.read_csv("https://raw.githubusercontent.com/srvanderplas/datasets/main/clean/storms.csv", on_bad_lines='skip')
@@ -940,7 +986,8 @@ Let's write the code, now that we have the order of operations straight!
 
 #### R {-}
 
-```{r max-power-storm}
+```{r}
+#| label: max-power-storm
 max_power_storm <- storms %>%
   # Storm names can be reused, so we need to have year to be sure it's the same instance
   group_by(name, year) %>%
@@ -958,7 +1005,8 @@ max_power_storm
 
 #### Python {-}
 
-```{python max-power-storm-py}
+```{python}
+#| label: max-power-storm-py
 grouped_storms = storms.groupby(["name", "year"])
 
 grouped_storm_sum = grouped_storms.agg({
@@ -987,13 +1035,15 @@ If we want to see a visual summary, we could plot a histogram of the minimum pre
 
 #### R {-}
 
-```{r ggplot-storms}
+```{r}
+#| label: ggplot-storms
 library(ggplot2)
 ggplot(max_power_storm, aes(x = pressure)) + geom_histogram()
 ```
 
 #### Python {-}
-```{python ggplot-storms-py}
+```{python}
+#| label: ggplot-storms-py
 from plotnine import *
 
 ggplot(max_power_storm, aes(x = "pressure")) + geom_histogram(bins=30)
@@ -1005,12 +1055,14 @@ We could also look to see whether there has been any change over time in pressur
 ::: panel-tabset
 
 #### R {-}
-```{r ggplot-power-pressure-r}
+```{r}
+#| label: ggplot-power-pressure-r
 ggplot(max_power_storm, aes(x = time, y = pressure)) + geom_point()
 ```
 
 #### Python {-}
-```{python ggplot-power-pressure-py}
+```{python}
+#| label: ggplot-power-pressure-py
 ggplot(max_power_storm, aes(x = "time", y = "pressure")) + geom_point()
 ```
 
@@ -1028,7 +1080,8 @@ Another interesting way to look at this data would be to examine the duration of
 
 #### R {-}
 
-```{r duration-storm}
+```{r}
+#| label: duration-storm
 storm_strength_duration <- storms %>%
   group_by(name, year) %>%
   summarize(duration = difftime(max(time), min(time), units = "days"), 
@@ -1041,7 +1094,8 @@ storm_strength_duration %>%
 ```
 
 #### Python {-}
-```{python duration-storm-py}
+```{python}
+#| label: duration-storm-py
 storm_strength_duration = storms.groupby(["name", "year"]).agg(duration = ("time", lambda x: max(x) - min(x)),max_strength = ("category", "max"))
 
 ggplot(aes(x = "factor(max_strength)", y = "duration"), data = storm_strength_duration) + geom_boxplot()
@@ -1062,7 +1116,8 @@ Diameter measurements don't exist for all storms, and they appear to measure the
 
 Note the use of `as.numeric(as.character(max(category)))` to get the maximum (ordinal categorical) strength and convert that into something numeric that can be plotted. 
 
-```{r storm-evo}
+```{r}
+#| label: storm-evo
 storm_evolution <- storms %>%
   filter(!is.na(hurricane_force_diameter)) %>%
   group_by(name, year) %>%
@@ -1077,7 +1132,8 @@ ggplot(storm_evolution,
 
 #### Python {-}
 
-```{python storm-evo-py}
+```{python}
+#| label: storm-evo-py
 storm_evolution = storms.loc[storms.hurricane_force_diameter.notnull(),:]
 
 storm_evolution = storm_evolution.assign(age = storm_evolution.groupby(["name", "year"], group_keys = False).apply(lambda x: x.time - x.time.min()))
@@ -1099,7 +1155,8 @@ It seems that the vast majority of storms have a single bout of hurricane force 
 
 #### R {-}
 
-```{r storm-evo-year}
+```{r}
+#| label: storm-evo-year
 storm_evolution %>%
   filter(year == 2008) %>%
   arrange(desc(time_since_start))
@@ -1111,7 +1168,8 @@ storm_evolution %>% filter(name == "Ike") %>%
 #### Python {-}
 
 
-```{python storm-evo-year-py}
+```{python}
+#| label: storm-evo-year-py
 storm_evolution.query("year==2008").sort_values(['age'], ascending = False).head()
 
 (ggplot(
@@ -1138,7 +1196,8 @@ The dplyr package is filled with other handy functions for accomplishing common 
 
 ![dplyr's across() function lets you apply a mutate or summarize statement to many columns (by Allison Horst)](../images/wrangling/dplyr_across.png)
 
-```{r storms-dplyr-other-functions}
+```{r}
+#| label: storms-dplyr-other-functions
 library(lubridate) # for the make_datetime() function
 data(storms)
 
@@ -1166,7 +1225,8 @@ avg_hurricane_intensity %>%
 
 We can use python's list comprehensions in combination with `.agg` to accomplish the same task as `dplyr`'s `across` function.
 
-```{python storms-dplyr-other-functions-py}
+```{python}
+#| label: storms-dplyr-other-functions-py
 import pandas as pd
 import numpy as np
 storms = pd.read_csv("https://raw.githubusercontent.com/srvanderplas/datasets/main/clean/storms.csv")
@@ -1194,7 +1254,8 @@ If we want to be more clear, or want to pass another argument into the function,
 Here, our lambda function is a function of `x`, and we calculate `x.mean(skipna=True)` for each x passed in (so, for each column). 
 
 
-```{python storms-dplyr-other-functions-py2}
+```{python}
+#| label: storms-dplyr-other-functions-py2
 # Get list of all remaining numeric variables
 cols = storms.select_dtypes(include =[np.number]).columns.values
 (storms.
@@ -1223,7 +1284,8 @@ The `gapminder` package in python (install with `pip install gapminder`) is a po
 ::: panel-tabset
 
 #### R {-}
-```{r tryitout-gapminder}
+```{r}
+#| label: tryitout-gapminder
 if (!"gapminder" %in% installed.packages()) install.packages("gapminder")
 library(gapminder)
 gapminder_unfiltered
@@ -1231,7 +1293,8 @@ gapminder_unfiltered
 
 #### Python {-}
 
-```{python tryitout-gapminder-py}
+```{python}
+#| label: tryitout-gapminder-py
 import pandas as pd
 
 gapminder_unfiltered = pd.read_csv("https://raw.githubusercontent.com/srvanderplas/datasets/main/raw/gapminder_unfiltered.csv")
@@ -1251,7 +1314,8 @@ Using your EDA skills, determine *how bad* the unfiltered data are. You may want
 
 #### R {-}
 
-```{r gapminder-tryitout-1}
+```{r}
+#| label: gapminder-tryitout-1
 gapminder_unfiltered %>% 
   group_by(country) %>% 
   summarize(n = n(), missinglifeExp = sum(is.na(lifeExp)), 
@@ -1264,7 +1328,8 @@ In order to determine what gaps were present in the gapminder dataset, I determi
 
 #### Python {-}
 
-```{python gapminder-tryitout-1-py}
+```{python}
+#| label: gapminder-tryitout-1-py
 (
   gapminder_unfiltered.
   set_index("country").
@@ -1289,7 +1354,8 @@ Start in 1952 (so 1952, 1957, 1962, ..., 2007).
 
 #### R {-}
 
-```{r gapminder-tryitout-5y-increments}
+```{r}
+#| label: gapminder-tryitout-5y-increments
 gapminder_unfiltered %>%
   filter(year %in% seq(1952, 2007, by = 5))
 ```
@@ -1300,7 +1366,8 @@ gapminder_unfiltered %>%
 
 [Explanation of the query @ statement](https://stackoverflow.com/questions/62914335/python-pandas-query-for-values-in-list)
 
-```{python gapminder-tryitout-5y-increments-py}
+```{python}
+#| label: gapminder-tryitout-5y-increments-py
 years_to_keep = [i for i in range(1952, 2008, 5)]
 gapminder_unfiltered.query("year in @years_to_keep")
 ```
@@ -1316,7 +1383,8 @@ gapminder_unfiltered.query("year in @years_to_keep")
 
 #### R {-}
 
-```{r gapminder-tryitout-countries-filter}
+```{r}
+#| label: gapminder-tryitout-countries-filter
 gapminder_unfiltered %>%
   filter(year %in% seq(1952, 2007, by = 5)) %>%
   group_by(country) %>%
@@ -1327,7 +1395,8 @@ gapminder_unfiltered %>%
 
 #### Python {-}
 
-```{python gapminder-tryitout-countries-filter-py}
+```{python}
+#| label: gapminder-tryitout-countries-filter-py
 
 years_to_keep = [i for i in range(1952, 2008, 5)]
 

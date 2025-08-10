@@ -1,6 +1,7 @@
 # Web Scraping {#sec-data-web}
 
-```{r, include=F}
+```{r}
+#| include: !expr F
 knitr::knit_engines$set(html = function(options) {
   code <- paste(options$code, collapse = '\n')
   out  <- ""
@@ -232,11 +233,14 @@ The city then included some small grocery stores that are very close to meeting 
 
 We can [download the KML file](https://opendata.dc.gov/api/download/v1/items/1d7c9d0e3aac49c1aa88d377a3bae430/kml?layers=4) and change the extension to XML so that the file opens in a standard web browser, or we can directly download the KML file as an XML file as in the code chunk below.
 
-```{r, include = F}
+```{r}
+#| include: !expr F
 options(width = 120)
 ```
 
-```{r get-dc-grocery-data, error = T}
+```{r}
+#| label: get-dc-grocery-data
+#| error: !expr T
 url <- "https://opendata.dc.gov/api/download/v1/items/1d7c9d0e3aac49c1aa88d377a3bae430/kml?layers=4"
 filename <- "../data/DC_Grocery_Stores_2025.xml"
 
@@ -249,14 +253,16 @@ xml_tbl <- data.frame(line = 1:length(xml_text),
                       xml = xml_text)
 ```
 
-```{r echo=F}
+```{r}
+#| echo: !expr F
 #| paged-print: true
 
 DT::datatable(xml_tbl[c(1:10, 35:64, 3145:3151),], rownames = F, escape = 2, editable = F, options = list(searching = F))
 ```
 
 
-```{r, include = F}
+```{r}
+#| include: !expr F
 options(width = 80)
 ```
 
@@ -392,7 +398,8 @@ HTML:
 ::: {.column width="45%"}
 
 Rendered:
-```{r, echo=F}
+```{r}
+#| echo: !expr F
 htmltools::knit_print.html("<table><tr><th>Heading Col 1</th><th>Heading Col 2</th></tr><tr><td>Value 1</td><td>Value 2</td></tr></table>")
 ```
 
@@ -576,7 +583,8 @@ Though the page *appears* to have a table, in fact, the table does not make use 
 
 If you're curious about why I'm reading the HTML from a saved version of the webpage, see the explanation in @sec-user-agents.
 
-```{r olympic-data-setup-r}
+```{r}
+#| label: olympic-data-setup-r
 #| message: false
 #| warning: false
 library(rvest)
@@ -642,7 +650,8 @@ That's too much to type, so search for elements with a class that contains "Tabl
 
 #### R  {-}
 
-```{r olympic-data-table-container-r}
+```{r}
+#| label: olympic-data-table-container-r
 table_nodes <- html_element(doc, css = "[class*='Table']")
 table_nodes
 ```
@@ -711,7 +720,8 @@ Each step in this outline may take more than one line of code.
 
 The CSS selector we use here is a compound selector - it looks for div elements that have `data-row-id` or `data-medal-id` as an attribute. 
 
-```{r olympic-data-scrape-r}
+```{r}
+#| label: olympic-data-scrape-r
 table_data <- html_elements(doc, css = "div[data-row-id],div[data-medal-id]")   # <1>
 
 header_names <- c("row", "flag", "country_abb", # <2>
@@ -1321,16 +1331,20 @@ rev_war_battles2 <- tibble(
 
 When writing custom functions for web scrapign, it's usually helpful to give yourself an idea of what the function does in a comment -- you can often reuse these functions, but that only works if you're kind to future you and remind yourself what they actually do. 
 
-```{r, eval=F, include=F}
+```{r}
+#| eval: !expr F
+#| include: !expr F
 saveRDS(rev_war_battles2, "../data/rev-war-battles2.RDS")
 ```
-```{r, echo=-1}
+```{r}
+#| echo: !expr '-1'
 rev_war_battles2 <- readRDS("../data/rev-war-battles2.RDS")
 head(rev_war_battles2)
 ```
 
 
-```{r, eval=F}
+```{r}
+#| eval: !expr F
 library(purrr)
 
 process_battle_row <- function(node){# <1>
@@ -1350,10 +1364,13 @@ rev_war_battles3 <- map(rev_war_rows, process_battle_row) |> bind_rows() # <4>
 3. The biggest modification here is to use `if_else()` to handle the missing values and replace them with NA instead.
 4. Call `process_battle_row` on each row and bind the rows together. 
 
-```{r, eval=F, include=F}
+```{r}
+#| eval: !expr F
+#| include: !expr F
 saveRDS(rev_war_battles3, "../data/rev-war-battles3.RDS")
 ```
-```{r, echo=-1}
+```{r}
+#| echo: !expr '-1'
 rev_war_battles3 <- readRDS("../data/rev-war-battles3.RDS")
 head(rev_war_battles3)
 ```
@@ -1458,7 +1475,8 @@ If the structured table doesn't exist, the location row doesn't exist, or there 
 
 ##### R {-}
 
-```{r, eval=F}
+```{r}
+#| eval: !expr F
 library(tidyr)
 library(tibble)
 
@@ -1497,10 +1515,13 @@ get_battle_location <- function(battle_link) {
 battle_locations <- purrr::map(rev_war_battles2$link, get_battle_location)
 battle_locations <- bind_rows(battle_locations)
 ```
-```{r, include = F, eval = F}
+```{r}
+#| include: !expr F
+#| eval: !expr F
 saveRDS(battle_locations, file = "../data/rev_war_battle_locations.RDS")
 ```
-```{r,echo=-1}
+```{r}
+#| echo: !expr '-1'
 battle_locations <- readRDS("../data/rev_war_battle_locations.RDS")
 battle_locations <- battle_locations |> unique() # filter out NA values that don't have any links at all
 
@@ -1977,7 +1998,8 @@ team_data_clean <- map(team_data, clean_team_df) |>
 ```
 
 ##### Python {-}
-```{python, cache = F}
+```{python}
+#| cache: !expr F
 from warnings import warn
 
 def get_players(sub_df):

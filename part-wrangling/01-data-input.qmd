@@ -77,7 +77,11 @@ These files are fairly common outputs from older FORTRAN-based programs, but may
 
 In base R (no extra packages), you can read fixed-width files in using `read.fwf`, but you must specify the column breaks yourself, which can be painful.
 
-```{r read-fwf-colbreaks, error = T, eval = -1, echo = -2}
+```{r}
+#| label: read-fwf-colbreaks
+#| error: !expr T
+#| eval: !expr '-1'
+#| echo: !expr '-2'
 url <- "https://www.mesonet.org/index.php/dataMdfMts/dataController/getFile/202206070000/mdf/TEXT/"
 url <- "../data/mesodata.txt"
 data <- read.fwf(url, 
@@ -93,7 +97,8 @@ You can count all of those spaces by hand (not shown), you can use a different f
 ::: {.callout-warning collapse=true}
 ##### Code for counting field width {-}
 
-```{r fixed-width-demo}
+```{r}
+#| label: fixed-width-demo
 
 # I like to cheat a bit....
 # Read the first few lines in
@@ -136,7 +141,9 @@ mesodata[1:6,] # first 6 rows
 You can also write fixed-width files if you *really* want to:
 
 
-```{r gdata-demo, message = F}
+```{r}
+#| label: gdata-demo
+#| message: !expr F
 if (!"gdata" %in% installed.packages()) install.packages("gdata")
 library(gdata)
 write.fwf(mtcars, file = tempfile())
@@ -146,7 +153,9 @@ write.fwf(mtcars, file = tempfile())
 
 The `readr` package creates data-frame like objects called tibbles (a souped-up data frame), but it is *much* friendlier to use. 
 
-```{r readr-demo, message = F}
+```{r}
+#| label: readr-demo
+#| message: !expr F
 library(readr) # Better data importing in R
 
 read_table(url, skip = 2) # Gosh, that was much easier!
@@ -155,7 +164,8 @@ read_table(url, skip = 2) # Gosh, that was much easier!
 ##### Python {-}
 
 By default, pandas' `read_fwf` will guess at the format of your fixed-width file. 
-```{python readfwf}
+```{python}
+#| label: readfwf
 import pandas as pd
 url = "https://www.mesonet.org/index.php/dataMdfMts/dataController/getFile/202006070000/mdf/TEXT/"
 data = pd.read_fwf(url, skiprows = 2) # Skip the first 2 lines (useless)
@@ -177,7 +187,9 @@ Delimited text files are files where fields are separated by a specific characte
 
 ##### Base R {-}
 
-```{r delimited-text-files-r, collapse = F}
+```{r}
+#| label: delimited-text-files-r
+#| collapse: !expr F
 url <- "https://raw.githubusercontent.com/srvanderplas/datasets/main/clean/pokemon_gen_1-9.csv"
 
 pokemon_info <- read.csv(url, header = T, stringsAsFactors = F)
@@ -190,7 +202,9 @@ There is a family of `read_xxx` functions in `readr` to read files delimited wit
 
 The most common delimited text format is CSV: comma-separated value. 
 
-```{r delimited-text-files-r3, collapse = F}
+```{r}
+#| label: delimited-text-files-r3
+#| collapse: !expr F
 library(readr)
 url <- "https://raw.githubusercontent.com/srvanderplas/datasets/main/clean/pokemon_gen_1-9.csv"
 pokemon_info <- read_csv(url)
@@ -202,7 +216,9 @@ pokemon_info[1:6, 1:6] # Show only the first 6 lines & cols
 
 There is a family of `read_xxx` functions in `pandas` including functions to read files delimited with commas (`read_csv`) as well as generic delimited files (`read_table`).
 
-```{python delimited-text-files-py, collapse = F}
+```{python}
+#| label: delimited-text-files-py
+#| collapse: !expr F
 import pandas as pd
 
 url <- "https://raw.githubusercontent.com/srvanderplas/datasets/main/clean/pokemon_gen_1-9.csv"
@@ -226,7 +242,8 @@ Sometimes, data is available in files that use other characters as delimiters. T
 
 ##### Base R {-}
 
-```{r delimited-text-files-r2}
+```{r}
+#| label: delimited-text-files-r2
 # Download from web
 download.file("https://geonames.usgs.gov/docs/stategaz/NE_Features.zip", destfile = '../data/NE_Features.zip')
 # Unzip to `data/` folder
@@ -246,7 +263,8 @@ nebraska_locations[1:6, 1:6]
 
 There is a family of `read_xxx` functions in `readr` to read files delimited with commas (`read_csv`), tabs (`read_tsv`), or generic delimited files (`read_delim`).
 
-```{r delimited-text-files-r4}
+```{r}
+#| label: delimited-text-files-r4
 # Download from web
 download.file("https://geonames.usgs.gov/docs/stategaz/NE_Features.zip", destfile = '../data/NE_Features.zip')
 # Unzip to `data/` folder
@@ -264,7 +282,8 @@ nebraska_locations[1:6, 1:6]
 We can actually read in the file without unzipping it, so long as we download it first - `readr` does not support reading remote zipped files, but it does support reading zipped files locally.
 If we know ahead of time what our delimiter is, this is the best choice as it reduces the amount of file clutter we have in our working directory.
 
-```{r delimited-text-files-r5}
+```{r}
+#| label: delimited-text-files-r5
 nebraska_locations <- read_delim("../data/NE_Features.zip", delim = "|")
 nebraska_locations[1:6, 1:6]
 ```
@@ -276,7 +295,8 @@ There is a family of `read_xxx` functions in `pandas` including functions to rea
 
 Pandas can access zipped data files and unzip them while reading the data in, so we don't have to download the file and unzip it first.
 
-```{python delimited-text-files-py2}
+```{python}
+#| label: delimited-text-files-py2
 # a file delimited with |
 
 url = "https://geonames.usgs.gov/docs/stategaz/NE_Features.zip"
@@ -295,7 +315,10 @@ nebraska_locations
 Rebrickable.com contains tables of almost any information imaginable concerning Lego sets, conveniently available at their [download page](https://rebrickable.com/downloads/). 
 Because these data sets are comparatively large, they are available as compressed CSV files - that is, the .gz extension is a gzip compression applied to the CSV. 
 
-```{r rebrickable-lego-data-once, eval = T, include = F}
+```{r}
+#| label: rebrickable-lego-data-once
+#| eval: !expr T
+#| include: !expr F
 # Download the data if it doesn't exist, as it's used later
 library(readr)
 if (!file.exists("../data/lego_sets.csv")) {
@@ -312,7 +335,9 @@ The `readr` package and `pandas` can handle .csv.gz files with no problems. Try 
 
 #### R Solution {-}
 
-```{r rebrickable-lego-data, eval = T}
+```{r}
+#| label: rebrickable-lego-data
+#| eval: !expr T
 library(readr)
 legosets <- read_csv("https://cdn.rebrickable.com/media/downloads/sets.csv.gz")
 write_csv(legosets, "../data/lego_sets.csv")
@@ -320,7 +345,9 @@ write_csv(legosets, "../data/lego_sets.csv")
 
 
 #### Python Solution {-}
-```{python rebrickable-lego-data-py, eval = F}
+```{python}
+#| label: rebrickable-lego-data-py
+#| eval: !expr F
 import pandas as pd
 
 legosets = pd.read_csv("https://cdn.rebrickable.com/media/downloads/sets.csv.gz")
@@ -345,7 +372,9 @@ In R, the easiest way to read Excel data in is to use the `readxl` package. Ther
 By far and away you are more likely to have problems with the arcane format of the Excel spreadsheet than with the package used to read the data in. 
 It is usually helpful to open the spreadsheet up in a graphical program first to make sure the formatting is as you expected it to be.
 
-```{r spreadsheet-readin, warning = F}
+```{r}
+#| label: spreadsheet-readin
+#| warning: !expr F
 if (!"readxl" %in% installed.packages()) install.packages("readxl")
 library(readxl)
 
@@ -363,7 +392,8 @@ pizza_data[1:10, 1:6]
 
 #### Python {-}
 
-```{python spreadsheet-readin-py}
+```{python}
+#| label: spreadsheet-readin-py
 import pandas as pd
 
 pizza_data = pd.read_excel("../data/nyc_slice.xlsx")
@@ -388,7 +418,8 @@ Read in the data using your language(s) of choice. Be sure to look at the struct
 
 #### R Solution {-}
 
-```{r tryitout-dmv-solution-r}
+```{r}
+#| label: tryitout-dmv-solution-r
 url <- "https://dmv.nebraska.gov/sites/dmv.nebraska.gov/files/doc/data/ld-totals/NE_Licensed_Drivers_by_Type_2021.xls"
 download.file(url, destfile = "../data/NE_Licensed_Drivers_by_Type_2021.xls", mode = "wb")
 library(readxl)
@@ -400,7 +431,8 @@ ne_plates[1:10,1:6]
 
 You may need to install `xlrd` via pip for this code to work.
 
-```{python tryitout-dmv-solution-py}
+```{python}
+#| label: tryitout-dmv-solution-py
 import pandas as pd
 
 ne_plates = pd.read_excel("https://dmv.nebraska.gov/sites/dmv.nebraska.gov/files/doc/data/ld-totals/NE_Licensed_Drivers_by_Type_2021.xls", skiprows = 2)
@@ -434,7 +466,9 @@ Let's demonstrate reading in data from google sheets in R and python using the [
 
 One simple hack-ish way to read google sheets in Python (so long as the sheet is publicly available) is to modify the sheet url to export the data to CSV and then just read that into pandas as usual. This method is described in @schaferReadDataGoogle2020. 
 
-```{python google-sheets-py2, eval = T}
+```{python}
+#| label: google-sheets-py2
+#| eval: !expr T
 import pandas as pd
 
 sheet_id = "1wZhPLMCHKJvwOkP4juclhjFgqIY8fQFMemwKL2c64vk"
@@ -450,7 +484,9 @@ This method would likely work just as well in R and would not require the `googl
 
 This method is described in @schaferReadDataGoogle2020 for Python, but I have adapted the code to use in R.
 
-```{R google-sheets-r2, eval = T}
+```{R}
+#| label: google-sheets-r2
+#| eval: !expr T
 library(readr)
 sheet_id = "1wZhPLMCHKJvwOkP4juclhjFgqIY8fQFMemwKL2c64vk"
 sheet_name = "Items"
@@ -468,7 +504,9 @@ Copy this code and run it on your computer to read in a sheet from google drive 
 
 <!-- How to authenticate on google actions/rsconnect: https://gargle.r-lib.org/articles/non-interactive-auth.html -->
 
-```{r google-sheets-r, eval = F}
+```{r}
+#| label: google-sheets-r
+#| eval: !expr F
 library(googlesheets4)
 gs4_auth(scopes = "https://www.googleapis.com/auth/drive.readonly") # Read-only permissions
 data_is_plural <- read_sheet("https://docs.google.com/spreadsheets/d/1wZhPLMCHKJvwOkP4juclhjFgqIY8fQFMemwKL2c64vk/edit#gid=0")
@@ -481,7 +519,9 @@ We will have to install the `GSpread` package: type `pip install gspread` into t
 
 Then, you will need to obtain a client token JSON file following [these instructions](https://towardsdatascience.com/how-to-import-google-sheets-data-into-a-pandas-dataframe-using-googles-api-v4-2020-f50e84ea4530). 
 
-```{python google-sheets-py, eval = F}
+```{python}
+#| label: google-sheets-py
+#| eval: !expr F
 import gspread as gs
 import pandas as pd
 ```
@@ -525,7 +565,8 @@ If you are interested in reading binary data in Python, see @maierleLoadingBinar
 
 `.Rdata` is perhaps the most common R binary data format, and can store several objects (along with their names) in the same file.
 
-```{r rdata-demo}
+```{r}
+#| label: rdata-demo
 legos <- read_csv("../data/lego_sets.csv")
 my_var <- "This variable contains a string"
 save(legos, my_var, file = "../data/R_binary.Rdata")
@@ -534,7 +575,8 @@ save(legos, my_var, file = "../data/R_binary.Rdata")
 If we look at the file sizes of `lego_sets.csv` (619 KB) and `R_binary.Rdata`(227.8 KB), the size difference between binary and flat file formats is obvious. 
 
 We can load the R binary file back in using the `load()` function.
-```{r load-demo}
+```{r}
+#| label: load-demo
 rm(legos, my_var) # clear the files out
 
 ls() # all objects in the working environment
@@ -546,7 +588,8 @@ ls() # all objects in the working environment
 
 Another (less common) binary format used in R is the RDS format. Unlike Rdata, the RDS format does not save the object name - it only saves its contents (which also means you can save only one object at a time). As a result, when you read from an RDS file, you need to store the result of that function into a variable.
 
-```{r rds-demo}
+```{r}
+#| label: rds-demo
 saveRDS(legos, "../data/RDSlego.rds")
 
 other_lego <- readRDS("../data/RDSlego.rds")
@@ -558,7 +601,8 @@ Because RDS formats don't save the object name, you can be sure that you're not 
 
 We first need to install the `pyreadr` package by running `pip install pyreadr` in the terminal.
 
-```{python rbinary-py}
+```{python}
+#| label: rbinary-py
 import pyreadr
 
 rdata_result = pyreadr.read_r('../data/R_binary.Rdata')
@@ -573,7 +617,8 @@ rds_result[None] # for RDS files, access the data using None as the key since RD
 
 First, let's download the NHTS data. 
 
-```{r download-nhts}
+```{r}
+#| label: download-nhts
 library(httr)
 # Download the file and write to disk
 res <- GET("https://query.data.world/s/y7jo2qmjqfcnmublmwjvkn7wl4xeax", 
@@ -582,7 +627,8 @@ res <- GET("https://query.data.world/s/y7jo2qmjqfcnmublmwjvkn7wl4xeax",
 
 You can see more information about this data [here](https://data.world/dot/national-household-travel-survey-nhts-2009) [@usdepartmentoftransportationNationalHouseholdTravel2018].
 
-```{r nhts-sas7bdat-demo}
+```{r}
+#| label: nhts-sas7bdat-demo
 if (!"sas7bdat" %in% installed.packages()) install.packages("sas7bdat")
 
 library(sas7bdat)
@@ -597,7 +643,8 @@ If you are curious about what this data means, then by all means, take a look at
 
 First, we need to download the SAS data file. This required writing a function to actually write the file downloaded from the URL, which is what this code chunk does.
 
-```{python nhts-sas7bdat-dl-py}
+```{python}
+#| label: nhts-sas7bdat-dl-py
 # Source: https://stackoverflow.com/questions/16694907/download-large-file-in-python-with-requests
 import requests
 def download_file(url, local_filename):
@@ -616,7 +663,8 @@ You can see more information about this data [here](https://data.world/dot/natio
 
 To read SAS files, we use the `read_sas` function in Pandas.
 
-```{python nhts-sas7bdat-demo-py}
+```{python}
+#| label: nhts-sas7bdat-demo-py
 import pandas as pd
 
 data = pd.read_sas("../data/cen10pub.sas7bdat")
@@ -646,7 +694,8 @@ Then, load the two RDS files and the Rdata file in Python. Are the objects the s
 
 #### R Solution {-}
 
-```{r tryitout-readin-data-saved}
+```{r}
+#| label: tryitout-readin-data-saved
 library(readxl)
 library(readr)
 pizza <- read_xlsx("../data/nyc_slice.xlsx", sheet = 1, guess_max = 7000)
@@ -671,7 +720,8 @@ all.equal(legos, lego_compare)
 
 #### Python Solution {-}
 
-```{python tryitout-readin-data-saved-py}
+```{python}
+#| label: tryitout-readin-data-saved-py
 import pyreadr
 
 robjs = pyreadr.read_r('data/04_Try_Binary.Rdata')

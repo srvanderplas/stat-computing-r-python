@@ -62,7 +62,8 @@ This suggests that Pandas, at least, is programmed using an object-oriented para
 <!-- R also was designed by people who enjoyed using Lisp - another multi-paradigm approach that accommodates functional programming, procedural programming, and object-oriented programming.  -->
 An easy example of R's object oriented nature is that when you fit different models or perform different tests, the default output is different. 
 
-```{r model-output}
+```{r}
+#| label: model-output
 data(mtcars)
 
 r1 <- t.test(mtcars$mpg~mtcars$vs)
@@ -232,7 +233,8 @@ I am sure that the python code I've written here is a bit kludgy, so if you are 
 ::: panel-tabset
 
 #### base R
-```{r base-split-regression}
+```{r}
+#| label: base-split-regression
 poke <- read.csv("https://raw.githubusercontent.com/srvanderplas/datasets/main/clean/pokemon_gen_1-9.csv")
 # Get rid of mega pokemon - they're a different thing
 poke <- subset(poke, !grepl("Mega", poke$variant)) # step 1
@@ -265,7 +267,8 @@ In the tidyverse, we use `tidyr::nest()` to accomplish a similar thing to `split
 
 This approach is designed to work entirely within a single data frame, which keeps the environment relatively clean and ensures that each step's results are stored in a convenient, easy-to-find place.
 
-```{r tidyr-nest-regression}
+```{r}
+#| label: tidyr-nest-regression
 library(purrr)
 library(readr)
 library(dplyr)
@@ -308,7 +311,8 @@ This construct of storing everything inside a single data frame isn't as common 
 You will need to `pip install statsmodels` to get the `statsmodels` [@seabold2010statsmodels] package that implements many basic statistical models. 
 The `scikit-learn` package [@scikitlearn] is another commonly used package [@menonLinearRegressionLines2018], but it does not have the easy accessor functions to pull out e.g. coefficients and r-squared values, so we'll use `statsmodels` here. 
 
-```{python groupby-regression}
+```{python}
+#| label: groupby-regression
 import pandas as pd
 from statsmodels.formula.api import ols
 
@@ -382,7 +386,10 @@ One of the most common structures for storing data on the web is [JSON: JavaScri
 (JSON is pronounced "Jason", like the person's name).
 :::
 
-```{r get-tmdb-data, include = F, eval = F}
+```{r}
+#| label: get-tmdb-data
+#| include: !expr F
+#| eval: !expr F
 # https://developers.themoviedb.org/3/search/search-movies
 # https://developers.themoviedb.org/3/discover/movie-discover
 
@@ -473,7 +480,8 @@ ps_messy$id
 
 Let's start with the cast list. Most objects seem to be single entries; the only thing that isn't is the `genre_ids` field. So let's see whether we can just convert each list entry to a data frame, and then deal with the `genre_ids` column afterwards.
 
-```{r, error = T}
+```{r}
+#| error: !expr T
 cast_list <- ps_messy$cast
 ```
 
@@ -570,7 +578,8 @@ We could theoretically clean this up so that movies where Patrick Stewart was in
 
 Pandas includes a `read_json` function, so let's try that and see if it works as well as `fromJSON()` did in R:
 
-```{python, error = T}
+```{python}
+#| error: !expr T
 import pandas as pd
 
 data_url = "https://raw.githubusercontent.com/srvanderplas/stat-computing-r-python/main/data/Patrick_Stewart.json"

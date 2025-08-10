@@ -15,7 +15,8 @@ generation (despite appearances) is categorical by declaring it a factor
 variable. This ensures that we get a break on the x-axis at each
 generation.
 
-```{python poke-dist-plots-plotnine}
+```{python}
+#| label: poke-dist-plots-plotnine
 from plotnine import *
 
 (ggplot(mapping = aes(x = "factor(generation)"), data = poke) +
@@ -26,7 +27,8 @@ from plotnine import *
 
 ##### Python: plotnine
 
-```{python poke-ggplot2-cts-py}
+```{python}
+#| label: poke-ggplot2-cts-py
 #| collapse: true
 #| fig-align: center
 #| fig-cap:  Histogram and density plots of height and log10 height of different pokemon. The untransformed data are highly skewed, the transformed data are significantly less skewed.
@@ -66,7 +68,8 @@ cross-tabular view) using `geom_bar` with `position = 'fill'`, which
 scales each bar so that it ends at 1. I've flipped the axes using
 `coord_flip` so that you can read the labels more easily.
 
-```{python poke-dist-plots-plotnine-mosaic}
+```{python}
+#| label: poke-dist-plots-plotnine-mosaic
 # Convert everything to categorical/factor variable ahead of time
 # this stops an error: TypeError: '<' not supported between instances of 'float' and 'str'
 poke['type_1'] = pd.Categorical(poke['type_1'].astype(str))
@@ -85,7 +88,8 @@ Another way to look at this data is to bin it in x and y and shade the
 resulting bins by the number of data points in each bin. We can even add
 in labels so that this is at least as clear as the tabular view!
 
-```{python poke-dist-plots-plotnine-tile}
+```{python}
+#| label: poke-dist-plots-plotnine-tile
 (ggplot(mapping = aes(x = 'type_1', y = 'type_2'), data = poke) +
   # Shade tiles according to the number of things in the bin
   stat_bin2d(aes(fill = after_stat('count')), geom = 'tile'))
@@ -93,7 +97,8 @@ in labels so that this is at least as clear as the tabular view!
 
 
 ##### Python: plotnine {.unnumbered}
-```{python boxplot-plotnine-py}
+```{python}
+#| label: boxplot-plotnine-py
 ggplot(mapping = aes(x = "type_1", y = "height_m"), data = poke) +\
 geom_boxplot()
 
@@ -104,7 +109,8 @@ geom_boxplot()
 ##### Python: plotnine {.unnumbered}
 
 
-```{python plotnine-scatter-quantized}
+```{python}
+#| label: plotnine-scatter-quantized
 #| out-width: "50%"
 #| fig-width: 4
 #| fig-height: 4
@@ -119,7 +125,8 @@ ggplot(poke, aes(x = "attack", y = "sp_attack")) + geom_jitter(alpha = 0.5, heig
 
 While plotnine doesn't have scatterplot matrices by default, you can create them using some [clever code](https://github.com/has2k1/plotnine/issues/16#issuecomment-851938860). This is obviously not as fancy as `ggpairs` but it works well enough.
 
-```{python plotnine-scatter-matrix}
+```{python}
+#| label: plotnine-scatter-matrix
 from plotnine import *
 import itertools
 

@@ -53,7 +53,8 @@ To a lesser degree, we will also cover some details of more basic plotting libra
 - Base R plotting libraries [@pengBasePlottingSystem2020]
 
 
-```{r, eval = F}
+```{r}
+#| eval: !expr F
 install.packages("ggplot2")
 ```
 
@@ -62,7 +63,8 @@ To install python graphics packages, pick one of the following methods (you can 
 ::: panel-tabset
 #### System Terminal
 
-```{bash, eval = F}
+```{bash}
+#| eval: !expr F
 pip3 install matplotlib seaborn
 ```
 
@@ -70,7 +72,8 @@ pip3 install matplotlib seaborn
 
 This package installation method requires that you have a virtual environment set up (that is, if you are on Windows, don't try to install packages this way).
 
-```{r, eval = F}
+```{r}
+#| eval: !expr F
 reticulate::py_install(c("matplotlib", "seaborn"))
 ```
 
@@ -78,7 +81,8 @@ reticulate::py_install(c("matplotlib", "seaborn"))
 
 In a python chunk (or the python terminal), you can run the following command. This depends on something called "IPython magic" commands, so if it doesn't work for you, try the System Terminal method instead.
 
-```{python, eval = F}
+```{python}
+#| eval: !expr F
 %pip install matplotlib seaborn
 ```
 
@@ -115,7 +119,8 @@ Which one would you rather use? Why?
 ::: panel-tabset
 
 #### Dataset
-```{r, echo = F}
+```{r}
+#| echo: !expr F
 # install.packages("datasauRus")
 library(datasauRus)
 library(dplyr)
@@ -123,7 +128,8 @@ datasaurus_dozen %>% filter(dataset == "dino") %>% select(x, y) %>% rmarkdown::p
 ```
 
 #### Summary statistics
-```{r, echo = F}
+```{r}
+#| echo: !expr F
 datasaurus_dozen %>% filter(dataset == "dino") %>% 
   summarize(`mean(X)`    = mean(x),
             `mean(Y)`    = mean(y),
@@ -136,7 +142,11 @@ datasaurus_dozen %>% filter(dataset == "dino") %>%
 ```
 
 #### Plot
-```{r, echo = F, fig.width = 5, fig.height = 5, out.width = "50%"}
+```{r}
+#| echo: !expr F
+#| fig-width: 5
+#| fig-height: 5
+#| out-width: 50%
 library(ggplot2)
 datasaurus_dozen %>% filter(dataset == "dino") %>% 
 ggplot(aes(x = x, y = y)) + geom_point()
@@ -168,7 +178,8 @@ We'll use the `palmerpenguins` package in R, which is also available in python.
 ::: panel-tabset
 
 #### R
-```{r, eval = -1}
+```{r}
+#| eval: !expr '-1'
 install.packages("palmerpenguins")
 library(palmerpenguins)
 head(penguins)
@@ -178,7 +189,8 @@ head(penguins)
 
 In your system console:
 
-```{bash, eval = F}
+```{bash}
+#| eval: !expr F
 pip3 install palmerpenguins
 ```
 
@@ -212,7 +224,8 @@ However, it is also clear that there is considerable variation that is not expla
 
 We can extend this process a bit by adding in additional information from the dataset and mapping that information to an additional variable - for instance, we can color the points by the species of penguin.
 
-```{r penguins-quiz-scatter}
+```{r}
+#| label: penguins-quiz-scatter
 ggplot(data = penguins, aes(x = body_mass_g, y = bill_length_mm, color = species)) + geom_point()
 ```
 
@@ -537,7 +550,8 @@ Let's start out by looking at the proportion of Pokemon added in each of the 9 g
 ::: panel-tabset
 
 #### R setup {-}
-```{r poke-read-data-r}
+```{r}
+#| label: poke-read-data-r
 #| message: false
 library(readr)
 library(dplyr)
@@ -550,7 +564,8 @@ poke <- read_csv("https://raw.githubusercontent.com/srvanderplas/datasets/main/c
 ```
 
 #### Python setup {-}
-```{python poke-read-data-py}
+```{python}
+#| label: poke-read-data-py
 import pandas as pd
 poke = pd.read_csv("https://raw.githubusercontent.com/srvanderplas/datasets/main/clean/pokemon_gen_1-9.csv")
 poke['generation'] = pd.Categorical(poke.gen)
@@ -574,7 +589,8 @@ Any variables specified in the plot statement are used to implicitly calculate t
 `ggplot` is smart enough to know that when we use `geom_bar`, we generally want the y variable to be the count, so we can get away with leaving that part out. 
 We just have to specify that we want the bars to be stacked on top of one another (instead of next to each other, "dodge").
 
-```{r gg-bar}
+```{r}
+#| label: gg-bar
 library(ggplot2)
 
 ggplot(aes(x = "", fill = generation), data = poke) + 
@@ -584,7 +600,9 @@ ggplot(aes(x = "", fill = generation), data = poke) +
 If we want a pie chart, we can get one very easily - we transform the coordinate plane from Cartesian coordinates to polar coordinates. 
 We specify that we want angle to correspond to the "y" coordinate, and that we want to start at $\theta = 0$. 
 
-```{r gg-pie, message = F}
+```{r}
+#| label: gg-pie
+#| message: !expr F
 ggplot(aes(x = "", fill = generation), data = poke) + 
   geom_bar(position = "stack") + 
   coord_polar("y", start = 0)
@@ -600,7 +618,8 @@ Let's start with what we want: for each generation, we want the total number of 
 
 To get a pie chart, we want that information mapped to a circle, with each generation represented by an angle whose size is proportional to the number of pokemon in that generation.
 
-```{r base-pie}
+```{r}
+#| label: base-pie
 # Create summary of pokemon by type
 tmp <- poke %>%
   group_by(generation) %>%
@@ -611,7 +630,8 @@ pie(tmp$n, labels = tmp$generation)
 
 We could alternately make a bar chart and stack the bars on top of each other. This also shows proportion (section vs. total) but does so in a linear fashion.
 
-```{r base-barplot}
+```{r}
+#| label: base-barplot
 # Create summary of pokemon by type
 tmp <- poke %>%
   group_by(generation) %>%
@@ -632,7 +652,8 @@ Let's start with what we want: for each generation, we want the total number of 
 
 To get a pie chart, we want that information mapped to a circle, with each generation represented by an angle whose size is proportional to the number of Pokemon in that generation.
 
-```{python plt-pie}
+```{python}
+#| label: plt-pie
 import matplotlib.pyplot as plt
 plt.cla() # clear out matplotlib buffer
 
@@ -651,7 +672,8 @@ plt.show()
 We could alternately make a bar chart and stack the bars on top of each other. 
 This also shows proportion (section vs. total) but does so in a linear fashion.
 
-```{python plt-bar}
+```{python}
+#| label: plt-bar
 import matplotlib.pyplot as plt
 plt.cla() # clear out matplotlib buffer
 
@@ -681,7 +703,8 @@ plt.show()
 As with Plotnine, seaborn does not support pie charts due to the same underlying issue. 
 The best option is to create a pie chart in matplotlib and use seaborn colors [@zachHowCreatePie2021].
 
-```{python seaborn-poke-pie}
+```{python}
+#| label: seaborn-poke-pie
 # Load the seaborn package
 # the alias "sns" stands for Samuel Norman Seaborn
 # from "The West Wing" television show
@@ -710,7 +733,8 @@ plt.show()
 
 Seaborn doesn't have the `autopct` option that matplotlib uses, so we have to aggregate the data ourselves before creating a barchart.
 
-```{python seaborn-poke-bar}
+```{python}
+#| label: seaborn-poke-bar
 poke['generation'] = pd.Categorical(poke['generation'])
 
 plt.cla() # clear out matplotlib buffer
@@ -765,7 +789,9 @@ When creating a grammar of graphics chart, we start with the data (this is consi
 
 ### ggplot2 {.unnumbered}
 
-```{r txhousing-ggplot-intro, warning = F}
+```{r}
+#| label: txhousing-ggplot-intro
+#| warning: !expr F
 library(ggplot2)
 data(txhousing)
 
@@ -775,7 +801,9 @@ ggplot(data = txhousing, aes(x = date, y = median)) +
 
 ### Seaborn {.unnumbered}
 
-```{python txhousing-so-intro, warning = F}
+```{python}
+#| label: txhousing-so-intro
+#| warning: !expr F
 from plotnine.data import txhousing
 import seaborn.objects as so
 
@@ -1082,7 +1110,8 @@ ggplot(data = housingsub, aes(x = listings, y = sales, color = city)) +
 
 #### plotnine {.unnumbered}
 
-```{python, warning = F}
+```{python}
+#| warning: !expr F
 ( # This is used to group lines together in python
 ggplot(housingsub, aes(x = "listings", y = "sales", color = "city"))
 + geom_point(alpha = .15) # Make points transparent

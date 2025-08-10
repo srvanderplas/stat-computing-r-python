@@ -382,7 +382,8 @@ This is called **print debugging** and it is an incredibly useful tool.
 #### R
 Imagine we start with this:
 
-```{r print-debugging-r}
+```{r}
+#| label: print-debugging-r
 x = 1
 y = 2
 z = 0
@@ -402,7 +403,8 @@ aa(5)
 
 and the goal is to understand what's happening in the code. We might add some lines:
 
-```{r print-debugging-r2}
+```{r}
+#| label: print-debugging-r2
 x = 1
 y = 2
 z = 0
@@ -432,7 +434,8 @@ aa(5)
 #### Python
 Imagine we start with this:
 
-```{python print-debugging-py}
+```{python}
+#| label: print-debugging-py
 x = 1
 y = 2
 z = 0
@@ -450,7 +453,8 @@ aa(5)
 
 and the goal is to understand what's happening in the code. We might add some lines:
 
-```{python print-debugging-py2}
+```{python}
+#| label: print-debugging-py2
 x = 1
 y = 2
 z = 0
@@ -494,7 +498,8 @@ To prevent the site from changing on me (as websites tend to do...), I've saved 
 ::: panel-tabset
 ##### R
 
-```{r real-world-debugging-r}
+```{r}
+#| label: real-world-debugging-r
 library(xml2) # read html
 
 search_for_parent <- function(node, tag) {
@@ -524,7 +529,8 @@ search_for_parent(poll_results[1], "table")
 
 You may need to `pip install lxml requests bs4` to run this code. 
 
-```{python real-world-debugging-py}
+```{python}
+#| label: real-world-debugging-py
 # !pip install lxml requests bs4
 from bs4 import BeautifulSoup
 import requests as req
@@ -576,7 +582,10 @@ The low-tech debugging tools, however, still work wonderfully.
 ::: panel-tabset
 
 ##### Setup
-```{r setup-debug-code, message = F, warning = F}
+```{r}
+#| label: setup-debug-code
+#| message: !expr F
+#| warning: !expr F
 library(ggplot2)
 library(dplyr)
 library(magrittr)
@@ -592,7 +601,11 @@ data(storms, package = "dplyr")
 
 The code below is supposed to print out a map of the tracks of all hurricanes of a specific category, 1 to 5, in 2013. Use print statements to figure out what's wrong with my code. 
 
-```{r map-hurricane-tracks, message = F, warning = F, out.width = "18%"}
+```{r}
+#| label: map-hurricane-tracks
+#| message: !expr F
+#| warning: !expr F
+#| out-width: 18%
 # Make base map to be used for each iteration
 basemap <-  ggplot() + 
   # Country shapes
@@ -624,7 +637,9 @@ for (i in 1:5) {
 
 First, lets split the setup from the loop. 
 
-```{r map-hurricane-tracks-setup, error = T}
+```{r}
+#| label: map-hurricane-tracks-setup
+#| error: !expr T
 # Make base map to be used for each iteration
 basemap <-  ggplot() + 
   # Country shapes
@@ -645,7 +660,8 @@ str(storms) # make sure the data exists and is formatted as expected
 
 Everything looks ok in the setup chunk...
 
-```{r map-hurricane-tracks-loop}
+```{r}
+#| label: map-hurricane-tracks-loop
 for (i in 1:5) {
   print(paste0("Category ", i, " storms"))
   # Subset the data
@@ -670,13 +686,16 @@ Ok, so from this we can see that something is going wrong with our filter statem
 
 ##### Solution 2: Fixing
 
-```{r hurricane-tracks-debugging-head}
+```{r}
+#| label: hurricane-tracks-debugging-head
 head(storms)
 ```
 
 Whoops. I meant "category" when I typed "status". 
 
-```{r hurricane-tracks-debugging-loop2, error = T}
+```{r}
+#| label: hurricane-tracks-debugging-loop2
+#| error: !expr T
 for (i in 1:5) {
   print(paste0("Category ", i, " storms"))
   # Subset the data
@@ -700,7 +719,8 @@ for (i in 1:5) {
 Ok, that's something, at least. 
 We now have some data for category 1 storms...
 
-```{r hurricane-tracks-debugging-3}
+```{r}
+#| label: hurricane-tracks-debugging-3
 filter(storms, year == 2013) %>%
   # Get max category for each named storm
   group_by(name) %>%
@@ -718,7 +738,9 @@ It looks like 2013 was just an incredibly quiet year for tropical activity.
 2013 may have been a quiet year for tropical activity in the Atlantic, but 2004 was not. 
 So let's just make sure our code works by checking out 2004. 
 
-```{r hurricane-tracks-debugging-4, error = T}
+```{r}
+#| label: hurricane-tracks-debugging-4
+#| error: !expr T
 for (i in 1:5) {
   print(paste0("Category ", i, " storms"))
   # Subset the data
@@ -743,7 +765,9 @@ If we want to only print informative plots, we could add an if statement.
 Now that the code works, we can also comment out our print() statements (we could delete them, too, depending on whether we anticipate future problems with the code). 
 
 
-```{r hurricane-tracks-debugging-5, error = T}
+```{r}
+#| label: hurricane-tracks-debugging-5
+#| error: !expr T
 for (i in 1:5) {
   # print(paste0("Category ", i, " storms"))
   
@@ -784,7 +808,9 @@ This may help you identify which function is actually causing the problem, which
 ::: panel-tabset
 ##### R
 
-```{r traceback-demo, error = T}
+```{r}
+#| label: traceback-demo
+#| error: !expr T
 aa <- function(x) {
   bb <- function(y) {
     cc <- function(z) {
@@ -799,7 +825,9 @@ aa()
 ```
 
 For more information, you could run traceback
-```{r traceback-demo2, eval = F}
+```{r}
+#| label: traceback-demo2
+#| eval: !expr F
 traceback()
 ```
 
@@ -824,7 +852,9 @@ If you are using `source()` to run the code in Rstudio, it will even provide a l
 
 ##### Python
 
-```{python traceback-demo-py, error = T}
+```{python}
+#| label: traceback-demo-py
+#| error: !expr T
 import sys,traceback
 
 def aa(x):
@@ -893,7 +923,9 @@ Use the interactive browser command to figure out what is going on and fix the p
 
 I start with 
 
-```{r browser-demo, error = T}
+```{r}
+#| label: browser-demo
+#| error: !expr T
 library(png)
 library(xml2)
 library(dplyr)
@@ -925,7 +957,8 @@ Then, instead of reading the PNG from the URL, we need to download it first and 
 
 Here's the final function, since this is somewhat hard to actually demonstrate because it's interactive...
 
-```{r browser-demo-2}
+```{r}
+#| label: browser-demo-2
 library(png)
 library(xml2)
 
@@ -961,7 +994,9 @@ get_xkcd() %>%
 ##### Python {-}
 
 I start with 
-```{python ipdb-demo-py, error = T}
+```{python}
+#| label: ipdb-demo-py
+#| error: !expr T
 from bs4 import BeautifulSoup
 import urllib.request # work with html
 from PIL import Image # work with images
@@ -999,7 +1034,9 @@ plt.show()
 
 ##### Python solution {-}
 
-```{python ipdb-demo2-py, eval=F}
+```{python}
+#| label: ipdb-demo2-py
+#| eval: !expr F
 from bs4 import BeautifulSoup
 import urllib.request # work with html
 from PIL import Image # work with images
@@ -1040,7 +1077,9 @@ The first issue is that the URL for the image isn't fully formed -- it's missing
 
 Here's the final function:
 
-```{python browser-demo-py2, error = T}
+```{python}
+#| label: browser-demo-py2
+#| error: !expr T
 from bs4 import BeautifulSoup
 import urllib.request # work with html
 from PIL import Image # work with images
@@ -1095,7 +1134,8 @@ What things might you add to make this function "defensive programming" compatib
 
 ##### R Solution
 
-```{r xkcd-tryitout-solution}
+```{r}
+#| label: xkcd-tryitout-solution
 # get the most current xkcd or the specified number
 get_xkcd <- function(id = NULL) {
   if (is.null(id)) {
@@ -1137,7 +1177,9 @@ get_xkcd(2259) %>%
 ##### Python Solution
 
 
-```{python tryitout-xkcd-solution-py, error = T}
+```{python}
+#| label: tryitout-xkcd-solution-py
+#| error: !expr T
 from bs4 import BeautifulSoup
 import urllib.request # work with html
 from PIL import Image # work with images
@@ -1189,7 +1231,9 @@ def get_xkcd(id=''):
 
 ```
 
-```{python tryitout-xkcd-py2, collapse = F}
+```{python}
+#| label: tryitout-xkcd-py2
+#| collapse: !expr F
 res = get_xkcd('')
 plt.imshow(res)
 plt.show()
@@ -1218,7 +1262,9 @@ Essentially, `debug()` places a `browser()` statement at the first line of a fun
 ::: demo
 #### Demo: `debug()` in R
 
-```{r debug-demo, error = T}
+```{r}
+#| label: debug-demo
+#| error: !expr T
 data(iris)
 
 tmp <- lm(Species ~ ., data = iris)
@@ -1226,7 +1272,9 @@ summary(tmp)
 ```
 We get this weird warning, and then an error about factors when we use summary() to look at the coefficients. 
 
-```{r debug-demo2, eval = F}
+```{r}
+#| label: debug-demo2
+#| eval: !expr F
 debug(lm) # turn debugging on
 
 
@@ -1266,7 +1314,8 @@ But, until I run `undebug(lm)`, every call to `lm` will take me into the debug w
 ##### Problem
 `larger(x, y)` is supposed to return the elementwise maximum of two vectors. 
 
-```{r debug-demo-tryitout}
+```{r}
+#| label: debug-demo-tryitout
 larger <- function(x, y) { 
   y.is.bigger <- y > x 
   x[y.is.bigger] <- y[y.is.bigger] 
@@ -1283,7 +1332,8 @@ Why is there an NA in the second example? It should be a 6. Figure out why this 
 ##### Solution
 
 I'll replicate "debug" in non-interactive mode by setting up an environment where x and y are defined
-```{r debug-demo-tryitout-solution}
+```{r}
+#| label: debug-demo-tryitout-solution
 
 x <- c(1, 5, 10)
 y <- 6

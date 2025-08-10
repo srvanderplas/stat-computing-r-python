@@ -189,11 +189,13 @@ In mutating joins, the columns from both sides are always kept.
 
 #### Code
 
-```{r, include = F}
+```{r}
+#| include: !expr F
 x = data.frame(v1 = c(1:3), v2 = c("x1", "x2", "x3"))
 y = data.frame(v1 = c(1, 2, 4), v3 = c("y1", "y2", "y4"))
 ```
-```{python, include = F}
+```{python}
+#| include: !expr F
 x = r.x
 y = r.y
 ```
@@ -208,7 +210,8 @@ Specify the keys to join by using `by` (or `by.x` and `by.y` if the column names
 Specify the rows to keep using `all` or `all.x` and `all.y`. 
 By default, R will merge on any variables that have the same names in each table.
 
-```{r base-mutating-joins}
+```{r}
+#| label: base-mutating-joins
 merge(x, y, by = "v1", all = F) # inner join
 merge(x, y, by = "v1", all = T) # full join
 merge(x, y, by = "v1", all.x = T) # left join
@@ -218,7 +221,8 @@ merge(x, y, by = "v1", all.y = T) # right join
 ##### R (tidy)
 `dplyr` contains functions that specifically implement mutating joins separately, primarily for code readability.
 
-```{r tidy-mutating-joins}
+```{r}
+#| label: tidy-mutating-joins
 library(dplyr)
 inner_join(x, y)
 left_join(x, y)
@@ -232,7 +236,8 @@ Mutating joins in pandas are accomplished with the `merge` command.
 The join type can be specified using the `how` parameter (left, right, outer, inner, cross). 
 Specify the keys to join by using `on` (or `left_on` and `right_on` if the column names are different in the two tables). 
 
-```{python py-mutating-joins}
+```{python}
+#| label: py-mutating-joins
 import pandas as pd
 pd.merge(x, y) # inner join (how = 'inner' is default)
 pd.merge(x, y, how = 'left')
@@ -247,7 +252,8 @@ pd.merge(x, y, how = 'outer') # full join
 ::: panel-tabset
 #### R
 
-```{r mutating-joins1-r}
+```{r}
+#| label: mutating-joins1-r
 library(tibble)
 library(dplyr)
 t1 <- tibble(x = c("A", "B", "D"), y = c(1, 2, 3))
@@ -256,33 +262,38 @@ t2 <- tibble(x = c("B", "C", "D"), z = c(2, 4, 5))
 
 An inner join keeps only rows that exist on both sides, but keeps all columns.
 
-```{r mutating-joins2-r}
+```{r}
+#| label: mutating-joins2-r
 inner_join(t1, t2)
 ```
 
 A left join keeps all of the rows in the left side, and adds any columns from the right side that match rows on the left. Rows on the left that don't match get filled in with NAs.
 
-```{r mutating-joins3-r}
+```{r}
+#| label: mutating-joins3-r
 left_join(t1, t2)
 left_join(t2, t1)
 ```
 
 There is a similar construct called a right join that is equivalent to flipping the arguments in a left join. The row and column ordering may be different, but all of the same values will be there
 
-```{r mutating-joins4-r}
+```{r}
+#| label: mutating-joins4-r
 right_join(t1, t2)
 right_join(t2, t1)
 ```
 
 An outer join keeps everything - all rows, all columns. In dplyr, it's known as a `full_join`.
 
-```{r mutating-joins5-r}
+```{r}
+#| label: mutating-joins5-r
 full_join(t1, t2)
 ```
 
 #### Python
 
-```{python mutating-joins1-py}
+```{python}
+#| label: mutating-joins1-py
 # This works because I already created the objects in R
 # and have the reticulate package loaded
 t1 = r.t1
@@ -291,28 +302,32 @@ t2 = r.t2
 
 An inner join keeps only rows that exist on both sides, but keeps all columns.
 
-```{python mutating-joins2-py}
+```{python}
+#| label: mutating-joins2-py
 import pandas as pd
 pd.merge(t1, t2, on = ['x']) # inner is default
 ```
 
 A left join keeps all of the rows in the left side, and adds any columns from the right side that match rows on the left. Rows on the left that don't match get filled in with NAs.
 
-```{python mutating-joins3-py}
+```{python}
+#| label: mutating-joins3-py
 pd.merge(t1, t2, on  = 'x', how = 'left')
 pd.merge(t2, t1, on = 'x', how = 'left')
 ```
 
 There is a similar construct called a right join that is equivalent to flipping the arguments in a left join. The row and column ordering may be different, but all of the same values will be there
 
-```{python mutating-joins4-py}
+```{python}
+#| label: mutating-joins4-py
 pd.merge(t1, t2, on  = 'x', how = 'right')
 pd.merge(t2, t1, on = 'x', how = 'right')
 ```
 
 An outer join keeps everything - all rows, all columns.
 
-```{python mutating-joins5-py}
+```{python}
+#| label: mutating-joins5-py
 pd.merge(t1, t2, on  = 'x', how = 'outer')
 ```
 :::
@@ -344,7 +359,8 @@ An anti-join keeps rows in x that do not have a match in y, and only keeps colum
 
 Semi and anti joins aren't available by default in base R. You have to do multiple stages of operations to get either one to work.
 
-```{r base-filtering-joins}
+```{r}
+#| label: base-filtering-joins
 ## Semi-join
 # First, do an inner join
 innerxy = merge(x, y, all = F)
@@ -366,7 +382,8 @@ antixy
 ```
 
 ##### R (tidy)
-```{r tidy-filtering-joins}
+```{r}
+#| label: tidy-filtering-joins
 library(dplyr)
 semi_join(x, y)
 anti_join(x, y)
@@ -375,7 +392,8 @@ anti_join(x, y)
 ##### Pandas
 In pandas, we have to be a bit tricky to get semi and anti joins. 
 
-```{python py-filtering-joins}
+```{python}
+#| label: py-filtering-joins
 import pandas as pd
 # First, we merge the two data frames (inner by default)
 semixy = pd.merge(x, y) # Semi join
@@ -388,7 +406,8 @@ semixy
 ```
 
 
-```{python py-filtering-joins2}
+```{python}
+#| label: py-filtering-joins2
 # This syntax keeps track of which rows are from which table
 outer = x.merge(y, how='outer', indicator=True)
 outer
@@ -443,11 +462,13 @@ All rows from x which are not also rows in y, keeping unique rows.
 
 #### Code
 
-```{r, include = F}
+```{r}
+#| include: !expr F
 x = data.frame(v1 = c(1, 1, 2), v2 = c("a", "b", "a"))
 y = data.frame(v1 = c(1, 2), v2 = c("a", "b"))
 ```
-```{python, include = F}
+```{python}
+#| include: !expr F
 x = r.x
 y = r.y
 ```
@@ -456,7 +477,8 @@ y = r.y
 
 ##### R (base)
 
-```{r base-set-joins}
+```{r}
+#| label: base-set-joins
 unionxy = unique(rbind(x, y))
 unionxy
 
@@ -470,7 +492,8 @@ intersectxy
 It is possible to get set difference and intersection for data frames by applying the base methods `setdiff` and `intersect`, but `dplyr` does this by overriding those defaults, so it's easier to just use that.
 
 ##### R (tidy)
-```{r tidy-set-joins}
+```{r}
+#| label: tidy-set-joins
 library(dplyr)
 union(x, y)
 unionall(x, y)
@@ -481,7 +504,8 @@ intersect(x, y)
 
 ##### Pandas
 
-```{python py-set-joins}
+```{python}
+#| label: py-set-joins
 import pandas as pd
 
 # Union
@@ -516,7 +540,8 @@ So before we can work with this data, we have to load the tables into Python.
 ::: panel-tabset
 #### R
 
-```{r dataset-setup-demo}
+```{r}
+#| label: dataset-setup-demo
 if (!"nycflights13" %in% installed.packages()) install.packages("nycflights13")
 if (!"dbplyr" %in% installed.packages()) install.packages("dbplyr")
 library(nycflights13)
@@ -529,7 +554,8 @@ nycflights13_sqlite(path = "../data/")
 
 #### Python
 
-```{python, eval = F}
+```{python}
+#| eval: !expr F
 import sqlite3
 con = sqlite3.connect("../data/nycflights13.sqlite")
 cur = con.cursor()
@@ -564,7 +590,8 @@ Using the flights data, let's determine whether there's a relationship between t
 ::: panel-tabset
 #### R
 
-```{r flights-delay-age-R}
+```{r}
+#| label: flights-delay-age-R
 #| fig-width: 6
 #| fig-height: 6
 #| out-width: "45%"
@@ -603,7 +630,8 @@ If anything, older planes are more likely to be early, but I suspect there aren'
 
 #### Python
 
-```{python flights-delay-age-py}
+```{python}
+#| label: flights-delay-age-py
 #| fig-width: 6
 #| fig-height: 6
 #| out-width: "45%"
@@ -663,17 +691,21 @@ Before we can start cleaning, we have to read in the data:
 
 ::: panel-tabset
 #### R
-```{r web-gas-data-reading}
+```{r}
+#| label: web-gas-data-reading
 ```
 
-```{r gas-price-data-head}
+```{r}
+#| label: gas-price-data-head
 ```
 
 #### Python
-```{python web-gas-data-reading-py}
+```{python}
+#| label: web-gas-data-reading-py
 ```
 
-```{python gas-price-data-head-py}
+```{python}
+#| label: gas-price-data-head-py
 ```
 
 :::
@@ -701,7 +733,8 @@ How do your steps compare to the steps you used for the manual approach?
 
 We'll use the same data cleaning function as before:
 
-```{r gas-data-pivot-merge-r}
+```{r}
+#| label: gas-data-pivot-merge-r
 # Clean up the table a bit
 gas_prices_raw <- gas_prices_html %>%
   set_names(fix_gas_names(names(.))) %>%
@@ -713,7 +746,8 @@ gas_prices_raw <- gas_prices_html %>%
 head(gas_prices_raw)
 ```
 
-```{r gas-data-pivot-merge-2-r}
+```{r}
+#| label: gas-data-pivot-merge-2-r
 gas_prices_dates <- select(gas_prices_raw, 1, matches("Week.[1-5].Date"))
 gas_prices_values <- select(gas_prices_raw, 1, matches("Week.[1-5].Value"))
 
@@ -721,7 +755,8 @@ head(gas_prices_dates)
 head(gas_prices_values)
 ```
 
-```{r gas-data-pivot-merge-3-r}
+```{r}
+#| label: gas-data-pivot-merge-3-r
 gas_prices_dates_long <- pivot_longer(gas_prices_dates, -Year.Month, names_to = "week", values_to = "month_day")
 gas_prices_values_long <- pivot_longer(gas_prices_values, -Year.Month, names_to = "week", values_to = "price_per_gallon")
 
@@ -729,7 +764,8 @@ head(gas_prices_dates_long)
 head(gas_prices_values_long)
 ```
 
-```{r gas-data-pivot-merge-4-r}
+```{r}
+#| label: gas-data-pivot-merge-4-r
 library(lubridate) # ymd function
 gas_prices_dates_long_clean <- gas_prices_dates_long %>%
   filter(month_day != "") %>%
@@ -747,7 +783,8 @@ head(gas_prices_dates_long_clean)
 head(gas_prices_values_long_clean)
 ```
 
-```{r gas-data-pivot-merge-5-r}
+```{r}
+#| label: gas-data-pivot-merge-5-r
 gas_prices <- left_join(gas_prices_dates_long_clean, gas_prices_values_long_clean, by = c("Year.Month", "week")) %>%
   select(Date, price_per_gallon)
 head(gas_prices)
@@ -755,7 +792,8 @@ head(gas_prices)
 
 #### Python solution
 
-```{python gas-data-pivot-merge-1-py}
+```{python}
+#| label: gas-data-pivot-merge-1-py
 gas_prices_raw = gas_prices_html.copy()
 
 # What do column names look like?
@@ -774,7 +812,8 @@ gas_prices_raw = gas_prices_raw.dropna(axis = 0, subset = ['Year-Month'])
 gas_prices_raw.head()
 ```
 
-```{python gas-data-pivot-merge-2-py}
+```{python}
+#| label: gas-data-pivot-merge-2-py
 gas_prices_dates = gas_prices_raw.filter(regex = 'Year-Month|Week.\d.Date', axis = 1)
 gas_prices_values = gas_prices_raw.filter(regex = 'Year-Month|Week.\d.Value', axis = 1)
 
@@ -782,7 +821,8 @@ gas_prices_dates.head()
 gas_prices_values.head()
 ```
 
-```{python gas-data-pivot-merge-3-py}
+```{python}
+#| label: gas-data-pivot-merge-3-py
 gas_prices_dates_long = pd.melt(gas_prices_dates, id_vars = 'Year-Month', var_name = "week", value_name = "month_day")
 gas_prices_values_long = pd.melt(gas_prices_values, id_vars = 'Year-Month', var_name = "week", value_name = "price_per_gallon")
 
@@ -790,7 +830,8 @@ gas_prices_dates_long.head()
 gas_prices_values_long.head()
 ```
 
-```{python gas-data-pivot-merge-4-py}
+```{python}
+#| label: gas-data-pivot-merge-4-py
 gas_prices_dates_long_clean = gas_prices_dates_long.dropna().copy()
 gas_prices_dates_long_clean["week"] = gas_prices_dates_long_clean.week.str.extract(r"Week.(\d).Date")
 gas_prices_dates_long_clean["year"] = gas_prices_dates_long_clean["Year-Month"].str.extract(r"(\d{4})-[A-z]{3}")
@@ -806,7 +847,8 @@ gas_prices_dates_long_clean.head()
 gas_prices_values_long_clean.head()
 ```
 
-```{python gas-data-pivot-merge-5-py}
+```{python}
+#| label: gas-data-pivot-merge-5-py
 gas_prices = pd.merge(gas_prices_dates_long_clean, gas_prices_values_long_clean, on = ("Year-Month", "week")).loc[:,["Date", "price_per_gallon"]]
 gas_prices.head()
 ```

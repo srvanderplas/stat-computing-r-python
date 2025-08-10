@@ -85,7 +85,9 @@ In @tbl-string-function, multiple functions are provided for e.g. common package
 
 One of the most common tasks when reading in and tidying messy data is that numeric-ish data can come in many forms that are read (by default) as strings. The data frame below provides an example of a few types of data which may be read in in unexpected ways. How do we tell R or Python that we want all of these columns to be treated as numbers?
 
-```{python number-formats-py, echo = F}
+```{python}
+#| label: number-formats-py
+#| echo: !expr F
 #| label: tbl-parse-numbers
 #| tbl-cap: Different "messy" number formats
 #| output: asis
@@ -110,7 +112,11 @@ print(tabulate(df, headers = list(df.columns)))
 df.to_csv("../data/number-formats.csv", index = False, quoting = 1)
 ```
 
-```{r number-formats-r, echo = F, include = F, dependson='number-formats-py'}
+```{r}
+#| label: number-formats-r
+#| echo: !expr F
+#| include: !expr F
+#| dependson: number-formats-py
 # library(reticulate)
 # df <- py$df
 df <- read.csv("../data/number-formats.csv")
@@ -147,14 +153,16 @@ We'll use @tbl-parse-numbers to explore different string operations focused spec
 ::: panel-tabset
 #### Get the data: Python {.unnumbered}
 
-```{python, eval = F}
+```{python}
+#| eval: !expr F
 import pandas as pd
 df = pd.read_csv("https://raw.githubusercontent.com/srvanderplas/stat-computing-r-python/main/data/number-formats.csv")
 ```
 
 #### R {.unnumbered}
 
-```{r, eval = F}
+```{r}
+#| eval: !expr F
 df <- read.csv("https://raw.githubusercontent.com/srvanderplas/stat-computing-r-python/main/data/number-formats.csv", colClasses = "character")
 ```
 
@@ -171,7 +179,8 @@ Both R and Python have ways to "guess" what type a column is and read the data i
 
 Here, R gets everything "right" except the eu_numbers, money_col, and custom cols, which makes sense - these contain information that isn't clearly numeric or doesn't match the default numeric formatting on my machine (which is using en_US.UTF-8 for almost everything). If we additionally want R to handle `mix_col`, we would have to explicitly convert to numeric, causing the a to be converted to `NA`
 
-```{r guess-type-conversion-r}
+```{r}
+#| label: guess-type-conversion-r
 library(dplyr)
 library(readr)
 df_guess <- type_convert(df)
@@ -180,7 +189,8 @@ str(df_guess)
 
 The `type_convert` function has a `locale` argument; `readr` includes a `locale()` function that you can pass to `type_convert` that allows you to define your own locale. Because we have numeric types structured from at least two locales in this data frame, we would have to specifically read the data in specifying which columns we wanted read with each locale.
 
-```{r guess-type-conversion-r-locale}
+```{r}
+#| label: guess-type-conversion-r-locale
 library(dplyr)
 library(readr)
 fixed_df <- type_convert(df) 
@@ -194,14 +204,16 @@ str(fixed_df)
 
 Similarly, Python does basically the same thing as R: mix_col, money_col, and custom are all left as strings, while floats, integers, and logical values are handled correctly.
 
-```{python guess-type-conversion-py}
+```{python}
+#| label: guess-type-conversion-py
 fixed_df = df.infer_objects()
 fixed_df.dtypes
 ```
 
 As in R, we can set the locale in Python to change how things are read in.
 
-```{python guess-type-conversion-py-locale}
+```{python}
+#| label: guess-type-conversion-py-locale
 from babel.numbers import parse_decimal
 
 # Convert eu_numbers column specifically
@@ -222,7 +234,8 @@ Obviously, we can also convert some strings to numbers using type conversion fun
 
 Here, we use the `across` helper function from `dplyr` to convert all of the columns to numeric. Note that the last 3 columns don't work here, because they contain characters R doesn't recognize as numeric characters.
 
-```{r direct-type-conversion-r}
+```{r}
+#| label: direct-type-conversion-r
 library(dplyr)
 
 df_numeric <- mutate(df, across(everything(), as.numeric))
@@ -231,7 +244,8 @@ str(df_numeric)
 
 ##### Python
 
-```{python direct-type-conversion-py}
+```{python}
+#| label: direct-type-conversion-py
 df_numeric = df.apply(pd.to_numeric, errors='coerce')
 df_numeric.dtypes
 ```
@@ -252,7 +266,8 @@ Some of these solutions are more kludgy than others, but I've used all 3 approac
 ::: panel-tabset
 ##### R
 
-```{r conversion-find-replace-r}
+```{r}
+#| label: conversion-find-replace-r
 library(stringr) # work with strings easily
 fixed_df = fixed_df %>%
   mutate(
@@ -272,7 +287,8 @@ str(fixed_df)
 
 We've already done a brief demonstration of string methods in Python when we trimmed off the £ character. In this situation, it's better to use the pandas `replace` method, which allows you to pass in a list of values and a list of replacements.
 
-```{python conversion-find-replace-py}
+```{python}
+#| label: conversion-find-replace-py
 # Categorical (factor) approach
 fixed_df['custom1'] = fixed_df['custom'].astype("category") # convert to categorical variable
 # Equality/boolean approach
@@ -306,7 +322,8 @@ In R, `parse_number()` handles the money column just fine - the pound sign goes 
 This didn't work by default with `type_convert`, but as long as we `mutate` and tell R we expect a number, things work well. 
 Then, as we did above, we can specify the locale settings so that decimal and grouping marks are handled correctly even for countries which use ',' for decimal and '.' for thousands separators.
 
-```{r guess-type-conversion-r-money}
+```{r}
+#| label: guess-type-conversion-r-money
 fixed_df = df %>%
   type_convert() %>% # guess everything
   mutate(money_col = parse_number(money_col),
@@ -319,7 +336,9 @@ fixed_df = df %>%
 
 In python, a similar approach doesn't work out, because the pound sign is not handled correctly.
 
-```{python guess-type-conversion-py-money1, error = T}
+```{python}
+#| label: guess-type-conversion-py-money1
+#| error: !expr T
 from babel.numbers import parse_decimal
 
 fixed_df = df.infer_objects()
@@ -334,7 +353,8 @@ fixed_df['money_col'] = fixed_df['money_col'].apply(lambda x: parse_decimal(x, l
 fixed_df.dtypes
 ```
 
-```{python guess-type-conversion-py-money2}
+```{python}
+#| label: guess-type-conversion-py-money2
 # Remove £ from string
 fixed_df['money_col'] = fixed_df['money_col'].str.removeprefix("£")
 # Then parse the number
@@ -357,7 +377,8 @@ We could also handle the locale issues using find-and-replace, if we wanted to..
 
 Note that `str_remove` is shorthand for `str_replace(x, pattern, "")`. There is a little bit of additional complexity in switching "," for "." and vice versa - we have to change "," to something else first, so that we can replace "." with ",". This is *not* elegant but it does work. It also doesn't generalize - it will mess up numbers formatted using the US/UK convention, and it won't handle numbers formatted using other conventions from other locales.
 
-```{r find-replace-locale-r}
+```{r}
+#| label: find-replace-locale-r
 fixed_df = df %>%
   type_convert() %>% # guess everything
   mutate(money_col = str_remove(money_col, "£") %>% parse_number(),
@@ -370,7 +391,9 @@ fixed_df = df %>%
 
 ##### Python
 
-```{python find-replace-locale-py, error = T}
+```{python}
+#| label: find-replace-locale-py
+#| error: !expr T
 from babel.numbers import parse_decimal
 
 fixed_df = df.infer_objects()
@@ -414,7 +437,8 @@ You can load it in R and then load the `reticuate` package to be able to access 
 
 #### R
 
-```{r separate-cols-r}
+```{r}
+#| label: separate-cols-r
 library(dplyr)
 library(tidyr)
 library(reticulate) # so we can access table3 in python
@@ -424,7 +448,8 @@ separate_wider_delim(table3, rate, delim = "/", names = c('cases', 'pop'), cols_
 
 #### Python
 
-```{python separate-cols-py}
+```{python}
+#| label: separate-cols-py
 table3 = r.table3
 table3[['cases', 'pop']] = table3.rate.str.split("/", expand = True)
 table3
@@ -454,7 +479,8 @@ You can load it in R and then load the `reticuate` package to be able to access 
 
 #### R
 
-```{r unite-cols-r}
+```{r}
+#| label: unite-cols-r
 library(dplyr)
 library(tidyr)
 library(reticulate) # so we can access table3 in python
@@ -466,7 +492,8 @@ unite(table5, col = yyyy, c(century, year), sep = "", remove = F) %>%
 
 #### Python
 
-```{python unite-cols-py}
+```{python}
+#| label: unite-cols-py
 import pandas as pd
 
 table5 = r.table5
@@ -483,7 +510,8 @@ table5
 
 Matching exact strings is easy - it's just like using find and replace.
 
-```{r regular-expressions}
+```{r}
+#| label: regular-expressions
 human_talk <- "blah, blah, blah. Do you want to go for a walk?"
 dog_hears <- str_extract(human_talk, "walk")
 dog_hears
@@ -541,7 +569,8 @@ Here are the basics of regular expressions:
 ::: panel-tabset
 #### R {.unnumbered}
 
-```{r phone-strings}
+```{r}
+#| label: phone-strings
 num_string <- "phone: 123-456-7890, nuid: 12345678, ssn: 123-45-6789"
 
 ssn <- str_extract(num_string, "[0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9][0-9][0-9]")
@@ -552,7 +581,8 @@ ssn
 
 In python, a regular expression is indicated by putting the character 'r' right before the quoted expression. This tells python that any backslashes in the string should be left alone -- if R had that feature, we wouldn't have to escape all the backslashes!
 
-```{python phone-strings-py}
+```{python}
+#| label: phone-strings-py
 import re
 
 num_string = "phone: 123-456-7890, nuid: 12345678, ssn: 123-45-6789"
@@ -576,7 +606,8 @@ Listing out all of those numbers can get repetitive, though. How do we specify r
 ::: panel-tabset
 #### R {.unnumbered}
 
-```{r regular-expression-banana}
+```{r}
+#| label: regular-expression-banana
 library(stringr)
 str_extract("banana", "[a-z]{1,}") # match any sequence of lowercase characters
 str_extract("banana", "[ab]{1,}") # Match any sequence of a and b characters
@@ -584,7 +615,8 @@ str_extract_all("banana", "(..)") # Match any two characters
 str_extract("banana", "(..)\\1") # Match a repeated thing
 ```
 
-```{r regular-expression-phone-ssn}
+```{r}
+#| label: regular-expression-phone-ssn
 num_string <- "phone: 123-456-7890, nuid: 12345678, ssn: 123-45-6789, bank account balance: $50,000,000.23"
 
 ssn <- str_extract(num_string, "[0-9]{3}-[0-9]{2}-[0-9]{4}")
@@ -599,7 +631,8 @@ bank_balance
 
 #### Python {.unnumbered}
 
-```{python regular-expression-banana-py}
+```{python}
+#| label: regular-expression-banana-py
 import re
 re.search(r"[a-z]{1,}", "banana") # match any sequence of lowercase characters
 re.search(r"[ab]{1,}", "banana") # Match any sequence of a and b characters
@@ -607,7 +640,8 @@ re.findall(r"(..)", "banana") # Match any two characters
 re.search(r"(..)\1", "banana") # Match a repeated thing
 ```
 
-```{python regular-expression-phone-ssn-py}
+```{python}
+#| label: regular-expression-phone-ssn-py
 import re
 
 num_string = "phone: 123-456-7890, nuid: 12345678, ssn: 123-45-6789, bank account balance: $50,000,000.23"
@@ -638,7 +672,8 @@ Combined with pre and post-processing, these let you make sense out of semi-stru
 ::: panel-tabset
 #### R {.unnumbered}
 
-```{r regular-expression-addresses}
+```{r}
+#| label: regular-expression-addresses
 address <- "1600 Pennsylvania Ave NW, Washington D.C., 20500"
 
 house_num <- str_extract(address, "^[0-9]{1,}")
@@ -656,7 +691,8 @@ zip <- str_extract(address, "[0-9-]{5,10}$") # match 5 and 9 digit zip codes
 
 Python match objects contain 3 things: `.span()`, which has the start and end positions of the match, `.string`, which contains the original string passed into the function, and `.group()`, which contains the actual matching portion of the string.
 
-```{python regular-expression-addresses-py}
+```{python}
+#| label: regular-expression-addresses-py
 import re
 
 address = "1600 Pennsylvania Ave NW, Washington D.C., 20500"
@@ -691,7 +727,8 @@ In R, backreferences are `\\1` through `\\9`.
 
 In R, the `\` character is special, so you have to escape it. So in R, `\\1` is the first reference, and `\\2` is the second, and so on.
 
-```{r regular-expression-fancier-r}
+```{r}
+#| label: regular-expression-fancier-r
 phone_num_variants <- c("(123) 456-7980", "123.456.7890", "+1 123-456-7890")
 phone_regex <- "\\+?[0-9]{0,3}? ?\\(?([0-9]{3})?\\)?.?([0-9]{3}).?([0-9]{4})"
 # \\+?[0-9]{0,3} matches the country code, if specified, 
@@ -714,7 +751,8 @@ dog_hears
 
 #### Python {.unnumbered}
 
-```{python regular-expression-fancier-py}
+```{python}
+#| label: regular-expression-fancier-py
 import pandas as pd
 import re
 
@@ -750,7 +788,8 @@ We can test our regular expressions to ensure that they are specific enough to p
 ::: panel-tabset
 #### R {.unnumbered}
 
-```{r regex-r-version-of-sas}
+```{r}
+#| label: regex-r-version-of-sas
 strings <- c("abcdefghijklmnopqrstuvwxyzABAB",
 "banana orange strawberry apple",
 "ana went to montana to eat a banana",
@@ -773,7 +812,8 @@ tibble(
 
 #### Python {.unnumbered}
 
-```{python regex-py-version-of-sas}
+```{python}
+#| label: regex-py-version-of-sas
 import pandas as pd
 import re
 
