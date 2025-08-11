@@ -1,0 +1,41 @@
+name: Render and deploy Quarto files
+on:
+  push:
+  pull_request:
+
+jobs:
+  quarto-render-and-deploy:
+    runs-on: ubuntu-latest
+    container:
+      image: local/quarto-reticulate:latest
+      env:
+        NEWSAPI_KEY: ${{ secrets.NEWSAPI_KEY }}
+        GH_APP_ID: ${{ secrets.GH_APP_ID }}
+        GH_APP_SECRET: ${{ secrets.GH_APP_SECRET }}
+        GH_PAT_DEMO: ${{ secrets.GH_PAT_DEMO }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GH_PAT: ${{ secrets.GH_PAT }}
+        GITHUB_PAT: ${{ secrets.GH_PAT }}
+        PYENV_PATHS_ROOT: /root/.pyenv
+        PYENV_PATHS_VENV: /root/.virtualenvs/venv
+        PYENV_PATHS_RETICULATE: /root/.local/share/r-reticulate
+    steps:
+      - uses: actions/checkout@v4
+
+      # The entrypoint script inside the container will handle Python setup
+      - name: Show environment info
+        run: |
+          Rscript -e "devtools::session_info()"
+          Rscript -e "reticulate::py_config()"
+
+      - name: Render Quarto Project
+        shell: /bin/bash {0}
+        run: |
+          quarto render --execute-debug
+
+      - name: "Deploy to gh-pages"
+        uses: peaceiris/actions-gh-pages@v4
+        if: github.ref == 'refs/heads/main'
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs
