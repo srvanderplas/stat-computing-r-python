@@ -21,7 +21,6 @@ We call these features that just "pop" without active work **preattentive** feat
 Take a look at @fig-preattentive1; can you spot the point that is different?
 
 ```{r}
-#| label: preattentive1
 #| echo: false
 #| fig-width: 4
 #| fig-height: 4
@@ -67,13 +66,9 @@ Some people suggest utilizing this to pack more dimensions into multivariate vis
 As awesome as it is to be able to use preattentive features to process information, we should not use combinations of preattentive features to show different variables. Take a look at @fig-preattentive2 - part (a) shows the same grouping in color and shape, part (b) shows color and shape used to encode different variables. 
 
 ```{r}
-#| label: preattentive2
 #| echo: false
-#| include: !expr T
-#| fig-width: 4
-#| fig-height: 4
+#| include: true
 #| out-width: 49.5%
-#| echo: false
 #| fig-width: 4
 #| fig-height: 4
 #| label: fig-preattentive2
@@ -92,12 +87,10 @@ data$y <- data$y+rnorm(36, 0, .25)
 suppressWarnings(library(ggplot2))
 new_theme_empty <- theme_bw()
 new_theme_empty$line <- element_blank()
-# new_theme_empty$rect <- element_blank()
 new_theme_empty$strip.text <- element_blank()
 new_theme_empty$axis.text <- element_blank()
 new_theme_empty$plot.title <- element_blank()
 new_theme_empty$axis.title <- element_blank()
-# new_theme_empty$plot.margin <- structure(c(0, 0, -1, -1), unit = "lines", valid.unit = 3L, class = "unit")
 
 data$shape <- data$color
 ggplot(data=data, aes(x=x, y=y, 
@@ -119,7 +112,6 @@ ggplot(data=data, aes(x=x, y=y,
   scale_shape_manual(guide="none", values=c(19, 15)) +
   scale_color_discrete(guide="none") + 
   new_theme_empty
-# qplot(data=data, x=x, y=y, color=factor(color), shape=factor(shape), size=I(5))+scale_shape_manual(guide="none", values=c(19, 15)) + scale_color_discrete(guide="none") + new_theme_empty
 ```
 
 Here, it is easy to differentiate the points in @fig-preattentive2(a), because they are dual-encoded. However, it is very difficult to pick out the different groups of points in @fig-preattentive2(b) because the combination of preattentive features requires active attention to sort out.
@@ -203,25 +195,22 @@ This can result in odd things, like the checkerboard and shadow shown in @fig-ch
 
 We have a limited amount of memory that we can instantaneously utilize. This mental space, called **short-term memory**, holds information for active use, but only for a limited amount of time.
 
-::: callout-tip
-#### Try it out! {.unnumbered}
+:::: example
+#### Try it out! {-}
 
-<details>
-
-<summary>Click here, read the information, and then click to hide it.</summary>
+::: {.callout collapse=true}
+##### Click here, read the information, and then click to hide it. {-}
 
 1 4 2 2 3 9 8 0 7 8
+:::
 
-</details>
-
-<details>
-
-<summary>Wait a few seconds, then expand this section</summary>
+::: {.callout collapse=true}
+##### Wait a few seconds, then expand this section {-}
 
 What was the third number?
-
-</details>
 :::
+
+::::
 
 Without rehearsing the information (repeating it over and over to yourself), the try it out task may have been challenging. Short term memory has a capacity of between 3 and 9 "bits" of information.
 
@@ -529,7 +518,7 @@ Most of the time, the addition of an extra dimension causes an increase in chart
 
 ```{r}
 #| label: disproportionate-pixels
-#| include: !expr F
+#| include: false
 imgs <- list.files("../images/wrangling", "3d_pie", full.names = T)
 tmp <- tibble(portfolio = c("Cash", "Bond", "Stocks"),
               pct = c(.05, .35, .5),

@@ -1,0 +1,75 @@
+name: Render and deploy Quarto files
+on:
+  push:
+  pull_request:
+
+jobs:
+  quarto-render-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Build container image with cache
+      uses: docker/build-push-action@v6
+      with:
+        context: .
+        file: ./Dockerfile
+        push: false
+        tags: local/quarto-reticulate:latest
+        build-args: |
+          BUILDKIT_INLINE_CACHE=1
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
+    - name: Restore renv cache
+      uses: actions/cache@v4
+      with:
+        path: ~/.local/share/renv
+        key: renv-${{ hashFiles('setup/renv.lock') }}
+        restore-keys: |
+          renv-
+
+    - name: Restore pip cache
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/pip
+        key: pip-${{ hashFiles('setup/requirements.txt') }}
+        restore-keys: |
+          pip-
+
+    - name: Restore pyenv cache
+      uses: actions/cache@v4
+      with:
+        path: /root/.virtualenvs/venv
+        key: pyenv-${{ hashFiles('setup/requirements.txt') }}
+        restore-keys: |
+          pyenv-
+
+    - name: Run container with renv & pip caching
+      run: |
+        docker run --rm \
+          -v ${{ github.workspace }}:/project \
+          -v ~/.local/share/renv:/root/.local/share/renv \
+          -v ~/.cache/pip:/root/.cache/pip \
+          -e NEWSAPI_KEY=${{ secrets.NEWSAPI_KEY }} \
+          -e GH_APP_ID=${{ secrets.GH_APP_ID }} \
+          -e GH_APP_SECRET=${{ secrets.GH_APP_SECRET }} \
+          -e GH_PAT_DEMO=${{ secrets.GH_PAT_DEMO }} \
+          -e GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} \
+          -e GH_PAT=${{ secrets.GH_PAT }} \
+          -e GITHUB_PAT=${{ secrets.GH_PAT }} \
+          local/quarto-reticulate:latest \
+          Rscript -e "renv::status()" \
+          Rscript -e "renv::diagnostics()" \
+          Rscript -e "devtools::session_info()" \
+          Rscript -e "reticulate::py_config()" \
+          bash -c "
+            cd setup && R -e 'renv::restore()' &&
+            pip install -r 'setup/requirements.txt' &&
+            cd /project && quarto render && quarto publish
+          "
