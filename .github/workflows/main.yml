@@ -12,55 +12,34 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Cache R packages from renv
-      - name: Cache renv packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.local/share/renv
-          key: ${{ runner.os }}-renv-${{ hashFiles('setup/renv.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-renv-
+      # Prepare cache directories so they always exist
+      - name: Prepare cache dirs
+        run: |
+          mkdir -p ~/.cache/pip
+          mkdir -p setup/renv
 
-      # Cache pip packages
+      # Cache Python packages
       - name: Cache pip packages
         uses: actions/cache@v4
         with:
           path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          key: ${{ runner.os }}-pip-${{ hashFiles('setup/requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
 
-      # Build the Docker image with project files
-      - name: Build Docker image
-        run: |
-          docker build \
-            --build-arg RENV_CACHE=/root/.local/share/renv \
-            --build-arg PIP_CACHE=/root/.cache/pip \
-            -t local/quarto-reticulate:latest .
+      # Cache R packages from renv
+      - name: Cache R packages
+        uses: actions/cache@v4
+        with:
+          path: renv
+          key: ${{ runner.os }}-renv-${{ hashFiles('renv.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-renv-
 
-      # Run the build inside the container
-      - name: Render Quarto project
-        run: |
-          docker run --rm \
-            -v $HOME/.local/share/renv:/root/.local/share/renv \
-            -v $HOME/.cache/pip:/root/.cache/pip \
-            -v ${{ github.workspace }}:/project \
-            -v ~/.local/share/renv:/root/.local/share/renv \
-            -v ~/.cache/pip:/root/.cache/pip \
-            -e NEWSAPI_KEY=${{ secrets.NEWSAPI_KEY }} \
-            -e GH_APP_ID=${{ secrets.GH_APP_ID }} \
-            -e GH_APP_SECRET=${{ secrets.GH_APP_SECRET }} \
-            -e GH_PAT_DEMO=${{ secrets.GH_PAT_DEMO }} \
-            -e GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} \
-            -e GH_PAT=${{ secrets.GH_PAT }} \
-            -e GITHUB_PAT=${{ secrets.GH_PAT }} \
-            local/quarto-reticulate:latest \
-            Rscript -e "renv::status()" \
-            Rscript -e "renv::diagnostics()" \
-            Rscript -e "devtools::session_info()" \
-            Rscript -e "reticulate::py_config()" \
-            bash -c "
-              cd setup && R -e 'renv::restore()' &&
-              pip install -r 'setup/requirements.txt' &&
-              cd /project && quarto render && quarto publish
-            "
+      # Build Docker image
+      - name: Build Docker image
+        run: docker build -t local/quarto-reticulate:latest .
+
+      # Run Docker container (optional test)
+      - name: Test build inside container
+        run: docker run --rm local/quarto-reticulate:latest
