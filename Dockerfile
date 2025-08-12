@@ -49,7 +49,7 @@ ENV REQ_FILE="/project/setup/requirements.txt"
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Make sure these exist
-RUN mkdir -p ${RENV_CACHE} ${PIP_CACHE}
+# RUN mkdir -p ${RENV_CACHE} ${PIP_CACHE}
 
 # Install tinytex system-wide (for LaTeX support)
 RUN Rscript -e "install.packages('tinytex'); tinytex::install_tinytex(force=T)"
