@@ -62,7 +62,7 @@ COPY renv /project/renv
 RUN R -e "renv::restore(lockfile = '/project/renv.lock', prompt = FALSE)"
 
 # Copy Python requirements file if exists (cached separately)
-COPY requirements.txt /project/requirements.txt
+COPY setup/requirements.txt ${REQ_FILE}
 RUN python3 -m venv "$VENV_PATH" \
     source "$VENV_PATH/bin/activate" \
     pip install --upgrade pip \
