@@ -2,16 +2,12 @@
 ARG RENV_CACHE=/root/.local/share/renv
 ARG PIP_CACHE=/root/.cache/pip
 
+# Base image
+FROM rocker/verse:latest
 
 # Set environment variables so renv/pip use them
 ENV RENV_PATHS_CACHE=${RENV_CACHE}
 ENV PIP_CACHE_DIR=${PIP_CACHE}
-
-# Base image
-FROM rocker/verse:latest
-
-# Make sure these exist
-RUN mkdir -p ${RENV_CACHE} ${PIP_CACHE}
 
 # Install Python
 RUN apt-get update && apt-get install -y \
