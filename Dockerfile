@@ -1,7 +1,6 @@
 # At the top
-ARG RENV_CACHE=/root/.local/share/renv
-ARG PIP_CACHE=/root/.cache/pip
-
+ARG RENV_CACHE=
+ARG PIP_CACHE=
 # Base image
 FROM rocker/verse:latest
 
@@ -42,12 +41,12 @@ RUN curl -fsSL https://quarto.org/download/latest/quarto-linux-amd64.deb -o quar
     rm quarto.deb
 
 # Environment variables
-ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64/
+ENV JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64/"
 ENV PATH=/root/.pyenv/bin:$PATH
 ENV VENV_PATH="/root/.virtualenvs/venv"
 ENV REQ_FILE="/project/setup/requirements.txt"
-ENV RENV_PATHS_CACHE=${RENV_CACHE}
-ENV PIP_CACHE_DIR=${PIP_CACHE}
+ENV RENV_PATHS_CACHE="/root/.local/share/renv"
+ENV PIP_CACHE_DIR="/root/.cache/pip"
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Install tinytex system-wide (for LaTeX support)
