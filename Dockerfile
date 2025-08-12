@@ -2,24 +2,16 @@
 ARG RENV_CACHE=/root/.local/share/renv
 ARG PIP_CACHE=/root/.cache/pip
 
-# Environment variables
-ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64/
-ENV PATH=/root/.pyenv/bin:$PATH
-ENV VENV_PATH="/root/.virtualenvs/venv"
-ENV REQ_FILE="/project/setup/requirements.txt"
-ENV RENV_PATHS_CACHE=${RENV_CACHE}
-ENV PIP_CACHE_DIR=${PIP_CACHE}
-ENV DEBIAN_FRONTEND=noninteractive
-
 # Base image
 FROM rocker/verse:latest
+
 
 # Make sure these exist
 RUN mkdir -p ${RENV_CACHE} ${PIP_CACHE}
 
 # Install Python
 RUN apt-get update && apt-get install -y \
-    python3 python3-pip python3-venv \
+    python3 python3-pip python3-venv python3-dev\
     && rm -rf /var/lib/apt/lists/*
 
 # Install system dependencies
@@ -30,8 +22,9 @@ RUN apt-get update && apt-get upgrade -y && \
       libxmlsec1-dev libffi-dev liblzma-dev \
       libtesseract-dev libpoppler-cpp-dev tesseract-ocr \
       libleptonica-dev libpng-dev libjpeg-dev libtiff-dev imagemagick \
-      gdal-bin libgdal-dev libsecret-1-dev default-jdk openjdk-11-jdk \
-      libglpk-dev libudunits2-dev python3 python3-venv python3-pip python3-dev \
+      gdal-bin libgdal-dev libsecret-1-dev \
+      default-jdk openjdk-11-jdk \
+      libglpk-dev libudunits2-dev \
       gnupg software-properties-common
 
 # Install GitHub CLI
@@ -47,6 +40,15 @@ RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | \
 RUN curl -fsSL https://quarto.org/download/latest/quarto-linux-amd64.deb -o quarto.deb && \
     apt-get update && apt-get install -y ./quarto.deb && \
     rm quarto.deb
+
+# Environment variables
+ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64/
+ENV PATH=/root/.pyenv/bin:$PATH
+ENV VENV_PATH="/root/.virtualenvs/venv"
+ENV REQ_FILE="/project/setup/requirements.txt"
+ENV RENV_PATHS_CACHE=${RENV_CACHE}
+ENV PIP_CACHE_DIR=${PIP_CACHE}
+ENV DEBIAN_FRONTEND=noninteractive
 
 # Install tinytex system-wide (for LaTeX support)
 RUN Rscript -e "install.packages('tinytex'); tinytex::install_tinytex(force=T)"
