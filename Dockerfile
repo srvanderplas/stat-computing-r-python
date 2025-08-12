@@ -1,3 +1,14 @@
+# At the top
+ARG RENV_CACHE=/root/.local/share/renv
+ARG PIP_CACHE=/root/.cache/pip
+
+# Make sure these exist
+RUN mkdir -p ${RENV_CACHE} ${PIP_CACHE}
+
+# Set environment variables so renv/pip use them
+ENV RENV_PATHS_CACHE=${RENV_CACHE}
+ENV PIP_CACHE_DIR=${PIP_CACHE}
+
 # Base image
 FROM rocker/verse:latest
 
@@ -38,8 +49,6 @@ ENV JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64/"
 ENV PATH=/root/.pyenv/bin:$PATH
 ENV VENV_PATH="/root/.virtualenvs/venv"
 ENV REQ_FILE="/project/setup/requirements.txt"
-ENV RENV_CACHE="/root/.local/share/renv"
-ENV PIP_CACHE="/root/.cache/pip"
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Make sure these exist
