@@ -11,8 +11,7 @@ ENV PIP_CACHE_DIR=${PIP_CACHE}
 FROM rocker/verse:latest
 
 # Make sure these exist
-RUN mkdir -p ${RENV_CACHE} ${PIP_CACHE} \
-
+RUN mkdir -p ${RENV_CACHE} ${PIP_CACHE}
 
 # Install Python
 RUN apt-get update && apt-get install -y \
