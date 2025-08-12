@@ -7,7 +7,16 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    env:
+      NEWSAPI_KEY: ${{ secrets.NEWSAPI_KEY }}
+      GH_APP_ID: ${{ secrets.GH_APP_ID }}
+      GH_APP_SECRET: ${{ secrets.GH_APP_SECRET }}
+      GH_PAT_DEMO: ${{ secrets.GH_PAT_DEMO }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GH_PAT: ${{ secrets.GH_PAT }}
+      GITHUB_PAT: ${{ secrets.GH_PAT }}
+      RENV_CACHE: ~/.cache/renv
+      VENV_CACHE: ~/.cache/pip
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -16,7 +25,7 @@ jobs:
       - name: Prepare cache dirs
         run: |
           mkdir -p ~/.cache/pip
-          mkdir -p setup/renv
+          mkdir -p ~/.cache/renv
 
       # Cache Python packages
       - name: Cache pip packages
@@ -38,7 +47,7 @@ jobs:
 
       # Build Docker image
       - name: Build Docker image
-        run: docker build -t local/quarto-reticulate:latest . -e RENV_CACHE=/root/.local/share/renv -e VENV_CACHE=/root/.cache/pip
+        run: docker build -t local/quarto-reticulate:latest . -e RENV_CACHE=/root/.cache/renv -e VENV_CACHE=/root/.cache/pip
 
       # Run Docker container (optional test)
       - name: Test build inside container
