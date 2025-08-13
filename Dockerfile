@@ -74,11 +74,7 @@ COPY . /project
 WORKDIR /project
 
 # Verify Environment
-RUN Rscript -e "renv::status()" && \
-    Rscript -e "renv::diagnostics()"  && \
-    Rscript -e "devtools::session_info()"  && \
-    Rscript -e "reticulate::py_config()"  && \
-    ls()
+RUN Rscript -e "renv::status();renv::diagnostics();devtools::session_info();reticulate::py_config()"
 
 # Default command
 CMD ["/bin/sh", "-c", "quarto render && quarto publish"]
