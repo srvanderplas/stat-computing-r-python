@@ -57,7 +57,7 @@ jobs:
           cache-to: type=gha,mode=max
 
       # Run inside the container against the mounted repo
-      - name: Render & publish with cached renv/pip
+      - name: Render & publish
         run: |
           docker run --rm \
             -v "${{ github.workspace }}:/project" \
@@ -75,18 +75,34 @@ jobs:
             local/quarto-reticulate:latest \
             /bin/sh -c '
               set -e
-              # R deps from renv in setup/
+
+              echo "=== Checking renv cache path ==="
+              ls -lah ${RENV_PATHS_CACHE} || echo "renv cache dir not found"
+
+              echo "=== Checking pip cache path ==="
+              ls -lah ${PIP_CACHE_DIR} || echo "pip cache dir not found"
+
+              echo "=== Package count in renv cache before restore ==="
+              Rscript -e "cat(length(list.files(Sys.getenv('RENV_PATHS_CACHE'), recursive=TRUE)), 'packages in cache\n')"
+
+              # Restore R packages from project root
               if [ -f "/project/renv.lock" ]; then
+                echo "=== Restoring R packages with renv ==="
                 Rscript -e "renv::restore(project = '/project', prompt = FALSE)"
               fi
-              # Python deps
-              if [ -f "/project/setup/requirements.txt" ]; then
+
+              echo "=== Package count in renv cache after restore ==="
+              Rscript -e "cat(length(list.files(Sys.getenv('RENV_PATHS_CACHE'), recursive=TRUE)), 'packages in cache\n')"
+
+              # Restore Python packages
+              if [ -f "/project/requirements.txt" ]; then
+                echo "=== Restoring Python packages ==="
                 python3 -m venv /root/.virtualenvs/venv
                 /root/.virtualenvs/venv/bin/pip install --upgrade pip
-                /root/.virtualenvs/venv/bin/pip install --cache-dir ${PIP_CACHE_DIR} -r /project/setup/requirements.txt
+                /root/.virtualenvs/venv/bin/pip install --cache-dir ${PIP_CACHE_DIR} -r /project/requirements.txt
                 export PATH=/root/.virtualenvs/venv/bin:$PATH
               fi
-              # Quarto
+
+              # Render + publish
               cd /project
               quarto render && quarto publish
-            '
