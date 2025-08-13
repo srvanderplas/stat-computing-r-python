@@ -74,10 +74,10 @@ COPY . /project
 WORKDIR /project
 
 # Verify Environment
-RUN Rscript -e "renv::status()" \
-    Rscript -e "renv::diagnostics()" \
-    Rscript -e "devtools::session_info()" \
-    Rscript -e "reticulate::py_config()" \
+RUN Rscript -e "renv::status()" && \
+    Rscript -e "renv::diagnostics()"  && \
+    Rscript -e "devtools::session_info()"  && \
+    Rscript -e "reticulate::py_config()"  && \
     ls()
 
 # Default command
