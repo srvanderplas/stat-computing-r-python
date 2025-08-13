@@ -65,8 +65,8 @@ RUN R -e "renv::restore(lockfile = '/project/renv.lock', prompt = FALSE)"
 # Copy Python requirements file if exists (cached separately)
 COPY setup/requirements.txt ${REQ_FILE}
 RUN python3 -m venv /root/.virtualenvs/venv && \
-    . /root/.virtualenvs/venv/bin/activate && \
-    pip install --cache-dir /root/.cache/pip -r /project/setup/requirements.txt
+    ${VENV_PATH}/bin/pip install --cache-dir ${PIP_CACHE_DIR} -r ${REQ_FILE}
+
 
 
 # Copy the rest of the project
