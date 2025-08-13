@@ -59,7 +59,7 @@ COPY renv.lock /project/renv.lock
 COPY renv /project/renv
 
 # Restore R deps from renv.lock using persistent cache
-RUN --mount=type=cache,target=${R_CACHE} Rscript -e 'renv::restore(lockfile = '/project/renv.lock', prompt = FALSE)'
+RUN --mount=type=cache,target=${R_CACHE} Rscript -e 'renv::restore(lockfile = "/project/renv.lock", prompt = FALSE)'
 
 # Copy Python requirements file if exists (cached separately)
 COPY setup/requirements.txt ${REQ_FILE}
