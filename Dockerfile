@@ -1,14 +1,10 @@
-# At the top
-ARG RENV_CACHE=/root/.cache/R/renv/
-ARG PIP_CACHE=/root/.cache/pip
-
 # Base image
 FROM rocker/verse:latest
 
 # Set environment variables so renv/pip use them
-ENV R_CACHE_DIR=/root/.cache/R/
-ENV RENV_PATHS_CACHE=${RENV_CACHE}
-ENV PIP_CACHE_DIR=${PIP_CACHE}
+ENV R_CACHE=/root/.cache/R/
+ENV RENV_CACHE=/root/.cache/R/renv/
+ENV PIP_CACHE=/root/.cache/pip
 
 # Install Python
 RUN apt-get update && apt-get install -y \
@@ -53,22 +49,22 @@ ENV DEBIAN_FRONTEND=noninteractive
 # RUN mkdir -p ${RENV_CACHE} ${PIP_CACHE}
 
 # Install tinytex system-wide (for LaTeX support)
-RUN --mount=type=cache,target=${R_CACHE_DIR} Rscript -e "install.packages('tinytex'); tinytex::install_tinytex(force=T)"
+RUN --mount=type=cache,target=${R_CACHE} Rscript -e "install.packages('tinytex'); tinytex::install_tinytex(force=T)"
 
 # Install minimal R packages for system-level support
-RUN --mount=type=cache,target=${R_CACHE_DIR} Rscript -e "install.packages(c('digest','devtools','renv','reticulate','yaml'))"
+RUN --mount=type=cache,target=${R_CACHE} Rscript -e "install.packages(c('digest','devtools','renv','reticulate','yaml'))"
 
 # Copy renv.lock and renv directory for layer caching, install R dependencies via renv
 COPY renv.lock /project/renv.lock
 COPY renv /project/renv
 
 # Restore R deps from renv.lock using persistent cache
-RUN --mount=type=cache,target=${R_CACHE_DIR} Rscript -e 'renv::restore(lockfile = '/project/renv.lock', prompt = FALSE)'
+RUN --mount=type=cache,target=${R_CACHE} Rscript -e 'renv::restore(lockfile = '/project/renv.lock', prompt = FALSE)'
 
 # Copy Python requirements file if exists (cached separately)
 COPY setup/requirements.txt ${REQ_FILE}
-RUN --mount=type=cache,target=${PIP_CACHE_DIR} python3 -m venv /root/.virtualenvs/venv && \
-    "${VENV_PATH}/bin/pip" install --cache-dir "${PIP_CACHE_DIR}" -r "${REQ_FILE}"
+RUN --mount=type=cache,target=${PIP_CACHE} python3 -m venv /root/.virtualenvs/venv && \
+    "${VENV_PATH}/bin/pip" install --cache-dir "${PIP_CACHE}" -r "${REQ_FILE}"
 
 # Copy the rest of the project
 COPY . /project
