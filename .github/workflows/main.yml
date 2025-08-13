@@ -1,8 +1,8 @@
 name: Render and deploy Quarto files
+
 on:
   push:
   pull_request:
-
 
 jobs:
   build:
@@ -16,20 +16,21 @@ jobs:
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GH_PAT: ${{ secrets.GH_PAT }}
       GITHUB_PAT: ${{ secrets.GH_PAT }}
-      RENV_CACHE: ~/.cache/renv
-      PIP_CACHE: ~/.cache/pip
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Prepare cache directories so they always exist
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # Make sure caches exist even on first run
       - name: Prepare cache dirs
         run: |
           mkdir -p ~/.cache/pip
-          mkdir -p ~/.cache/renv
+          mkdir -p ~/.local/share/renv
 
-      # Cache Python packages
-      - name: Cache pip packages
+      - name: Cache pip (downloads/wheels)
         uses: actions/cache@v4
         with:
           path: ~/.cache/pip
@@ -37,19 +38,55 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-pip-
 
-      # Cache R packages from renv
-      - name: Cache R packages
+      - name: Cache renv (global cache, not project folder)
         uses: actions/cache@v4
         with:
-          path: renv
-          key: ${{ runner.os }}-renv-${{ hashFiles('renv.lock') }}
+          path: ~/.local/share/renv
+          key: ${{ runner.os }}-renv-${{ hashFiles('setup/renv.lock') }}
           restore-keys: |
             ${{ runner.os }}-renv-
 
-      # Build Docker image
-      - name: Build Docker image
-        run: docker build -t local/quarto-reticulate:latest .
+      - name: Build Docker image with layer cache
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: ./Dockerfile
+          push: false
+          tags: local/quarto-reticulate:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
-      # Run Docker container (optional test)
-      - name: Test build inside container
-        run: docker run --rm local/quarto-reticulate:latest
+      # Run inside the container against the mounted repo
+      - name: Render & publish with cached renv/pip
+        run: |
+          docker run --rm \
+            -v "${{ github.workspace }}:/project" \
+            -v "${HOME}/.local/share/renv:/root/.local/share/renv" \
+            -v "${HOME}/.cache/pip:/root/.cache/pip" \
+            -e RENV_PATHS_CACHE=/root/.local/share/renv \
+            -e PIP_CACHE_DIR=/root/.cache/pip \
+            -e NEWSAPI_KEY="${{ secrets.NEWSAPI_KEY }}" \
+            -e GH_APP_ID="${{ secrets.GH_APP_ID }}" \
+            -e GH_APP_SECRET="${{ secrets.GH_APP_SECRET }}" \
+            -e GH_PAT_DEMO="${{ secrets.GH_PAT_DEMO }}" \
+            -e GITHUB_TOKEN="${{ secrets.GITHUB_TOKEN }}" \
+            -e GH_PAT="${{ secrets.GH_PAT }}" \
+            -e GITHUB_PAT="${{ secrets.GH_PAT }}" \
+            local/quarto-reticulate:latest \
+            /bin/sh -c '
+              set -e
+              # R deps from renv in setup/
+              if [ -f "/project/renv.lock" ]; then
+                Rscript -e "renv::restore(project = '/project', prompt = FALSE)"
+              fi
+              # Python deps
+              if [ -f "/project/setup/requirements.txt" ]; then
+                python3 -m venv /root/.virtualenvs/venv
+                /root/.virtualenvs/venv/bin/pip install --upgrade pip
+                /root/.virtualenvs/venv/bin/pip install --cache-dir ${PIP_CACHE_DIR} -r /project/setup/requirements.txt
+                export PATH=/root/.virtualenvs/venv/bin:$PATH
+              fi
+              # Quarto
+              cd /project
+              quarto render && quarto publish
+            '
