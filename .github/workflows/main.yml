@@ -84,16 +84,16 @@ jobs:
               ls -lah ${PIP_CACHE_DIR} || echo "pip cache dir not found"
 
               echo "=== Package count in renv cache before restore ==="
-              Rscript -e "cat(length(list.files(Sys.getenv(\'RENV_PATHS_CACHE\'), recursive=TRUE)), \'packages in cache\n\')"
+              Rscript -e \'cat(length(list.files(Sys.getenv("RENV_PATHS_CACHE"), recursive=TRUE)), "packages in cache\n")\'
 
               # Restore R packages from project root
               if [ -f "/project/renv.lock" ]; then
                 echo "=== Restoring R packages with renv ==="
-                Rscript -e "renv::restore(project = \'/project\', prompt = FALSE)"
+                Rscript -e \'renv::restore(project = "/project", prompt = FALSE)\'
               fi
 
               echo "=== Package count in renv cache after restore ==="
-              Rscript -e "cat(length(list.files(Sys.getenv(\'RENV_PATHS_CACHE\'), recursive=TRUE)), \'packages in cache\n\')"
+              Rscript -e \'cat(length(list.files(Sys.getenv("RENV_PATHS_CACHE"), recursive=TRUE)), "packages in cache\n")\'
 
               # Restore Python packages
               if [ -f "/project/requirements.txt" ]; then
