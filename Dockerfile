@@ -32,7 +32,7 @@ RUN curl -fsSL https://quarto.org/download/latest/quarto-linux-amd64.deb -o /tmp
     rm -rf /var/lib/apt/lists/*
 
 # --- Layer 4: TinyTeX
-RUN Rscript -e "install.packages('tinytex', repos='https://cloud.r-project.org'); tinytex::install_tinytex()"
+RUN Rscript -e "install.packages('tinytex', repos='https://cloud.r-project.org'); tinytex::install_tinytex(force=T)"
 
 # Ensure cache dirs exist
 RUN mkdir -p ${RENV_PATHS_CACHE} ${PIP_CACHE_DIR} /root/.virtualenvs
