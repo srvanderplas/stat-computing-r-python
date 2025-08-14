@@ -1,7 +1,7 @@
 # Web Scraping {#sec-data-web}
 
 ```{r}
-#| include: !expr F
+#| include: false
 knitr::knit_engines$set(html = function(options) {
   code <- paste(options$code, collapse = '\n')
   out  <- ""
@@ -234,13 +234,13 @@ The city then included some small grocery stores that are very close to meeting 
 We can [download the KML file](https://opendata.dc.gov/api/download/v1/items/1d7c9d0e3aac49c1aa88d377a3bae430/kml?layers=4) and change the extension to XML so that the file opens in a standard web browser, or we can directly download the KML file as an XML file as in the code chunk below.
 
 ```{r}
-#| include: !expr F
+#| include: false
 options(width = 120)
 ```
 
 ```{r}
 #| label: get-dc-grocery-data
-#| error: !expr T
+#| error: true
 url <- "https://opendata.dc.gov/api/download/v1/items/1d7c9d0e3aac49c1aa88d377a3bae430/kml?layers=4"
 filename <- "../data/DC_Grocery_Stores_2025.xml"
 
@@ -254,7 +254,7 @@ xml_tbl <- data.frame(line = 1:length(xml_text),
 ```
 
 ```{r}
-#| echo: !expr F
+#| echo: false
 #| paged-print: true
 
 DT::datatable(xml_tbl[c(1:10, 35:64, 3145:3151),], rownames = F, escape = 2, editable = F, options = list(searching = F))
@@ -262,7 +262,7 @@ DT::datatable(xml_tbl[c(1:10, 35:64, 3145:3151),], rownames = F, escape = 2, edi
 
 
 ```{r}
-#| include: !expr F
+#| include: false
 options(width = 80)
 ```
 
@@ -399,7 +399,7 @@ HTML:
 
 Rendered:
 ```{r}
-#| echo: !expr F
+#| echo: false
 htmltools::knit_print.html("<table><tr><th>Heading Col 1</th><th>Heading Col 2</th></tr><tr><td>Value 1</td><td>Value 2</td></tr></table>")
 ```
 
@@ -1332,8 +1332,8 @@ rev_war_battles2 <- tibble(
 When writing custom functions for web scrapign, it's usually helpful to give yourself an idea of what the function does in a comment -- you can often reuse these functions, but that only works if you're kind to future you and remind yourself what they actually do. 
 
 ```{r}
-#| eval: !expr F
-#| include: !expr F
+#| eval: false
+#| include: false
 saveRDS(rev_war_battles2, "../data/rev-war-battles2.RDS")
 ```
 ```{r}
@@ -1344,7 +1344,7 @@ head(rev_war_battles2)
 
 
 ```{r}
-#| eval: !expr F
+#| eval: false
 library(purrr)
 
 process_battle_row <- function(node){# <1>
@@ -1365,8 +1365,8 @@ rev_war_battles3 <- map(rev_war_rows, process_battle_row) |> bind_rows() # <4>
 4. Call `process_battle_row` on each row and bind the rows together. 
 
 ```{r}
-#| eval: !expr F
-#| include: !expr F
+#| eval: false
+#| include: false
 saveRDS(rev_war_battles3, "../data/rev-war-battles3.RDS")
 ```
 ```{r}
@@ -1476,7 +1476,7 @@ If the structured table doesn't exist, the location row doesn't exist, or there 
 ##### R {-}
 
 ```{r}
-#| eval: !expr F
+#| eval: false
 library(tidyr)
 library(tibble)
 
@@ -1516,8 +1516,8 @@ battle_locations <- purrr::map(rev_war_battles2$link, get_battle_location)
 battle_locations <- bind_rows(battle_locations)
 ```
 ```{r}
-#| include: !expr F
-#| eval: !expr F
+#| include: false
+#| eval: false
 saveRDS(battle_locations, file = "../data/rev_war_battle_locations.RDS")
 ```
 ```{r}
@@ -1999,7 +1999,7 @@ team_data_clean <- map(team_data, clean_team_df) |>
 
 ##### Python {-}
 ```{python}
-#| cache: !expr F
+#| cache: false
 from warnings import warn
 
 def get_players(sub_df):
