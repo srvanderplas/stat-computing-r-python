@@ -10,6 +10,7 @@ RUN --mount=type=cache,target=/var/cache/apt \
     apt-get update && apt-get install -y --no-install-recommends \
       python3 python3-pip python3-venv python3-dev \
       libcurl4-openssl-dev libssl-dev libxml2-dev \
+      default-jdk \
       libtesseract-dev libpoppler-cpp-dev tesseract-ocr \
       libleptonica-dev libpng-dev libjpeg-dev libtiff-dev \
       imagemagick gdal-bin libgdal-dev libsecret-1-dev \
