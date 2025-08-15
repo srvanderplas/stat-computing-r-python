@@ -1,8 +1,10 @@
 FROM rocker/verse:4.5
 
 ENV DEBIAN_FRONTEND=noninteractive
-ENV RENV_PATHS_CACHE=/root/.local/share/renv \
-    PIP_CACHE_DIR=/root/.cache/pip
+ENV RENV_PATHS_CACHE=/root/.local/share/renv
+ENV PIP_CACHE_DIR=/root/.cache/pip
+ENV JAVA_HOME=/usr/bin/java
+ENV RETICULATE_PYTHON_ENV=venv
 
 # --- Layer 1: OS deps (cacheable with BuildKit)
 RUN --mount=type=cache,target=/var/cache/apt \
