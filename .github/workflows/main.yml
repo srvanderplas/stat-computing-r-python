@@ -66,7 +66,6 @@ jobs:
             -v "${HOME}/.cache/pip:/root/.cache/pip" \
             -e RENV_PATHS_CACHE=/root/.local/share/renv \
             -e PIP_CACHE_DIR=/root/.cache/pip \
-            -e QUARTO_PYTHON="venv" \
             -e NEWSAPI_KEY="${{ secrets.NEWSAPI_KEY }}" \
             -e GH_APP_ID="${{ secrets.GH_APP_ID }}" \
             -e GH_APP_SECRET="${{ secrets.GH_APP_SECRET }}" \
@@ -96,14 +95,10 @@ jobs:
               echo "=== Package count in renv cache after restore ==="
               Rscript -e \'cat(length(list.files(Sys.getenv("RENV_PATHS_CACHE"), recursive=TRUE)), "packages in cache\n")\'
 
-              # Restore Python packages
+              # Restore Python packages into baked-in venv
               if [ -f "/project/requirements.txt" ]; then
-                echo "=== Restoring Python packages ==="
-                python3 -m venv /root/.virtualenvs/venv
-                /root/.virtualenvs/venv/bin/pip install --upgrade pip
-                /root/.virtualenvs/venv/bin/pip install --cache-dir ${PIP_CACHE_DIR} -r /project/requirements.txt
-                export PATH=/root/.virtualenvs/venv/bin:$PATH
-                source /root/.virtualenvs/venv/bin/activate
+                echo "=== Restoring Python packages into baked-in venv ==="
+                /opt/venv/bin/pip install --cache-dir ${PIP_CACHE_DIR} -r /project/requirements.txt
               fi
 
               # Render + publish

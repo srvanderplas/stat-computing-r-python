@@ -47,6 +47,30 @@ RUN curl -fsSL https://quarto.org/download/latest/quarto-linux-amd64.deb -o /tmp
 # --- Layer 4: TinyTeX
 RUN Rscript -e "tinytex::install_tinytex(force=T)"
 
+# --- Layer 5: python
+# Install Python and venv support
+RUN apt-get update && \
+    apt-get install -y python3 python3-venv python3-pip && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Create a dedicated virtual environment
+ENV VENV_PATH=/opt/venv
+RUN python3 -m venv $VENV_PATH
+
+# Make sure pip is up to date and install common build tools
+RUN $VENV_PATH/bin/pip install --upgrade pip setuptools wheel
+
+# Register venv globally for R/reticulate and Quarto
+ENV PATH="$VENV_PATH/bin:$PATH"
+ENV RETICULATE_PYTHON=$VENV_PATH/bin/python
+ENV QUARTO_PYTHON=$VENV_PATH/bin/python
+
+# Pre-install Jupyter kernel so Quarto sees it, and populate with dependencies
+RUN $VENV_PATH/bin/pip install ipykernel && \
+    $VENV_PATH/bin/python -m ipykernel install --prefix=/usr/local --name=venv --display-name "Python (venv)" \
+    $VENV_PATH/bin/pip install -r /project/requirements.txt
+
+
 # Ensure cache dirs exist
 RUN mkdir -p ${RENV_PATHS_CACHE} ${PIP_CACHE_DIR} /root/.virtualenvs
 
