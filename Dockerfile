@@ -24,7 +24,7 @@ RUN --mount=type=cache,target=/var/cache/apt \
 
 ENV JAVA_HOME=/usr/lib/jvm/default-java/
 ENV PATH="${JAVA_HOME}/bin:${PATH}"
-ENV LD_LIBRARY_PATH="${JAVA_HOME}/lib/server:${LD_LIBRARY_PATH}"
+ENV LD_LIBRARY_PATH="${JAVA_HOME}/lib/server"
 
 # Verify Java install
 RUN java -version && javac -version
