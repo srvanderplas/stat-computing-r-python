@@ -78,4 +78,4 @@ RUN mkdir -p ${RENV_PATHS_CACHE} ${PIP_CACHE_DIR} /root/.virtualenvs
 WORKDIR /project
 
 # Default command: render and publish
-CMD ["/bin/sh","-c","quarto render && quarto publish"]
+CMD ["/bin/sh","-c","quarto render && quarto publish --no-render --no-browser --no-prompt"]
