@@ -58,22 +58,22 @@ ENV VENV_PATH=/opt/venv
 RUN python3 -m venv $VENV_PATH
 
 # Make sure pip is up to date and install common build tools
+ENV PATH="$VENV_PATH/bin:$PATH"
 RUN $VENV_PATH/bin/pip install --upgrade pip setuptools wheel
 
 # Register venv globally for R/reticulate and Quarto
-ENV PATH="$VENV_PATH/bin:$PATH"
 ENV RETICULATE_PYTHON=$VENV_PATH/bin/python
 ENV QUARTO_PYTHON=$VENV_PATH/bin/python
 
-# Pre-install Jupyter kernel so Quarto sees it, and populate with dependencies
-RUN $VENV_PATH/bin/pip install ipykernel && \
-    $VENV_PATH/bin/python -m ipykernel install --prefix=/usr/local --name=venv --display-name "Python (venv)" \
-    $VENV_PATH/bin/pip install -r /project/requirements.txt
-
+# If your file lives at project root:
+COPY requirements.txt /tmp/requirements.txt
+# Tools in the venv
+RUN $VENV_PATH/bin/pip install --upgrade pip setuptools wheel ipykernel && \
+    $VENV_PATH/bin/python -m ipykernel install --prefix=/usr/local --name=venv --display-name "Python (venv)" && \
+    $VENV_PATH/bin/pip install -r /tmp/requirements.txt
 
 # Ensure cache dirs exist
 RUN mkdir -p ${RENV_PATHS_CACHE} ${PIP_CACHE_DIR} /root/.virtualenvs
-
 
 WORKDIR /project
 
