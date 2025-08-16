@@ -79,9 +79,9 @@ In base R (no extra packages), you can read fixed-width files in using `read.fwf
 
 ```{r}
 #| label: read-fwf-colbreaks
-#| error: !expr T
-#| eval: !expr '-1'
-#| echo: !expr '-2'
+#| error: true
+#| eval: -1
+#| echo: -2
 url <- "https://www.mesonet.org/index.php/dataMdfMts/dataController/getFile/202206070000/mdf/TEXT/"
 url <- "../data/mesodata.txt"
 data <- read.fwf(url, 
@@ -143,7 +143,7 @@ You can also write fixed-width files if you *really* want to:
 
 ```{r}
 #| label: gdata-demo
-#| message: !expr F
+#| message: false
 if (!"gdata" %in% installed.packages()) install.packages("gdata")
 library(gdata)
 write.fwf(mtcars, file = tempfile())
@@ -155,7 +155,7 @@ The `readr` package creates data-frame like objects called tibbles (a souped-up 
 
 ```{r}
 #| label: readr-demo
-#| message: !expr F
+#| message: false
 library(readr) # Better data importing in R
 
 read_table(url, skip = 2) # Gosh, that was much easier!
@@ -189,7 +189,7 @@ Delimited text files are files where fields are separated by a specific characte
 
 ```{r}
 #| label: delimited-text-files-r
-#| collapse: !expr F
+#| collapse: false
 url <- "https://raw.githubusercontent.com/srvanderplas/datasets/main/clean/pokemon_gen_1-9.csv"
 
 pokemon_info <- read.csv(url, header = T, stringsAsFactors = F)
@@ -204,7 +204,7 @@ The most common delimited text format is CSV: comma-separated value.
 
 ```{r}
 #| label: delimited-text-files-r3
-#| collapse: !expr F
+#| collapse: false
 library(readr)
 url <- "https://raw.githubusercontent.com/srvanderplas/datasets/main/clean/pokemon_gen_1-9.csv"
 pokemon_info <- read_csv(url)
@@ -218,7 +218,7 @@ There is a family of `read_xxx` functions in `pandas` including functions to rea
 
 ```{python}
 #| label: delimited-text-files-py
-#| collapse: !expr F
+#| collapse: false
 import pandas as pd
 
 url <- "https://raw.githubusercontent.com/srvanderplas/datasets/main/clean/pokemon_gen_1-9.csv"
@@ -317,8 +317,8 @@ Because these data sets are comparatively large, they are available as compresse
 
 ```{r}
 #| label: rebrickable-lego-data-once
-#| eval: !expr T
-#| include: !expr F
+#| eval: true
+#| include: false
 # Download the data if it doesn't exist, as it's used later
 library(readr)
 if (!file.exists("../data/lego_sets.csv")) {
@@ -337,7 +337,7 @@ The `readr` package and `pandas` can handle .csv.gz files with no problems. Try 
 
 ```{r}
 #| label: rebrickable-lego-data
-#| eval: !expr T
+#| eval: true
 library(readr)
 legosets <- read_csv("https://cdn.rebrickable.com/media/downloads/sets.csv.gz")
 write_csv(legosets, "../data/lego_sets.csv")
@@ -347,7 +347,7 @@ write_csv(legosets, "../data/lego_sets.csv")
 #### Python Solution {-}
 ```{python}
 #| label: rebrickable-lego-data-py
-#| eval: !expr F
+#| eval: false
 import pandas as pd
 
 legosets = pd.read_csv("https://cdn.rebrickable.com/media/downloads/sets.csv.gz")
@@ -374,7 +374,7 @@ It is usually helpful to open the spreadsheet up in a graphical program first to
 
 ```{r}
 #| label: spreadsheet-readin
-#| warning: !expr F
+#| warning: false
 if (!"readxl" %in% installed.packages()) install.packages("readxl")
 library(readxl)
 
@@ -468,7 +468,7 @@ One simple hack-ish way to read google sheets in Python (so long as the sheet is
 
 ```{python}
 #| label: google-sheets-py2
-#| eval: !expr T
+#| eval: true
 import pandas as pd
 
 sheet_id = "1wZhPLMCHKJvwOkP4juclhjFgqIY8fQFMemwKL2c64vk"
@@ -486,7 +486,7 @@ This method is described in @schaferReadDataGoogle2020 for Python, but I have ad
 
 ```{R}
 #| label: google-sheets-r2
-#| eval: !expr T
+#| eval: true
 library(readr)
 sheet_id = "1wZhPLMCHKJvwOkP4juclhjFgqIY8fQFMemwKL2c64vk"
 sheet_name = "Items"
@@ -506,7 +506,7 @@ Copy this code and run it on your computer to read in a sheet from google drive 
 
 ```{r}
 #| label: google-sheets-r
-#| eval: !expr F
+#| eval: false
 library(googlesheets4)
 gs4_auth(scopes = "https://www.googleapis.com/auth/drive.readonly") # Read-only permissions
 data_is_plural <- read_sheet("https://docs.google.com/spreadsheets/d/1wZhPLMCHKJvwOkP4juclhjFgqIY8fQFMemwKL2c64vk/edit#gid=0")
@@ -521,7 +521,7 @@ Then, you will need to obtain a client token JSON file following [these instruct
 
 ```{python}
 #| label: google-sheets-py
-#| eval: !expr F
+#| eval: false
 import gspread as gs
 import pandas as pd
 ```
