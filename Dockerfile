@@ -66,7 +66,7 @@ ENV RETICULATE_PYTHON=$VENV_PATH/bin/python
 ENV QUARTO_PYTHON=$VENV_PATH/bin/python
 
 # If your file lives at project root:
-COPY requirements.txt /tmp/requirements.txt
+COPY setup/requirements.txt /tmp/requirements.txt
 # Tools in the venv
 RUN $VENV_PATH/bin/pip install --upgrade pip setuptools wheel ipykernel && \
     $VENV_PATH/bin/python -m ipykernel install --prefix=/usr/local --name=venv --display-name "Python (venv)" && \
