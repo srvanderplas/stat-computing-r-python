@@ -6,7 +6,7 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2025-07-28">
+<meta name="dcterms.date" content="2025-08-16">
 
 <title>Part III: Data Wrangling – Statistical Computing using R and Python</title>
 <style>
@@ -52,7 +52,7 @@ div.csl-indent {
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
 <link href="../part-wrangling/01-data-input.html" rel="next">
-<link href="../part-gen-prog/99-extra.html" rel="prev">
+<link href="../part-gen-prog/07-prog-data.html" rel="prev">
 <link href="../build_deps/favicon.ico" rel="icon">
 <script src="../site_libs/quarto-html/quarto.js"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
@@ -63,8 +63,8 @@ div.csl-indent {
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-dark-d3043699f4f525e226433170f63674df.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-f72f9b35904d2ea5476463089e7eb91e.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="../site_libs/bootstrap/bootstrap-dark-911893017f91c846c1ac6958f01790a6.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../site_libs/bootstrap/bootstrap-3aa69a1339168624f7655e842e11f63c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dark-f38919fb4197cc32248bc009c03d5db8.min.css" rel="prefetch" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -116,6 +116,45 @@ div.callout-demo.callout-style-default .callout-icon::before, div.callout-demo.c
   content: '\f12e' !important;
   background-image: none;
 }
+div.callout-diy.callout {
+  border-left-color: #b3e094;
+}
+div.callout-diy.callout-style-default > .callout-header {
+  background-color: rgba(179, 224, 148, 0.13);
+}
+div.callout-diy .callout-toggle::before {  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgb(33, 37, 41)" class="bi bi-chevron-down" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>');}
+div.callout-diy.callout-style-default .callout-icon::before, div.callout-diy.callout-titled .callout-icon::before {
+  font-family: 'Font Awesome 6 Free', FontAwesome;
+  font-style: normal;
+  content: '\f0ad' !important;
+  background-image: none;
+}
+div.callout-setup.callout {
+  border-left-color: #f3e969;
+}
+div.callout-setup.callout-style-default > .callout-header {
+  background-color: rgba(243, 233, 105, 0.13);
+}
+div.callout-setup .callout-toggle::before {  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgb(33, 37, 41)" class="bi bi-chevron-down" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>');}
+div.callout-setup.callout-style-default .callout-icon::before, div.callout-setup.callout-titled .callout-icon::before {
+  font-family: 'Font Awesome 6 Free', FontAwesome;
+  font-style: normal;
+  content: '\f6e3' !important;
+  background-image: none;
+}
+div.callout-advanced.callout {
+  border-left-color: #cbbaf9;
+}
+div.callout-advanced.callout-style-default > .callout-header {
+  background-color: rgba(203, 186, 249, 0.13);
+}
+div.callout-advanced .callout-toggle::before {  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgb(33, 37, 41)" class="bi bi-chevron-down" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>');}
+div.callout-advanced.callout-style-default .callout-icon::before, div.callout-advanced.callout-titled .callout-icon::before {
+  font-family: 'Font Awesome 6 Free', FontAwesome;
+  font-style: normal;
+  content: '\f5dc' !important;
+  background-image: none;
+}
 div.callout-example.callout {
   border-left-color: #f39c12;
 }
@@ -140,32 +179,6 @@ div.callout-learnmore.callout-style-default .callout-icon::before, div.callout-l
   font-family: 'Font Awesome 6 Free', FontAwesome;
   font-style: normal;
   content: '\f02d' !important;
-  background-image: none;
-}
-div.callout-advanced.callout {
-  border-left-color: #cbbaf9;
-}
-div.callout-advanced.callout-style-default > .callout-header {
-  background-color: rgba(203, 186, 249, 0.13);
-}
-div.callout-advanced .callout-toggle::before {  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgb(33, 37, 41)" class="bi bi-chevron-down" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>');}
-div.callout-advanced.callout-style-default .callout-icon::before, div.callout-advanced.callout-titled .callout-icon::before {
-  font-family: 'Font Awesome 6 Free', FontAwesome;
-  font-style: normal;
-  content: '\f5dc' !important;
-  background-image: none;
-}
-div.callout-setup.callout {
-  border-left-color: #f3e969;
-}
-div.callout-setup.callout-style-default > .callout-header {
-  background-color: rgba(243, 233, 105, 0.13);
-}
-div.callout-setup .callout-toggle::before {  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgb(33, 37, 41)" class="bi bi-chevron-down" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>');}
-div.callout-setup.callout-style-default .callout-icon::before, div.callout-setup.callout-titled .callout-icon::before {
-  font-family: 'Font Awesome 6 Free', FontAwesome;
-  font-style: normal;
-  content: '\f6e3' !important;
   background-image: none;
 }
 </style>
@@ -253,7 +266,7 @@ div.callout-setup.callout-style-default .callout-icon::before, div.callout-setup
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../part-tools/04-scripts-notebooks.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Scripts and Notebooks</span></span></a>
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Scripts and Notebooks and Terminals</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
@@ -339,12 +352,6 @@ div.callout-setup.callout-style-default .callout-icon::before, div.callout-setup
  <span class="menu-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Programming With Data</span></span></a>
   </div>
 </li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../part-gen-prog/99-extra.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Other Helpful Programming Resources</span></span></a>
-  </div>
-</li>
       </ul>
   </li>
         <li class="sidebar-item sidebar-item-section">
@@ -359,79 +366,73 @@ div.callout-setup.callout-style-default .callout-icon::before, div.callout-setup
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../part-wrangling/01-data-input.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Data Input</span></span></a>
+ <span class="menu-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Data Input</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../part-wrangling/02-basic-data-vis.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Data Visualization Basics</span></span></a>
+ <span class="menu-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Data Visualization Basics</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../part-wrangling/02a-eda.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">Exploratory Data Analysis</span></span></a>
+ <span class="menu-text"><span class="chapter-number">19</span>&nbsp; <span class="chapter-title">Exploratory Data Analysis</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../part-wrangling/02b-graphics.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Data Visualization</span></span></a>
+ <span class="menu-text"><span class="chapter-number">20</span>&nbsp; <span class="chapter-title">A Grammar of Graphics</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../part-wrangling/02c-good-graphics.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Creating Good Charts</span></span></a>
+ <span class="menu-text"><span class="chapter-number">21</span>&nbsp; <span class="chapter-title">Creating Good Charts</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../part-wrangling/03-data-cleaning.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Data Cleaning</span></span></a>
+ <span class="menu-text"><span class="chapter-number">22</span>&nbsp; <span class="chapter-title">Data Cleaning</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../part-wrangling/04-strings.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Working with Strings</span></span></a>
+ <span class="menu-text"><span class="chapter-number">23</span>&nbsp; <span class="chapter-title">Working with Strings</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../part-wrangling/05-data-reshape.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Reshaping Data</span></span></a>
+ <span class="menu-text"><span class="chapter-number">24</span>&nbsp; <span class="chapter-title">Reshaping Data</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../part-wrangling/05b-normal-forms.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Normal Forms of Data</span></span></a>
+ <span class="menu-text"><span class="chapter-number">25</span>&nbsp; <span class="chapter-title">Normal Forms of Data</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../part-wrangling/06-data-join.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Joining Data</span></span></a>
+ <span class="menu-text"><span class="chapter-number">26</span>&nbsp; <span class="chapter-title">Joining Data</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../part-wrangling/07-datetime.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Dates and Times</span></span></a>
+ <span class="menu-text"><span class="chapter-number">27</span>&nbsp; <span class="chapter-title">Dates and Times</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../part-wrangling/08-functional-prog.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Functional Programming</span></span></a>
-  </div>
-</li>
-          <li class="sidebar-item">
-  <div class="sidebar-item-container"> 
-  <a href="../part-wrangling/09-spatial-formats.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">30</span>&nbsp; <span class="chapter-title">Spatial data</span></span></a>
+ <span class="menu-text"><span class="chapter-number">28</span>&nbsp; <span class="chapter-title">Functional Programming</span></span></a>
   </div>
 </li>
       </ul>
@@ -448,73 +449,73 @@ div.callout-setup.callout-style-default .callout-icon::before, div.callout-setup
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../part-advanced-topics/01-simulation.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">31</span>&nbsp; <span class="chapter-title">Simulation and Reproducibility</span></span></a>
+ <span class="menu-text"><span class="chapter-number">29</span>&nbsp; <span class="chapter-title">Simulation</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../part-advanced-topics/02-data-doc.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">32</span>&nbsp; <span class="chapter-title">Data Documentation: Codebooks, Reproducibility, and more</span></span></a>
+ <span class="menu-text"><span class="chapter-number">30</span>&nbsp; <span class="chapter-title">Data Documentation</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../part-advanced-topics/03-web-scraping.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">33</span>&nbsp; <span class="chapter-title">Web Scraping</span></span></a>
+ <span class="menu-text"><span class="chapter-number">31</span>&nbsp; <span class="chapter-title">Web Scraping</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../part-advanced-topics/04-xml-json-list-processing.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">34</span>&nbsp; <span class="chapter-title">Record-based Data and List Processing Strategies</span></span></a>
+ <span class="menu-text"><span class="chapter-number">32</span>&nbsp; <span class="chapter-title">Record-based Data and List Processing Strategies</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../part-advanced-topics/05-APIs.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">35</span>&nbsp; <span class="chapter-title">Application Programming Interfaces</span></span></a>
+ <span class="menu-text"><span class="chapter-number">33</span>&nbsp; <span class="chapter-title">Application Programming Interfaces</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../part-advanced-topics/06-pdf-tools.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">36</span>&nbsp; <span class="chapter-title">Working with PDFs</span></span></a>
+ <span class="menu-text"><span class="chapter-number">34</span>&nbsp; <span class="chapter-title">Working with PDFs</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../part-advanced-topics/07-intro-interactive-graphics.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">37</span>&nbsp; <span class="chapter-title">Interactive Graphics</span></span></a>
+ <span class="menu-text"><span class="chapter-number">35</span>&nbsp; <span class="chapter-title">Interactive Graphics</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../part-advanced-topics/08-javascript-graphics.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">38</span>&nbsp; <span class="chapter-title">Interactive Graphics</span></span></a>
+ <span class="menu-text"><span class="chapter-number">36</span>&nbsp; <span class="chapter-title">Interactive Graphics</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../part-advanced-topics/09-big-data.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">39</span>&nbsp; <span class="chapter-title">“Big” Data</span></span></a>
+ <span class="menu-text"><span class="chapter-number">37</span>&nbsp; <span class="chapter-title">“Big” Data</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../part-advanced-topics/10-databases.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">40</span>&nbsp; <span class="chapter-title">Databases</span></span></a>
+ <span class="menu-text"><span class="chapter-number">38</span>&nbsp; <span class="chapter-title">Databases</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../part-advanced-topics/11-arrow-parquet.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">41</span>&nbsp; <span class="chapter-title">Efficient Data Access: Arrow and Parquet Files</span></span></a>
+ <span class="menu-text"><span class="chapter-number">39</span>&nbsp; <span class="chapter-title">Efficient Data Access: Arrow and Parquet Files</span></span></a>
   </div>
 </li>
           <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../part-advanced-topics/12-memory-handling.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">42</span>&nbsp; <span class="chapter-title">Memory and Computational Efficiency</span></span></a>
+ <span class="menu-text"><span class="chapter-number">40</span>&nbsp; <span class="chapter-title">Memory and Computational Efficiency</span></span></a>
   </div>
 </li>
       </ul>
@@ -522,7 +523,7 @@ div.callout-setup.callout-style-default .callout-icon::before, div.callout-setup
         <li class="sidebar-item">
   <div class="sidebar-item-container"> 
   <a href="../graveyard.html" class="sidebar-item-text sidebar-link">
- <span class="menu-text"><span class="chapter-number">43</span>&nbsp; <span class="chapter-title">Other Topics</span></span></a>
+ <span class="menu-text"><span class="chapter-number">41</span>&nbsp; <span class="chapter-title">Other Topics</span></span></a>
   </div>
 </li>
     </ul>
@@ -555,7 +556,7 @@ div.callout-setup.callout-style-default .callout-icon::before, div.callout-setup
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">July 28, 2025</p>
+      <p class="date">August 16, 2025</p>
     </div>
   </div>
   
@@ -568,21 +569,21 @@ div.callout-setup.callout-style-default .callout-icon::before, div.callout-setup
 
 
 <p>This part of the textbook covers topics related to working with data. Every data set is messy in its own way <span class="citation" data-cites="tidy-data"><a href="#ref-tidy-data" role="doc-biblioref">[1]</a></span>, and this section is focused on providing you with some of the tools to deal with the most common types of messy data.</p>
-<p><a href="01-data-input.html" class="quarto-xref"><span>18&nbsp; Data Input</span></a> covers how to read in data from many common formats, such as spreadsheets, web tables, and databases.</p>
+<p><a href="01-data-input.html" class="quarto-xref"><span>17&nbsp; Data Input</span></a> covers how to read in data from many common formats, such as spreadsheets, web tables, and databases.</p>
 <p>Then, we start to talk about graphics.</p>
-<p><a href="02-basic-data-vis.html" class="quarto-xref"><span>19&nbsp; Data Visualization Basics</span></a> provides a brief primer on how to create different charts and graphics in R and python for use in other sections.</p>
-<p><a href="02a-eda.html" class="quarto-xref"><span>20&nbsp; Exploratory Data Analysis</span></a> talks about how to do exploratory data analysis using graphs, tables, and summary statistics.</p>
-<p><a href="02b-graphics.html" class="quarto-xref"><span>21&nbsp; Data Visualization</span></a> covers the in-depth about how to create different types of charts using R and python.</p>
-<p><a href="02c-good-graphics.html" class="quarto-xref"><span>22&nbsp; Creating Good Charts</span></a> discusses how to create <em>good</em> graphics - graphics that are easy to read, account for human perceptual quirks, and look nice.</p>
+<p><a href="02-basic-data-vis.html" class="quarto-xref"><span>18&nbsp; Data Visualization Basics</span></a> provides a brief primer on how to create different charts and graphics in R and python for use in other sections.</p>
+<p><a href="02a-eda.html" class="quarto-xref"><span>19&nbsp; Exploratory Data Analysis</span></a> talks about how to do exploratory data analysis using graphs, tables, and summary statistics.</p>
+<p><a href="02b-graphics.html" class="quarto-xref"><span>20&nbsp; A Grammar of Graphics</span></a> covers the in-depth about how to create different types of charts using R and python.</p>
+<p><a href="02c-good-graphics.html" class="quarto-xref"><span>21&nbsp; Creating Good Charts</span></a> discusses how to create <em>good</em> graphics - graphics that are easy to read, account for human perceptual quirks, and look nice.</p>
 <p>In the next set of sections, we talk about how to rearrange, summarize, clean, and manipulate data.</p>
-<p><a href="03-data-cleaning.html" class="quarto-xref"><span>23&nbsp; Data Cleaning</span></a> covers verbs for transforming data - creating new variables, modifying existing variables, selecting specific rows and/or columns, and more.</p>
-<p><a href="04-strings.html" class="quarto-xref"><span>24&nbsp; Working with Strings</span></a> discusses string manipulations. Text data is some of the messiest data out there, and this chapter will give you some tools to help make text and character data more tidy.</p>
-<p><a href="05-data-reshape.html" class="quarto-xref"><span>25&nbsp; Reshaping Data</span></a> discusses how to transform data from wide human-friendly formats to long comptuer-friendly formats for analysis and processing.</p>
-<p><a href="06-data-join.html" class="quarto-xref"><span>27&nbsp; Joining Data</span></a> discusses how to join data sets together using common variables.</p>
-<p>Finally, we talk about a few specific types of data: dates and times, lists, and spatial data.</p>
-<p><a href="07-datetime.html" class="quarto-xref"><span>28&nbsp; Dates and Times</span></a> discusses how to work with dates and times using R and Python.</p>
-<p><a href="08-functional-prog.html" class="quarto-xref"><span>29&nbsp; Functional Programming</span></a> discusses how to work with data stored in nested lists efficiently.</p>
-<p><a href="09-spatial-formats.html" class="quarto-xref"><span>30&nbsp; Spatial data</span></a> covers working with spatial data formats: drawing maps, working with spatial regions, and more. We will focus exclusively on the visualization and data wrangling part, leaving the modeling of spatial data for a different time.</p>
+<p><a href="03-data-cleaning.html" class="quarto-xref"><span>22&nbsp; Data Cleaning</span></a> covers verbs for transforming data - creating new variables, modifying existing variables, selecting specific rows and/or columns, and more.</p>
+<p><a href="04-strings.html" class="quarto-xref"><span>23&nbsp; Working with Strings</span></a> discusses string manipulations. Text data is some of the messiest data out there, and this chapter will give you some tools to help make text and character data more tidy.</p>
+<p><a href="05-data-reshape.html" class="quarto-xref"><span>24&nbsp; Reshaping Data</span></a> discusses how to transform data from wide human-friendly formats to long comptuer-friendly formats for analysis and processing.</p>
+<p><a href="06-data-join.html" class="quarto-xref"><span>26&nbsp; Joining Data</span></a> discusses how to join data sets together using common variables.</p>
+<p>Finally, we talk about a few specific types of data: dates and times and lists.</p>
+<p><a href="07-datetime.html" class="quarto-xref"><span>27&nbsp; Dates and Times</span></a> discusses how to work with dates and times using R and Python.</p>
+<p><a href="08-functional-prog.html" class="quarto-xref"><span>28&nbsp; Functional Programming</span></a> discusses how to work with data stored in nested lists efficiently, though additional information is available in <a href="../part-advanced-topics/04-xml-json-list-processing.html" class="quarto-xref"><span>32&nbsp; Record-based Data and List Processing Strategies</span></a>, where these strategies are applied to record-based data.</p>
+<!-- @sec-spatial covers working with spatial data formats: drawing maps, working with spatial regions, and more. We will focus exclusively on the visualization and data wrangling part, leaving the modeling of spatial data for a different time.  -->
 <section id="sec-wrangling-refs" class="level2">
 <h2 class="anchored" data-anchor-id="sec-wrangling-refs">References</h2>
 
@@ -1203,13 +1204,13 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <input type="hidden" id="giscus-alt-theme" value="dark">
 <nav class="page-navigation column-body">
   <div class="nav-page nav-page-previous">
-      <a href="../part-gen-prog/99-extra.html" class="pagination-link" aria-label="Other Helpful Programming Resources">
-        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Other Helpful Programming Resources</span></span>
+      <a href="../part-gen-prog/07-prog-data.html" class="pagination-link" aria-label="Programming With Data">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">16</span>&nbsp; <span class="chapter-title">Programming With Data</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
       <a href="../part-wrangling/01-data-input.html" class="pagination-link" aria-label="Data Input">
-        <span class="nav-page-text"><span class="chapter-number">18</span>&nbsp; <span class="chapter-title">Data Input</span></span> <i class="bi bi-arrow-right-short"></i>
+        <span class="nav-page-text"><span class="chapter-number">17</span>&nbsp; <span class="chapter-title">Data Input</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
 </nav>
