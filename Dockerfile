@@ -20,8 +20,7 @@ RUN --mount=type=cache,target=/var/cache/apt \
       curl gnupg ca-certificates \
     && rm -rf /var/lib/apt/lists/* \
     && install2.r --error --deps TRUE \
-      RJDBC odbc tinytex quarto devtools rmarkdown rstudioapi reticulate yaml digest \\
-    && Rscript -e "tinytex::install_tinytex(force=T)"
+      RJDBC odbc tinytex quarto devtools rmarkdown rstudioapi reticulate yaml digest
 
 ENV JAVA_HOME=/usr/lib/jvm/default-java/
 ENV PATH="${JAVA_HOME}/bin:${PATH}"
@@ -44,7 +43,10 @@ RUN curl -fsSL https://quarto.org/download/latest/quarto-linux-amd64.deb -o /tmp
     apt-get update && apt-get install -y /tmp/quarto.deb && rm -f /tmp/quarto.deb && \
     rm -rf /var/lib/apt/lists/*
 
-# --- Layer 4: Check cache dirs
+
+# --- Layer 4: TinyTeX
+RUN Rscript -e "tinytex::install_tinytex(force=T)"
+
 # Ensure cache dirs exist
 RUN mkdir -p ${RENV_PATHS_CACHE} ${PIP_CACHE_DIR} /root/.virtualenvs
 
