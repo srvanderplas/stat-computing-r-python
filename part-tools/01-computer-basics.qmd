@@ -26,7 +26,7 @@ The components that make up the physical computer are the **hardware**.
 This 3-minute video is focused on desktops, but the same components (with the exception of the optical drive) are commonly found in cell phones, smart watches, and laptops.
 
 ::: youtube-video-container
-{{< video https://www.youtube.com/embed/Rdm8E59L8Og >}}
+{{< video https://www.youtube.com./embed/Rdm8E59L8Og >}}
 :::
 
 The important distinction for hardware is between Random Access Memoroy (RAM, or 'memory') and disk storage (hard drives).
@@ -99,14 +99,14 @@ Evidently, there has been a bit of generational shift as computers have evolved:
 [Dan Robitzski provided an interesting discussion of the problem](https://futurism.com/the-byte/gen-z-kids-file-systems), making the argument that with modern search capabilities, most people use their computers as a laundry hamper instead of as a nice, organized closet and dresser (or file cabinet) [@robitzskiGenKidsApparently2021].
 
 ::: youtube-video-container
-{{< video https://www.youtube.com/embed/KN8YgJnShPM >}}
+{{< video https://www.youtube.com./embed/KN8YgJnShPM >}}
 :::
 
 Regardless of how you tend to organize your personal files, it is probably helpful to understand the basics of what is meant by a computer **file system** -- a way to organize data stored on a hard drive.
 Since data is always stored as 0's and 1's, it's important to have some way to figure out what type of data is stored in a specific location, and how to interpret it.
 
 ::: youtube-video-container
-{{< video https://www.youtube.com/embed/BV0-EPUYuQc >}}
+{{< video https://www.youtube.com./embed/BV0-EPUYuQc >}}
 :::
 
 ### Local and Network File Systems
@@ -128,17 +128,13 @@ Instead, you will need to keep all of the files you need for a project together 
 Some operating systems (Windows, Mac OS) prefer to save files in network storage services that may (or may not) be also stored on your physical hard drive.
 Over time, it has become harder to ensure that you are working on a local machine, but working "in the cloud" can cause odd errors when programming and in particular when working with version control systems[^01-computer-basics-5]
 
-::: callout-caution
-You want to save your files in this class to your **physical hard drive**.
-This will save you a lot of troubleshooting time.
-:::
-
-[^01-computer-basics-5]: To disable OneDrive sync for certain windows folders, use [this guide](https://support.microsoft.com/en-us/office/files-save-to-onedrive-by-default-in-windows-10-33da0077-770c-4bda-b61e-8c8e8ca70ac7). On Mac, see ["Turn off Desktop and Documents"](https://support.apple.com/en-us/109344) to stop iCloud sync of your Desktop and Documents folders (you can still manually copy things into iCloud for backup). 
+[^01-computer-basics-5]: To disable OneDrive sync for certain windows folders, use [this guide](https://support.microsoft.com/en-us/office/files-save-to-onedrive-by-default-in-windows-10-33da0077-770c-4bda-b61e-8c8e8ca70ac7). 
+On Mac, see ["Turn off Desktop and Documents"](https://support.apple.com/en-us/109344) to stop iCloud sync of your Desktop and Documents folders (you can still manually copy things into iCloud for backup). 
 
 
 ### Allowed File Names
 
-Different operating systems have different rules for how file names are handled within the file system.
+Different operating systems (and file system formats) have different rules for how file names are handled within the file system.
 
 |   | Windows <i class="fa-brands fa-windows"></i> | Mac OSX <i class="fa-brands fa-apple"></i> | Linux <i class="fa-brands fa-linux"></i> |
 |--------------|-------------------|--------------|--------------------------|
@@ -188,35 +184,92 @@ The user should reference `my-pup.png` instead of `My-pup.PNG`. This file name w
 ### File Paths
 
 ::: youtube-video-container
-{{< video https://www.youtube.com/embed/BMT3JUWmqYY >}}
+{{< video https://www.youtube.com./embed/BMT3JUWmqYY >}}
 :::
 
 When you write a program, you may have to reference external files - data stored in `data.csv`, a diagram or picture, or a link to additional documentation.
 
-To handle this need, most programmers use a shortcut: they create a project-specific folder, and then include the files that are required for that project within the folder.
-@picardiProjectOrganization2024 discusses several common layouts used for research projects, but using RStudio tends to ensure a slightly more structured approach to projects.
+To reference a file, you have to tell the computer where to look -- that is, you have to give it a **file path**. 
+File paths come in two basic types: 
+
+- global file path: Starts at the file system location (e.g. `C:\` or `/home` or `/Users`) and describes how to navigate to the file. 
+
+- local file path: Starts at the program's current location (the **working directory**) and navigates to the file from that point. 
+
+When you work on a project that may need to exist on some other machine, it's important to use **local** file paths -- the global path will likely not be the same, but you can usually set the local project-specific structure up to be the same across machines. 
+
+In fact, there's a very common shortcut that programmers take -- they set up a project-specific folder that is self contained. 
+That is, all of the data and code necessary for that project is provided within the folder. 
+Then, the code within the folder can use local paths and will work when the project folder is copied to a new machine. 
+
+To help with organization, it's not uncommon to use a project structure like this:
 
 ```
-- Project-Name/
-    - data/
-        - `descriptive-data-name.csv`
-    - analysis.R
+- main-folder
+    - raw-data
+        - design.csv
+        - observations.csv
+        - other-vars.csv
+    - processed-data
+    - code
+        - 01-read-clean.xxx
+        - 02-analysis.xxx
+        - 03-simulation.xxx
     - writeup.qmd
-    - project.Rproj
+    - README
+    - project-file.xxx
 ```
 
-The structure above indicates a folder (`Project-Name`) and a subfolder (`data`). 
-The `project.Rproj` file contains RStudio settings for the project and also tells RStudio where to look for associated code and data when the project is opened.
-At the most basic level, the project folder might contain an analysis script (`analysis.R`) and a write-up of the project (`writeup.qmd`). 
+The README file contains a basic overview of the project's contents. 
+Files are added to the `processed-data` subfolder after code is run. 
+Files in `raw-data` are set to read-only to prevent the data from being accidentally overwritten. 
+A `project-file.xxx` file tells the program you're using (RStudio, VSCode, Positron, etc) what the specific settings are, and also that this directory should be treated as the **project root** -- that is, local file paths will start from this directory. 
+When working on code, we will typically assume that the **working directory** (where the program looks for files) is `main-folder`.
 
-The "base folder" , `Project-Name`, is known as your **working directory** - the place your program thinks of as home.
-When working within a project, you can use **local** or **relative paths** to reference files -- for instance, you can read in your data with `read.csv("data/descriptive-data-name.csv")`
+@picardiProjectOrganization2024 discusses several common layouts used for research projects.
 
-XXX stopped here 
+### Using Paths to Navigate
+
+File paths can be a bit tricky to construct, but there are a couple of shorthands that help a lot:
+
+- `.` represents the working directory
+- `..` is the directory that is above the working directory in the file system.
+- You enter a folder with `/` (Linux, Mac) or `\` (Windows)    
+(in R, `\` is an escape character. To represent a literal `\`, you have to actually type `\\` is the directory separator)
+
+So, the path `./dir1/dir2/my-project.Rproj` assumes the following file structure:
+
+```
+. - current directory
+    - dir1 
+        - dir2 
+            - my-project.Rproj
+```
+
+It's a bit more challenging to think about paths that use the `..` shorthand. 
+Let's think about a path like `../../../other-dir/other-data.csv`:
+
+```
+- my-dir
+    - dir1
+        - dir2
+            -my-project.Rproj
+- other-dir
+    - other-data.csv
+```
+
+::: {layout-ncol=2}
+
+![A local path from `my-dir` to `my-project.Rproj` needs to go through dir1 and dir2. ](../images/tools/file-path-demo-1.png){fig-alt="A directory structure with a folder 'example' containing my-dir and other-dir. my-dir contains dir1, which contains dir2, which contains my-project.Rproj. To navigate from my-dir to my-project.Rproj, we must go into dir1 and then go into dir2."}
+
+![A local path from `my-project.Rproj` to `other-data.csv` requires using the ../ to go to the parent folder. ](../images/tools/file-path-demo-2.png){fig-alt="A directory structure with a folder 'example' containing my-dir and other-dir. my-dir contains dir1, which contains dir2, which contains my-project.Rproj. To navigate from within dir2 to a file in other-dir, we must go up 3 directories and look in other-dir to find other-data.csv."}
+
+:::
+
 ## System Paths
 
 When you install software, it is saved in a specific location on your computer, like C:/Program Files/ on {{< fa brands windows >}}, /Applications/ on {{< fa brands apple >}}, or /usr/local/bin/ on {{< fa brands linux >}}.
-For the most part, you don't need to keep track of where programs are installed, because the install process (usually) automatically creates icons on your desktop or in your start menu, and you find your programs there.
+For the most part, you don't need to keep track of where programs are installed, because the install process (usually) automatically creates icons on your desktop or in your start menu that point to the right location.
 
 Unfortunately, that isn't sufficient when you're programming, because you may need to know where a program is in order to reference that program -- for instance, if you need to pop open a browser window as part of your program, you're (most likely) going to have to tell your computer where that browser executable file lives.
 
@@ -224,7 +277,7 @@ To simplify this process, operating systems have what's known as a "system path"
 You may, at some point, have to edit your system path to add a new folder to it, making the executable files within that folder more easily available.
 
 ::: callout-warning
-#### Error Messages That Indicate Path Problems
+#### Error Messages That Indicate Path Problems {-}
 
 If you run across an error like this:
 
@@ -236,7 +289,7 @@ You might start thinking about whether your system path is set correctly for wha
 :::
 
 :::: demo
-#### Demonstration: Path Errors
+#### Demonstration: Path Errors {-}
 
 Let's see what path errors look like using different tools you might encounter.
 
@@ -274,7 +327,9 @@ If you want to locate where an executable is found (in this example, we'll use `
 Some programs, like RStudio, have places where you can set the locations of common dependencies.
 If you go to Tools \> Global Options \> Git/SVN, you can set the path to git.
 
-### How To Modify System Paths {.unnumbered}
+::: learnmore
+
+### Modifying Your System Path {-}
 
 [How to set system paths (general)](https://superuser.com/a/284361/391106)
 
@@ -284,30 +339,6 @@ Operating-system specific instructions cobbled together from a variety of differ
 -   {{< fa brands apple >}} [On Mac](https://osxdaily.com/2014/08/14/add-new-path-to-path-command-line/)
 -   {{< fa brands linux >}} [On Linux](https://linuxize.com/post/how-to-add-directory-to-path-in-linux/)
 
-<!-- ## Working Directories -->
-
-<!-- When you launch a program, that program starts up with a specific directory as its "location" - the place where it will look for files. Most of the time, we don't think too much about this when using graphical programs, but it's much more important to get this right when programming things ourselves. -->
-
-<!-- In RStudio, you can set your working directory in several ways: -->
-
-<!-- 1. Work in an RStudio Project (File > New Project), which will make it easy to access your project folder, and will set your working directory to the right folder automatically. I've created a project in `/home/susan/Projects/Class/unl-stat850/test-project`     -->
-
-<!-- ![Setup window for RStudio projects](../images/tools/test-project-setup.png) -->
-
-<!-- 2. Use `setwd()` to set your working directory. If I'm not working in the RStudio project described above, I can set my working directory to that folder using: -->
-
-<!-- `setwd("/home/susan/Projects/Class/unl-stat850/test-project")` -->
-
-<!-- 3. Use the files tab (bottom right) to navigate to your preferred folder. Then, click More > Set As Working Directory. -->
-
-<!-- In this class, we're going to focus on **reproducibility** - making sure your code runs on any other computer with the right project setup. So with that in mind: -->
-
-<!-- 1. Work in (RStudio) projects^[None of the good practices here are dependent on RStudio, but RStudio projects do make it easier for you to e.g. keep track of where files are living and what your current working directory is. You can do the same thing in a purely python project if you want to, but think of RStudio here as training wheels for those in the class who are not familiar with file paths and reproducibility.] -->
-
-<!-- 2. Store the data for the project in your project folder -->
-
-<!-- 3. Use local paths - if you're in your project folder and trying to reference "data.xls", then you would just use "data.xls" as the path. If your data is in a "code" folder, you would use "code/data.xls" as the path. -->
-
-<!-- This will ensure that your code should work on any other machine, as long as your data is in your project folder and your code uses local file paths. -->
+:::
 
 ## References {#part-tools-01-refs}
