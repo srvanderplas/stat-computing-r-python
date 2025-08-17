@@ -75,6 +75,22 @@ RUN $VENV_PATH/bin/pip install --upgrade pip setuptools wheel ipykernel && \
 # Ensure cache dirs exist
 RUN mkdir -p ${RENV_PATHS_CACHE} ${PIP_CACHE_DIR} /root/.virtualenvs
 
+# Copy R and Python dependency definitions first
+COPY renv.lock /tmp/renv.lock
+COPY .Rprofile /tmp/.Rprofile
+COPY setup/requirements.txt /tmp/requirements.txt
+
+# Install R dependencies via renv
+RUN Rscript -e 'install.packages("renv", repos="https://cloud.r-project.org")' && \
+    Rscript -e 'renv::restore(lockfile = "/tmp/renv.lock", prompt = FALSE)'
+
+# Install Python dependencies into baked-in venv
+RUN /opt/venv/bin/pip install --cache-dir /root/.cache/pip -r /tmp/requirements.txt
+
+# Then copy project files
+COPY . /project
+WORKDIR /project
+
 WORKDIR /project
 
 # Default command: render and publish

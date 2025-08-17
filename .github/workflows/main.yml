@@ -24,28 +24,6 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      # Make sure caches exist even on first run
-      - name: Prepare cache dirs
-        run: |
-          mkdir -p ~/.cache/pip
-          mkdir -p ~/.local/share/renv
-
-      - name: Cache pip (downloads/wheels)
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip-${{ hashFiles('setup/requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-pip-
-
-      - name: Cache renv (global cache, not project folder)
-        uses: actions/cache@v4
-        with:
-          path: ~/.local/share/renv
-          key: ${{ runner.os }}-renv-${{ hashFiles('setup/renv.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-renv-
-
       - name: Build Docker image with layer cache
         uses: docker/build-push-action@v6
         with:
@@ -57,15 +35,10 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      # Run inside the container against the mounted repo
       - name: Render & publish
         run: |
           docker run --rm \
             -v "${{ github.workspace }}:/project" \
-            -v "${HOME}/.local/share/renv:/root/.local/share/renv" \
-            -v "${HOME}/.cache/pip:/root/.cache/pip" \
-            -e RENV_PATHS_CACHE=/root/.local/share/renv \
-            -e PIP_CACHE_DIR=/root/.cache/pip \
             -e NEWSAPI_KEY="${{ secrets.NEWSAPI_KEY }}" \
             -e GH_APP_ID="${{ secrets.GH_APP_ID }}" \
             -e GH_APP_SECRET="${{ secrets.GH_APP_SECRET }}" \
@@ -76,32 +49,6 @@ jobs:
             local/quarto-reticulate:latest \
             /bin/sh -c $'
               set -e
-
-              echo "=== Checking renv cache path ==="
-              ls -lah ${RENV_PATHS_CACHE} || echo "renv cache dir not found"
-
-              echo "=== Checking pip cache path ==="
-              ls -lah ${PIP_CACHE_DIR} || echo "pip cache dir not found"
-
-              echo "=== Package count in renv cache before restore ==="
-              Rscript -e \'cat(length(list.files(Sys.getenv("RENV_PATHS_CACHE"), recursive=TRUE)), "packages in cache\n")\'
-
-              # Restore R packages from project root
-              if [ -f "/project/renv.lock" ]; then
-                echo "=== Restoring R packages with renv ==="
-                Rscript -e \'renv::restore(project = "/project", prompt = FALSE)\'
-              fi
-
-              echo "=== Package count in renv cache after restore ==="
-              Rscript -e \'cat(length(list.files(Sys.getenv("RENV_PATHS_CACHE"), recursive=TRUE)), "packages in cache\n")\'
-
-              # Restore Python packages into baked-in venv
-              if [ -f "/project/requirements.txt" ]; then
-                echo "=== Restoring Python packages into baked-in venv ==="
-                /opt/venv/bin/pip install --cache-dir ${PIP_CACHE_DIR} -r /project/requirements.txt
-              fi
-
-              # Render + publish
               cd /project
               quarto render
               touch docs/.nojekyll
@@ -109,6 +56,4 @@ jobs:
               git add docs
               git commit -m "Publish site to docs/"
               git push
-
-              ' --verbose
-
+            ' --verbose
