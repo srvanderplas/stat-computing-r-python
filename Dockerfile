@@ -1,4 +1,4 @@
-FROM rocker/verse:4.5
+FROM rocker/r-ver:4.5
 
 ENV DEBIAN_FRONTEND=noninteractive
 ENV RENV_PATHS_CACHE=/root/.local/share/renv
@@ -20,7 +20,8 @@ RUN --mount=type=cache,target=/var/cache/apt \
       curl gnupg ca-certificates \
     && rm -rf /var/lib/apt/lists/* \
     && install2.r --error --deps TRUE \
-      RJDBC odbc tinytex quarto devtools rmarkdown rstudioapi reticulate yaml digest
+      RJDBC odbc tinytex quarto devtools rmarkdown rstudioapi reticulate yaml digest \
+    && rm -rf /var/lib/apt/lists/*
 
 ENV JAVA_HOME=/usr/lib/jvm/default-java/
 ENV PATH="${JAVA_HOME}/bin:${PATH}"
@@ -35,7 +36,7 @@ RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \
     chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg && \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" \
       > /etc/apt/sources.list.d/github-cli.list && \
-    apt-get update && apt-get install -y gh && \
+    apt-get update && apt-get install -y gh --no-install-recommends && \
     rm -rf /var/lib/apt/lists/*
 
 # --- Layer 3: Quarto CLI
@@ -48,18 +49,9 @@ RUN curl -fsSL https://quarto.org/download/latest/quarto-linux-amd64.deb -o /tmp
 RUN Rscript -e "tinytex::install_tinytex(force=T)"
 
 # --- Layer 5: python
-# Install Python and venv support
-RUN apt-get update && \
-    apt-get install -y python3 python3-venv python3-pip && \
-    apt-get clean && rm -rf /var/lib/apt/lists/*
-
 # Create a dedicated virtual environment
 ENV VENV_PATH=/opt/venv
 RUN python3 -m venv $VENV_PATH
-
-# Make sure pip is up to date and install common build tools
-ENV PATH="$VENV_PATH/bin:$PATH"
-RUN $VENV_PATH/bin/pip install --upgrade pip setuptools wheel
 
 # Register venv globally for R/reticulate and Quarto
 ENV RETICULATE_PYTHON=$VENV_PATH/bin/python
@@ -67,7 +59,9 @@ ENV QUARTO_PYTHON=$VENV_PATH/bin/python
 
 # If your file lives at project root:
 COPY setup/requirements.txt /tmp/requirements.txt
-# Tools in the venv
+
+# Make sure pip is up to date and install common build tools
+ENV PATH="$VENV_PATH/bin:$PATH"
 RUN $VENV_PATH/bin/pip install --upgrade pip setuptools wheel ipykernel && \
     $VENV_PATH/bin/python -m ipykernel install --prefix=/usr/local --name=venv --display-name "Python (venv)" && \
     $VENV_PATH/bin/pip install -r /tmp/requirements.txt
