@@ -91,10 +91,13 @@ FROM bookbase AS bookr
 
 # Install R packages from renv cache
 # Copy renv lockfile from project root to tmp
+
+ENV RENV_PATH=/opt/renv
+ENV RENV_PATHS_CACHE=/root/.local/share/renv
 COPY renv.lock /tmp/renv.lock
 COPY .Rprofile /tmp/.Rprofile
 # install R packages
-RUN Rscript -e "renv::restore(lockfile = '/tmp/renv.lock', prompt = FALSE)"
+RUN Rscript -e "renv::restore(lockfile = '/tmp/renv.lock', library=Sys.getenv('RENV_PATH'), prompt = FALSE)"
 
 #echo "=== Checking renv cache path ===" \
 #     && ls -lah ${RENV_PATHS_CACHE} || echo "renv cache dir not found" \
@@ -112,14 +115,18 @@ ENV PATH="${JAVA_HOME}/bin:${PATH}"
 ENV LD_LIBRARY_PATH="${JAVA_HOME}/lib/server"
 # Add venv to path
 ENV VENV_PATH=/opt/venv
+ENV PIP_CACHE_DIR=/root/.cache/pip
+ENV RENV_PATH=/opt/renv
+ENV RENV_PATHS_CACHE=/root/.local/share/renv
 # Register venv globally for R/reticulate and Quarto
 ENV PATH="$VENV_PATH/bin:$PATH"
 ENV RETICULATE_PYTHON=$VENV_PATH/bin/python
 ENV QUARTO_PYTHON=$VENV_PATH/bin/python
 
-COPY --from=bookpy $VENV_PATH venv
+COPY --from=bookpy $VENV_PATH $VENV_PATH
 COPY --from=bookpy $PIP_CACHE_DIR $PIP_CACHE_DIR
-COPY --from=bookr $RENV_PATHS_CACHE renv
+COPY --from=bookr $RENV_PATH $RENV_PATH
+COPY --from=bookr $RENV_PATHS_CACHE $RENV_PATHS_CACHE
 
 WORKDIR /project
 

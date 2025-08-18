@@ -64,8 +64,10 @@ jobs:
             -v "${{ github.workspace }}:/project" \
             -v "${HOME}/.local/share/renv:/root/.local/share/renv" \
             -v "${HOME}/.cache/pip:/root/.cache/pip" \
-            -e RENV_PATHS_CACHE=/root/.local/share/renv \
-            -e PIP_CACHE_DIR=/root/.cache/pip \
+            -e RENV_PATHS_CACHE=${HOME}/.local/share/renv \
+            -e RENV_PATH=/opt/renv \
+            -e VENV_PATH=/opt/venv \
+            -e PIP_CACHE_DIR=${HOME}/.cache/pip \
             -e NEWSAPI_KEY="${{ secrets.NEWSAPI_KEY }}" \
             -e GH_APP_ID="${{ secrets.GH_APP_ID }}" \
             -e GH_APP_SECRET="${{ secrets.GH_APP_SECRET }}" \
@@ -83,21 +85,21 @@ jobs:
               ls -lah ${PIP_CACHE_DIR} || echo "pip cache dir not found"
 
               echo "=== Package count in renv cache before restore ==="
-              Rscript -e \'cat(length(list.files(Sys.getenv("RENV_PATHS_CACHE"), recursive=TRUE)), "packages in cache\n")\'
+              Rscript -e \'cat(length(list.files(Sys.getenv("RENV_PATH"), recursive=TRUE)), "packages in cache\n")\'
 
               # Restore R packages from project root
               if [ -f "/project/renv.lock" ]; then
                 echo "=== Restoring R packages with renv ==="
-                Rscript -e \'renv::restore(project = "/project", prompt = FALSE)\'
+                Rscript -e \'renv::restore(project = "/project", lockfile="/project/renv.lock", library = Sys.getenv("RENV_PATH"), prompt = FALSE)\'
               fi
 
               echo "=== Package count in renv cache after restore ==="
-              Rscript -e \'cat(length(list.files(Sys.getenv("RENV_PATHS_CACHE"), recursive=TRUE)), "packages in cache\n")\'
+              Rscript -e \'cat(length(list.files(Sys.getenv("RENV_PATH"), recursive=TRUE)), "packages in cache\n")\'
 
               # Restore Python packages into baked-in venv
               if [ -f "/project/requirements.txt" ]; then
                 echo "=== Restoring Python packages into baked-in venv ==="
-                /opt/venv/bin/pip install --cache-dir ${PIP_CACHE_DIR} -r /project/requirements.txt
+                ${VENV_PATH}/bin/pip install --cache-dir ${PIP_CACHE_DIR} -r /project/requirements.txt
               fi
 
               # Render + publish
