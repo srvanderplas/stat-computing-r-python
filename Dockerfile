@@ -117,11 +117,9 @@ ENV PATH="$VENV_PATH/bin:$PATH"
 ENV RETICULATE_PYTHON=$VENV_PATH/bin/python
 ENV QUARTO_PYTHON=$VENV_PATH/bin/python
 
-COPY --from=bookpy $VENV_PATH $VENV_PATH
+COPY --from=bookpy $VENV_PATH venv
 COPY --from=bookpy $PIP_CACHE_DIR $PIP_CACHE_DIR
-COPY --from=bookr $RENV_PATHS_CACHE $RENV_PATHS_CACHE
-COPY renv.lock /tmp/renv.lock
-
+COPY --from=bookr $RENV_PATHS_CACHE renv
 
 WORKDIR /project
 
