@@ -1,10 +1,10 @@
 # Build with docker buildx build -t book-image .
 
 #### Stage 1: Linux, R, python, LaTeX, Java ####################################
-FROM rocker/tidyverse:4.5 AS bookbase
+FROM rocker/r-ver:4.5 AS bookbase
 
 ENV DEBIAN_FRONTEND=noninteractive
-ENV RENV_PATHS_CACHE=/root/.local/share/renv
+ENV RENV_PATHS_CACHE=/root/.cache/R/renv
 ENV PIP_CACHE_DIR=/root/.cache/pip
 ENV RETICULATE_PYTHON_ENV=venv
 
@@ -13,6 +13,7 @@ RUN --mount=type=cache,target=/var/cache/apt \
     --mount=type=cache,target=/var/lib/apt \
     apt-get update \
     && apt-get install -y --no-install-recommends \
+      libgit2-dev libx11-dev pandoc \
     # python
       python3 python3-pip python3-venv python3-dev \
     # curl/xml
@@ -21,12 +22,14 @@ RUN --mount=type=cache,target=/var/cache/apt \
       default-jdk default-jre r-cran-rjava \
     # odbc
       unixodbc unixodbc-dev \
+    # fonts
+      libharfbuzz-dev libfribidi-dev \
     # s2
       libabsl-dev cmake \
     # tesseract
       libtesseract-dev libpoppler-cpp-dev tesseract-ocr \
     # graphics
-      libleptonica-dev libpng-dev libjpeg-dev libtiff-dev imagemagick \
+      libleptonica-dev libpng-dev libjpeg-dev libtiff-dev imagemagick libfontconfig1-dev\
     # gdal
       gdal-bin libgdal-dev \
     # secrets
@@ -87,7 +90,7 @@ RUN python3 -m $RETICULATE_PYTHON_ENV $VENV_PATH \
     && $VENV_PATH/bin/pip install --cache-dir ${PIP_CACHE_DIR} -r /tmp/requirements.txt
 
 #### Stage 3: R packages #######################################################
-FROM bookbase AS bookr
+FROM bookpy AS bookrpy
 
 # Install R packages from renv cache
 # Copy renv lockfile from project root to tmp
@@ -108,7 +111,7 @@ RUN Rscript -e "renv::restore(lockfile = '/tmp/renv.lock', library=Sys.getenv('R
 
 
 #### Stage 4: R +  Py + Base ###################################################
-FROM bookbase AS bookbuild
+FROM bookrpy AS bookbuild
 
 ENV JAVA_HOME=/usr/lib/jvm/default-java/
 ENV PATH="${JAVA_HOME}/bin:${PATH}"
@@ -122,11 +125,6 @@ ENV RENV_PATHS_CACHE=/root/.local/share/renv
 ENV PATH="$VENV_PATH/bin:$PATH"
 ENV RETICULATE_PYTHON=$VENV_PATH/bin/python
 ENV QUARTO_PYTHON=$VENV_PATH/bin/python
-
-COPY --from=bookpy $VENV_PATH $VENV_PATH
-COPY --from=bookpy $PIP_CACHE_DIR $PIP_CACHE_DIR
-COPY --from=bookr $RENV_PATH $RENV_PATH
-COPY --from=bookr $RENV_PATHS_CACHE $RENV_PATHS_CACHE
 
 WORKDIR /project
 

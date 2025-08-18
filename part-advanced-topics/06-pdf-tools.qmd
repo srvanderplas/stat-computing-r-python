@@ -1,5 +1,14 @@
 # Working with PDFs {#sec-pdf-data}
 
+```{r}
+#| eval: true
+#| include: false
+library(reticulate)
+py_run_string("import os")
+py_run_string("os.environ['JAVA_HOME']='/usr/lib/jvm/default-java/bin/java'")
+```
+
+
 When I started my first job out of graduate school, one particular process used by my coworkers completely mystified me: they would print out a document, and then immediately scan it back in, with the scan emailed to themselves.
 This seemed like a waste of toner, paper, and time to me -- why would anyone do such a thing?
 Eventually, I found out that the printer would automatically recognize the text and add a text layer to a PDF that previously couldn't be highlighted. 
@@ -275,7 +284,7 @@ tesseract  -l eng ../data/file-1.png ../data/file-1-bash # <2>
 ::: column
 ###### PNG {-}
 [Link to the PNG file](../data/file-1-bash.png)
-![](../data/Lancaster-County-NE-Real-Estate-AppraisalCard-28749-2025-147568-pg1-image-1.png){.lightbox fig-alt="A detailed Lancaster County Appraisal Card for a property detailing owner, sales, inspection, and value information. The document presents comprehensive information about a property for tax year 2025, with a run date of July 15, 2025. The document is formatted into several sections, including owner information, sales information, property address, general property information, inspection history, appeal history, assessed value history, appraised values, and market land information. The owner section lists \"EASTDALE RENTALS LLC\" with mailing details. Sales information includes several dates of transactions, instrument types, and amounts related to property sales and transfers. The property site address is listed as 2250 Sheldon St, Lincoln, NE 68503. The general property information provides details like property class, zoning, neighborhood, and school code base. An inspection history section lists dates and reasons for inspections, along with the appraiser involved and contact code. Recent appeal history and assessed value history show changes in land and building values over recent years. Appraised values include current and prior values, detailing land, building, and total values. The legal description notes the property location in \"ENGLISH ADDITION, BLOCK 2, Lot 23.\""}
+![](../data/Lancaster-County-NE-Real-Estate-AppraisalCard-28749-2025-147568-pg1-image.png){.lightbox fig-alt="A detailed Lancaster County Appraisal Card for a property detailing owner, sales, inspection, and value information. The document presents comprehensive information about a property for tax year 2025, with a run date of July 15, 2025. The document is formatted into several sections, including owner information, sales information, property address, general property information, inspection history, appeal history, assessed value history, appraised values, and market land information. The owner section lists \"EASTDALE RENTALS LLC\" with mailing details. Sales information includes several dates of transactions, instrument types, and amounts related to property sales and transfers. The property site address is listed as 2250 Sheldon St, Lincoln, NE 68503. The general property information provides details like property class, zoning, neighborhood, and school code base. An inspection history section lists dates and reasons for inspections, along with the appraiser involved and contact code. Recent appeal history and assessed value history show changes in land and building values over recent years. Appraised values include current and prior values, detailing land, building, and total values. The legal description notes the property location in \"ENGLISH ADDITION, BLOCK 2, Lot 23.\""}
 :::
 ::: column
 ###### Text {-}
@@ -1050,10 +1059,41 @@ cpi_data |>
 
 ##### Tabula-Py {-}
 
+<!-- ::: {.callout collapse=true} -->
+<!-- ###### Debugging Info: Tabula-py {-} -->
+
+<!-- Sometimes the book compilation process decides not to properly find Java from Python (even though R can find it fine, and I can locate it on my machine fine, and I told Python where to find Java...grr).  -->
+<!-- This is just a bit of information for debugging purposes. -->
+
+<!-- ```{python} -->
+<!-- #| echo: true -->
+<!-- #| include: true -->
+
+<!-- import sys -->
+<!-- sys.path.append("/usr/lib/jvm/default-java/bin/java") -->
+
+<!-- import tabula -->
+<!-- tabula.util.environment_info() -->
+<!-- ``` -->
+
+<!-- Regardless of whether the book has the proper output, I've verified that the code in this section runs interactively on my machine. Quarto is just being finicky about using R to call Python to call Java. Which is, from the computer's point of view, an incredibly weird thing to do. -->
+
+<!-- ::: -->
+::: callout
+
+Note: The chunks of code here are set to not evaluate, because it turns out calling Java from Python from R works fine, but doing it from inside a quarto document might be a step too far. 
+I've tested the code on my own machine and it works great, but if you have problems, leave a comment below. 
+If you'd like to have a simple script to run, you can find the one I assembled for debugging [here](test-tabula.py).
+
+:::
+
 If we learned anything from doing this in R, it's that it probably won't work the first time. 
 So this code saves a bit of evaluation time by using some of the info we got from R, like the page numbers (I've adjusted these to match python indexing). 
 
+
+
 ```{python}
+#| eval: false
 import pdfplumber
 import tabula
 from glob import glob
@@ -1073,8 +1113,8 @@ page_numbers = [8, 8, 7, 8, 8, 8, 7, 8, 9, 8, 8, 7, 8, 8, 8, 9, 8, 8, 8, 7, 7, 9
 ```
 
 ```{python}
-tables = tabula.read_pdf(files[0], pages=page_numbers[0]+1)
-tables
+tables = tabula.io.read_pdf(files[0], pages=page_numbers[0]+1)
+tables 
 ```
 
 Ok, so this time, we get 5 columns, which isn't quite right - it seems as if the major headers are determining the column structure. 
@@ -1083,15 +1123,17 @@ Let's see if we can define the table area and help things out.
 
 
 ```{python}
-tbl = tabula.read_pdf(files[0], pages=page_numbers[0]+1, area=[128, 35, 586, 575], pandas_options={'header': None})[0]
+#| eval: false
+tbl = tabula.io.read_pdf(files[0], pages=page_numbers[0]+1, area=[128, 35, 586, 575], pandas_options={'header': None})[0] 
 tbl
 ```
 
 ```{python}
+#| eval: false
 from itertools import chain
-import pandas as pd
+import pandas as pd 
 
-header = tabula.read_pdf(files[0], pages=page_numbers[0]+1, area=[89, 35, 128, 575], pandas_options={'header': None})[0]
+header = tabula.io.read_pdf(files[0], pages=page_numbers[0]+1, area=[89, 35, 128, 575], pandas_options={'header': None})[0]
 
 def fix_headers(tbl): # <1>
   modifiers=[["", "Rel_imp."], ["Unadj_idx."]*3, ["Unadj_pct_chg."]*2, ["Seas_adj_pct_chg."]*3] # <2>
@@ -1117,8 +1159,8 @@ header = fix_headers(header)  # <6>
 header
 
 def read_table_1(file, page_number):   # <7>
-  tbl    = tabula.read_pdf(file, pages=page_number+1, area=[128, 35, 586, 575], pandas_options={'header': None})[0]  # <8>
-  header = tabula.read_pdf(file, pages=page_number+1, area=[ 89, 35, 128, 575], pandas_options={'header': None})[0]   # <9>
+  tbl    = read_pdf(file, pages=page_number+1, area=[128, 35, 586, 575], pandas_options={'header': None})[0]  # <8>
+  header = read_pdf(file, pages=page_number+1, area=[ 89, 35, 128, 575], pandas_options={'header': None})[0]   # <9>
   header=fix_headers(header)  # <10>
   tbl = tbl.rename(header, axis=1)  # <11>
   return tbl
@@ -1141,9 +1183,10 @@ tables[2]
 Then we just need to clean things up a bit more.
 
 ```{python}
+#| eval: false
 import pandas as pd
 import os
-
+ 
 report_date = pd.Series([os.path.basename(i) for i in files]) # <1>
 report_date = report_date.str.replace("cpi_|\.pdf$", "", regex=True) # <1>
 report_date = pd.to_datetime(report_date, format="%m%d%Y") # <1>
@@ -1178,6 +1221,7 @@ We could probably get this data cleaner -- the lagged columns should be specifie
 Let's at least do something interesting with this data that wouldn't have been possible without reading data in from the tables. 
 
 ```{python}
+#| eval: false
 #| fig-width: 8
 #| fig-height: 4
 #| label: py-cpi-u-calc-pic
@@ -1185,7 +1229,7 @@ Let's at least do something interesting with this data that wouldn't have been p
 #| fig-alt: "A line chart with date on the x-axis spanning from June 2022 to June 2025 and relative importance in the CPI-U calculation on the y-axis, ranging from approximately 170 to 625. Six lines are shown: Medical is the highest and has a slight increase over the period between June 2023 and June 2025, reaching just over 600. Transit is the next highest, and starts at around 360, increasing steadily with only a few wobbles to 400 by June 2025. Shelter costs are just below Transit, increasing from 350 to about 400 over the period of the graphs in almost an entirely linear fashion. Food increases slightly from 300 to about 325. Energy starts at just above 300 and oscillates in an irregular fashion over the 3-year period. Finally, goods are almost entirely flat at perhaps 175."
 
 tmp = cpi_data.query("~vardate.str.contains(r'_')")
-tmp = tmp.assign(vardate = pd.to_datetime(tmp['vardate'], format="%b%Y"))
+tmp = tmp.assign(vardate = pd.to_datetime(tmp['vardate'], format="%b%Y")) 
 
 tmp2 = tmp.query('Expenditure_category.isin(["Energy", "Food", "Shelter", "Medical care services", "commodities", "Transportation services"])')
 
