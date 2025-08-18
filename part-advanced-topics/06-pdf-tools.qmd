@@ -4,7 +4,7 @@ When I started my first job out of graduate school, one particular process used 
 This seemed like a waste of toner, paper, and time to me -- why would anyone do such a thing?
 Eventually, I found out that the printer would automatically recognize the text and add a text layer to a PDF that previously couldn't be highlighted. 
 So, my coworkers found a handy workaround to manually typing out the numbers they needed from older PDF documents!
-As clever as this was, it was also unnecessary. A lot of paper, toner, and time could have been saved if the company had just provided **Optical Character Recognition** programs and made them available to workers. 
+As clever as this was, it was also unnecessary. A lot of paper, toner, and time could have been saved if the company had just provided **Optical Character Recognition** (OCR) programs and made them available to workers. 
 
 In this chapter, you'll learn about PDF document structure, as well as how to use OCR programs.
 
@@ -239,7 +239,7 @@ I created the image version of the PDF by opening the PDF in an image editor and
 > Data scientists are often interested in data from tables. Unfortunately the pdf format is pretty dumb and does not have notion of a table (unlike for example HTML). Tabular data in a pdf file is nothing more than strategically positioned lines and text, which makes it difficult to extract the raw data... [@oomsPdftoolsTextExtraction2025]
 
 The quote above gives you some idea of the challenge of extracting text from a PDF, but it's likely you've already come across this challenge when trying to copy text out of a PDF and into some other program for editing. 
-Incidentally, the PDF representation of text is also a reason why some groups are shifting away from the format entirely -- it is difficult to make PDF documents accessible to screen readers, because the text isn't inherently ordered in any way^[In the US, the Department of Justice's [interpretation of Title II of the Americans with Disabilities Act](https://www.ada.gov/law-and-regs/regulations/title-ii-2010-regulations/) requires state and government services (including education) to meet digital accessibility standards. Many universities directed professors to shift materials to Word or HTML instead of PDF, as making PDFs accessible requires proprietary Adobe software.]
+Incidentally, the PDF representation of text is also a reason why some groups are shifting away from the format entirely -- it is difficult to make PDF documents accessible to screen readers, because the text isn't inherently ordered in any way^[In the US, the Department of Justice's [interpretation of Title II of the Americans with Disabilities Act](https://www.ada.gov/law-and-regs/regulations/title-ii-2010-regulations/) requires state and government services (including education) to meet digital accessibility standards. Many universities directed professors to shift materials to Word or HTML instead of PDF, as making PDFs accessible requires proprietary Adobe software.].
 
 
 Text extraction from PDFs can be annoying, but extracting structured text in tables is an even harder challenge. 
@@ -461,6 +461,7 @@ I will show code for running OCR on all pages of the file, but it doesn't make s
 ```{bash}
 #| label: legal-ocr-bash
 #| eval: false
+#!/bin/bash
 pdf="../data/legal-transcript-trial_-_day_1.pdf"
 path="../data/legal-transcript-trial-day-1"
 mkdir -p $path
@@ -559,6 +560,7 @@ for pageNum,imgBlob in enumerate(pages):
 ::: {.callout collapse=true}
 ###### Python tesseract file output {-}
 ```{bash}
+#!/bin/bash
 cat ../data/legal-transcript-trial-day-1/page-001-py.txt
 ```
 :::
@@ -584,7 +586,7 @@ The pages don't have a ton of dust, copy artifacts, etc., so if we can crop off 
 In addition, the pages aren't that skewed and are mostly in the same alignment -- we might be able to get away with specifying a crop boundary for all pages. 
 
 I could figure out how to crop images in R or python, but honestly, I think the easiest way to do this is just to use the command line.
-I encourage you to search for how to do <task> for a folder of files on the command line, because no one remembers the syntax for this stuff unless they're doing it all the time.
+I encourage you to search for how to do `<task>` for a folder of files on the command line, because no one remembers the syntax for this stuff unless they're doing it all the time.
 I consulted [this page](https://superuser.com/questions/1161340/how-to-crop-an-image-using-imagemagick-from-the-command-line) and [this page](https://stackoverflow.com/questions/31104371/cropping-images-with-loop-in-imagemagick) and eventually pieced something together. The `$(echo $f | sed 's/\.png/-crop.png/')` is probably not the most elegant way to rename the output files but it works (which the other methods I tried did not).
 This requires that `imagemagick` is installed and on the system path.
 
@@ -754,7 +756,7 @@ Installation of `tabulapdf` in R depends on `rJava`, which can be a bit tricky, 
 
 :::: example
 
-#### Example: BLS 
+#### Example: Bureau of Labor Statistics Consumer Price Index {-} 
 
 The Bureau of Labor Statistics provides monthly Consumer Price Index news releases. 
 An archive of these releases is available at https://www.bls.gov/bls/news-release/cpi.htm. 
