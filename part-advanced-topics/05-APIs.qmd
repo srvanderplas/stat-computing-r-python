@@ -84,55 +84,21 @@ HTTP requests have a request header and a request body.
 
 HTTP requests will return a response code. 
 
-In general, 2xx is Success, 3xx is 'address moved', 4xx is 'client screwed up', and 5xx is 'server screwed up', but you can find a full list [here](https://www.coderstool.com/http-response-codes). 
-You're probably familiar with a 404 error, which 
+I prefer the very general summary [@AllHTTPStatus2023]: 
+
+> 1xx Here's what I'll do.
+2xx Here's what you want.
+3xx I don't have what you want but I know who does.
+4xx It didn't work but it's your fault.
+5xx It didn't work and it's my fault.
+
+
+You can find a full list [here](https://www.coderstool.com/http-response-codes). 
+You're probably familiar with a 404 error, which is "File not found" -- that is, you passed in an address that isn't valid. 
 
 ::: column-margin
-Julia Evans [@evansQuestionsHTTPStatus2020] has some lovely Q&A flashcards on HTTP codes, and there is a cartoon-style [zine]( https://wizardzines.com/zines/http/) for sale that is really lovely as well.  
+Julia Evans [@evansQuestionsHTTPStatus2020] has some lovely Q&A flashcards on HTTP codes, and there is a cartoon-style [zine](https://wizardzines.com/zines/http/) for sale that is also very nice.  
 :::
-
-::: {.callout collapse=true}
-#### There's a lovely poem from Rester Test [source](https://medium.com/@t79877005/api-response-codes-poem-451ca17e8f2c) that explains response codes and their meanings
-
-```
-In the world of tech, there’s a curious thing,
-Called API requests that make devices sing.
-They’re like little messages that devices send,
-To get a response from their API friend.
-
-API requests are like a note,
-Sent to an API with a hopeful mote.
-They can ask for data or do some work,
-And wait for a response, like a playful quirk.
-
-But sometimes the API friend may say,
-“I cannot do as you request today”.
-And send a response with a special code,
-To let the device know what’s on the road.
-
-Response codes are like a language too,
-And help devices know what to do.
-There’s 200 for success, and 400 for bad,
-And 500 for errors, that makes devices sad.
-
-With response codes, the devices know,
-If their requests are a friend or foe.
-They can take action based on the code,
-And keep the tech world in a secure mode.
-
-So next time you send an API request,
-And wait for a response with bated breath,
-Remember that codes are the language they speak,
-And help devices find what they seek.
-
-API requests and response codes together,
-Are the backbone of tech’s forever.
-They help devices connect and communicate,
-And make our world a much better state.
-```
-
-:::
-
 
 ## Accessing APIs without Authentication
 
@@ -234,13 +200,14 @@ Make sure you have the `httr2` library installed (it's a dependency of a lot of 
 
 ```{r}
 library(httr2)
+library(xml2)
+
 req <- request("https://evilinsult.com/generate_insult.php/?lang=el&type=xml") |>
   req_perform()
 
 resp_raw(req) # response header and body
 xml_resp <- resp_body_string(req) # response body, encoded as a string
 
-library(xml2)
 read_xml(xml_resp)
 ```
 
@@ -277,6 +244,12 @@ You may need to make several requests to get the data you want.
 
 ```{r}
 library(httr2)
+library(lubridate)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(purrr)
+
 uastring <- "R/python data science demos, svanderplas2@unl.edu" # Set this to YOUR email, please!
 
 pointsreq <- request("https://api.weather.gov/points/35.339508,-97.486702") |>
@@ -294,12 +267,11 @@ forecastreq <- request(req_url_str) |>
 forecastjson <- resp_body_json(forecastreq)
 forecastjson$properties$periods[[1]]
 
-library(lubridate)
-moore_temps <- tibble(start_time = map_vec(forecastjson$properties$periods, "startTime"),
-                      temp = map_vec(forecastjson$properties$periods, "temperature")) |>
+moore_temps <- tibble(
+  start_time = map_vec(forecastjson$properties$periods, "startTime"),
+  temp = map_vec(forecastjson$properties$periods, "temperature")) |>
   mutate(start_time = ymd_hms(start_time))
 
-library(ggplot2)
 ggplot(moore_temps, aes(x = start_time, y = temp)) + geom_line()
 
 ```
@@ -415,6 +387,7 @@ Sys.getenv("API_SECRET")
 ###### Python {-}
 
 ```{python}
+#| eval: false
 %pip install python-dotenv
 ```
 
