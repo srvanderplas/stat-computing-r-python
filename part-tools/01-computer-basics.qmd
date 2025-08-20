@@ -228,7 +228,7 @@ When working on code, we will typically assume that the **working directory** (w
 
 @picardiProjectOrganization2024 discusses several common layouts used for research projects.
 
-### Using Paths to Navigate
+#### Using Paths to Navigate
 
 File paths can be a bit tricky to construct, but there are a couple of shorthands that help a lot:
 
@@ -265,6 +265,19 @@ Let's think about a path like `../../../other-dir/other-data.csv`:
 ![A local path from `my-project.Rproj` to `other-data.csv` requires using the ../ to go to the parent folder. ](../images/tools/file-path-demo-2.png){fig-alt="A directory structure with a folder 'example' containing my-dir and other-dir. my-dir contains dir1, which contains dir2, which contains my-project.Rproj. To navigate from within dir2 to a file in other-dir, we must go up 3 directories and look in other-dir to find other-data.csv."}
 
 :::
+
+#### Constructing File Paths
+
+On Windows, file paths are constructed as follows: `C:\Folder 1\Folder_2\file.R`. Paths are *generally* not case sensitive, so you can reference the same file path as `c:\folder 1\folder_2\file.R`. Usually, paths are encased in `""` because spaces make interpreting file paths complicated and Windows paths have lots of spaces.
+
+On Unix systems, file paths are constructed as follows: `/home/user/folder1/folder2/file.R`. Paths are case sensitive, so you cannot reach `/home/user/folder1/folder2/file.R` if you use `/home/user/folder1/folder2/file.r`. On Unix systems, spaces in file paths must be escaped with `\`, so any space character in a terminal should be typed `\ ` instead. 
+
+
+::: callout
+It's easier to just not use spaces in file paths, which you quickly find out when you've had to type paths into the terminal a few times, or if you ever use LaTeX [@xieDontUseSpaces2018].
+:::
+
+This quickly gets complicated and annoying when working on code that is meant for multiple operating systems. These complexities are why when you're constructing a file path in R or python, you should use commands like `file.path("folder1", "folder2", "file.r")` or `os.path.join("folder1", "folder2", "file.py")`, so that your code will work on Windows, Mac, and Linux by default.
 
 ## System Paths
 
