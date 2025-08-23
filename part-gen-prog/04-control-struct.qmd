@@ -47,7 +47,8 @@ When this statement is read by the computer, the computer checks to see if condi
 If the condition is true, then (thing to do) is also run. 
 If the condition is false, then (other thing to do) is run instead.
 
-Let's try this out:
+::: demo
+### Demo: Conditional Statements
 
 ::: panel-tabset
 ### R {.unnumbered}
@@ -103,6 +104,7 @@ Again, we indent the code under the else statement to show where it "belongs".
 
 <!-- https://www.py4e.com/html3/03-conditional -->
 :::
+:::
 
 ::: callout-warning
 Python will throw errors if you mess up the spacing. 
@@ -123,14 +125,18 @@ Typically, after a conditional statement, the program flow returns to a single p
 
 In many cases, it can be helpful to have a long chain of conditional statements describing a sequence of alternative statements.
 
-::: callout-warning
-### Example - Conditional Evaluation
+While different languages have different conventions for this, it's helpful to conceptualize the if-else-if-else pattern as a series of binary choices evaluated in sequence. 
+I like to imagine a superhero trying to make contingency plans for a battle with their nemesis - if they try this, then I'll do this, and if that doesn't work, then I'll do this other thing.
+The important thing is to make sure that all possible outcomes are covered, because if there is an edge case that isn't covered, it will inevitably lead to a bug that you'll have to track down later.
+
+::: example
+#### Example - Conditional Evaluation {-}
 
 Suppose I want to determine what categorical age bracket someone falls into based on their numerical age. 
 All of the bins are mutually exclusive - you can't be in the 25-40 bracket and the 41-55 bracket.
 
 ::: panel-tabset
-#### Program Flow Map {.unnumbered}
+##### Program Flow Map {.unnumbered}
 
 ![Program flow map for a series of mutually exclusive categories. If our goal is to take a numeric age variable and create a categorical set of age brackets, such as \<18, 18-25, 26-40, 41-55, 56-65, and \>65, we can do this with a series of if-else statements chained together. Only one of the bracket assignments is evaluated, so it is important to place the most restrictive condition first.](../images/gen-prog/age-category-prog-flow.png)
 
@@ -146,7 +152,7 @@ If for some reason you wrote your conditional statements in the wrong order, the
 
 In code, we would write this statement using `else-if` (or `elif`) statements.
 
-#### R {.unnumbered}
+##### R {.unnumbered}
 
 ```{r}
 #| label: else-if-statements
@@ -169,7 +175,7 @@ if (age < 18) {
 bracket
 ```
 
-#### Python {.unnumbered}
+##### Python {.unnumbered}
 
 Python uses `elif` as a shorthand for `else if` statements. As always, indentation/white space in python matters. If you put an extra blank line between two elif statements, then the interpreter will complain. If you don't indent properly, the interpreter will complain.
 
@@ -196,11 +202,11 @@ bracket
 :::
 
 
-::: callout-tip
-### Try it out - Chained If/Else Statements
+::: diy
+#### Try It Out - Chained If/Else Statements
 
 ::: panel-tabset
-#### Problem {.unnumbered}
+##### Problem {.unnumbered}
 
 The US Tax code has brackets, such that the first \$10,275 of your income is taxed at 10%, anything between \$10,275 and \$41,775 is taxed at 12%, and so on.
 
@@ -227,8 +233,8 @@ Hint: You may want to keep track of how much of the income has already been taxe
 
 ```{r}
 #| label: tax-data
-#| echo: !expr F
-#| eval: !expr F
+#| echo: false
+#| eval: false
 #| fig-width: 5
 #| fig-height: 4
 #| out-width: 60%
@@ -278,7 +284,7 @@ df2 %>%
 ```
 
 
-#### Flow Map
+##### Flow Map
 
 ![The control flow diagram for the tax brackets](../images/gen-prog/tax-brackets.png)
 
@@ -286,7 +292,7 @@ Control flow diagrams can be extremely helpful when figuring out how programs wo
 It can be very helpful to map out your program flow as you're untangling a problem.
 
 
-#### R Solution {.unnumbered}
+##### R Solution {.unnumbered}
 
 ```{r}
 # Start with total income
@@ -353,7 +359,7 @@ if (x > 0) {
 print(paste("Total Tax Rate on $", income, " in income = ", round(y/income, 4)*100, "%"))
 ```
 
-#### Python Solution {.unnumbered}
+##### Python Solution {.unnumbered}
 
 ```{python}
 # Start with total income
@@ -416,10 +422,375 @@ if untaxed > 0:
 print("Total Tauntaxed Rate on $", income, " in income = ", round(taxes/income, 4)*100, "%")
 ```
 
-We will find a better way to represent this calculation once we discuss loops - we can store each bracket's start and end point in a vector and loop through them. Any time you find yourself copy-pasting code and changing values, you should consider using a loop (or eventually a function) instead.
+There are better ways to represent this calculation that depend on concepts like vectors or loops -- see @sec-cond-efficiency for details. 
+Any time you find yourself copy-pasting code and changing values, you should consider using vectorized code, a loop, or eventually, a function instead. It's less typing and easier to maintain.
 
 :::
 :::
+
+:::: {.advanced collapse=true}
+### Compact Chained Conditionals
+
+::: callout-caution
+The case statement is relatively new in Python (added in 3.10), so if you are using an older version of Python, you will not be able to make the code in this section work.
+:::
+
+The code to implement a long series of if-else statements can get rather long and hard to follow. 
+This complexity is particularly unnecessary when all of the if() statements are related to one variable, and it's even more unnecessary when that variable has a fixed number of values that correspond to different actions. 
+
+The **switch statement** (implemented using `match` and `case` in Python, `case_when` in `dplyr`, and `switch` in base R) is a way to make long sets of conditionals clearer and more compact. 
+
+A general switch statement looks like this:
+
+```
+switch (test-value) {
+  case (first-value):
+    <do something>
+  case (second-value):
+    <do something else>
+  default-value:
+    <do the default thing>
+}
+```
+
+Essentially, in a switch statement, you look for one of a finite list of values, and do something based on which value is true **first** in the sequence. 
+Ideally the values first-value and second-value are completely disjoint, but that doesn't always happen -- however, in a switch statement, as in chained if-statements, the first value to be TRUE causes subsequent statements not to be executed at all, which essentially means that subsequent statements are implicitly of the form `second-value and NOT first-value`, `third-value and NOT second-value and NOT first-value`, and so on.
+
+
+Note that any series of chained if statements based on a single quantitative variable can be converted to allow the use of a switch statement by assigning labels to each different group of conditions and then using a switch statement to evaluate the variable holding the labels. 
+
+
+For each implementation, we'll look at how we might do something based on a coffee order size, using Starbucks size labels (which I've never gotten straight, but I don't drink a ton of coffee). 
+
+::: panel-tabset
+#### R (base) {-}
+
+The `switch` statement in base R works differently depending on whether the first argument is a character string or a number. 
+If the first argument is a number, it's converted to an integer. 
+Factors (sequential integers with labels) should be manually converted to character variables or integers; a switch statement with a factor as the first argument will issue a warning. 
+If the first argument is a character vector, then the remaining arguments should be named according to the possible values of that character vector. 
+An additional unnamed argument should be included at the end to handle any unaccounted for cases.
+
+```{r}
+size <- c("short", "tall", "grande", "venti", "trenta")
+
+sizefac <- factor(size, levels = size, ordered = T)
+
+size[1]
+sizefac[1]
+
+switch(
+  size[3],
+  "short" = 8, 
+  "tall" = 12,
+  "grande" = 16,
+  "venti" = 20,
+  "trenta" = 30,
+  NA) # default value is unnamed
+
+
+switch(
+  sizefac[3],
+  "short" = 8, 
+  "tall" = 12,
+  "grande" = 16,
+  "venti" = 20,
+  "trenta" = 30, 
+  NA) 
+# Warning if you use a factor without converting
+# to a character variable
+
+
+switch(as.numeric(sizefac[3]), 8, 12, 16, 20, 30) 
+# If an integer, all arguments must be unnamed
+# No default value is possible
+```
+
+#### Python {-}
+
+```{python}
+import pandas as pd
+size = ["short", "tall", "grande", "venti", "trenta"]
+
+match size[2]:
+  case "short": 8
+  case "tall": 12
+  case "grande": 16
+  case "venti": 20
+  case "trenta": 30
+  case _: pd.NA
+
+```
+
+#### `case_match` (R-dplyr) {-}
+
+The approach taken by the `case_match` function is similar to that in python, but it's vectorized, which is convenient -- we don't have to loop over the full vector to get the size in ounces for each cup.
+
+`case_match` also works with factors without requiring an explicit type conversion. 
+
+```{r}
+library(dplyr)
+
+size <- c("short", "tall", "grande", "venti", "trenta")
+
+sizefac <- factor(size, levels = size, ordered = T)
+
+case_match(
+  size,
+  "short" ~ 8, 
+  "tall" ~ 12, 
+  "grande" ~ 16, 
+  "venti" ~ 20, 
+  "trenta" ~ 30, 
+  .default = NA
+)
+
+case_match(
+  sizefac,
+  "short" ~ 8, 
+  "tall" ~ 12, 
+  "grande" ~ 16, 
+  "venti" ~ 20, 
+  "trenta" ~ 30, 
+  .default = NA
+)
+
+```
+
+But, `case_match` does something else that's somewhat unique -- it allows you to specify multiple labels that correspond to the same output value. 
+Suppose our Starbucks is out of 8 and 30 oz cups, and they are thus offering free upgrades from short to tall orders, while not offering any trenta orders.
+
+```{r}
+case_match(
+  sizefac,
+  c("short","tall") ~ 12, 
+  "grande" ~ 16, 
+  "venti" ~ 20, 
+  .default = NA
+)
+
+```
+
+This setup allows us to collapse categories easily while still keeping the basic syntax and options for order sizes the same. 
+
+
+:::
+
+
+#### `case_when` in `dplyr` {-}
+
+`dplyr` also includes an additional function that is somewhat different than the canonical `switch` statement: `case_when`. 
+`case_when` uses logical expressions on one side, making it much closer to a direct equivalent of an if-then-else-if... chain of expressions. 
+The first expression to evaluate to TRUE is what determines the output.
+
+::: diy
+##### Try It Out: Income Taxes {-}
+
+::: panel-tabset
+
+###### Problem
+
+Let's consider our income tax example from before. Try to write the tax calculation out using a case-when statement in R. Can you come up with an equivalent formulation in Python by defining an intermediate labeled variable? 
+
+###### R
+
+```{r}
+# Start with total income
+income <- 200000
+
+# x will hold income that hasn't been taxed yet
+x <- income
+# y will hold taxes paid
+y <- case_when(
+  x <= 10275  ~ x*.1,
+  x <= 41775  ~ 10275*.10 +         (x-10275)*.12,
+  x <= 80975  ~ 10275*.10 +     (41775-10275)*.12 + 
+          (x - 41775)*.22,
+  x <= 170050 ~ 10275*.10 +     (41775-10275)*.12 + 
+      (80975 - 41775)*.22 +       (x - 80975)*.24,
+  x <= 215950 ~ 10275*.10 +     (41775-10275)*.12 + 
+      (80975 - 41775)*.22 +  (170050 - 80975)*.24 +
+         (x - 170050)*.32,
+  x <= 539900 ~ 10275*.10 +     (41775-10275)*.12 + 
+      (80975 - 41775)*.22 +  (170050 - 80975)*.24 +
+    (215950 - 170050)*.32 +        (x-215950)*.35,
+  .default =    10275*.10 +     (41775-10275)*.12 + 
+      (80975 - 41775)*.22 +  (170050 - 80975)*.24 +
+    (215950 - 170050)*.32 + (539900 - 215950)*.35 + 
+       (x - 539900) * .37
+)
+
+print(paste("Total Tax Rate on $", income, " in income = ", round(y/income, 4)*100, "%"))
+```
+
+
+This is a much more concise set of statements that are still pretty clear. 
+Note that we've had to refactor the calculation, so that each calculation happens separately rather than being cumulative, but that isn't so terrible. 
+
+###### Python
+
+
+```{python}
+import numpy as np
+
+# Start with total income
+income = 200000
+
+# x will hold income that hasn't been taxed yet
+x = income
+
+brackets = np.array([10275, 41775, 80975, 170050, 215950, 539900])
+brackets = brackets.astype('int32')
+bracket_labels = np.array([str(i) for i in brackets])
+bracket_labels = np.append(bracket_labels, "Inf")
+brackets = np.append(brackets, np.inf)
+
+match bracket_labels[brackets >= x][0]:
+  case "10275": 
+    y = x*.1
+  case "41775":
+    y = (x-10275)*.12 + 10275*.1
+  case "80975":
+    y = (x-41775)*.22 + (41775-10275)*.12 + 10275*.1
+  case "170050":
+    y = (x-80975)*.24 + (80975-41775)*.22 + (41775-10275)*.12 + 10275*.1
+  case "215950":
+    y = (x-170050)*.32 + (170050-80975)*.24 + (80975-41775)*.22 + (41775-10275)*.12 + 10275*.1
+  case "539900":
+    y = (x-215950)*.35 + (215950-170050)*.32 + (170050-80975)*.24 + (80975-41775)*.22 + (41775-10275)*.12 + 10275*.1
+  case _:
+    y = (x-539900)*.37 + (539900-215950)*.35 + (215950-170050)*.32 + (170050-80975)*.24 + (80975-41775)*.22 + (41775-10275)*.12 + 10275*.1
+
+y
+
+print("Total Tax Rate on $" + str(income) + " in income = " + str(round(y/income, 4)*100) + "%")
+```
+
+To be able to use a python case statement, we first have to decide on some labels that are mutually exclusive and indicate which set of tax rates to apply. 
+In this case, I've decided to use the next bracket above the total income level as the label, which tells me that I don't have to worry about any income over the labeled level. 
+:::
+
+:::
+::::
+
+:::: {.advanced collapse=true}
+### Computational Efficiency and Conditionals {#sec-cond-efficiency}
+
+In some cases, it is possible to replace conditional sequences with carefully constructed vectorized calculations. 
+This is much more efficient (especially in R, where vectorization is one primary way to decrease evaluation time) and can be easier to read and understand as well. 
+
+::: demo
+#### Demo: Tax Brackets without Conditionals {-}
+
+We can use vectorized calculations and make the tax calculations even more succinct, eliminating the need for any if-statements (or similar constructs).  
+
+::: panel-tabset
+##### R {-}
+
+```{r}
+brackets <- c(    0, 10275, 41775, 80975, 170050, 215950, 539900, Inf)
+rates <-    c(   .1,   .12,   .22,    .24,    .32,   .35,    .37)
+
+sum(-diff(pmax(0, x-brackets)) * rates)
+```
+##### Python {-}
+```{python}
+import numpy as np
+
+# Start with total income
+x = 200000
+
+brackets = np.array([    0, 10275, 41775, 80975, 170050, 215950, 539900, np.inf])
+rates    = np.array([   .1,   .12,   .22,    .24,    .32,   .35,    .37])
+
+np.sum(-np.diff(np.maximum(0, x - brackets))*rates)
+```
+
+:::
+
+
+This is the simplest refactoring of this problem, but it's also less directly comprehensible. 
+It will evaluate much more quickly than the conditional formulations in computer time, but the programmer has to go through and understand what is happening, which isn't always easy to do, particularly when you didn't write the code. 
+
+::: column-margin
+Sometimes, it's that you wrote the code years ago, and past you was invariably smarter *and* dumber than you are currently.  ![I have a t-shirt that has something like this on it, and I'm amazed at how frequently it's true.](../images/gen-prog/debugging-classic-mystery-game.jpg){fig-alt="Debugging: The classic mystery game where you are the detective, the victim, and the murderer. Shows dice and game pieces similar to those in the board game Clue."}  
+:::
+
+Here is a longer sequence of code that performs the same calculations, with variables named descriptively.
+
+::: panel-tabset
+##### R {-}
+```{r}
+brackets <- c(    0, 10275, 41775, 80975, 170050, 215950, 539900, Inf) # <1>
+rates <-    c(   .1,   .12,   .22,    .24,    .32,   .35,    .37)
+
+amount_above_bracket <- x - brackets  # <2>
+amount_above_bracket
+
+cumulative_amount_subject_to_rate <- pmax(0, amount_above_bracket)  # <3>
+cumulative_amount_subject_to_rate
+
+amount_subject_to_rate <- -diff(cumulative_amount_subject_to_rate) # <4>
+taxes_per_level <- amount_subject_to_rate*rates # <5>
+
+# Display calculation in table
+rbind(amount = amount_subject_to_rate, rate = rates, tax_at_level = taxes_per_level)
+
+total_taxes <- sum(taxes_per_level) # <6>
+total_taxes
+```
+1. `brackets` defines the cutoffs for the different hierarchical tax rates, including the `[539900, Inf)` implicit bracket
+2. `x - brackets` calculates the amount of income taxed at or above each rate
+3. `pmax(0, x-brackets)` does not allow the values to go below 0, so that we're not paying negative taxes (though that would be nice, and some tax credits actually work that way)
+4. `diff(...)` subtracts value 1 from value 2, value 2 from value 3, and so on, shortening the vector by 1. This produces negative values in this case, so we have to multiply by -1 to get them back to positive values (we could also reverse the vector, diff, and then reverse again, e.g. `sum(rev(diff(pmax(0, rev(x-brackets)))) * rates)`).
+5. Then, we can multiply our values by their corresponding rates (`-diff(pmax(0, x-brackets))*rates`). 
+6. Finally, we add up the values (`sum`) in the vector to get the total tax burden for someone making \$200,000 per year. 
+
+##### Python {-}
+
+```{python}
+import numpy as np
+import pandas as pd
+# Start with total income
+x = 200000
+
+brackets = np.array([    0, 10275, 41775, 80975, 170050, 215950, 539900, np.inf]) # <1>
+rates    = np.array([   .1,   .12,   .22,    .24,    .32,   .35,    .37])
+
+amount_above_bracket = x - brackets  # <2>
+amount_above_bracket
+
+cumulative_amount_subject_to_rate = np.maximum(0, amount_above_bracket)  # <3>
+cumulative_amount_subject_to_rate
+
+amount_subject_to_rate = -np.diff(cumulative_amount_subject_to_rate) # <4>
+taxes_per_level = amount_subject_to_rate*rates # <5>
+
+# Display calculation in table
+pd.DataFrame({"amount" : amount_subject_to_rate, "rate" : rates, "tax_at_level" : taxes_per_level})
+
+total_taxes = sum(taxes_per_level) # <6>
+total_taxes
+```
+1. `brackets` defines the cutoffs for the different hierarchical tax rates, including the `[539900, Inf)` implicit bracket
+2. `x - brackets` calculates the amount of income taxed at or above each rate
+3. `pmax(0, x-brackets)` does not allow the values to go below 0, so that we're not paying negative taxes (though that would be nice, and some tax credits actually work that way)
+4. `diff(...)` subtracts value 1 from value 2, value 2 from value 3, and so on, shortening the vector by 1. This produces negative values in this case, so we have to multiply by -1 to get them back to positive values (we could also reverse the vector, diff, and then reverse again, e.g. `sum(rev(diff(pmax(0, rev(x-brackets)))) * rates)`).
+5. Then, we can multiply our values by their corresponding rates (`-diff(pmax(0, x-brackets))*rates`). 
+6. Finally, we add up the values (`sum`) in the vector to get the total tax burden for someone making \$200,000 per year. 
+
+
+:::
+
+This code uses slightly more memory by storing intermediate results, but it is much more readable -- you can clearly associate the steps to each line of code. 
+When the tax code changes, it will also be easier to change -- instead of having to change the values of every tax bracket level in the conditional statement, we have to change the vector one time, and everything else will update accordingly. 
+
+:::
+
+It is always a trade-off to decide between a balance of computational time, computational resource requirements, programmer time (both to program and to maintain the code), and readability. 
+The vectorized calculation is less readable, but more computationally efficient. We can make it slightly more readable by increasing storage requirements and using intermediate variables that are well named to make the calculation process more comprehensible. 
+
+::::
 
 ## Loops
 
@@ -446,8 +817,8 @@ Loops can be written in several different ways, but all loops allow for executin
 In the previous section, we discussed conditional statements, where a block of code is only executed *if* a logical statement is true.
 The simplest type of loop is the **while** loop, which executes a block of code until a statement is no longer true.
 
-::: callout-warning
-#### Example - While Loops
+::: example
+#### Example: While Loops {-}
 
 ::: panel-tabset
 ##### Flow Map
@@ -482,7 +853,7 @@ while x < 10:
 :::
 :::
 
-::: callout-tip
+::: diy
 #### Try it Out - While Loops
 
 ::: panel-tabset
@@ -547,7 +918,7 @@ print("At ", k, " iterations, the product is ", prod, "compared to the limit ", 
 :::
 
 ::: callout-warning
-#### Warning: Avoid Infinite Loops
+#### Warning: Avoid Infinite Loops {-}
 
 It is very easy to create an **infinite** loop when you are working with while loops. 
 Infinite loops never exit, because the condition is always true. 
@@ -561,7 +932,7 @@ If that variable gets over a certain threshold, you exit the loop.
 ::: panel-tabset
 ##### R {.unnumbered}
 
-This while loop runs until either x \< 10 or n \> 50 - so it will run an indeterminate number of times and depends on the random values added to x. Since this process (a 'random walk') could theoretically continue forever, we add the n\>50 check to the loop so that we don't tie up the computer for eternity.
+This while loop runs until either x \< 10 or n \> 50 - so it will run an indeterminate number of times and depends on the random values added to x. Since this process (a 'random walk') could theoretically continue forever, we add the n\>30 check to the loop so that we don't tie up the computer for eternity.
 
 ```{r}
 #| label: infinite-loop-exit-r
@@ -572,8 +943,8 @@ while (x < 10) {
   print(x)
   x <- x + rnorm(1) # add a random normal (0, 1) draw each time
   n <- n + 1
-  if (n > 50) 
-    break # this stops the loop if n > 50
+  if (n > 30) 
+    break # this stops the loop if n > 30
 }
 ```
 
@@ -596,7 +967,9 @@ while x < 10:
 ```
 :::
 
-In both of the examples above, there are more efficient ways to write a random walk, but we will get to that later. The important thing here is that we want to make sure that our loops don't run for all eternity.
+In both of the examples above, there are more efficient ways to write a random walk, but we will get to that later. 
+The important thing here is that we want to make sure that our loops don't run for all eternity.
+
 :::
 
 ### For Loops
@@ -608,8 +981,8 @@ While loops are known as **indefinite** loops because the code within a while lo
 
 ![A visual demonstration of for loops iterating through a vector of monsters to dress them up for a parade. Image by [Allison Horst](https://twitter.com/allison_horst/status/1636395184106917889?s=20).](../images/tools/monster-parade.jpeg){fig-alt="Illustrated for loop where the input vector is a parade of monsters, including monsters that are circles, triangles, and squares. The for loop they enter has an if-else statement: if the monster is a triangle, it gets sunglasses. Otherwise, it gets a hat. The output is the parade of monsters where the same input parade of monsters shows up, now wearing either sunglasses (if triangular) or a hat (if any other shape)."}
 
-::: callout-caution
-#### Example - For Loop Syntax
+::: demo
+#### Demo - For Loop Syntax {-}
 ::: panel-tabset
 ##### Flow Map {.unnumbered}
 
@@ -638,12 +1011,12 @@ By default `range`(5) goes from 0 to 5, the upper bound. When `i = 5` the loop e
 
 For loops are often run from 1 to N (or 0 to N-1 in python) but in essence, a for loop is very commonly used to do a task for every value of a vector.
 
-::: ex
-#### Example - For Loops
+::: example
+#### Example: For Loops
 ::: panel-tabset
 ##### R {.unnumbered}
 
-For instance, in R, there is a built-in variable called `month.name`. Type `month.name` into your R console to see what it looks like. 
+In R, there is a built-in variable called `month.name`. Type `month.name` into your R console to see what it looks like. 
 If we want to iterate along the values of month.name, we can:
 
 ```{r}
@@ -654,21 +1027,17 @@ for (i in month.name)
 We can even pick out the first 3 letters of each month name and store them into a vector called `abbr3`
 
 ```{r}
-# Create new vector of the correct length
-abbr3 <- rep("", length(month.name))
 
-# We have to iterate along the index (1 to length) instead of the name 
-# in this case because we want to store the result in a corresponding
-# row of a new vector
-for (i in 1:length(month.name))
-  abbr3[i] <- substr(month.name[i], 1, 3)
+abbr3 <- rep("", length(month.name)) # <1>
 
-# We can combine the two vectors into a data frame 
-# so that each row corresponds to a month and there are two columns:
-# full month name, and abbreviation
-data.frame(full_name = month.name, abbrev = abbr3)
+for (i in 1:length(month.name))           # <2>
+  abbr3[i] <- substr(month.name[i], 1, 3) # <2>
+
+data.frame(full_name = month.name, abbrev = abbr3) # <3>
 ```
-
+1. Create new vector of the correct length
+2. We have to iterate along the index (1 to length) instead of the name in this case because we want to store the result in a corresponding row of a new vector
+3. We can combine the two vectors into a data frame so that each row corresponds to a month and there are two columns: full month name, and abbreviation
 
 ##### Python {.unnumbered}
 
@@ -676,62 +1045,54 @@ In python, we have to define our vector or list to start out with, but that's ea
 
 ```{python}
 import calendar
-# Create a list with month names. For some reason, by default there's a "" as 
-# the first entry, so we'll get rid of that
-month_name = list(calendar.month_name)[1:13]
+month_name = list(calendar.month_name)[1:13] # <1>
 
-for i in month_name:
-  print(i)
+for i in month_name: # <2>
+  print(i)           # <2>
 ```
+1. Create a list with month names. For some reason, by default there's a "" as the first entry, so we'll get rid of that
+2. Iterate along the vector, printing out each element
 
 
 We can even pick out the first 3 letters of each month name and store them into a vector called `abbr3`.
 
-Python handles lists best when you use [pythonic](https://stackoverflow.com/questions/522563/accessing-the-index-in-for-loops) expressions. The linked post has an excellent explanation of why enumerate works best here.
+Python handles lists best when you use [pythonic](https://stackoverflow.com/questions/522563/accessing-the-index-in-for-loops) expressions. 
+The linked post has an excellent explanation of why enumerate works best here.
 
 ```{python}
-# Create new vector of the correct length
-abbr3 = [""] * len(month_name)
+abbr3 = [""] * len(month_name) # <1>
 
-# We have to iterate along the index because we want to 
-# store the result in a corresponding row of a new vector
-# Python allows us to iterate along both the index i and the value val
-# at the same time, which is convenient.
-for i, val in enumerate(month_name):
-  abbr3[i] = val[0:3:] # Strings have indexes by character, so this gets 
-                       # characters 0, 1, and 2.
+
+for i, val in enumerate(month_name): # <2> 
+  abbr3[i] = val[0:3:] # <3>
   
 abbr3
 ```
+1. Create new vector of the correct length
+2. We have to iterate along the index because we want to store the result in a corresponding row of a new vector.  Python allows us to iterate along both the index `i` and the value `val` at the same time, which is convenient.
+3. Strings have indexes by character, so this gets  characters 0, 1, and 2.
+
 :::
 :::
 
-## Other Control Structures
+There are additional types of iterators and control statements for iterators available in some languages, such as the `doWhile` loop and recursion. 
+If you're curious, expand the section below, but you can always write a `doWhile` loop as a while loop and can usually restate a recursion as a loop, so these constructs are largely for convenience. 
 
-### Conditional Statements
+::: {.advanced  collapse=true}
+### do-while Loops
 
-case statements, e.g. `case_when` in tidyverse
+The do-while loop runs the code first and then evaluates the logical condition to determine whether the loop will be run again.
 
-### Loops
 
-#### Controlling Loops
-
-While I do not often use break, next, and continue statements, they do exist in both languages and can be useful for controlling the flow of program execution. 
-I have moved the section on this to @sec-controlling-loops for the sake of brevity and to reduce the amount of new material those without programming experience are being exposed to in this section.
-
-#### Other Types of Loops
-
-There are other types of loops in most languages, such as the do-while loop, which runs the code first and then evaluates the logical condition to determine whether the loop will be run again.
-
-::: callout-warning
-##### Example: do-while loops
+::: demo
+##### Demo: do-while loops {-}
 
 ::: panel-tabset
-###### R
+###### R {-}
 
 In R, do-while loops are most naturally implemented using a very primitive type of iteration: a `repeat` statement.
 ```{r}
-#| eval: !expr F
+#| eval: false
 repeat {
   # statements go here
   if (condition)
@@ -739,11 +1100,11 @@ repeat {
 }
 ```
 
-###### Python
+###### Python {-}
 
 In python, do-while loops are most naturally implemented using a while loop with condition TRUE:
 ```{python}
-#| eval: !expr F
+#| eval: false
 while TRUE:
   # statements go here
   if condition:
@@ -754,10 +1115,18 @@ while TRUE:
 :::
 :::
 
+### Recursion
+
 An additional means of running code an indeterminate number of times is the use of **recursion**, which we cannot cover until we learn about functions. 
 I have added an additional section, @sec-recursion, to cover this topic, but it is not essential to being able to complete most basic data programming tasks.
 Recursion is useful when working with structures such as trees (including phylogenetic trees) and nested lists.
 
+### Controlling Loops with Break, Next, Continue
+
+While I do not often use break, next, and continue statements, they do exist in both languages and can be useful for controlling the flow of program execution. 
+I have moved the section on this to @sec-controlling-loops for the sake of brevity and to reduce the amount of new material those without programming experience are being exposed to in this section.
+
+:::
 
 ## References  {#sec-control-struct-refs}
 
