@@ -55,8 +55,9 @@ This data is part of the Australian data and story library [OzDASL](https://gksm
 See the [help page](http://www.statsci.org/data/oz/wallaby.html) for information about this data set and each of its variables.
 
 ```{r}
+library(knitr)
 wallaby <- read.csv("../data/wallaby.csv") 
-head(wallaby) %>% knitr::kable(caption="First few lines of the wallaby data.")
+head(wallaby) |> kable(caption="First few lines of the wallaby data.")
 ```
 
 ::: panel-tabset
@@ -70,10 +71,11 @@ We can check whether that condition is fulfilled by tallying up the combination 
 #### Is Anim the key? {.unnumbered}
 
 ```{r}
-wallaby %>% 
-  count(Anim, sort = TRUE) %>% 
-  head() %>% 
-  knitr::kable(caption="Anim by itself is not uniquely identifying rows in the data.")
+library(dplyr)
+wallaby |> 
+  count(Anim, sort = TRUE) |> 
+  head() |> 
+  kable(caption="Anim by itself is not uniquely identifying rows in the data.")
 ```
 
 Anim by itself is not a key variable, because for some animal ids we have multiple sets of measurements. 
@@ -81,10 +83,11 @@ Anim by itself is not a key variable, because for some animal ids we have multip
 #### Is Anim + Age the key? {.unnumbered}
 
 ```{r}
-wallaby %>% 
-  count(Anim, Age, sort = TRUE) %>% 
-  head() %>% 
-  knitr::kable(caption="All combinations of animal ID and an animal's age only refer to one set of measurements.")
+library(dplyr)
+wallaby |> 
+  count(Anim, Age, sort = TRUE) |> 
+  head() |> 
+  kable(caption="All combinations of animal ID and an animal's age only refer to one set of measurements.")
 ```
 
 The combination of `Anim` and `Age` uniquely describes each observation, and is therefore a key for the data set.
@@ -134,15 +137,17 @@ Below is a snapshot of a reshaped version of the previous example, where all mea
 While `Anim` now should be a key variable (presumably it uniquely identifies each animal),  the data set is still not in first normal form, because the entries in the variable `measurements` are data sets by themselves, not just single values.
 
 ```{r}
-wallaby2 <- wallaby %>% 
+library(tidyr)
+
+wallaby2 <- wallaby |> 
   nest(.by = c("Anim", "Sex", "Loca"), .key="measurements") 
-wallaby2 %>% head() 
+wallaby2 |> head() 
 ```
 Is `Anim` the key variable of `wallaby2`?
 For that we check whether the `Anim` variable is unique - and find out that it is not unique! 
 
 ```{r}
-wallaby2 %>% count(Anim, sort=TRUE) %>% head() %>%
+wallaby2 |> count(Anim, sort=TRUE) |> head() |>
   knitr::kable(caption="We see in the frequency breakdown of `Anim`, that the animal ID for 125 is used twice, i.e. 125 seems to describe two different animals. This would indicate that animal numbers do not refer to an individual animal as the data description suggests.")
 ```
 This finding is a sign of an inconsistency in the data set - and just a first example of why we care about normal forms. 
@@ -150,8 +155,8 @@ Here, we identify the first entry in the results below as a completely different
 Most likely, this is a wrongly identified animal.
 
 ```{r}
-wallaby %>% 
-  filter(Anim == 125) %>% head() %>% 
+wallaby |> 
+  filter(Anim == 125) |> head() |> 
   knitr::kable(caption="Based on the listing for the values of animal 125, the very first entry does not fit in well with the other values.")
 ```
 
@@ -172,16 +177,18 @@ Its timing (`Age`) and value (`Weight`) make it the best fit for animal 126.
 ```{r}
 #| echo: false
 #| warning: false
-#| label: fig-wallaby125
+#| label: wallaby125
 #| fig-cap: "Scatterplots of Weight by Age, facetted by animal number. Only male specimen in location Ha are considered. The orange point shows the measurements of the entry wrongly assigned to animal 125 (which is female and lives in a different location)."
-#| 
-wallaby %>% 
-  filter(Loca == "Ha", Anim!=125, Sex == 1, !is.na(Weight)) %>%
-  mutate(Anim=factor(Anim)) %>%  
+
+library(ggplot2)
+
+wallaby |> 
+  filter(Loca == "Ha", Anim!=125, Sex == 1, !is.na(Weight)) |>
+  mutate(Anim=factor(Anim)) |>  
   ggplot(aes(x = Age, y = Weight)) + 
   geom_point(size = 4, alpha = 0.5) + 
   facet_wrap(~Anim) + 
-  geom_point(data = filter(wallaby, Anim==125, Sex==1) %>% select(-Anim),
+  geom_point(data = filter(wallaby, Anim==125, Sex==1) |> select(-Anim),
              colour = "darkorange", size = 4, alpha = 0.8) +
   xlim(c(50,200)) + 
   ylim(c(0,5000)) + 
@@ -193,19 +200,24 @@ In @fig-wallaby126 all measurements for wallaby 126 are shown by age (in days) w
 
 ```{r}
 #| echo: false
-#| label: fig-wallaby126
+#| label: wallaby126
 #| fig-cap: "Growth curves of animal 126 for all the measurements taken between days 50 and 200. In orange, the additional entry for animal 125 is shown. The values are consistent with animal 126's growth."
-wallaby_long <- wallaby %>% 
-  pivot_longer(c("Weight", "Head":"Tail"), values_to = "Measurement", names_to="Trait") %>% 
+
+library(tidyr)
+library(dplyr)
+library(ggplot2)
+
+wallaby_long <- wallaby |> 
+  pivot_longer(c("Weight", "Head":"Tail"), values_to = "Measurement", names_to="Trait") |> 
   filter(Trait!="Leng")
 
-wallaby_long %>% 
-  filter(Anim==126, between(Age, 50, 200)) %>% 
+wallaby_long |> 
+  filter(Anim==126, between(Age, 50, 200)) |> 
   ggplot(aes(x = Age, y = Measurement)) + 
   geom_point(size = 4, alpha = 0.5) + 
   facet_wrap(~Trait, scales="free_y") +
-  geom_point(data = wallaby_long %>%
-               filter(Anim==125, Sex==1) %>% 
+  geom_point(data = wallaby_long |>
+               filter(Anim==125, Sex==1) |> 
                  select(-Anim), 
              colour = "darkorange", size = 4, alpha = 0.8)  +
   theme_bw() +
@@ -219,7 +231,7 @@ wallaby_long %>%
 As a direct result of the normalization step, we make a change (!!!) to the orignial data.
 ```{r}
 # Cleaning Step 1
-wallaby_cleaner <- wallaby %>% 
+wallaby_cleaner <- wallaby |> 
   mutate(Anim = ifelse(Anim==125 & Sex==1, 126, Anim))
 ```
 Making any changes to a dataset should never be done light-heartedly,  always be well argued and well-documented.
@@ -239,7 +251,7 @@ Note, that tables in 1st normal form with a single key variable are automaticall
 Regarding the example of the `wallaby` dataset, we see the dataset in its basic form is not in 2nd normal form, because the two non-key variables `Sex` (biological sex of the animal) and the animal's location (`Loca`) only depend on the animal number `Anim`, and not on the `Age` variable.
 
 ```{r}
-wallaby2 %>% group_by(Anim) 
+wallaby2 |> group_by(Anim) 
 ```
 
 ### Normalization: 1st NF to 2nd NF
@@ -257,8 +269,8 @@ In the example of the `wallaby` data, we have identified the non-key variables `
 We separate those variables into the data set `wallaby_demographics` and reduce the number of rows by finding a tally of the number of rows we summarize. 
 
 ```{r}
-wallaby_demographics <- wallaby_cleaner %>% 
-  select(Anim, Sex, Loca) %>%
+wallaby_demographics <- wallaby_cleaner |> 
+  select(Anim, Sex, Loca) |>
   count(Anim, Sex, Loca) 
 # Don't need the total number
 ```
@@ -266,18 +278,18 @@ wallaby_demographics <- wallaby_cleaner %>%
 Once we have verified that `Anim` is a key for `wallaby_demographics`, we know that this table is in 2nd normal form. 
 
 ```{r}
-wallaby_demographics %>% 
-  count(Anim, sort=TRUE) %>% 
+wallaby_demographics |> 
+  count(Anim, sort=TRUE) |> 
   head()
 ```
 
 With the key-splitting variables `Sex` and `Loca` being taken care of in the second dataset, we can safely remove those variables from the original data. To preserve the original, we actually create a separate copy called `wallaby_measurements`:
 
 ```{r}
-wallaby_measurements <- wallaby_cleaner %>% 
+wallaby_measurements <- wallaby_cleaner |> 
   select(-Sex, -Loca) 
 
-wallaby_measurements %>%
+wallaby_measurements |>
   head()
 ```
 
@@ -324,8 +336,8 @@ For the `wallaby_demographics`, we will split the data into two parts: `wallaby_
 
 
 ```{r}
-wallaby_sex <- wallaby_demographics %>% select(Anim, Sex)
-wallaby_Location <- wallaby_demographics %>% select(Anim, Loca)
+wallaby_sex <- wallaby_demographics |> select(Anim, Sex)
+wallaby_Location <- wallaby_demographics |> select(Anim, Loca)
 ```
 
 ##### Pivoting (R)
@@ -333,7 +345,7 @@ wallaby_Location <- wallaby_demographics %>% select(Anim, Loca)
 Another approach to bringing a dataset into key-value pairs is to summarize the values of a set of variables by introducing a new key for the variable names.
 
 ```{r}
-wallaby_measurements_long <- wallaby_measurements %>% 
+wallaby_measurements_long <- wallaby_measurements |> 
   pivot_longer(cols = 'Leng':'Weight', names_to="Traits", values_to="Measurements", 
                values_drop_na = TRUE)
 
