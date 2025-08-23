@@ -2,11 +2,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.6.39">
+<meta name="generator" content="quarto-1.7.31">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2025-08-19">
+<meta name="dcterms.date" content="2025-08-23">
 
 <title>34&nbsp; Working with PDFs – Statistical Computing using R and Python</title>
 <style>
@@ -22,8 +22,9 @@ ul.task-list li input[type="checkbox"] {
   vertical-align: middle;
 }
 /* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -34,7 +35,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
   { counter-reset: source-line 0; }
@@ -88,15 +89,16 @@ div.csl-indent {
 <link href="../part-advanced-topics/07-intro-interactive-graphics.html" rel="next">
 <link href="../part-advanced-topics/05-APIs.html" rel="prev">
 <link href="../build_deps/favicon.ico" rel="icon">
-<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-3e476e15ae565c222d94875412ae43a1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-fced259a1985fd972ecb57c7cd45153f.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-e5743f53fa41095997804694e2f5b46d.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-f07762a21ba25cba39e145f6fd1c637f.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script src="../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
 <link href="../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
 <link href="../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
@@ -138,6 +140,32 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
 </script>
 <script src="https://kit.fontawesome.com/baac5f0610.js" crossorigin="anonymous"></script>
 <style>
+div.callout-advanced.callout {
+  border-left-color: #cbbaf9;
+}
+div.callout-advanced.callout-style-default > .callout-header {
+  background-color: rgba(203, 186, 249, 0.13);
+}
+div.callout-advanced .callout-toggle::before {  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgb(33, 37, 41)" class="bi bi-chevron-down" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>');}
+div.callout-advanced.callout-style-default .callout-icon::before, div.callout-advanced.callout-titled .callout-icon::before {
+  font-family: 'Font Awesome 6 Free', FontAwesome;
+  font-style: normal;
+  content: '\f5dc' !important;
+  background-image: none;
+}
+div.callout-diy.callout {
+  border-left-color: #b3e094;
+}
+div.callout-diy.callout-style-default > .callout-header {
+  background-color: rgba(179, 224, 148, 0.13);
+}
+div.callout-diy .callout-toggle::before {  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgb(33, 37, 41)" class="bi bi-chevron-down" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>');}
+div.callout-diy.callout-style-default .callout-icon::before, div.callout-diy.callout-titled .callout-icon::before {
+  font-family: 'Font Awesome 6 Free', FontAwesome;
+  font-style: normal;
+  content: '\f0ad' !important;
+  background-image: none;
+}
 div.callout-example.callout {
   border-left-color: #f39c12;
 }
@@ -164,32 +192,6 @@ div.callout-setup.callout-style-default .callout-icon::before, div.callout-setup
   content: '\f6e3' !important;
   background-image: none;
 }
-div.callout-diy.callout {
-  border-left-color: #b3e094;
-}
-div.callout-diy.callout-style-default > .callout-header {
-  background-color: rgba(179, 224, 148, 0.13);
-}
-div.callout-diy .callout-toggle::before {  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgb(33, 37, 41)" class="bi bi-chevron-down" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>');}
-div.callout-diy.callout-style-default .callout-icon::before, div.callout-diy.callout-titled .callout-icon::before {
-  font-family: 'Font Awesome 6 Free', FontAwesome;
-  font-style: normal;
-  content: '\f0ad' !important;
-  background-image: none;
-}
-div.callout-learnmore.callout {
-  border-left-color: #f09bb6;
-}
-div.callout-learnmore.callout-style-default > .callout-header {
-  background-color: rgba(240, 155, 182, 0.13);
-}
-div.callout-learnmore .callout-toggle::before {  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgb(33, 37, 41)" class="bi bi-chevron-down" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>');}
-div.callout-learnmore.callout-style-default .callout-icon::before, div.callout-learnmore.callout-titled .callout-icon::before {
-  font-family: 'Font Awesome 6 Free', FontAwesome;
-  font-style: normal;
-  content: '\f02d' !important;
-  background-image: none;
-}
 div.callout-demo.callout {
   border-left-color: #91d5d4;
 }
@@ -203,17 +205,17 @@ div.callout-demo.callout-style-default .callout-icon::before, div.callout-demo.c
   content: '\f12e' !important;
   background-image: none;
 }
-div.callout-advanced.callout {
-  border-left-color: #cbbaf9;
+div.callout-learnmore.callout {
+  border-left-color: #f09bb6;
 }
-div.callout-advanced.callout-style-default > .callout-header {
-  background-color: rgba(203, 186, 249, 0.13);
+div.callout-learnmore.callout-style-default > .callout-header {
+  background-color: rgba(240, 155, 182, 0.13);
 }
-div.callout-advanced .callout-toggle::before {  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgb(33, 37, 41)" class="bi bi-chevron-down" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>');}
-div.callout-advanced.callout-style-default .callout-icon::before, div.callout-advanced.callout-titled .callout-icon::before {
+div.callout-learnmore .callout-toggle::before {  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgb(33, 37, 41)" class="bi bi-chevron-down" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>');}
+div.callout-learnmore.callout-style-default .callout-icon::before, div.callout-learnmore.callout-titled .callout-icon::before {
   font-family: 'Font Awesome 6 Free', FontAwesome;
   font-style: normal;
-  content: '\f5dc' !important;
+  content: '\f02d' !important;
   background-image: none;
 }
 </style>
@@ -251,7 +253,7 @@ window.Quarto = {
 <link rel="stylesheet" href="../build_deps/style.css">
 </head>
 
-<body class="nav-sidebar floating slimcontent">
+<body class="nav-sidebar floating slimcontent quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top">
@@ -635,7 +637,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">August 19, 2025</p>
+      <p class="date">August 23, 2025</p>
     </div>
   </div>
   
@@ -673,7 +675,7 @@ window.Quarto = {
 <section id="pdf-file-format" class="level3 page-columns page-full" data-number="34.1.1">
 <h3 data-number="34.1.1" class="anchored" data-anchor-id="pdf-file-format"><span class="header-section-number">34.1.1</span> PDF File Format</h3>
 <p>The PDF file format was created in 1993 by Adobe and was a proprietary format until 2008, when the format became an open standard under the control of the International Standards Organization <span class="citation" data-cites="wikimediacontributorsHistoryPDF2024"><a href="#ref-wikimediacontributorsHistoryPDF2024" role="doc-biblioref">[5]</a></span>. As the acronym suggests, Portable Document Format is intended to be readable on any computer. This was something of a novel idea in the 1990s, when Mac users used one document creation software and Windows users another, and there was not a version of e.g.&nbsp;Microsoft Office available for Mac.</p>
-<p>The technical details of a PDF file are complex <span class="citation" data-cites="gnupdfprojectIntroductionPDF2014 hodsonPDFSuccinctly2012"><a href="#ref-gnupdfprojectIntroductionPDF2014" role="doc-biblioref">[6]</a>, <a href="#ref-hodsonPDFSuccinctly2012" role="doc-biblioref">[7]</a></span>. However, conceptually, there are four required components to a PDF document, as shown in <a href="#fig-pdf-doc-components" class="quarto-xref">Figure&nbsp;<span>34.1</span></a>:</p>
+<p>The technical details of a PDF file are complex <span class="citation" data-cites="gnupdfprojectIntroductionPDF2014 hodsonPDFSuccinctly2012"><a href="#ref-gnupdfprojectIntroductionPDF2014" role="doc-biblioref">[6]</a>, <a href="#ref-hodsonPDFSuccinctly2012" role="doc-biblioref">[7]</a></span>. However, conceptually, there are four required components to a PDF document, as shown in <a href="#fig-pdf-doc-components" class="quarto-xref">Figure&nbsp;<span class="quarto-unresolved-ref">fig-pdf-doc-components</span></a>:</p>
 
 <div class="no-row-height column-margin column-container"><div class="">
 <div id="fig-pdf-doc-components" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="A box containing four colored boxes: Header, Body, Cross-ref table, and Trailer.">
@@ -702,7 +704,7 @@ Figure&nbsp;34.2: Required components of a PDF Body
 <li>PDF version number</li>
 <li>arbitrary sequence of binary data to prevent applications from opening the document as a text file (which would corrupt the file)</li>
 </ul></li>
-<li>Body (relationships between body components shown in <a href="#fig-pdf-body-components" class="quarto-xref">Figure&nbsp;<span>34.2</span></a>)
+<li>Body (relationships between body components shown in <a href="#fig-pdf-body-components" class="quarto-xref">Figure&nbsp;<span class="quarto-unresolved-ref">fig-pdf-body-components</span></a>)
 <ul>
 <li>Page tree - serves as the root of the document, and may be as simple as a list of pages.</li>
 <li>Pages - each page is defined independently and contains its own metadata, links to resources, and content (defined separately).</li>
@@ -731,7 +733,7 @@ Demo: PDF Fun
 </div>
 <div class="callout-body-container callout-body">
 <p>Consider a <a href="../data/Lancaster-County-NE-Real-Estate-AppraisalCard-28719-2025-147568.pdf">Home appraisal record from Lancaster County, NE</a>. Opening the card in a PDF reader and selecting all the text yields a <a href="../data/Lancaster-County-NE-Real-Estate-AppraisalCard-28719-2025-147568.txt">disorganized text file</a> (and this PDF is actually created using modern methods and relatively clean!)</p>
-<p>A few observations, marked up in <a href="#fig-pdf-layout-text" class="quarto-xref">Figure&nbsp;<span>34.3</span></a>:</p>
+<p>A few observations, marked up in <a href="#fig-pdf-layout-text" class="quarto-xref">Figure&nbsp;<span class="quarto-unresolved-ref">fig-pdf-layout-text</span></a>:</p>
 <ul>
 <li>The title on page 1 is on line 39 of the file, and it appears that the data from the first column is on lines 1-38.</li>
 <li>When there are multi-column tables, as in the “Inspection History” table in the middle of the first page, the values are listed by column, but missing values (the times of inspection) are not indicated at all!</li>
@@ -749,7 +751,7 @@ Figure&nbsp;34.3: Comparing text of PDF document to the rendered PDF document.
 </div>
 <p>Now, perhaps we could write a script that would disentangle some of this information and format it properly, though I think the missing values would still be unrecoverable without someone visually mapping the data to the corresponding lines.</p>
 <p>The arrangement of the text you get from selecting all text is different in different PDF applications – I tried it with <a href="../data/Lancaster-County-NE-Real-Estate-AppraisalCard-28749-2025-147568.txt">Okular</a> and <a href="../data/Lancaster-County-NE-Real-Estate-AppraisalCard-28749-2025-147568-Firefox.txt">Firefox</a>, and got totally different orders of text boxes.</p>
-<p>The scope of the actual problem only becomes visible when you look at a second <a href="../data/Lancaster-County-NE-Real-Estate-AppraisalCard-28749-2025-147568.pdf">PDF document</a> and the corresponding <a href="../data/Lancaster-County-NE-Real-Estate-AppraisalCard-28749-2025-147568.txt">text file</a>. <a href="#fig-pdf-layout-text-parallel" class="quarto-xref">Figure&nbsp;<span>34.4</span></a> shows the two PDF files and their corresponding text files, with the comparable portion of each PDF and text file highlighted.</p>
+<p>The scope of the actual problem only becomes visible when you look at a second <a href="../data/Lancaster-County-NE-Real-Estate-AppraisalCard-28749-2025-147568.pdf">PDF document</a> and the corresponding <a href="../data/Lancaster-County-NE-Real-Estate-AppraisalCard-28749-2025-147568.txt">text file</a>. <a href="#fig-pdf-layout-text-parallel" class="quarto-xref">Figure&nbsp;<span class="quarto-unresolved-ref">fig-pdf-layout-text-parallel</span></a> shows the two PDF files and their corresponding text files, with the comparable portion of each PDF and text file highlighted.</p>
 <div id="fig-pdf-layout-text-parallel" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="A screenshot of the text files and PDF files for both real estate appraisal cards. The recent appeal history and assessed value history table headers and first row of text are highlighted in both sets of documents.">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-pdf-layout-text-parallel-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -6150,7 +6152,7 @@ Python tesseract file output
 <p>We could reduce this work a bit if we could automatically recognize the vertical-ish lines separating the transcript content from the line numbers, but even doing that automatically is tricky and would likely involve line detection, rotation, and cropping for each image.</p>
 <p>However, it might be easy enough to make an educated guess, as this PDF is actually a “best case” OCR scenario. The pages don’t have a ton of dust, copy artifacts, etc., so if we can crop off the top, bottom, and left margins, we’d probably get cleaner data. In addition, the pages aren’t that skewed and are mostly in the same alignment – we might be able to get away with specifying a crop boundary for all pages.</p>
 <p>I could figure out how to crop images in R or python, but honestly, I think the easiest way to do this is just to use the command line. I encourage you to search for how to do <code>&lt;task&gt;</code> for a folder of files on the command line, because no one remembers the syntax for this stuff unless they’re doing it all the time. I consulted <a href="https://superuser.com/questions/1161340/how-to-crop-an-image-using-imagemagick-from-the-command-line">this page</a> and <a href="https://stackoverflow.com/questions/31104371/cropping-images-with-loop-in-imagemagick">this page</a> and eventually pieced something together. The <code>$(echo $f | sed 's/\.png/-crop.png/')</code> is probably not the most elegant way to rename the output files but it works (which the other methods I tried did not). This requires that <code>imagemagick</code> is installed and on the system path.</p>
-<p>Then, we have to figure out how much to crop. Imagemagick’s <code>convert</code> command uses an argument string of <code>&lt;Width&gt;x&lt;Height&gt;+OffsetX+OffsetY</code>. I opened a few files up in an image viewing program that had a crop function and drew some rectangles to see how different cropping arguments would work, as in <a href="#fig-legal-pdf-crop-args" class="quarto-xref">Figure&nbsp;<span>34.5</span></a>.</p>
+<p>Then, we have to figure out how much to crop. Imagemagick’s <code>convert</code> command uses an argument string of <code>&lt;Width&gt;x&lt;Height&gt;+OffsetX+OffsetY</code>. I opened a few files up in an image viewing program that had a crop function and drew some rectangles to see how different cropping arguments would work, as in <a href="#fig-legal-pdf-crop-args" class="quarto-xref">Figure&nbsp;<span class="quarto-unresolved-ref">fig-legal-pdf-crop-args</span></a>.</p>
 
 <div class="no-row-height column-margin column-container"><div class="">
 <div id="fig-legal-pdf-crop-args" class="lightbox quarto-float quarto-figure quarto-figure-center anchored" alt="A screenshot of a page of a PDF as a PNG in an image viewer program, with a crop box shown. Arguments Width, Height, Offset X, and Offset Y, are shown at the bottom of the window.">
@@ -6191,7 +6193,7 @@ Figure&nbsp;34.6: After the <code>convert</code> command is run, it can be helpf
 </dl>
 </div>
 </div>
-<p>Once the conversion command has run, it can be helpful to page through the cropped files looking for problems, and rerun the crop command if problems are identified, as in <a href="#fig-legal-pdf-crop-results" class="quarto-xref">Figure&nbsp;<span>34.6</span></a>.</p>
+<p>Once the conversion command has run, it can be helpful to page through the cropped files looking for problems, and rerun the crop command if problems are identified, as in <a href="#fig-legal-pdf-crop-results" class="quarto-xref">Figure&nbsp;<span class="quarto-unresolved-ref">fig-legal-pdf-crop-results</span></a>.</p>
 <p>Then, we re-run the OCR process on the cropped files.</p>
 <div class="callout callout-style-default callout-demo callout-titled">
 <div class="callout-header d-flex align-content-center">
@@ -6487,7 +6489,7 @@ Acquiring 2 years of BLS CPI news releases
 </div>
 <div id="callout-17" class="callout-17-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>As this material is covered in <a href="03-web-scraping.html" class="quarto-xref"><span>Chapter 31</span></a>, I’m just going to provide the code to do this in R – you can see equivalent python commands in <a href="03-web-scraping.html" class="quarto-xref"><span>Chapter 31</span></a>. After having done this in R, I realized I probably could have accomplished the same task with a single <code>wget</code> command in <code>bash</code>, the lesson being that it is important to pick your tools wisely.</p>
+<p>As this material is covered in <a href="#sec-data-web" class="quarto-xref"><span class="quarto-unresolved-ref">sec-data-web</span></a>, I’m just going to provide the code to do this in R – you can see equivalent python commands in <a href="#sec-data-web" class="quarto-xref"><span class="quarto-unresolved-ref">sec-data-web</span></a>. After having done this in R, I realized I probably could have accomplished the same task with a single <code>wget</code> command in <code>bash</code>, the lesson being that it is important to pick your tools wisely.</p>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(rvest)</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(lubridate)</span>
@@ -6563,7 +6565,7 @@ Acquiring 2 years of BLS CPI news releases
 <span id="cb20-30"><a href="#cb20-30" aria-hidden="true" tabindex="-1"></a><span class="do">## # ℹ abbreviated name: ¹​`Seasonally adjusted percent`</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>It appears that <code>tabulapdf</code> isn’t separating the columns the way we’d prefer. Let’s see if we can fix that….</p>
-<p>There’s a function, <code>locate_areas()</code>, that works interactively - it opens a viewer tab and you select the table using the mouse, as in <a href="#fig-tabulapdf-locate-area" class="quarto-xref">Figure&nbsp;<span>34.8</span></a>.</p>
+<p>There’s a function, <code>locate_areas()</code>, that works interactively - it opens a viewer tab and you select the table using the mouse, as in <a href="#fig-tabulapdf-locate-area" class="quarto-xref">Figure&nbsp;<span class="quarto-unresolved-ref">fig-tabulapdf-locate-area</span></a>.</p>
 
 <p><code>locate_areas</code> provides a sequence of coordinates that are relatively consistent across multiple full-page tables, so we might try to use those coordinates to improve our table parsing.</p>
 <div class="cell">
@@ -6926,7 +6928,7 @@ Listening on http://127.0.0.1:7339
 <span id="annotated-cell-43-18"><a href="#annotated-cell-43-18" aria-hidden="true" tabindex="-1"></a>  <span class="st">''</span>.join(tbl.loc[<span class="dv">0</span>:<span class="dv">3</span>,<span class="dv">7</span>]),</span>
 <span id="annotated-cell-43-19"><a href="#annotated-cell-43-19" aria-hidden="true" tabindex="-1"></a>  <span class="st">''</span>.join(tbl.loc[<span class="dv">0</span>:<span class="dv">3</span>,<span class="dv">8</span>]),</span>
 <span id="annotated-cell-43-20"><a href="#annotated-cell-43-20" aria-hidden="true" tabindex="-1"></a>  <span class="st">''</span>.join(tbl.loc[<span class="dv">0</span>:<span class="dv">3</span>,<span class="dv">9</span>])])</span>
-<button class="code-annotation-anchor" data-target-cell="annotated-cell-43" data-target-annotation="5">5</button><span id="annotated-cell-43-21" class="code-annotation-target"><a href="#annotated-cell-43-21" aria-hidden="true" tabindex="-1"></a>  spans<span class="op">=</span>spans.<span class="bu">str</span>.replace(<span class="st">"\."</span>, <span class="st">""</span>, regex <span class="op">=</span> <span class="va">True</span>)</span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-43" data-target-annotation="5">5</button><span id="annotated-cell-43-21" class="code-annotation-target"><a href="#annotated-cell-43-21" aria-hidden="true" tabindex="-1"></a>  spans<span class="op">=</span>spans.<span class="bu">str</span>.replace(<span class="st">"</span><span class="er">\</span><span class="st">."</span>, <span class="st">""</span>, regex <span class="op">=</span> <span class="va">True</span>)</span>
 <span id="annotated-cell-43-22"><a href="#annotated-cell-43-22" aria-hidden="true" tabindex="-1"></a>  spans<span class="op">=</span>spans.<span class="bu">str</span>.replace(<span class="st">"[ -]"</span>, <span class="st">"_"</span>, regex <span class="op">=</span> <span class="va">True</span>)</span>
 <span id="annotated-cell-43-23"><a href="#annotated-cell-43-23" aria-hidden="true" tabindex="-1"></a>  </span>
 <span id="annotated-cell-43-24"><a href="#annotated-cell-43-24" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> modifiers <span class="op">+</span> spans</span>
@@ -6998,14 +7000,14 @@ Listening on http://127.0.0.1:7339
 <span id="annotated-cell-44-2"><a href="#annotated-cell-44-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
 <span id="annotated-cell-44-3"><a href="#annotated-cell-44-3" aria-hidden="true" tabindex="-1"></a> </span>
 <button class="code-annotation-anchor" data-target-cell="annotated-cell-44" data-target-annotation="1">1</button><span id="annotated-cell-44-4" class="code-annotation-target"><a href="#annotated-cell-44-4" aria-hidden="true" tabindex="-1"></a>report_date <span class="op">=</span> pd.Series([os.path.basename(i) <span class="cf">for</span> i <span class="kw">in</span> files])</span>
-<span id="annotated-cell-44-5"><a href="#annotated-cell-44-5" aria-hidden="true" tabindex="-1"></a>report_date <span class="op">=</span> report_date.<span class="bu">str</span>.replace(<span class="st">"cpi_|\.pdf$"</span>, <span class="st">""</span>, regex<span class="op">=</span><span class="va">True</span>)</span>
+<span id="annotated-cell-44-5"><a href="#annotated-cell-44-5" aria-hidden="true" tabindex="-1"></a>report_date <span class="op">=</span> report_date.<span class="bu">str</span>.replace(<span class="st">"cpi_|</span><span class="er">\</span><span class="st">.pdf$"</span>, <span class="st">""</span>, regex<span class="op">=</span><span class="va">True</span>)</span>
 <span id="annotated-cell-44-6"><a href="#annotated-cell-44-6" aria-hidden="true" tabindex="-1"></a>report_date <span class="op">=</span> pd.to_datetime(report_date, <span class="bu">format</span><span class="op">=</span><span class="st">"%m</span><span class="sc">%d</span><span class="st">%Y"</span>)</span>
 <span id="annotated-cell-44-7"><a href="#annotated-cell-44-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="annotated-cell-44-8"><a href="#annotated-cell-44-8" aria-hidden="true" tabindex="-1"></a>cpi_data <span class="op">=</span> pd.DataFrame()</span>
 <span id="annotated-cell-44-9"><a href="#annotated-cell-44-9" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i,tbl <span class="kw">in</span> <span class="bu">enumerate</span>(tables):</span>
 <button class="code-annotation-anchor" data-target-cell="annotated-cell-44" data-target-annotation="2">2</button><span id="annotated-cell-44-10" class="code-annotation-target"><a href="#annotated-cell-44-10" aria-hidden="true" tabindex="-1"></a>  tbl[<span class="st">'report_date'</span>] <span class="op">=</span> report_date[i]</span>
 <button class="code-annotation-anchor" data-target-cell="annotated-cell-44" data-target-annotation="3">3</button><span id="annotated-cell-44-11" class="code-annotation-target"><a href="#annotated-cell-44-11" aria-hidden="true" tabindex="-1"></a>  tbl <span class="op">=</span> tbl.melt(id_vars<span class="op">=</span>[<span class="st">'Expenditure_category'</span>, <span class="st">'report_date'</span>], value_name<span class="op">=</span><span class="st">'val'</span>, var_name<span class="op">=</span><span class="st">'var'</span>)</span>
-<span id="annotated-cell-44-12"><a href="#annotated-cell-44-12" aria-hidden="true" tabindex="-1"></a>  cols <span class="op">=</span> pd.DataFrame(tbl[<span class="st">'var'</span>].<span class="bu">str</span>.split(<span class="st">"\."</span>).to_list(), columns<span class="op">=</span>[<span class="st">'varname'</span>, <span class="st">'vardate'</span>])</span>
+<span id="annotated-cell-44-12"><a href="#annotated-cell-44-12" aria-hidden="true" tabindex="-1"></a>  cols <span class="op">=</span> pd.DataFrame(tbl[<span class="st">'var'</span>].<span class="bu">str</span>.split(<span class="st">"</span><span class="er">\</span><span class="st">."</span>).to_list(), columns<span class="op">=</span>[<span class="st">'varname'</span>, <span class="st">'vardate'</span>])</span>
 <button class="code-annotation-anchor" data-target-cell="annotated-cell-44" data-target-annotation="4">4</button><span id="annotated-cell-44-13" class="code-annotation-target"><a href="#annotated-cell-44-13" aria-hidden="true" tabindex="-1"></a>  tbl <span class="op">=</span> pd.concat([tbl, cols], axis <span class="op">=</span> <span class="dv">1</span>)</span>
 <button class="code-annotation-anchor" data-target-cell="annotated-cell-44" data-target-annotation="5">5</button><span id="annotated-cell-44-14" class="code-annotation-target"><a href="#annotated-cell-44-14" aria-hidden="true" tabindex="-1"></a>  tbl <span class="op">=</span> tbl.set_index([<span class="st">'report_date'</span>, <span class="st">'Expenditure_category'</span>, <span class="st">'vardate'</span>])</span>
 <span id="annotated-cell-44-15"><a href="#annotated-cell-44-15" aria-hidden="true" tabindex="-1"></a>  tbl <span class="op">=</span> tbl.drop([<span class="st">'var'</span>], axis<span class="op">=</span><span class="dv">1</span>)</span>
@@ -7013,7 +7015,7 @@ Listening on http://127.0.0.1:7339
 <span id="annotated-cell-44-17"><a href="#annotated-cell-44-17" aria-hidden="true" tabindex="-1"></a>  tbl_wide <span class="op">=</span> tbl_wide.reset_index()</span>
 <button class="code-annotation-anchor" data-target-cell="annotated-cell-44" data-target-annotation="6">6</button><span id="annotated-cell-44-18" class="code-annotation-target"><a href="#annotated-cell-44-18" aria-hidden="true" tabindex="-1"></a>  cpi_data <span class="op">=</span> pd.concat([cpi_data, tbl_wide], axis<span class="op">=</span><span class="dv">0</span>)</span>
 <span id="annotated-cell-44-19"><a href="#annotated-cell-44-19" aria-hidden="true" tabindex="-1"></a></span>
-<button class="code-annotation-anchor" data-target-cell="annotated-cell-44" data-target-annotation="7">7</button><span id="annotated-cell-44-20" class="code-annotation-target"><a href="#annotated-cell-44-20" aria-hidden="true" tabindex="-1"></a>cpi_data[<span class="st">'Expenditure_category'</span>] <span class="op">=</span> cpi_data[<span class="st">'Expenditure_category'</span>].<span class="bu">str</span>.replace(<span class="st">"[ \.]{1,}$"</span>, <span class="st">""</span>, regex<span class="op">=</span><span class="va">True</span>)</span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-44" data-target-annotation="7">7</button><span id="annotated-cell-44-20" class="code-annotation-target"><a href="#annotated-cell-44-20" aria-hidden="true" tabindex="-1"></a>cpi_data[<span class="st">'Expenditure_category'</span>] <span class="op">=</span> cpi_data[<span class="st">'Expenditure_category'</span>].<span class="bu">str</span>.replace(<span class="st">"[ </span><span class="er">\</span><span class="st">.]{1,}$"</span>, <span class="st">""</span>, regex<span class="op">=</span><span class="va">True</span>)</span>
 <span id="annotated-cell-44-21"><a href="#annotated-cell-44-21" aria-hidden="true" tabindex="-1"></a></span>
 <span id="annotated-cell-44-22"><a href="#annotated-cell-44-22" aria-hidden="true" tabindex="-1"></a>cpi_data.shape</span>
 <span id="annotated-cell-44-23"><a href="#annotated-cell-44-23" aria-hidden="true" tabindex="-1"></a>cpi_data.head</span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -7195,236 +7197,242 @@ Figure&nbsp;34.8: A screenshot of one page of one of the PDFs, showing how <code
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
-window.document.addEventListener("DOMContentLoaded", function (event) {
-  const toggleBodyColorMode = (bsSheetEl) => {
-    const mode = bsSheetEl.getAttribute("data-mode");
-    const bodyEl = window.document.querySelector("body");
-    if (mode === "dark") {
-      bodyEl.classList.add("quarto-dark");
-      bodyEl.classList.remove("quarto-light");
-    } else {
-      bodyEl.classList.add("quarto-light");
-      bodyEl.classList.remove("quarto-dark");
-    }
-  }
-  const toggleBodyColorPrimary = () => {
-    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
-    if (bsSheetEl) {
-      toggleBodyColorMode(bsSheetEl);
-    }
-  }
-  toggleBodyColorPrimary();  
-  const icon = "";
-  const anchorJS = new window.AnchorJS();
-  anchorJS.options = {
-    placement: 'right',
-    icon: icon
-  };
-  anchorJS.add('.anchored');
-  const isCodeAnnotation = (el) => {
-    for (const clz of el.classList) {
-      if (clz.startsWith('code-annotation-')) {                     
-        return true;
-      }
-    }
-    return false;
-  }
-  const onCopySuccess = function(e) {
-    // button target
-    const button = e.trigger;
-    // don't keep focus
-    button.blur();
-    // flash "checked"
-    button.classList.add('code-copy-button-checked');
-    var currentTitle = button.getAttribute("title");
-    button.setAttribute("title", "Copied!");
-    let tooltip;
-    if (window.bootstrap) {
-      button.setAttribute("data-bs-toggle", "tooltip");
-      button.setAttribute("data-bs-placement", "left");
-      button.setAttribute("data-bs-title", "Copied!");
-      tooltip = new bootstrap.Tooltip(button, 
-        { trigger: "manual", 
-          customClass: "code-copy-button-tooltip",
-          offset: [0, -8]});
-      tooltip.show();    
-    }
-    setTimeout(function() {
-      if (tooltip) {
-        tooltip.hide();
-        button.removeAttribute("data-bs-title");
-        button.removeAttribute("data-bs-toggle");
-        button.removeAttribute("data-bs-placement");
-      }
-      button.setAttribute("title", currentTitle);
-      button.classList.remove('code-copy-button-checked');
-    }, 1000);
-    // clear code selection
-    e.clearSelection();
-  }
-  const getTextToCopy = function(trigger) {
-      const codeEl = trigger.previousElementSibling.cloneNode(true);
-      for (const childEl of codeEl.children) {
-        if (isCodeAnnotation(childEl)) {
-          childEl.remove();
-        }
-      }
-      return codeEl.innerText;
-  }
-  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
-    text: getTextToCopy
-  });
-  clipboard.on('success', onCopySuccess);
-  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
-    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
-      text: getTextToCopy,
-      container: window.document.getElementById('quarto-embedded-source-code-modal')
-    });
-    clipboardModal.on('success', onCopySuccess);
-  }
-    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
-    var mailtoRegex = new RegExp(/^mailto:/);
-      var filterRegex = new RegExp("https:\/\/srvanderplas\.github\.io\/stat-computing-r-python\/");
-    var isInternal = (href) => {
-        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
-    }
-    // Inspect non-navigation links and adorn them if external
- 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
-    for (var i=0; i<links.length; i++) {
-      const link = links[i];
-      if (!isInternal(link.href)) {
-        // undo the damage that might have been done by quarto-nav.js in the case of
-        // links that we want to consider external
-        if (link.dataset.originalHref !== undefined) {
-          link.href = link.dataset.originalHref;
-        }
-      }
-    }
-  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
-    const config = {
-      allowHTML: true,
-      maxWidth: 500,
-      delay: 100,
-      arrow: false,
-      appendTo: function(el) {
-          return el.parentElement;
-      },
-      interactive: true,
-      interactiveBorder: 10,
-      theme: 'quarto',
-      placement: 'bottom-start',
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
     };
-    if (contentFn) {
-      config.content = contentFn;
-    }
-    if (onTriggerFn) {
-      config.onTrigger = onTriggerFn;
-    }
-    if (onUntriggerFn) {
-      config.onUntrigger = onUntriggerFn;
-    }
-    window.tippy(el, config); 
-  }
-  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
-  for (var i=0; i<noterefs.length; i++) {
-    const ref = noterefs[i];
-    tippyHover(ref, function() {
-      // use id or data attribute instead here
-      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
-      try { href = new URL(href).hash; } catch {}
-      const id = href.replace(/^#\/?/, "");
-      const note = window.document.getElementById(id);
-      if (note) {
-        return note.innerHTML;
-      } else {
-        return "";
-      }
-    });
-  }
-  const xrefs = window.document.querySelectorAll('a.quarto-xref');
-  const processXRef = (id, note) => {
-    // Strip column container classes
-    const stripColumnClz = (el) => {
-      el.classList.remove("page-full", "page-columns");
-      if (el.children) {
-        for (const child of el.children) {
-          stripColumnClz(child);
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
         }
       }
+      return false;
     }
-    stripColumnClz(note)
-    if (id === null || id.startsWith('sec-')) {
-      // Special case sections, only their first couple elements
-      const container = document.createElement("div");
-      if (note.children && note.children.length > 2) {
-        container.appendChild(note.children[0].cloneNode(true));
-        for (let i = 1; i < note.children.length; i++) {
-          const child = note.children[i];
-          if (child.tagName === "P" && child.innerText === "") {
-            continue;
-          } else {
-            container.appendChild(child.cloneNode(true));
-            break;
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
           }
         }
-        if (window.Quarto?.typesetMath) {
-          window.Quarto.typesetMath(container);
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/srvanderplas\.github\.io\/stat-computing-r-python\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
         }
-        return container.innerHTML
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
       } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
         if (window.Quarto?.typesetMath) {
           window.Quarto.typesetMath(note);
         }
-        return note.innerHTML;
-      }
-    } else {
-      // Remove any anchor links if they are present
-      const anchorLink = note.querySelector('a.anchorjs-link');
-      if (anchorLink) {
-        anchorLink.remove();
-      }
-      if (window.Quarto?.typesetMath) {
-        window.Quarto.typesetMath(note);
-      }
-      if (note.classList.contains("callout")) {
-        return note.outerHTML;
-      } else {
-        return note.innerHTML;
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
       }
     }
-  }
-  for (var i=0; i<xrefs.length; i++) {
-    const xref = xrefs[i];
-    tippyHover(xref, undefined, function(instance) {
-      instance.disable();
-      let url = xref.getAttribute('href');
-      let hash = undefined; 
-      if (url.startsWith('#')) {
-        hash = url;
-      } else {
-        try { hash = new URL(url).hash; } catch {}
-      }
-      if (hash) {
-        const id = hash.replace(/^#\/?/, "");
-        const note = window.document.getElementById(id);
-        if (note !== null) {
-          try {
-            const html = processXRef(id, note.cloneNode(true));
-            instance.setContent(html);
-          } finally {
-            instance.enable();
-            instance.show();
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
           }
         } else {
-          // See if we can fetch this
-          fetch(url.split('#')[0])
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
           .then(res => res.text())
           .then(html => {
             const parser = new DOMParser();
             const htmlDoc = parser.parseFromString(html, "text/html");
-            const note = htmlDoc.getElementById(id);
+            const note = htmlDoc.querySelector('main.content');
             if (note !== null) {
-              const html = processXRef(id, note);
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
               instance.setContent(html);
             } 
           }).finally(() => {
@@ -7432,230 +7440,231 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             instance.show();
           });
         }
-      } else {
-        // See if we can fetch a full url (with no hash to target)
-        // This is a special case and we should probably do some content thinning / targeting
-        fetch(url)
-        .then(res => res.text())
-        .then(html => {
-          const parser = new DOMParser();
-          const htmlDoc = parser.parseFromString(html, "text/html");
-          const note = htmlDoc.querySelector('main.content');
-          if (note !== null) {
-            // This should only happen for chapter cross references
-            // (since there is no id in the URL)
-            // remove the first header
-            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
-              note.children[0].remove();
-            }
-            const html = processXRef(null, note);
-            instance.setContent(html);
-          } 
-        }).finally(() => {
-          instance.enable();
-          instance.show();
-        });
-      }
-    }, function(instance) {
-    });
-  }
-      let selectedAnnoteEl;
-      const selectorForAnnotation = ( cell, annotation) => {
-        let cellAttr = 'data-code-cell="' + cell + '"';
-        let lineAttr = 'data-code-annotation="' +  annotation + '"';
-        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
-        return selector;
-      }
-      const selectCodeLines = (annoteEl) => {
-        const doc = window.document;
-        const targetCell = annoteEl.getAttribute("data-target-cell");
-        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
-        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
-        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
-        const lineIds = lines.map((line) => {
-          return targetCell + "-" + line;
-        })
-        let top = null;
-        let height = null;
-        let parent = null;
-        if (lineIds.length > 0) {
-            //compute the position of the single el (top and bottom and make a div)
-            const el = window.document.getElementById(lineIds[0]);
-            top = el.offsetTop;
-            height = el.offsetHeight;
-            parent = el.parentElement.parentElement;
-          if (lineIds.length > 1) {
-            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
-            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
-            height = bottom - top;
-          }
-          if (top !== null && height !== null && parent !== null) {
-            // cook up a div (if necessary) and position it 
-            let div = window.document.getElementById("code-annotation-line-highlight");
-            if (div === null) {
-              div = window.document.createElement("div");
-              div.setAttribute("id", "code-annotation-line-highlight");
-              div.style.position = 'absolute';
-              parent.appendChild(div);
-            }
-            div.style.top = top - 2 + "px";
-            div.style.height = height + 4 + "px";
-            div.style.left = 0;
-            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
-            if (gutterDiv === null) {
-              gutterDiv = window.document.createElement("div");
-              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
-              gutterDiv.style.position = 'absolute';
-              const codeCell = window.document.getElementById(targetCell);
-              const gutter = codeCell.querySelector('.code-annotation-gutter');
-              gutter.appendChild(gutterDiv);
-            }
-            gutterDiv.style.top = top - 2 + "px";
-            gutterDiv.style.height = height + 4 + "px";
-          }
-          selectedAnnoteEl = annoteEl;
-        }
-      };
-      const unselectCodeLines = () => {
-        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
-        elementsIds.forEach((elId) => {
-          const div = window.document.getElementById(elId);
-          if (div) {
-            div.remove();
-          }
-        });
-        selectedAnnoteEl = undefined;
-      };
-        // Handle positioning of the toggle
-    window.addEventListener(
-      "resize",
-      throttle(() => {
-        elRect = undefined;
-        if (selectedAnnoteEl) {
-          selectCodeLines(selectedAnnoteEl);
-        }
-      }, 10)
-    );
-    function throttle(fn, ms) {
-    let throttle = false;
-    let timer;
-      return (...args) => {
-        if(!throttle) { // first call gets through
-            fn.apply(this, args);
-            throttle = true;
-        } else { // all the others get throttled
-            if(timer) clearTimeout(timer); // cancel #2
-            timer = setTimeout(() => {
-              fn.apply(this, args);
-              timer = throttle = false;
-            }, ms);
-        }
-      };
-    }
-      const annoteTargets = window.document.querySelectorAll('.code-annotation-anchor');
-      for (let i=0; i<annoteTargets.length; i++) {
-        const annoteTarget = annoteTargets[i];
-        const targetCell = annoteTarget.getAttribute("data-target-cell");
-        const targetAnnotation = annoteTarget.getAttribute("data-target-annotation");
-        const contentFn = () => {
-          const content = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
-          if (content) {
-            const tipContent = content.cloneNode(true);
-            tipContent.classList.add("code-annotation-tip-content");
-            return tipContent.outerHTML;
-          }
-        }
-        const config = {
-          allowHTML: true,
-          content: contentFn,
-          onShow: (instance) => {
-            selectCodeLines(instance.reference);
-            instance.reference.classList.add('code-annotation-active');
-            window.tippy.hideAll();
-          },
-          onHide: (instance) => {
-            unselectCodeLines();
-            instance.reference.classList.remove('code-annotation-active');
-          },
-          maxWidth: 300,
-          delay: [50, 0],
-          duration: [200, 0],
-          offset: [5, 10],
-          arrow: true,
-          trigger: 'click',
-          appendTo: function(el) {
-            return el.parentElement.parentElement.parentElement;
-          },
-          interactive: true,
-          interactiveBorder: 10,
-          theme: 'quarto',
-          placement: 'right',
-          positionFixed: true,
-          popperOptions: {
-            modifiers: [
-            {
-              name: 'flip',
-              options: {
-                flipVariations: false, // true by default
-                allowedAutoPlacements: ['right'],
-                fallbackPlacements: ['right', 'top', 'top-start', 'top-end', 'bottom', 'bottom-start', 'bottom-end', 'left'],
-              },
-            },
-            {
-              name: 'preventOverflow',
-              options: {
-                mainAxis: false,
-                altAxis: false
-              }
-            }
-            ]        
-          }      
-        };
-        window.tippy(annoteTarget, config); 
-      }
-  const findCites = (el) => {
-    const parentEl = el.parentElement;
-    if (parentEl) {
-      const cites = parentEl.dataset.cites;
-      if (cites) {
-        return {
-          el,
-          cites: cites.split(' ')
-        };
-      } else {
-        return findCites(el.parentElement)
-      }
-    } else {
-      return undefined;
-    }
-  };
-  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
-  for (var i=0; i<bibliorefs.length; i++) {
-    const ref = bibliorefs[i];
-    const citeInfo = findCites(ref);
-    if (citeInfo) {
-      tippyHover(citeInfo.el, function() {
-        var popup = window.document.createElement('div');
-        citeInfo.cites.forEach(function(cite) {
-          var citeDiv = window.document.createElement('div');
-          citeDiv.classList.add('hanging-indent');
-          citeDiv.classList.add('csl-entry');
-          var biblioDiv = window.document.getElementById('ref-' + cite);
-          if (biblioDiv) {
-            citeDiv.innerHTML = biblioDiv.innerHTML;
-          }
-          popup.appendChild(citeDiv);
-        });
-        return popup.innerHTML;
+      }, function(instance) {
       });
     }
-  }
-});
-</script>
-<script src="https://giscus.app/client.js" data-repo="srvanderplas/stat-computing-r-python" data-repo-id="R_kgDOIvwd2g" data-category="General" data-category-id="DIC_kwDOIvwd2s4CTksR" data-mapping="pathname" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="light" data-lang="en" crossorigin="anonymous" async="">
-</script>
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        const annoteTargets = window.document.querySelectorAll('.code-annotation-anchor');
+        for (let i=0; i<annoteTargets.length; i++) {
+          const annoteTarget = annoteTargets[i];
+          const targetCell = annoteTarget.getAttribute("data-target-cell");
+          const targetAnnotation = annoteTarget.getAttribute("data-target-annotation");
+          const contentFn = () => {
+            const content = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+            if (content) {
+              const tipContent = content.cloneNode(true);
+              tipContent.classList.add("code-annotation-tip-content");
+              return tipContent.outerHTML;
+            }
+          }
+          const config = {
+            allowHTML: true,
+            content: contentFn,
+            onShow: (instance) => {
+              selectCodeLines(instance.reference);
+              instance.reference.classList.add('code-annotation-active');
+              window.tippy.hideAll();
+            },
+            onHide: (instance) => {
+              unselectCodeLines();
+              instance.reference.classList.remove('code-annotation-active');
+            },
+            maxWidth: 300,
+            delay: [50, 0],
+            duration: [200, 0],
+            offset: [5, 10],
+            arrow: true,
+            trigger: 'click',
+            appendTo: function(el) {
+              return el.parentElement.parentElement.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'quarto',
+            placement: 'right',
+            positionFixed: true,
+            popperOptions: {
+              modifiers: [
+              {
+                name: 'flip',
+                options: {
+                  flipVariations: false, // true by default
+                  allowedAutoPlacements: ['right'],
+                  fallbackPlacements: ['right', 'top', 'top-start', 'top-end', 'bottom', 'bottom-start', 'bottom-end', 'left'],
+                },
+              },
+              {
+                name: 'preventOverflow',
+                options: {
+                  mainAxis: false,
+                  altAxis: false
+                }
+              }
+              ]        
+            }      
+          };
+          window.tippy(annoteTarget, config); 
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
 <input type="hidden" id="giscus-base-theme" value="light">
 <input type="hidden" id="giscus-alt-theme" value="dark">
+<script>
+  function loadGiscus() {
+    // Function to get the theme based on body class
+    const getTheme = () => {
+      let baseTheme = document.getElementById('giscus-base-theme').value;
+      let altTheme = document.getElementById('giscus-alt-theme').value;
+      return document.body.classList.contains('quarto-dark') ? altTheme : baseTheme;
+    };
+    const script = document.createElement("script");
+    script.src = "https://giscus.app/client.js";
+    script.async = true;
+    script.dataset.repo = "srvanderplas/stat-computing-r-python";
+    script.dataset.repoId = "R_kgDOIvwd2g";
+    script.dataset.category = "General";
+    script.dataset.categoryId = "DIC_kwDOIvwd2s4CTksR";
+    script.dataset.mapping = "pathname";
+    script.dataset.reactionsEnabled = "1";
+    script.dataset.emitMetadata = "0";
+    script.dataset.inputPosition = "top";
+    script.dataset.theme = getTheme();
+    script.dataset.lang = "en";
+    script.crossOrigin = "anonymous";
+    // Append the script to the desired div instead of at the end of the body
+    document.getElementById("quarto-content").appendChild(script);
+  }
+  loadGiscus();
+</script>
 <nav class="page-navigation column-body">
   <div class="nav-page nav-page-previous">
       <a href="../part-advanced-topics/05-APIs.html" class="pagination-link" aria-label="Application Programming Interfaces">
