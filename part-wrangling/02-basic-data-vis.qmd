@@ -1,11 +1,12 @@
 # Data Visualization Basics {#sec-basic-data-vis}
 
-This section is intended as a very light overview of how you might create charts in R and python. @sec-data-vis will be much more in depth.
+This section is intended as a very light overview of how you might create charts in R and python. 
+@sec-data-vis will be much more in depth.
 
 ## Objectives {-}
 
 - Use ggplot2/seaborn to create a chart
-- Begin to identify issues with data formatting
+- Begin to identify issues with data formatting that need to be resolved before creating a chart.
 
 ## Package Installation 
 
@@ -52,7 +53,8 @@ Once you have run this command, please comment it out so that you don't reinstal
 ## First Steps
 
 Now that you can read data in to R and python and define new variables, you can create plots! 
-Data visualization is a skill that takes a lifetime to learn, but for now, let's start out easy:  let's talk about how to make (basic) plots in R (with `ggplot2`) and in python (with `seaborn`, which has similar).
+Data visualization is a skill that takes a lifetime to learn, but for now, let's start out easy:  let's talk about how to make (basic) plots in R (with `ggplot2`) and in python (with `seaborn`, which has a similar approach to charts).
+You can read more about this approach, called the **grammar of graphics** in @sec-data-vis.
 
 ### Graphing HBCU Enrollment
 
@@ -91,7 +93,7 @@ hbcu_all = pd.read_csv('https://raw.githubusercontent.com/rfordatascience/tidytu
 
 ### Making a Line Chart
 
-ggplot2 and seaborn work with data frames. 
+`ggplot2` and `seaborn` work with data frames. 
 
 If you pass a data frame in as the data argument, you can refer to columns in that data with "bare" column names (you don't have to reference the full data object using `df$name` or `df.name`; you can instead use `name` or `"name"`).
 
@@ -135,9 +137,16 @@ plt.show()
 
 ### Data Formatting
 
-If your data is in the right format, ggplot2 is very easy to use; if your data aren't formatted neatly, it can be a real pain. 
+If your data is in the right format, `ggplot2` is very easy to use; if your data aren't formatted neatly, it can be a real pain. 
 If you want to plot multiple lines, you need to either list each variable you want to plot, one by one, or (more likely) you want to get your data into "long form". 
 We'll learn more about how to do this type of data transition when we talk about [reshaping data](05-data-reshape.qmd).
+
+::: {.column-margin .callout}
+#### Tip {-}
+It's helpful to start thinking about what format your data is in, and what format you would want it to be in in order to plot it. 
+Sketching a data frame for the "as is" condition and the "to plot" condition is a useful skill to cultivate. 
+
+:::
 
 ::: callout-demo
 
@@ -170,10 +179,11 @@ knitr::kable(head(hbcu_all))
 #| label: pivot-operation-data-2
 #| echo: false
 
-knitr::kable(head(hbcu_long))
+knitr::kable(head(hbcu_long, 9*6))
 ```
 
 In the long form of the data, we have a row for each data point (year x measurement type), not for each year.
+I've shown the same amount of data (6 years, 9 measurements) in this table as in the original data, but this takes up much more vertical space!
 
 :::
 
@@ -182,7 +192,7 @@ In the long form of the data, we have a row for each data point (year x measurem
 ### Making a (Better) Line Chart
 
 If we had wanted to show all of the available data before, we would have needed to add a separate line for each column, coloring each one manually, and then we would have wanted to create a legend manually (which is a pain). 
-Converting the data to long form means we can use ggplot2/seaborn to do all of this for us with only a single plot statement (`geom_line` or `sns.lineplot`).
+Converting the data to long form means we can use `ggplot2`/`seaborn` to do all of this for us with only a single plot statement (`geom_line` or `sns.lineplot`).
 Having the data in the right form to plot is very important if you want to get the plot you're imagining with relatively little effort.
 
 
@@ -193,6 +203,9 @@ Having the data in the right form to plot is very important if you want to get t
 #### R
 ```{r}
 #| label: long-form-demo-r
+#| fig-width: 8
+#| fig-height: 6
+#| fig-alt: "A chart titled HBCU College Enrollment, with y-axis labeled 'value' ranging from 0 to 350000 and x-axis year spanning from 1976 to 2015. Many lines are shown, with combinations of 2-year, 4-year, and total, private and public within those designations, and male and female enrollment as well. For most values, the overall enrollment has grown over time (declining somewhat since 2010), but the value for private 2-year HBCUs has declined over the entire time period and remained relatively flat. It is clear that private HBCUs make up an extremely small proportion of overall HBCU enrollment."
 
 ggplot(hbcu_long, aes(x = Year, y = value, color = type)) + geom_line() +
   ggtitle("HBCU College Enrollment")
@@ -211,6 +224,11 @@ ggplot(hbcu_long, aes(x = "Year", y = "value", color = "variable")) + geom_line(
 
 ```{python}
 #| label: long-form-demo-python-seaborn
+#| fig-width: 8
+#| fig-height: 6
+#| fig-alt: "A chart titled HBCU College Enrollment, with y-axis labeled 'value' ranging from 0 to 350000 and x-axis year spanning from 1976 to 2015. Many lines are shown, with combinations of 2-year, 4-year, and total, private and public within those designations, and male and female enrollment as well. For most values, the overall enrollment has grown over time (declining somewhat since 2010), but the value for private 2-year HBCUs has declined over the entire time period and remained relatively flat. It is clear that private HBCUs make up an extremely small proportion of overall HBCU enrollment."
+
+
 plot = sns.lineplot(hbcu_long, x = "Year", y = "value", hue = "variable")
 plot.set_title("4-year HBCU College Enrollment")
 plt.show()
@@ -219,5 +237,177 @@ plt.show()
 :::
 
 :::
+
+
+### Highlighting Key Insights
+
+Examining the charts in the previous section, it seems that there are at least three different contrasts which are easily made: 2 year vs. 4 year (vs. Total), Public vs. Private, and Male vs. Female enrollment. 
+The 2 year vs. 4 year vs. Total and Public vs. Private variables seem to be "crossed" - we have values for every combination of these variables. 
+The Male and Female numbers are not broken out further.
+
+When creating charts, it's useful to think about key comparisons and insights that the user may wish to explore, and then to explicitly highlight those comparisons with separate charts.
+It's never enough to just make one chart -- any data that is complex enough to plot deserves to be explored from multiple angles. 
+
+::: demo
+#### Sketching Possible Comparisons
+
+It is helpful to sketch out the data structure and then use that sketch to identify key comparisons. 
+You do not have to know what the data looks like at this stage -- it is enough to think through what *might* be interesting and then to test whether or not the comparison is interesting by generating the chart.
+
+::: panel-tabset
+
+##### Data Structure
+
+![Sketching the data structure and identifying interesting comparisons can help to guide your data analysis and exploration of the data visually.](../images/wrangling/hbcu-sketch-data-comparisons.png){fig-alt="A sketch of the HBCU data in wide form, with annotations underneath the table showing comparisons between relevant columns - by gender, by public and private 2y vs 4y, by total 2y and 4y enrollment, by public vs. private"}
+
+##### Chart 1
+
+![This sketch shows what we might see by breaking the data out by gender.](../images/wrangling/hbcu-sketch-subplots-gender.png){fig-alt="A sketch of what the HBCU enrollment data broken out by gender might show."}
+
+##### Chart 2
+
+![One way of representing the public/private and 2y/4y data using small multiples.](../images/wrangling/hbcu-sketch-subplots-0.png){fig-alt=" There are three subplots shown - Total, Public, and Private. In the Total pane, lines are broken out by public and private, while in the public and private panes they are broken out by 2y vs. 4y."}
+##### Chart 3
+
+![Another way of representing the public/private and 2y/4y data using small multiples.](../images/wrangling/hbcu-sketch-subplots-1.png){fig-alt=" There are four subplots shown, arranged in a 2x2 table, with columns Public and Private, and rows 2yr and 4yr. In each cell, there is a subplot with a single line drawn."}
+
+##### Chart 4
+
+![An additional way of representing the public/private and 2y/4y data using small multiples.](../images/wrangling/hbcu-sketch-subplots-2.png){fig-alt=" There are two subplots shown, arranged in a 1x2 table, with columns Public and Private. In each cell there is a chart with two lines: 4yr and 2yr."}
+:::
+
+When considering which version of a chart to generate, it is helpful to think about which comparisons are most natural for each chart. When lines are close together and share the same scale, comparisons are easier to make. So, if the goal is to highlight the difference between 2yr enrollment and 4yr enrollment, then Chart 4 is particularly effective, as those comparisons are easiest to make in that chart. 
+@sec-data-vis discusses this in more detail.
+
+:::
+
+#### HBCU Enrollment by Gender
+
+First, let's peel off the gender-specific enrollment data. 
+This requires us to find only types "Females" and "Males", which we can obtain by filtering or subsetting the data.
+
+
+::: callout-demo
+
+::: panel-tabset
+
+#### R
+```{r}
+#| label: long-form-subset-r
+#| fig-width: 8
+#| fig-height: 6
+#| fig-alt: "A chart titled HBCU College Enrollment by gender, with y-axis labeled 'value' ranging from 0 to 350000 and x-axis year spanning from 1976 to 2015. Three lines are shown: Total enrollment, Males, and Females."
+
+hbcu_gender <- hbcu_long |>
+  dplyr::filter(type %in% c("Females", "Males", "Total enrollment"))
+
+ggplot(hbcu_gender, aes(x = Year, y = value, color = type)) + geom_line() +
+  ggtitle("HBCU College Enrollment by Gender")
+```
+
+#### Python
+
+```{python}
+#| label: long-form-subset-python-seaborn
+#| fig-width: 8
+#| fig-height: 6
+#| fig-alt: "A chart titled HBCU College Enrollment by gender, with y-axis labeled 'value' ranging from 0 to 350000 and x-axis year spanning from 1976 to 2015. Three lines are shown: Total enrollment, Males, and Females."
+plt.clf() # Clear previous plot
+rel_types=["Total enrollment", "Females", "Males"]
+hbcu_gender = hbcu_long.query('variable.isin(@rel_types)')
+plot = sns.lineplot(hbcu_gender, x = "Year", y = "value", hue = "variable")
+plot.set_title("HBCU College Enrollment")
+plt.show()
+```
+
+:::
+
+:::
+
+Seeing only the gender related data (with total enrollment as a comparison) helps to highlight that the same temporal trends seem to apply across males and females, though in some cases growth is more shallow in males.
+
+#### Institution Types
+
+It may also be useful to consider the type of institution when we consider enrollment numbers -- public or private? 2 year or 4 year? 
+In this case, it may be most useful to aim for creating some "small multiples" -- multiple charts that are similarly constructed and  placed together systematically. 
+
+::: demo
+
+::: panel-tabset
+
+#### R
+
+```{r}
+#| label: hbcu-small-multiples-r
+#| fig-width: 8
+#| fig-height: 6
+#| fig-alt: "A chart titled HBCU College Enrollment by gender, with y-axis labeled 'value' ranging from 0 to 350000 and x-axis year spanning from 1976 to 2015. Three lines are shown: Total enrollment, Males, and Females."
+
+hbcu_inst <- hbcu_all |>
+  dplyr::select(1:2, 5:12) |>
+  dplyr::rename(
+    "Total-Total" = "Total enrollment",
+    "Total-4year" = "4-year", 
+    "Total-2year"="2-year", 
+    "Public-Total" = "Total - Public", 
+    "Public-4year" = "4-year - Public", 
+    "Public-2year" = "2-year - Public", 
+    "Private-Total" = "Total - Private", 
+    "Private-4year" = "4-year - Private", 
+    "Private-2year" = "2-year - Private") |>
+  tidyr::pivot_longer(2:10, names_to="variable", values_to="enrollment") |>
+  tidyr::separate("variable", into = c("Type", "Degree")) 
+
+ggplot(hbcu_inst, aes(x = Year, y = enrollment, color = Degree)) + geom_line() +
+  ggtitle("HBCU College Enrollment by Institution Type and Degree Length") + 
+  facet_wrap(~Type)
+
+
+ggplot(hbcu_inst, aes(x = Year, y = enrollment, color = Degree)) + geom_line() +
+  ggtitle("HBCU College Enrollment by Institution Type and Degree Length") + 
+  facet_wrap(~Degree)
+```
+
+#### Python
+
+```{python}
+#| label: hbcu-small-multiples-python-seaborn
+#| fig-width: 8
+#| fig-height: 6
+#| fig-alt: "A chart titled HBCU College Enrollment by gender, with y-axis labeled 'value' ranging from 0 to 350000 and x-axis year spanning from 1976 to 2015. Three lines are shown: Total enrollment, Males, and Females."
+
+hbcu_inst = hbcu_all.iloc[:,[0,1,4,5,6,7,8,9,10,11]]
+hbcu_inst_names=["Year", "Total-Total", "Total-4year", "Total-2year", "Public-Total", "Public-4year", "Public-2year","Private-Total", "Private-4year", "Private-2year"]
+hbcu_inst.columns = hbcu_inst_names
+hbcu_inst_long = pd.melt(hbcu_inst, id_vars = ['Year'], value_vars = hbcu_inst.columns[1:10])
+hbcu_inst_long[['Type','Degree']]=list(hbcu_inst_long["variable"].str.split("-"))
+
+plt.clf() # Clear previous plot
+plot = sns.FacetGrid(hbcu_inst_long, col="Type")
+plot.map_dataframe(sns.lineplot,x = "Year", y = "value", hue = "Degree")
+plot.add_legend()
+plt.show()
+
+
+plt.clf() # Clear previous plot
+plot = sns.FacetGrid(hbcu_inst_long, col="Degree")
+plot.map_dataframe(sns.lineplot,x = "Year", y = "value", hue = "Type")
+plot.add_legend()
+plt.show()
+```
+
+:::
+
+Any of these plots could be customized by e.g. removing Totals (if desired), changing axis parameters so that facets don't have the same axis values, etc., but this is enough to get the basic idea of how to work with data.
+
+:::
+
+### Key Takeaways
+
+From this example of HBCU enrollment, a few things are clear:
+
+- The form of the data is important to be able to plot the data easily
+- It can be helpful to break measurements down into disjoint combinations (where the data allows) to create plots that thoughtfully compare variables
+- Plotting subsets of variables and rows can help us understand effects in the data better
 
 ## References {#sec-graphics-intro-refs}
