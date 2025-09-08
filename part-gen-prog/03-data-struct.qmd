@@ -8,10 +8,13 @@ This chapter introduces some of the most important structures for storing and wo
 ## Objectives {-}
 
 - Understand the differences between lists, vectors, data frames, matrices, and arrays in R and python
-- Be able to use location-based indexing in R or python to pull out subsets of a complex data object
+- Use location-based indexing in R or python to pull out subsets of a complex data object
+- Use logical indexing in R or python to pull out subsets of a data object
+- Understand categories of mathematical, descriptive, and set operations on vectors
+- Use vector operations in R and python to perform simple calculations
 
 ::: setup
-## Python Package Installation 
+## Python Package Installation  {-}
 
 You will need the `numpy` and `pandas` packages for this section. Pick one of the following ways to install python packages:
 
@@ -60,8 +63,8 @@ Data **structures** are more complex arrangements of information, but they are s
 | 2D          | matrix        | data frame    |
 | N-D         | array         |               |
 
-::: callout-warning
-### Opinionated Structures
+::: {.advanced collapse=true}
+### Opinionated Structures {-}
 
 Those of you who have taken programming classes that were more computer science focused will realize that I am leaving out a lot of information about lower-level structures like pointers. 
 I'm making a deliberate choice to gloss over most of those details in this chapter, because it's already hard enough to learn 2 languages worth of data structures at a time.
@@ -97,20 +100,15 @@ In Python, on the other hand, items are 0-indexed -- the first item in a list `y
 A **vector** is a one-dimensional column of homogeneous data. 
 **Homogeneous** means that every element in a vector has the same data type.
 
-We can have vectors of any data type and length we want: 
+We can have vectors of any data type and length we want, as illustrated using Lego in @fig-lego-vectors[^05-vectors-1].
 
-![vectors of different data types](../images/gen-prog/lego-set-of-vectors.png){fig-alt="A picture of several stacks of lego bricks. First, there is a set of green-hued 1x1 bricks labeled `int`. Next, there is a set of red-hued 1x1 bricks labeled `lgl`, or logical. Then, there is a set of blue-hued 1x2 bricks labeled `float` and finally, a set of 1x3 purple-hued bricks labeled string. Each set of colored bricks has a different length."}
+[^05-vectors-1]: Throughout this section (and other sections), lego pictures are rendered using https://www.mecabricks.com/en/workshop. It's a pretty nice tool for building stuff online! 
+
+![Vectors of different data types illustrated via Lego. Each vector has a range of different values (hues), and vectors are represented by different size bricks that roughly correspond to storage requirements.](../images/gen-prog/lego-set-of-vectors.png){#fig-lego-vectors fig-alt="A picture of several stacks of lego bricks. First, there is a set of green-hued 1x1 bricks labeled `int`. Next, there is a set of red-hued 1x1 bricks labeled `lgl`, or logical. Then, there is a set of blue-hued 1x2 bricks labeled `float` and finally, a set of 1x3 purple-hued bricks labeled string. Each set of colored bricks has a different length." width="30%"}
 
 
-### Indexing by Location {#sec-indexing}
-
-Each element in a vector has an **index** - an integer telling you what the item's position within the vector is. I'm going to demonstrate indices with the string vector
-
-| R                                                                         | Python                                                                              |
-|----------------------------------|--------------------------------------|
-| 1-indexed language                                                        | 0-indexed language                                                                  |
-| Count elements as 1, 2, 3, 4, ..., N                                      | Count elements as 0, 1, 2, 3, , ..., N-1                                            |
-| ![R lego vector, labeled with numbers 1-12](../images/gen-prog/lego-1x3-vector-R.png) | ![Python lego vector, labeled with numbers 0-11](../images/gen-prog/lego-1x3-vector-python.png) |
+:::: demo
+### Demo: Creating Vectors {-}
 
 ::: panel-tabset
 #### R {.unnumbered}
@@ -235,12 +233,32 @@ weekdays
 :::
 
 [^05-vectors-2]: A similar system exists in R libraries, but R doesn't handle multiple libraries having the same function names well, which leads to all sorts of confusion. At least python is explicit about it.
+::::
+
+### Indexing by Location {#sec-indexing}
+
+Each element in a vector has an **index** - an integer telling you what the item's position within the vector is.
+
+The index is important because it allows us to:
+
+- Change values according to location or condition (e.g. replace all even values)
+- Sequentially use values in the vector to complete a task (e.g. for each data point, compute some quantity)
+- Select values in the vector based on location
+- Select values in the vector based on a condition
+
+| R                                                                         | Python                                                                              |
+|----------------------------------|--------------------------------------|
+| 1-indexed language                                                        | 0-indexed language                                                                  |
+| Count elements as 1, 2, 3, 4, ..., N                                      | Count elements as 0, 1, 2, 3, , ..., N-1                                            |
+| ![R lego vector, labeled with numbers 1-12](../images/gen-prog/lego-1x3-vector-R.png){#fig-vector-indexing-lego-r fig-alt="A set of 12 1x3 Legos of various pink/purple hues labeled 1 through 12 sequentially."} | ![Python lego vector, labeled with numbers 0-11](../images/gen-prog/lego-1x3-vector-python.png){#fig-vector-indexing-lego-py fig-alt="A set of 12 1x3 Legos of various pink/purple hues labeled 0 through 11 sequentially."}  |
 
 We can pull out items in a vector by indexing, but we can also replace specific things as well:
 
-::: ex
+:::: demo
+#### Demo: Replacing Values using Indexes {-}
+
 ::: panel-tabset
-#### R {.unnumbered}
+##### R {.unnumbered}
 
 ```{r}
 #| label: cat-vector-indexing
@@ -253,7 +271,7 @@ favorite_cats[2] <- "Nyan Cat"
 favorite_cats
 ```
 
-#### Python {.unnumbered}
+##### Python {.unnumbered}
 
 ```{python}
 #| label: cat-vector-indexing-py
@@ -267,26 +285,39 @@ favorite_cats
 ```
 :::
 
-If you're curious about any of these cats, see the footnotes[^05-vectors-3].
-:::
+Not familiar with these cats [^05-vectors-3]? Curiosity won't kill you, but it might make you laugh!
+::::
 
-[^05-vectors-3]: [Grumpy cat](https://www.grumpycats.com/), [Garfield](https://www.garfield.com/), [Nyan cat](https://en.wikipedia.org/wiki/Nyan_Cat). Jorts and Jean: [The initial post](https://www.reddit.com/r/AmItheAsshole/comments/rfwgmc/aita_for_perpetuating_ethnic_stereotypes_about/) and the [update](https://web.archive.org/web/20221018203712/https://www.reddit.com/r/AmItheAsshole/comments/rfwgmc/aita_for_perpetuating_ethnic_stereotypes_about/) (both are worth a read because the story is hilarious). The cats also have a [Twitter account](https://twitter.com/JortsTheCat) where they promote workers rights.
+[^05-vectors-3]: [Grumpy cat](https://www.grumpycats.com/), [Garfield](https://www.garfield.com/), [Nyan cat](https://en.wikipedia.org/wiki/Nyan_Cat). Jorts and Jean: [The initial post](https://www.reddit.com/r/AmItheAsshole/comments/rfwgmc/aita_for_perpetuating_ethnic_stereotypes_about/) and the [update](https://web.archive.org/web/20221018203712/https://www.reddit.com/r/AmItheAsshole/comments/rfwgmc/aita_for_perpetuating_ethnic_stereotypes_about/) (both are worth a read because the story is hilarious). The cats also have a [Twitter account](https://twitter.com/JortsTheCat) where they promote labor unions and worker rights.
+
+
 
 ### Indexing with Logical Vectors
 
 As you might imagine, we can create vectors of all sorts of different data types. 
 One particularly useful trick is to create a **logical vector** that goes along with a vector of another type to use as a **logical index**.
 
-![lego vectors - a pink/purple hued set of 1x3 bricks representing the data and a corresponding set of 1x1 grey and black bricks representing the logical index vector of the same length](../images/gen-prog/lego-logical-full.png)
+::: {layout-ncol=2}
+![Logical Indexing with R 1-index numbering](../images/gen-prog/vector-index-logical-r.png){fig-alt="A set of purple/pink 1x3 lego bricks representing data with different values and a set of black and grey 1x1 lego bricks of the same length representing a logical index vector."  #fig-logical-indexing-lego-full-r}
 
-If we let the black lego represent "True" and the grey lego represent "False", we can use the logical vector to pull out all values in the main vector.
+![Logical Indexing with python 0-index numbering](../images/gen-prog/vector-index-logical-py.png){fig-alt="A set of purple/pink 1x3 lego bricks representing data with different values and a set of black and grey 1x1 lego bricks of the same length representing a logical index vector." #fig-logical-indexing-lego-full-py}
 
-| Black `==` True, Grey `==` False                                                                                                                                                                                                                                                                             | Grey `==` True, Black `==` False                                                                                                                                                                                                                                                                            |
-|------------------------------------|------------------------------------|
-| ![a pink/purple-hued set of 1x3 bricks representing a vector and a corresponding set of 1x1 black bricks representing the logical index vector of the same length. The grey bricks (and corresponding values of the previous vector) have been removed (filtered out).](../images/gen-prog/lego-logical-black.png) | ![a pink/purple-hued set of 1x3 bricks representing a vector and a corresponding set of 1x1 grey bricks representing the logical index vector of the same length. The black bricks (and corresponding values of the previous vector) have been removed (filtered out).](../images/gen-prog/lego-logical-grey.png) |
+Lego vectors showing the data (pink/purple) and the logical index (grey/black). Each image is numbered according to the position of the vector -- in R, this numbering is from 1, in python, it is from 0. 
+
+:::
+
+Depending on what color we consider to be true, we can select different values from the original vector. 
+
+| Language | Black is True | Grey is True |
+|-----|------------------------------------|------------------------------------|
+| R | ![R logical indexing with color == "black". Numerical indexes are shown corresponding to the original vector positions.](../images/gen-prog/vector-index-logical-R-black.png){#fig-logical-indexing-lego-black fig-alt="A pink/purple-hued set of 1x3 bricks representing a vector and a corresponding set of 1x1 black bricks representing the logical index vector of the same length. The grey bricks (and corresponding values of the previous vector) have been removed (filtered out)"} | ![R logical indexing with color == "grey". Numerical indexes are shown corresponding to the original vector positions.](../images/gen-prog/vector-index-logical-R-grey.png){#fig-logical-indexing-lego-grey fig-alt="A pink/purple-hued set of 1x3 bricks representing a vector and a corresponding set of 1x1 grey bricks representing the logical index vector of the same length. The black bricks (and corresponding values of the previous vector) have been removed (filtered out)."} |
+| Python | ![Python logical indexing with color == "black". Numerical indexes are shown corresponding to the original vector positions.](../images/gen-prog/vector-index-logical-python-black.png){#fig-logical-indexing-lego-black fig-alt="A pink/purple-hued set of 1x3 bricks representing a vector and a corresponding set of 1x1 black bricks representing the logical index vector of the same length. The grey bricks (and corresponding values of the previous vector) have been removed (filtered out)"} | ![Python logical indexing with color == "grey". Numerical indexes are shown corresponding to the original vector positions.](../images/gen-prog/vector-index-logical-python-grey.png){#fig-logical-indexing-lego-grey fig-alt="A pink/purple-hued set of 1x3 bricks representing a vector and a corresponding set of 1x1 grey bricks representing the logical index vector of the same length. The black bricks (and corresponding values of the previous vector) have been removed (filtered out)."} |
 
 Note that for logical indexing to work properly, the logical index must be the same length as the vector we're indexing. 
 This constraint will return when we talk about data frames, but for now, just keep in mind that logical indexing doesn't make sense when this constraint isn't true.
+
+:::: demo
+#### Demo: Logical Indexing {-}
 
 ::: panel-tabset
 #### R {.unnumbered}
@@ -330,40 +361,99 @@ animals[~good_pets] # equivalent to using bad_pets
 ```
 :::
 
+::::
+
 
 #### Logical Operations on Vectors {.intermediate .advanced}
 
 Indexing with logical vectors is an extremely powerful technique -- so much so that it is worthwhile to quickly review how logical operations can be combined.
 In both R and Python, we can operate on logical vectors with standard operators -- AND, OR, and NOT. 
 
+:::: demo
+
+##### Demo: Logical Operators and Logical Indexing {-}
+
 ::: panel-tabset
 
-##### R
+###### R
 
-```{R}
-# This set of code converts pi to a character, 
-# splits the string into single-character pieces,
-# converts it back to numbers, 
-# and removes the NA resulting from converting '.' to a number.
-x <- na.omit(as.numeric(strsplit(as.character(pi), "")[[1]]))
+```{r}
+pi_str <- sprintf("%0.50f", pi) # <1>
+pi_str
+pi_chars <- strsplit(pi_str, "")[[1]] # <2>
+pi_chars
+pi_num <- as.numeric(pi_chars) # <3>
+pi_num
+pi_num <- pi_num[!is.na(pi_num)] # <4>
+pi_num
+
+pi_num%%3==0 # <5>
+pi_num[pi_num%%3==0] # <5>
+
+pi_num%%2==0 # <6>
+pi_num[pi_num%%2==0] # <6>
+
+# Compound conditional statement with & = AND
+pi_num%%2==0 & pi_num%%3==0 # <7>
+pi_num[pi_num%%2==0 & pi_num%%3==0] # <7>
 ```
+1. Get 50 digits of pi as a string. `sprintf` works from specially formatted strings, so `%0.50f` says we will pass in a float and we want the string to be formatted with 50 decimal places of that float value. 
+2. Split the string into single characters. `strsplit` expects a vector, and returns a list, so as we're working with only a single string, we tell it we're only interested in the first set of values `[[1]]`.
+3. Convert the single-number values to numbers. We get a warning because `.` doesn't convert to a number properly and R uses NA to indicate that the conversion didn't work 100% of the time.
+4. Use logical indexing to get only things that actually converted to numbers properly. 
+5. Get only the values in `pi_num` which are evenly divisible by 3 -- that is, which are multiples of 3. 
+6. Get only the values in `pi_num` which are evenly divisible by 2 -- that is, which are multiples of 2. 
+7. Get only the values in `pi_num` which are evenly divisible by 2 and 3 -- that is, which are multiples of 6. 
 
-##### Python
+###### Python
 
+```{python}
+import math # <1>
+import pandas as pd # <1>
+
+pi_str = f"{math.pi:0.50f}" # <2>
+print(pi_str) # <2>
+
+pi_chars = pd.Series(list(pi_str)) # <3>
+print(pi_chars.head()) # <3>
+
+pi_num = pd.to_numeric(pi_chars, errors="coerce") # <4>
+print(pi_num.head()) # <4>
+
+pi_num = pi_num[~pd.isna(pi_num)] # <5>
+print(pi_num.head()) # <5>
+
+pi_num = pi_num.astype("int") # <6>
+print(pi_num.head()) # <6>
+
+print(pi_num[pi_num % 3 == 0]) # <7>
+print(pi_num[pi_num % 2 == 0]) # <8>
+print(pi_num[(pi_num % 2 == 0) & (pi_num % 3 == 0)]) # <9>
+```
+1. Load math library (for pi) and pandas (for Series/vector structure)
+2. Get 50 digits of pi as a string. `f` at the front says that this is a formatted string, and inside `{}` we have the value of the string `math.pi` and the format `0.50f` -- note this is essentially the same in R and python. `0.50f` says we will pass in a float and we want the string to be formatted with 50 decimal places of that float value.
+3. Converting a string to a list extracts the single characters in Python. Then we convert this to a pandas Series because it will behave more like a single-type vector.
+4. We convert the vector to numeric, coercing anything that isn't numeric -- this will cause '.' to be converted to NA without raising an error.
+5. We then create a logical vector `pd.isna(pi_num)` that is TRUE when `pi_num` has the value `NA`. Putting `~` in front of this vector negates it, causing the logical vector to be FALSE when `pi_num` is NA. Using this as an index keeps only the values in the vector which are NOT NA -- that is, only the numbers remain.
+6. We convert the float values to integers, since they represent digits. 
+7. We create a logical vector `pi_num%3==0` that is TRUE when `pi_num` is a multiple of 3 (or evenly divisible by 3) and FALSE otherwise. We use this as an index to extract only digits of pi that are multiples of 3.
+8. We create a logical vector `pi_num%2==0` that is TRUE when `pi_num` is a multiple of 2 (or evenly divisible by 2) and FALSE otherwise. We use this as an index to extract only digits of pi that are multiples of 2.
+9. We combine the two conditional statements to create a compound statement that is TRUE only when the digit is a multiple of 2 AND 3 (that is, when the digit is a multiple of 6). 
 
 :::
 
+::::
 
 ### Math with Vectors {.intermediate .advanced}
 
 In order to talk about mathematical operations on (numerical) vectors, we first need to consider different ways we could combine vectors. 
 If the vectors are the same length, we could perform mathematical operations on the elements (and if they're not the same length we could come up with some convention to coerce them to be the same length). 
 
-\begin{align}
+$$\begin{align}
 \left[\begin{array}{c}a_1\\a_2\\a_3\end{array}\right] + \left[\begin{array}{c}b_1\\b_2\\b_3\end{array}\right] = \left[\begin{array}{c}a_1+b_1\\a_2 + b_2\\a_3 + b_3\end{array}\right]
-\end{align}
+\end{align}$$ {#eq-elementwise-sum}
 
-: Element-wise sum of two vectors
+@eq-elementwise-sum shows how an element-wise sum of two vectors is defined mathematically. 
 
 We could also think about performing mathematical operations on all of the entries in a vector - e.g. taking the sum of all vector entries, or the mean, or the standard deviation. 
 This reduces a vector of numbers to a single (scalar) number via a defined function. 
@@ -429,7 +519,8 @@ a ** b
 
 #### Vector-to-Scalar Operations
 
-Let's cover a few built-in or commonly-used vector summary operations here, focusing on those which are most useful for statistics. 
+There are a few built-in or commonly-used vector summary operations here. 
+This table focuses on those which are most useful for statistics. 
 
 Function | R | Python
 ---- | ---- | ----
@@ -441,6 +532,9 @@ maximum | `max(x)` | `x.max()`
 location of maximum | `which.max(x)` | `x.argmax()`
 minimum | `min(x)` | `x.min()`
 location of minimum | `which.min(x)` | `x.argmin()`
+
+:::: demo
+##### Demo: Vector-to-scalar operations {-}
 
 ::: panel-tabset
 ##### R
@@ -492,7 +586,7 @@ x.describe()
 ```
 
 :::
-
+::::
 
 #### Set Operations
 
@@ -508,7 +602,10 @@ Operation | Definition | Symbol (Math) | R function | Python function
 Union | All elements in A or B | $A \cup B$ | `union(A, B)` | `np.union1d(A, B)`
 Intersection | Elements in both A and B | $A \cap B$ | `intersect(A, B)` | `np.intersect1d(A, B)`
 Set Difference | Elements in A but not B | $A \setminus B$ | `setdiff(A, B)` | `np.setdiff1d(A, B)`
-Cartesian Product | Combination of each element in A with each element in B | $expand.grid(A, B)$ | ... it's complicated, see code. 
+Cartesian Product | Combination of each element in A with each element in B | $A\times B$ | `expand.grid(A, B)` | ... it's complicated, see code. 
+
+:::: demo
+##### Demo: Set Operations {-}
 
 ::: panel-tabset
 ##### R
@@ -556,16 +653,19 @@ np.array(list(itertools.product(A, B))) # array of 2d coords
 pd.DataFrame(list(itertools.product(A, B))) # data frame
 ```
 
-
 ::: 
+::::
 
+### Data Types and Vector Operations
 
-### Reviewing Types
+:::: demo
+
+#### Demo: Different Types in a Vector {-}
 
 As vectors are a collection of things of a single type, what happens if we try to make a vector with differently typed things?
 
 ::: panel-tabset
-#### R {.unnumbered}
+##### R {.unnumbered}
 
 ```{r}
 #| label:  vector-type-conversion-r
@@ -577,7 +677,7 @@ c(2L, FALSE) # <3>
 2. converted to numerics
 3. converted to integers
 
-#### Python {.unnumbered}
+##### Python {.unnumbered}
 
 ```{python}
 #| label:  vector-type-conversion-python
@@ -594,13 +694,32 @@ np.array([2, False]) # <3>
 :::
 
 As a reminder, this is an example of **implicit** type conversion - R and python decide what type to use for you, going with the type that doesn't lose data but takes up as little space as possible.
+::::
 
-### Try it Out! {.unnumbered .tryitout}
+:::: example
 
-::: panel-tabset
-#### Problem {.unnumbered}
+### Try it Out: Logical Indexing {-}
+
 
 Create a vector of the integers from one to 30. Use logical indexing to pick out only the numbers that are multiples of 3.
+
+
+::: panel-tabset
+
+#### Key Components of the Problem {.unnumbered}
+
+- We define a vector of numbers from 1 to 30 as `1:30` in R and `range(1, 31)` in Python.    
+In Python, we also want to convert this range into a numpy array, so we need to import numpy. 
+
+- We can use logical indexing to select only some elements of a vector which meet our criteria - in this case, that the number is evenly divisible by 3. 
+
+- **Modular Division** The mathematical operator that is useful for testing "evenly divisible" is the **modulus** operator, which provides the remainder when a number is divided by another number. So, `15 modulo 4` (or `15 mod 4`) breaks down the division problem into two components - the whole number (3x4 = 12) and the fractional remainder (15 - 12 = 3). Thus, `15 mod 4` is 3. 
+  - We use modular division frequently to test whether something is a multiple of something else. 
+Usually in these cases we're testing whether (`x mod y == 0`), which corresponds to a statement "x is a multiple of y". 
+  - This translates into `x%%3==0` in R or `x%3==0` in Python
+
+- We index vectors using `[]` in both R and python. 
+
 
 #### R Solution {.unnumbered}
 
@@ -618,10 +737,25 @@ x[ x % 3 == 0]
 ```
 :::
 
-::: panel-tabset
-#### Challenge
 
 Extra challenge: Pick out numbers which are multiples of 2 or 3, but not multiples of 6!
+
+::: panel-tabset
+#### Key Components
+
+- `x mod 3 == 0` will pick out the multiples of 3, `x mod 2==0` will pick out the multiples of 2, and `x mod 6==0` will pick out the multiples of 6
+
+- We need to combine the statements using AND and OR operators, or use the XOR (exclusive or) operator, if you prefer to go that route. 
+
+- Think of each condition as a letter or set. One option is to define variables A and B that represent the initial logical vectors, and then do logical operations on those vectors to get the full condition. Another option is to work it all out with math and only substitute the modulo operators at the end.
+
+    1. `(A OR B) AND NOT (A AND B)` and slowly shift to programming notation from logical/math notation. 
+    2. `(A | B) & NOT (A & B)` replaces the AND and OR operators
+    3. Tackle the NOT operator with `(A | B) & !(A & B)`. 
+    4. Replace the A and B with the conditionals: `(x mod 2 == 0 | x mod 3 == 0) & !(x mod 6 == 0)`. Here, A&B is equivalent to `x mod 6 == 0` mathematically (but it would also be ok to use the full modulus statements).
+
+
+
 
 #### General Solution {.unnumbered}
 
@@ -629,39 +763,92 @@ This operation is **xor**, a.k.a. exclusive or. That is, X or Y, but not both X 
 
 We can write xor as `(X OR Y) & !(X AND Y)` -- or we can use a predefined function: `xor()` in R, `^` in python.
 
-#### R Solution {.unnumbered}
+#### R Solution 1 {.unnumbered}
 
 ```{r}
 x <- 1:30
 
-x2 <- x %% 2 == 0 # multiples of 2
-x3 <- x %% 3 == 0 # multiples of 3
-x2xor3 <- xor(x2, x3) 
-x2xor3_2 <- (x2 | x3) & !(x2 & x3)
-x[x2xor3]
-x[x2xor3_2]
+xor_sol <- xor(x %% 2 == 0, x %% 3 == 0) 
+x[xor_sol]
 ```
 
-#### Python Solution {.unnumbered}
+We can also write out the full set of conditional statements - it should work out to the same solution. 
+```{r}
+full_sol <- (x %% 2 == 0 | x %% 3 == 0) & !(x %% 2 == 0 & x %% 3 == 0)
+x[full_sol]
+```
+
+#### R Solution 2 {.unnumbered}
+
+This solution uses intermediate variables to make things easier to understand and write. 
+
+```{r}
+x <- 1:30
+
+a <- x %% 2 == 0 # multiples of 2
+b <- x %% 3 == 0 # multiples of 3
+a_and_b <- x %% 6 == 0 # multiples of 6
+
+a_xor_b <- xor(a, b) 
+x[a_xor_b]
+```
+
+Similarly, we can avoid using XOR and just use the full set of conditional statements. 
+
+```{r}
+a_b_full <- (a | b) & !(a_and_b)
+x[a_b_full]
+```
+
+#### Python Solution 1 {.unnumbered}
 
 ```{python}
 import numpy as np
 x = np.array(range(1, 31))
 
-x2 = x % 2 == 0 # multiples of 2
-x3 = x % 3 == 0 # multiples of 3
-x2xor3 = x2 ^ x3
+xor_sol = (x % 2 == 0) ^ (x % 3 == 0)
+x[xor_sol]
+```
 
-x[x2xor3]
+We can also use the full set of conditional statements if we would rather be explicit.
+```{python}
+full_sol = ((x % 2 == 0) | (x % 3 == 0)) & ~(x % 6 == 0)
+x[full_sol]
+```
+
+
+
+#### Python Solution 2 {.unnumbered}
+
+This solution uses intermediate variables to make things easier to understand and write. 
+
+```{python}
+import numpy as np
+x = np.array(range(1, 31))
+
+a = x % 2 == 0 # multiples of 2
+b = x % 3 == 0 # multiples of 3
+a_xor_b = a ^ b
+x[a_xor_b]
+```
+
+We can also use the full set of conditional statements if we would rather be explicit.
+```{python}
+a_b_full = (a|b) & ~(a & b)
+x[a_b_full]
 ```
 :::
 
+::::
 
 ## Lists
 
 A **list** is a one-dimensional column of heterogeneous data - the things stored in a list can be of different types.
 
-![A lego list: the bricks are all different types and colors, but they are still part of the same data structure.](../images/gen-prog/lego-list.png)
+![A lego list: the bricks are all different types and colors, but they are still part of the same data structure.](../images/gen-prog/lego-list.png){width="50%" fig-alt="A set of colorful Lego bricks lined up on a horizontal axis. The bricks are all different sizes - 1x1, 1x2, 1x4, 1x2, 2x2." #fig-lego-list}
+
+:::: demo
+### Creating Lists  {-}
 
 ::: panel-tabset
 ### R {.unnumbered}
@@ -680,14 +867,16 @@ x = ["a", 3, False]
 x
 ```
 :::
+::::
 
-The most important thing to know about lists, for the moment, is how to pull things out of the list. We call that process **indexing**.
+The most important thing to know about lists, for the moment, is how to pull things out of the list. As with vectors, we call this process **indexing**.
 
-### Indexing
+### Indexing Lists
 
-Every element in a list has an **index** (a location, indicated by an integer position)[^05-vectors-1].
+Every element in a list has an **index** (a location, indicated by an integer position).
 
-[^05-vectors-1]: Throughout this section (and other sections), lego pictures are rendered using https://www.mecabricks.com/en/workshop. It's a pretty nice tool for building stuff online!
+::: demo
+#### Demo: Indexing with Lists {-}
 
 ::: panel-tabset
 #### R concept {.unnumbered}
@@ -698,24 +887,30 @@ In R, we count from 1.
 
 #### R code {.unnumbered}
 
+In R, list indexing with `[]` will return a list with the specified elements.
+
 ```{r}
 #| error: true
+#| collapse: false
 x <- list("a", 3, FALSE)
 
 x[1] # <1>
 x[1:2] # <2>
-
-x[[1]] # <3>
-x[[1:2]] # <4>
 ```
 1. This returns a list
-2. This returns multiple elements in the list
-3. This returns the item
-4. This doesn't work - you can only use [[]] with a single index
+2. This returns multiple elements in the list. Notice that in R, a:b notation gives a, a+1, ..., b, including b. In Python, the same notation does not include b, so watch out. 
 
-In R, list indexing with `[]` will return a list with the specified elements.
 
 To actually retrieve the item in the list, use `[[]]`. The only downside to `[[]]` is that you can only access one thing at a time.
+
+```{r}
+#| error: true
+#| collapse: false
+x[[1]] # <1>
+x[[1:2]] # <2>
+```
+1. This returns the item
+2. This doesn't work - you can only use [[]] with a single index
 
 #### Python concept {.unnumbered}
 
@@ -726,23 +921,37 @@ In Python, we count from 0.
 #### Python code {.unnumbered}
 
 ```{python}
+#| error: true
+#| collapse: false
 x = ["a", 3, False]
 
-x[0]
-x[1]
-x[0:2]
+x[0] # <1>
+x[1] # <2>
+x[0:2] # <3>
 ```
+1. This returns a scalar
+2. This returns a scalar
+3. This returns a list. Notice that Python indexing 0:2 is 0, 1 -- that is, creating a sequential index a:b returns integers (a, ..., b-1) excluding b. This is different from R, so watch out!
 
 In Python, we can use single brackets to get an object or a list back out, but we have to know how **slices** work. Essentially, in Python, `0:2` indicates that we want objects 0 and 1, but want to stop at 2 (not including 2). If you use a slice, Python will return a list; if you use a single index, python just returns the value in that location in the list.
 
 :::
+::::
 
-We'll talk more about indexing as it relates to vectors, but indexing is a general concept that applies to just about any multi-value object.
+We've also talked about indexing as it relates to vectors -- for the most part, the two concepts work exactly the same, subject to some minor things in R about differences between `x[[idx]]` and `x[idx]`. 
 
 ### Concatenation
 
 Another important thing to know about lists is how to combine them. 
 If I have rosters for two classes and I want to make a list of all of my students, I need to somehow merge the two lists together.
+
+In addition, it is often necessary to get only one copy of each item, even if it appears across multiple lists. 
+
+:::: demo
+#### Demo: Concatenation of Vectors and Unique Elements {-}
+
+Let's consider some characters from two Star Trek series: DS9 and The Next Generation. One character, Miles O'Brien, appears in both series. 
+When we combine lists, it is sometimes sensible to have only unique elements in the list (e.g. Miles O'Brien should only appear once) -- but that is not always true. 
 
 ::: panel-tabset
 #### R
@@ -768,18 +977,21 @@ students
 list(dict.fromkeys(students)) # get only unique names
 ```
 :::
-
+::::
 
 ## Matrices
 
 A **matrix** is the next step after a vector - it's a set of values arranged in a two-dimensional, rectangular format. 
 
+:::: demo
+### Demo: Creating Matrices {-}
+
 ::: panel-tabset
-### Matrix (Lego) {.unnumbered}
+#### Matrix (Lego) {.unnumbered}
 
-![lego depiction of a 3-row, 4-column matrix of 2x2 red-colored blocks](../images/gen-prog/lego-2x2-matrix.png)
+![A 3x4 Lego matrix of 2x2 blocks.](../images/gen-prog/lego-2x2-matrix.png){width="50%" fig-alt="An array of 12 legos laid out in a 3-row by 4 column rectangle."}
 
-### R {.unnumbered}
+#### R {.unnumbered}
 
 ```{r}
 #| label: matrix-r
@@ -798,7 +1010,7 @@ matrix(1:12, nrow = 3, byrow = T)
 diag(rep(1, times = 4))
 ```
 
-### Python {.unnumbered}
+#### Python {.unnumbered}
 
 In python, matrices are just a special case of a class called `ndarray` - n-dimensional arrays.
 
@@ -819,17 +1031,26 @@ np.reshape(range(0,12), (3,4), order = 'F')
 ```
 
 In python, we create 2-dimensional arrays (aka matrices) either by creating a list of rows to join together or by reshaping a 1-dimensional array. 
-The trick with reshaping the 1-dimensional array is the order argument: 'F' stands for "Fortran-like" and 'C' stands for "C-like"... so to go by column, you use 'F' and to go by row, you use 'C'. 
+The trick with reshaping the 1-dimensional array is the order argument: `F` stands for "Fortran-like" and `C` stands for "C-like"... so to go by column, you use `F` and to go by row, you use `C`. 
 Totally intuitive, right?
 
 :::
+::::
 
-Most of the problems we're going to work on will not require much in the way of matrix or array operations. 
+::: callout-caution
+### Don't Panic! {-}
+
+If you are using this textbook as an undergraduate or non-statistician, don't panic -- you don't need linear algebra or matrices to learn how to do statistical programming. 
+If you have it, great!
+
 For now, you need the following:
 
 -   Know that matrices exist and what they are (2-dimensional arrays of numbers)
 -   Understand how they are indexed (because it is extremely similar to data frames that we'll work with in the next chapter)
 -   Be aware that there are lots of functions that depend on matrix operations at their core (including linear regression)
+
+If you're a graduate student in statistics or data science, you should probably already have had linear algebra... otherwise, ... good luck!
+:::
 
 For more on matrix operations and matrix calculations, see @sec-matrix-calcs.
 
@@ -838,6 +1059,9 @@ For more on matrix operations and matrix calculations, see @sec-matrix-calcs.
 Both R and python use \[row, column\] to index matrices. To extract the bottom-left element of a 3x4 matrix in R, we would use \[3,1\] to get to the third row and first column entry; in python, we would use \[2,0\] (remember that Python is 0-indexed).
 
 As with vectors, you can replace elements in a matrix using assignment.
+
+:::: demo
+#### Demo: Matrix Indexing {-}
 
 ::: panel-tabset
 #### R {.unnumbered}
@@ -864,8 +1088,9 @@ my_mat[2,0] = 500
 my_mat
 ```
 :::
+::::
 
-### Matrix Operations
+### Matrix Operations {#sec-matrix-calcs}
 
 There are a number of matrix operations that we need to know for basic programming purposes:
 
@@ -877,6 +1102,9 @@ $$t(\textbf{X}) = \left[\begin{array}{cc} x_{1,1} & x_{1, 2}\\x_{2,1} & x_{2,2}\
 $$\textbf{X}*\textbf{Y} = \left[\begin{array}{cc} x_{1,1} & x_{1, 2}\\x_{2,1} & x_{2,2}\end{array}\right] * \left[\begin{array}{cc} y_{1,1} \\y_{2,1} \end{array}\right] = \left[\begin{array}{c}x_{1,1}*y_{1,1} + x_{1,2}*y_{2,1} \\x_{2, 1}*y_{1,1} + x_{2,2}*y_{2,1}\end{array}\right]$$ 
 Note that matrix multiplication depends on having matrices of compatible dimensions. 
 If you have two matrices of dimension $(a \times b)$ and $(c \times d)$, then $b$ must be equal to $c$ for the multiplication to work, and your result will be $(a \times d)$.
+
+:::: demo
+#### Demo: Matrix Operations {-}
 
 ::: panel-tabset
 #### R {.unnumbered}
@@ -916,6 +1144,7 @@ x.transpose() # Long form
 np.dot(x, y)
 ```
 :::
+::::
 
 ## Arrays
 
@@ -945,7 +1174,7 @@ np.array([[[1,2],[3,4]],[[5,6], [7,8]]])
 
 ## Data Frames {#sec-data-frames}
 
-In the previous sections, we talked about homogeneous structures: arrangements of data, like vectors and matrices, where every entry in the larger structure has the same type. 
+In previous sections, we talked about homogeneous structures: arrangements of data, like vectors and matrices, where every entry in the larger structure has the same type. 
 In the rest of this chapter, we'll be talking about the root of most data science analysis projects: the data frame.
 
 Like an excel spreadsheet, data frames are arrangements of data in columns and rows.
@@ -955,16 +1184,16 @@ This format has two main restrictions:
 -   Every entry in each column must have the same data type
 -   Every column must have the same number of rows
 
-![A lego data frame of 4 columns and 12 rows. Each column is a separate color hue (data type), with slight variations in the hue of each individual bricks.](../images/gen-prog/lego-data-frame.png)
+![A lego data frame of 4 columns and 12 rows. Each column is a separate color hue (data type), with slight variations in the hue of each individual bricks.](../images/gen-prog/lego-data-frame.png){width="50%" fig-alt="A set of 4 columns of legos, with each column a different color and size of lego brick. Each column has 12 rows of multi-hued bricks." #fig-lego-df}
 
-The picture above shows a data frame of 4 columns, each with a different data type (brick size/hue). 
+@fig-lego-df shows a data frame of 4 columns, each with a different data type (brick size/hue). 
 The data frame has 12 rows. 
-This picture may look similar to one that we used to show logical indexing in the last chapter, and that is not a coincidence. 
+This picture may look similar to one that we used to show logical indexing or lists in previous sections, and that is not a coincidence. 
 You can get everything from a data frame that you would get from a collection of 4 separate vectors... but there are advantages to keeping things in a data frame instead.
+Similarly, a data frame is very similar to a list of vectors, but with an additional constraint that each vector in the list has the same number of items. 
 
-
-::: callout-caution
-### Motivating Data Frames: Working with Multiple Vectors
+:::: example
+### Example: Motivating Data Frames by Working with Multiple Vectors {-}
 
 Consider for a moment https://worldpopulationreview.com/states, which lists the population of each state. 
 You can find this dataset in CSV form [here](https://raw.githubusercontent.com/srvanderplas/stat-computing-r-python/main/data/population2024.csv").
@@ -975,7 +1204,7 @@ Let's see what happens when we work with the data above as a set of vectors/Seri
 ::: panel-tabset
 #### Python
 
-(I'm going to cheat and read this in using pandas functions we haven't learned yet to demonstrate why this stuff matters.)
+I'm reading in the data using functions we haven't learned yet -- focus primarily on the operations *after* the lines containing  `pd.read_csv`. 
 
 ```{python}
 #| label:  read-state-pops
@@ -1038,25 +1267,32 @@ head(df[order2024,])
 
 :::
 
-:::
+::::
 
 The primary advantage to data frames is that rows of data are kept together. 
 Since we often think of a row of data as a single observation in a sample, this is an extremely important feature that makes data frames a huge improvement on a collection of vectors of the same length: it's much harder for observations in a single row to get shuffled around and mismatched!
+This connection to the physical units of observation is also why data frames are *much* more common in statistical programming than in other programming courses which will teach you about lists and arrays but do not have a hybrid type for data observations that accommodates different types of variables but requires the same number and order of observations. 
 
-### Data Frame Basics
+### Libraries
 
 In R, data frames are built in as type `data.frame`, though there are packages that provide other implementations of data frames that have additional features, such as the `tibble` package used in many other common packages. 
 We will cover functions from both base R and the `tibble` package in this chapter.
 
 In Python, we will use the `pandas` library, which is conventionally abbreviated `pd`. So before you use any data frames in python, you will need to add the following line to your code: `import pandas as pd`.
 
-::: callout-demo
 
-#### Examining Data Frames
 
+### Data Frame Structure
+
+When you first begin working with a data frame, it becomes critical to know the size of the object, the number of rows and columns, and roughly what columns are present in the data frame. 
+Most of these considerations are structural in nature - just like exploring a wrapped present, you first size it up, then you shake it a bit, and then you unwrap it to find out what's inside. 
+
+
+:::: demo
+#### Demo: Size and Structure of Data Frames {-}
 ::: panel-tabset
 
-##### R {- .unnumbered}
+##### R {-}
 
 When you examine the structure of a data frame, as shown below, you get each column shown in a row, with its type and the first few values in the column. The `head(n)` command shows the first $n$ rows of a data frame (enough to see what's there, not enough to overflow your screen).
 
@@ -1092,7 +1328,7 @@ ncol(mtcars)
 
 Missing variables in an R data frame are indicated with `NA`.
 
-##### Python {- .unnumbered}
+##### Python {-}
 
 When you examine the structure of a data frame, as shown below, you get each column shown in a row, with its type and the first few values in the column. 
 The `df.head(n)` command shows the first $n$ rows of a data frame (enough to see what's there, not enough to overflow your screen).
@@ -1133,16 +1369,12 @@ Missing variables in a pandas data frame are indicated with `nan` or `NULL`.
 
 
 :::
-:::
+::::
 
 
-:::{.callout-tip}
+:::: example
 
-#### Try it out {.unnumbered}
-
-::: panel-tabset
-
-##### Setup {- .unnumbered}
+#### Try it out: Data Frame Exploration {-}
 
 The dataset `state.x77` contains information on US state statistics in the 1970s. By default, it is a matrix, but we can easily convert it to a data frame, as shown below.
 
@@ -1171,8 +1403,11 @@ import pandas as pd
 state_facts = pd.read_csv("https://raw.githubusercontent.com/srvanderplas/stat-computing-r-python/main/data/state_facts.csv")
 ```
 
+Now that the data has been read in, we can do some basic explorations. 
 
-##### Problem {- .unnumbered}
+::: panel-tabset
+
+##### Problem
 
 1. How many rows and columns does it have? Can you find different ways to get that information?
 
@@ -1180,7 +1415,7 @@ state_facts = pd.read_csv("https://raw.githubusercontent.com/srvanderplas/stat-c
 
 3. Calculate the average population density of each state (population per square mile) and store it in a new column `PopDensity`. Using the R reference card, can you find functions that you can combine to get the state with the minimum population density?
 
-##### R Solution {- .unnumbered}
+##### R Solution
 
 ```{r}
 #| label:  state-facts-tryitout-solutions-r
@@ -1202,7 +1437,7 @@ state_facts$state[which.min(state_facts$PopDensity)]
 ```
 
 
-##### Python Solution {- .unnumbered}
+##### Python Solution
 
 ```{python}
 #| label:  state-facts-tryitout-solutions-py
@@ -1228,15 +1463,15 @@ state_facts.state[loc_min_dens]
 ```
 
 :::
-:::
+::::
 
 ### Creating Data Frames
 
 It is possible to create data frames from scratch by building them out of simpler components, such as lists of vectors or dicts of Series. 
 This tends to be useful for small data sets, but it is more common to read data in from e.g. CSV files, which I've used several times already but haven't yet shown you how to do (see @sec-data-input for the full how-to).
 
-::: callout-demo
-#### Data Frames from Scratch
+:::: demo
+#### Demo: Creating Data Frames from Scratch {-}
 
 ::: panel-tabset
 
@@ -1274,16 +1509,17 @@ math_and_lsd
 
 :::
 
-:::
+::::
 
 While it's not *so* hard to create data frames from scratch for small data sets, it's very tedious if you have a lot of data (or if you can't type accurately). 
 An easier way to create a data frame (rather than typing the whole thing in) is to read in data from somewhere else - a file, a table on a webpage, etc. 
 We're not going to go into the finer points of this (you'll get into that in @sec-data-input), but it is useful to know how to read neatly formatted data.
 
-One source of (relatively neat) data is the [TidyTuesday github repository](https://github.com/rfordatascience/tidytuesday)^[Tidy Tuesday is a collaborative project where the R community gets together and explores a dataset, cleaning it, visualizing it, and generally working to collectively hone R skills together. You can find some very nice YouTube livestreams, as well as lots of examples using the [#tidytuesday twitter tag](https://twitter.com/search?q=%23tidytuesday).]
+One source of (relatively neat) data is the [TidyTuesday github repository](https://github.com/rfordatascience/tidytuesday)^[Tidy Tuesday is a collaborative project where the R community gets together and explores a dataset, cleaning it, visualizing it, and generally working to collectively hone R skills together. You can find some very nice YouTube livestreams, as well as lots of examples using the [#tidytuesday twitter tag](https://twitter.com/search?q=%23tidytuesday).]. 
+If you want to practice reading in data in different formats, that is an excellent place to start. 
 
-::: callout-demo
-#### Reading in Data
+:::: demo
+#### Reading in Data {-}
 
 ::: panel-tabset
 ##### Base R
@@ -1317,15 +1553,15 @@ airmen.head()
 ```
 
 :::
-:::
+::::
 
 ### Working with Data Frames
 
 Often, we want to know what a data frame contains. 
 R and pandas both have easy summary methods for data frames.
 
-::: callout-demo
-#### Data Frame Summaries
+:::: demo
+#### Demo: Summarizing Data Frames {-}
 
 Notice that the type of summary depends on the data type.
 
@@ -1363,7 +1599,8 @@ airmen.info(show_counts=True)
 
 In pandas, you will typically want to separate out .describe() calls for numeric and non-numeric columns. Another handy function in pandas is .info(), which you can use to show the number of non-NA values. This is particularly useful in sparse datasets where there may be a LOT of missing values and you may want to find out which columns have useful information for more than just a few rows.
 :::
-:::
+
+::::
 
 
 ## References  {#sec-data-struct-refs}
