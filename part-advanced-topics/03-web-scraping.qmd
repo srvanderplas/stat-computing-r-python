@@ -1337,8 +1337,14 @@ When writing custom functions for web scrapign, it's usually helpful to give you
 saveRDS(rev_war_battles2, "../data/rev-war-battles2.RDS")
 ```
 ```{r}
-#| echo: !expr '-1'
+#| include: false
+#| eval: true
+
+
 rev_war_battles2 <- readRDS("../data/rev-war-battles2.RDS")
+```
+
+```{r}
 head(rev_war_battles2)
 ```
 
@@ -1359,7 +1365,7 @@ process_battle_row <- function(node){# <1>
 
 rev_war_battles3 <- map(rev_war_rows, process_battle_row) |> bind_rows() # <4>
 ```
-1. Here, the function is called on a single row of the table, so it's much harder to "lose" a value.
+1. The function is called on a single row of the table, so it's much harder to "lose" a value.
 2. First, get all first `td` elements with `a` children, and get the `href` attribute from those children. This will be `NULL` or `c()` (a list of length 0) if there is no `a` child of the first `td` element in the node.
 3. The biggest modification here is to use `if_else()` to handle the missing values and replace them with NA instead.
 4. Call `process_battle_row` on each row and bind the rows together. 
@@ -1370,8 +1376,11 @@ rev_war_battles3 <- map(rev_war_rows, process_battle_row) |> bind_rows() # <4>
 saveRDS(rev_war_battles3, "../data/rev-war-battles3.RDS")
 ```
 ```{r}
-#| echo: !expr '-1'
+#| eval: true
+#| include: false
 rev_war_battles3 <- readRDS("../data/rev-war-battles3.RDS")
+```
+```{r}
 head(rev_war_battles3)
 ```
 
@@ -1382,8 +1391,9 @@ head(rev_war_battles3)
 from bs4 import BeautifulSoup, SoupStrainer
 import urllib.request
 
+header={'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:131.0) Gecko/20100101 Firefox/131.0'}
 url = "https://en.wikipedia.org/wiki/List_of_American_Revolutionary_War_battles"
-req = urllib.request.Request(url)
+req = urllib.request.Request(url, headers=header)
 
 page_bytearray = urllib.request.urlopen(req)
 page = page_bytearray.read()
