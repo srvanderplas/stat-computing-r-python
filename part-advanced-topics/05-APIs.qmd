@@ -48,6 +48,7 @@ REST abstracts information into a **resource**, which can change state over time
 At any given time, the resource state is the **resource representation** and consists of the data, metadata about the data, and the links that help a client transition to another state. 
 
 ::: callout-info
+### URI Anatomy
 
 A REST API consists of interlinked resources, known as the **resource model**.
 
@@ -56,9 +57,17 @@ A REST API is a set of syntax that allows you to access the table data using a c
 
 A **URI** (Universal Resource Identifier) is the more updated term for a URL (Universal Resource Locator). Any URI that starts with https:// or ftp:// or mailto:// is a URL -- that is, all URLs are also URIs. ^[These terms are often mixed up and this has been an issue since at least 2003 [@zimmermanURIVsURL2020].]
 
-A URI will typically have an endpoint (the server address) along with **parameters** tacked on after the final `/`.
-The start of the parameter string is indicated with `?`, and parameters are separated by `&` characters. 
-The parameters often take the form of key-value pairs, so you might have a parameter string that looks like this: `?param1=value1&param2=value2`. 
+
+There are several components of an URI:
+
+- the **scheme** - the part before the colon, such as https, ftp, or mailto
+- the **authority** or **endpoint** - the server address, along with optional user information and port information [userinfo@]host[port].    
+For instance, RStudio's web server is hosted by default on port 8787, so if the web host is `host.com`, we'd access the RStudio server by `host.com:8787`. By default, port 80 is used for HTTP traffic, and most web servers will map ports to different folders.
+- the **path** - after the server address, there may be some /folder/ paths after the address.     
+Some of these paths may be more friendly ways to access different services hosted on different ports - for instance, I map :8787 to /rstudio on my web server. 
+- the **query** or **parameter string** - after the path, there may be a string with `?...`. Often, this will have `key=value` pairs separated by `&`. 
+- the **fragment** `#...` that links to a specific part of the page
+
 URIs cannot accommodate certain characters, such as spaces -- these must be [encoded using ASCII values](https://www.w3schools.com/tags//ref_urlencode.asp) [@w3schoolsHTMLURLEncoding2025].
 `%20` is the equivalent for a space, which is why you will often see it in URLs. Not all values in the linked ASCII table need to be encoded -- this usually applies to certain special characters like `/`, `-`, ` `, `(`, and `)`.
 :::
@@ -86,11 +95,11 @@ HTTP requests will return a response code.
 
 I prefer the very general summary [@AllHTTPStatus2023]: 
 
-> 1xx Here's what I'll do.
-2xx Here's what you want.
-3xx I don't have what you want but I know who does.
-4xx It didn't work but it's your fault.
-5xx It didn't work and it's my fault.
+> 1xx Here's what I'll do.    
+> 2xx Here's what you want.    
+> 3xx I don't have what you want but I know who does.    
+> 4xx It didn't work but it's your fault.    
+> 5xx It didn't work and it's my fault.    
 
 
 You can find a full list [here](https://www.coderstool.com/http-response-codes). 
