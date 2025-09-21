@@ -70,6 +70,7 @@ Some of these paths may be more friendly ways to access different services hoste
 
 URIs cannot accommodate certain characters, such as spaces -- these must be [encoded using ASCII values](https://www.w3schools.com/tags//ref_urlencode.asp) [@w3schoolsHTMLURLEncoding2025].
 `%20` is the equivalent for a space, which is why you will often see it in URLs. Not all values in the linked ASCII table need to be encoded -- this usually applies to certain special characters like `/`, `-`, ` `, `(`, and `)`.
+
 :::
 
 While most RESTful applications use HTTP methods and an API built around what look like web addresses, this is not required. 
@@ -196,12 +197,15 @@ We get a frequency (`count`), the name we were checking up on, the likely gender
 
 Both R and Python use CURL as a backend to interact with the internet at large, but it is often easier to send requests using a request-specific library, such as `httr2`. 
 
-Let's connect to the Evil Insult Generator API and get one insult from R in Greek (`lang=el`) in XML (`type=xml`) and one from Python in Russian (`lang=ru`), formatted as JSON (`type=json`). 
+Connect to the Evil Insult Generator API and get one insult from R in Greek (`lang=el`) in XML (`type=xml`) and one from Python in Russian (`lang=ru`), formatted as JSON (`type=json`).
 
-Please note that I have no idea how evil/off-color these insults might be, but the idea of an API just to insult you (in many languages) is amusing enough to demonstrate even at the risk that it is crude. 
-We're requesting these in non-English languages in the hopes of minimizing the offense (though the comment in the response gives a rough translation). 
-If you are fluent in Russian or Greek, please feel free to substitute Spanish (`es`), German (`de`), French (`fr`), Greek (`el`), Russian (`ru`), Chinese (`zh`), Hindi (`hi`), Polish (`pl`), or another language of your choice. 
-I think this API is using [ISO 639 2-letter language codes](https://en.wikipedia.org/wiki/List_of_ISO_639_language_codes), and it will return a string of asterisks if it doesn't understand your language -- it doesn't seem to have insults in every possible language, but I've verified a few modern/common ones. 
+Notes:
+
+- I have no idea how evil/off-color these insults might be, but the idea of an API just to insult you (in many languages) is amusing enough to demonstrate even at the risk that it is crude. 
+- I've set the task in non-English languages in the hopes of minimizing the offense (though the comment in the response gives a rough translation). If you are fluent in Russian or Greek, please feel free to substitute Spanish (`es`), German (`de`), French (`fr`), Greek (`el`), Russian (`ru`), Chinese (`zh`), Hindi (`hi`), Polish (`pl`), or another language of your choice. 
+- I think this API is using [ISO 639 2-letter language codes](https://en.wikipedia.org/wiki/List_of_ISO_639_language_codes), and it will return a string of asterisks if it doesn't understand your language -- it doesn't seem to have insults in every possible language, but I've verified a few modern/common ones. 
+
+
 
 ##### R {-}
 
@@ -252,6 +256,9 @@ You may need to make several requests to get the data you want.
 ##### R {-}
 
 ```{r}
+#| fig-width: 6
+#| fig-height: 3
+#| out-width: "50%"
 library(httr2)
 library(lubridate)
 library(dplyr)
@@ -289,6 +296,9 @@ ggplot(moore_temps, aes(x = start_time, y = temp)) + geom_line()
 
 
 ```{python}
+#| fig-width: 6
+#| fig-height: 3
+#| out-width: "50%"
 import requests
 import pandas as pd
 import seaborn.objects as so
@@ -357,6 +367,7 @@ Your keys should not have spaces.
 
 :::: demo
 ##### Demo: Environment File Secret Storage and Access
+
 ::: panel-tabset
 ###### R {-}
 
@@ -372,11 +383,10 @@ Personally, I try to use project-level secrets wherever possible, but some thing
 
 ```{r}
 library(usethis)
-usethis::edit_r_environ("project") # <1>
-usethis::edit_r_environ("user") # <2>
+usethis::edit_r_environ("project") # Store in project folder/working dir
+usethis::edit_r_environ("user") # Store at user level, accessible from any project
 ```
-1. If you want to store the secrets in your project folder (e.g. in what is likely your working directory)
-2. If you want to store the secrets in your user's folder, which would be accessible from any project on your machine while you're logged in. 
+
 
 Add these lines to your `.Renviron` file:
 ```
@@ -442,6 +452,7 @@ secrets['API_SECRET']
 ```
 
 :::
+
 ::::
 
 
