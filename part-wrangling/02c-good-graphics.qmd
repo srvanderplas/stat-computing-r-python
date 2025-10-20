@@ -472,7 +472,8 @@ plt.show()
 
 
 If the goal is to emphasize that every single country had an increase in life expectancy over the period, the best chart is the line chart - we can see upward slopes for each country leading to the conclusion that life expectancy increased. 
-This leverages the Gestalt principles of "similarity" and "common fate". Similarity, in that all lines point in the same direction, and common fate (often used for motion, e.g. a flock of birds are a group because they move together) because the lines are all "moving together". 
+This leverages the Gestalt principles of "similarity" and "common fate". 
+Similarity, in that all lines point in the same direction, and common fate (often used for motion, e.g. a flock of birds are a group because they move together) because the lines are all "moving together". 
 
 We can derive the same information from the bar chart, but we have to work a bit more for it, because we naturally group bars together by country (proximity) and by year (similarity). 
 We have to then notice that the 2007 bar is bigger for each country to come to the same conclusion -- this takes a bit more cognitive effort.
@@ -499,13 +500,13 @@ This power should be used responsibly.
 When creating a visualization that involves many different (usually categorical) variables, it is important to decide which variable is the **primary** comparison of interest. 
 This variable is the one which should be shown in the most easily comparable way -- usually, directly on the same plot. 
 
-Let's look at the palmerpenguins data. We have several categorical variables: `species`, `island`, `year` (technically numerical, but there are only 3 years), and `sex`. 
+Let's look at the `palmerpenguins` data. We have several categorical variables: `species`, `island`, `year` (technically numerical, but there are only 3 years), and `sex`. 
 The most interesting part of this data set is how the morphology (measurements) of penguins changes based on their sex and species, so let's explore what different charts examining `bill_len` and `body_mass` might look like across those variables. 
 For this example, I'll drop penguins with an unidentified sex for visual simplicity. 
 
 ```{r}
 #| echo: false
-#| fig-cap: "Three views of the palmerpenguins data comparing bill_len and body_mass across sex and species. Click on figures to enlarge."
+#| fig-cap: "Three views of the `palmerpenguins` data comparing bill_len and body_mass across sex and species. Click on figures to enlarge."
 #| fig-subcap: ["This plot uses shape, color, and linetype to distinguish the different groups. It's cluttered, but it is possible to make comparisons across species and sex", "This plot facets by species, allowing the user to make easy comparisons across sex for each species separately. Cross species comparisons are somewhat more difficult in this plot because the viewer must shift back and forth between panels.", "This plot facets by sex, allowing the user to make easy judgments about the effect of species on measurements. Comparisons between sexes must be made across panels, and require more cognitive effort."]
 #| label: fig-palmer-penguins-facets
 #| lightbox: 
@@ -640,10 +641,11 @@ filter(gap_nam, year == 2007) |>
 
 
 When creating a chart, it is helpful to consider which variables you want to show, and how accurate reader perception needs to be to get useful information from the chart. 
-In many cases, less is more - you can easily overload someone, which may keep them from engaging with your chart at all.
+In many cases, less is more - you can easily overload someone, which may keep them from engaging with your chart at all [@contiAttackingInformationVisualization2005].
 Variables which require the reader to notice small changes should be shown on position scales (x, y) rather than using color, alpha blending, etc.
 
 Consider the hierarchy of graphical tasks again.
+
 You may notice a general increase in dimensionality from 1-3 to 4 (2d) to 5 (3d). 
 In general, showing information in 3 dimensions when 2 will suffice can be misleading. 
 Just *how* misleading depends a lot on the type of chart you're using.
@@ -675,7 +677,455 @@ Extra dimensions and other annotations are sometimes called "chartjunk" and shou
 
 ### Show the Data
 
-TODO: Example showing the importance of raw data and how to add summary statistics to show model results on top of the raw data. 
+This section is inspired by Chapter 8 of Getting More out of Graphics by Antony Unwin. 
+We'll work with the FIDE (International Chess Federation) data, which ranks individual chess players using all official games. 
+The `Chess2020` object from the `ChessGmooG` data package created to accompany Getting More out of Graphics contains the rankings from December 2020.
+
+:::: setup
+
+### Chess Data Setup {-}
+
+First, we need to do a bit of data setup so that both R and Python can access the data. 
+This time, it's critical to run the R code first and then python, since we're exporting the data from R to a CSV that can be read in using python. 
+
+::: panel-tabset
+
+#### R {-}
+```{r}
+## packages for the chapter
+# install.packages(c("ggridges", "ChessGmooG")) # <0>
+
+library(ChessGmooG) # <1>
+data(Chess2020) # <2>
+readr::write_csv(Chess2020, file = "../data/Chess2020.csv") # <3>
+```
+0. Install the R packages necessary for this example
+1. Load the data package
+2. Load the data
+3. Export the data to CSV so it can be loaded in Python
+
+
+#### Python{-}
+
+```{python}
+import pandas as pd
+import numpy as np
+
+Chess2020 = pd.read_csv("../data/Chess2020.csv")
+```
+
+
+:::
+
+::::
+
+
+:::: example
+### Exploring Distributions: Rating and Age
+
+First, it's a good idea to generate some basic distributional plots to explore the contents of the data. 
+
+::: panel-tabset
+
+#### R {-}
+
+```{r}
+#| fig-width: 6
+#| fig-height: 2
+#| out-width: "100%"
+#| fig-alt: "A histogram of FIDE Rating by number of players. The distribution starts at 1500 players with a rating of 1000, and increases to a peak of 3500 players at a rating of 1750. There is a sharp increase in the number of players at rating 2000, and then a steep decline until 2750, where the bins disappear."
+library(ggplot2)
+theme_set(theme_bw())
+library(dplyr)
+
+ggplot(Chess2020, aes(x = DEC20)) + 
+  geom_histogram(binwidth = 10) + 
+  xlab("Rating") + ylab("# Players")
+```
+
+
+#### Python {-}
+```{python}
+#| fig-width: 6
+#| fig-height: 2
+#| out-width: "100%"
+#| fig-alt: "A histogram of FIDE Rating by number of players. The distribution starts at 1500 players with a rating of 1000, and increases to a peak of 3500 players at a rating of 1750. There is a sharp increase in the number of players at rating 2000, and then a steep decline until 2750, where the bins disappear."
+
+import seaborn.objects as so
+import seaborn as sns
+import matplotlib.pyplot as plt # Set figure size
+plt.figure(figsize=(6,2))
+
+so.Plot(Chess2020, x = "DEC20").add(so.Bars(), so.Hist(binwidth=10)).label(x = "Rating", y = "# Players").show()
+```
+
+
+:::
+
+The data only includes players whose rating is above 1000, which explains the sharp drop-off on the left edge of the distribution. 
+There are slight hints of bumps in the distribution at about 1200 and at the max of about 1750. 
+Other features include the slight spike at 2000, an additional very narrow bump just after 2000, and the long tail after that point.
+
+![Decomposing the histograms into hypothetical distributions that might explain the data.](../images/wrangling/mental-model-dist-components.png){#fig-mental-model-dist-components width="50%" fig-alt="A sketch of the outline of a histogram, with 50% opacity curves showing spikes, normal distributions, and other shapes that could be decomposed from the overall shape."}
+
+What if the different curves are due to activity? We have active and inactive players, and we might find that some of the distribution's features are activity related.
+
+
+::: panel-tabset
+
+#### R {-}
+
+```{r}
+#| fig-width: 6
+#| fig-height: 3
+#| fig-alt: 'The image features two side-by-side histograms depicting the distribution of player ratings. The left histogram is labeled "Active" and shows the number of active players along the y-axis and their ratings along the x-axis, with values ranging from 1000 to approximately 2800. The highest concentration of players is between 1500 and 2000 ratings. The right histogram is labeled "Inactive" and similarly represents the distribution for inactive players, with a comparable range on the x-axis. The peak is also in the 1500 to 2000 range, but with slightly fewer players compared to the active category. Both histograms have a grey fill and share the same x and y-axis scales, allowing for direct comparison.'
+
+Chess2020 <- Chess2020 |>
+  mutate(Activity = if_else(Flag %in% c("wi", "i"), "Inactive", "Active"))
+
+ggplot(Chess2020, aes(x = DEC20)) + 
+  geom_histogram(binwidth = 10) + 
+  xlab("Rating") + ylab("# Players") + 
+  facet_grid(~Activity)
+```
+
+
+#### Python {-}
+```{python}
+#| fig-width: 6
+#| fig-height: 3
+#| fig-alt: 'The image features two side-by-side histograms depicting the distribution of player ratings. The left histogram is labeled "Active" and shows the number of active players along the y-axis and their ratings along the x-axis, with values ranging from 1000 to approximately 2800. The highest concentration of players is between 1500 and 2000 ratings. The right histogram is labeled "Inactive" and similarly represents the distribution for inactive players, with a comparable range on the x-axis. The peak is also in the 1500 to 2000 range, but with slightly fewer players compared to the active category. Both histograms have a blue fill and share the same x and y-axis scales, allowing for direct comparison.'
+
+plt.figure(figsize=(6,3))
+
+Chess2020['Activity'] = Chess2020.Flag.replace(to_replace={"i":"Inactive", "wi": "Inactive", "w": "Active"})
+Chess2020 = Chess2020.fillna({"Activity":"Active"})
+
+so.Plot(Chess2020, x = "DEC20").add(so.Bars(), so.Hist(binwidth=10)).facet(col="Activity").label(x = "Rating", y = "# Players").show()
+```
+
+
+:::
+
+The left "bump" only occurs in Active players, and the right "bump" becomes much more clearly a one-sided peak at 2000, and only occurs in Inactive players. 
+It seems likely that players are more likely to become inactive once they reach their perceived peak, and for many players that occurs at 2000. 
+
+::: panel-tabset
+
+#### R {-}
+
+
+```{r}
+#| fig-width: 6
+#| fig-height: 3
+#| label: fig-r-rating-age-orig
+#| fig-cap: "Age in 2020 and Rating, with a smooth line drawn over top. There is significant overplotting in the data, with clusters between 10 and 20 (Rating between 1000 and 2000, in a parallelogram-ish shape) and another cluster between 45 and 70 (Rating between 1500 and 2000)."
+#| fig-alt: "The image is a scatter plot showing the relationship between age in 2020 and ratings. The x-axis represents age, ranging from 0 to 100, while the y-axis represents the rating, ranging from 1000 to 2500. The data points form a dense, black cluster throughout the graph, with a notable upward trend in ratings at ages 10 to 20, which plateaus and slightly declines from around age 30 onwards. A blue line runs through the data, highlighting the central trend of the values: it rises steeply at the beginning, evens out, and then gradually declines past age 50. The background is white with faint grey grid lines."
+
+Chess2020 <- Chess2020 |> 
+  mutate(Bday = as.numeric(Bday), 
+         Age = 2020 - Bday,
+         Age = if_else(Age == 2020, NA, Age))
+
+mean(is.na(Chess2020$Age)) # Only missing age for about 2.4% of players
+
+Chess2020 |>
+  filter(Activity == "Active") |>
+  ggplot(aes(x =Age, y = DEC20)) + 
+  geom_point(alpha = 0.01) + 
+  geom_smooth() + 
+  xlab("Age in 2020") + ylab("Rating") +
+  scale_x_continuous(breaks = (1:10)*10)
+```
+
+
+#### Python {-}
+
+```{python}
+#| fig-width: 6
+#| fig-height: 3
+#| label: fig-py-rating-age-orig
+#| fig-cap: "Age in 2020 and Rating, with a smooth line drawn over top. There is significant overplotting in the data, with a cluster between 10 and 20 (Rating between 1000 and 2000, in a parallelogram-ish shape) and another cluster between 45 and 70 (Rating between 1500 and 2000). "
+#| fig-alt: "The image is a scatter plot showing the relationship between age in 2020 and ratings. The x-axis represents age, ranging from 0 to 100, while the y-axis represents the rating, ranging from 1000 to 2500. The data points form a dense, black cluster throughout the graph, with a notable upward trend in ratings at ages 10 to 20, which plateaus and slightly declines from around age 30 onwards. A blue line runs through the data, highlighting the central trend of the values: it rises steeply at the beginning, evens out, and then gradually declines past age 50. The background is white with faint grey grid lines."
+#%pip install seaborn_objects_recipes
+import seaborn_objects_recipes as sor
+
+Chess2020['Bday'] = pd.to_numeric(Chess2020.Bday)
+Chess2020['Age'] = 2020-Chess2020.Bday
+Chess2020[Chess2020.Age==2020] = pd.NA
+
+Chess2020.Age.isna().mean() # Only missing age for about 2.4% of players
+
+active2020 = Chess2020.query('Activity=="Active"')
+
+(
+  so.Plot(active2020, x = 'Age', y = "DEC20").
+  add(so.Dot(color='black', alpha=.002)).
+  add(so.Line(), lowess:= sor.Lowess(frac=0.1, gridsize=1000)).
+  label(x = "Age in 2020", y = "Rating").
+  scale(x = so.Continuous().tick(every=10)).
+  show()
+)
+```
+
+
+:::
+
+It appears that players can start getting ratings of $> 1000$ around 8 or 9, at which point they get included in the data. Their rating increases steeply as they age, up to about 20 years old, at which point there is a much more gradual increase to age 30. After that, performance stays steady until age 60 and begins to decline. 
+
+However, it seems likely that there are some drop-out effects here, as we are only looking at active players, and the number of e.g. 20 year olds playing may decrease from the number of e.g. 16 year olds playing. 
+
+::::
+
+**Show the Data** 
+
+Notice the utility here of showing the whole data set and then highlighting a trend - we're not really hiding anything from the viewer, so they can still see the messiness, but we've chosen alpha carefully to try to balance density and overplotting with being able to see the points at all.
+Then, we highlight the overall trend with a line that stands out from the black-and-white plot.
+
+When you have too much data, it can be challenging to figure out the best way to represent it. Some options:
+
+- Optimize shape and $\alpha$ selection to show spread and balance spread with overplotting issues.
+- Sample points and only show a subset (the title/subtitle/caption should indicate the sampling method)
+- Use binning and map color to the number of points in each bin.
+
+Additionally, when you have overplotting but not too much data, it can be helpful to try `geom_jitter` to move similar values into a point cloud around the value. 
+That won't help in this situation, but it's a good trick in general. 
+
+The next set of tabs shows these options as executed in `ggplot2` (for brevity, I'm not showing python/seaborn here). 
+
+:::: example
+
+### Overplotting Solutions
+
+::: panel-tabset
+
+#### Shape and $\alpha$ Optimization {-}
+
+```{r}
+#| fig-width: 6
+#| fig-height: 3
+#| fig-alt: 'The image is a scatter plot with a large number of data points, represented as transparent black dots, displaying the relationship between age and rating. The horizontal axis is labeled "Age in 2020" and ranges from 0 to 100, while the vertical axis is labeled "Rating" with a range from 1000 to 2500. A blue line represents a trend through the data points, indicating an increase in rating from ages 0 to about 30, where it peaks and then gradually declines until the age of 100. There is a slight shaded area around the blue line, suggesting a margin of error or variance. The graphs title is "Age and Rating."'
+
+
+Chess2020 |>
+  filter(Activity == "Active") |>
+  ggplot(aes(x =Age, y = DEC20)) + 
+  geom_point(shape = 1, alpha = .05) + 
+  geom_smooth() + 
+  xlab("Age in 2020") + ylab("Rating") +
+  scale_x_continuous(breaks = (1:10)*10) + 
+  ggtitle("Age and Rating")
+```
+
+Notice that  this gives us somewhat better definition of the density areas than @fig-r-rating-age-orig, and allows us to see that the point density is much higher in the cluster between 10 and 20 than it is between 45 and 70.
+
+#### Sampling Points {-}
+
+```{r}
+#| fig-width: 6
+#| fig-height: 4
+#| fig-alt: 'The image is a scatter plot with a large number of data points, represented as transparent black dots, displaying the relationship between age and rating. The horizontal axis is labeled "Age in 2020" and ranges from 0 to 100, while the vertical axis is labeled "Rating" with a range from 1000 to 2500. A blue line represents a trend through the data points, indicating an increase in rating from ages 0 to about 30, where it peaks and then gradually declines until the age of 100. There is a slight shaded area around the blue line, suggesting a margin of error or variance. The graphs title is "Age and Rating" with subtitle "For a sample of 20% of the active players in the FIDE 2020 data."'
+
+
+Chess2020 |>
+  filter(Activity == "Active") |>
+  sample_frac(size = .2, replace = F) |>
+  ggplot(aes(x =Age, y = DEC20)) + 
+  geom_point(shape = 1, alpha = .25) + 
+  geom_smooth() + 
+  xlab("Age in 2020") + ylab("Rating") +
+  scale_x_continuous(breaks = (1:10)*10) + 
+  ggtitle("Age and Rating", subtitle = "For a sample of 20% of the active players in the FIDE 2020 data")
+```
+
+
+#### Binning {-}
+
+
+```{r}
+#| label: fig-data-reduction-binning
+#| fig-width: 6
+#| fig-height: 4
+#| fig-alt: ['The image is a hexbin plot depicting the relationship between age and chess rating in 2020. The horizontal axis represents age, ranging from 0 to 100, while the vertical axis represents rating, ranging from 1000 to 3000. The plot is populated with hexagonal bins that vary in shades of blue, indicating the density of data points, with darker shades representing higher counts. A smooth orange trend line with a slight upward curve from ages 10 to 20, then slightly declines around age 45, leveling and finally tapering off by age 100. A color scale on the right shows the count with breaks of 10, 10, 100, and 1000.', 'The image is a 2d-binned plot depicting the relationship between age and chess rating in 2020. The horizontal axis represents age, ranging from 0 to 100, while the vertical axis represents rating, ranging from 1000 to 3000. The plot is populated with square bins that vary in shades of blue, indicating the density of data points, with darker shades representing higher counts. A smooth orange trend line with a slight upward curve from ages 10 to 20, then slightly declines around age 45, leveling and finally tapering off by age 100. A color scale on the right shows the count with breaks of 10, 10, 100, and 1000.']
+#| layout-ncol: 2
+#| fig-cap: "Two different binned plots using hexagonal and rectangular bins, respectively. "
+
+Chess2020 |>
+  filter(Activity == "Active") |>
+  ggplot(aes(x =Age, y = DEC20)) + 
+  geom_hex() + 
+  scale_fill_gradient(low = "#E8EBF8", high = "#1432BA", trans="log10") + 
+  geom_smooth(color = "orange") + 
+  xlab("Age in 2020") + ylab("Rating") +
+  scale_x_continuous(breaks = (1:10)*10) + 
+  ggtitle("Age and Rating")
+
+
+
+Chess2020 |>
+  filter(Activity == "Active") |>
+  ggplot(aes(x =Age, y = DEC20)) + 
+  geom_bin_2d(binwidth = list(x = 2, y = 100)) + 
+  scale_fill_gradient(low = "#E8EBF8", high = "#1432BA", trans="log10") + 
+  geom_smooth(color = "orange") + 
+  xlab("Age in 2020") + ylab("Rating") +
+  scale_x_continuous(breaks = (1:10)*10) + 
+  ggtitle("Age and Rating")
+```
+
+There are several intentional but non-trivial modifications here:
+
+- The fill scale has been set with low as a very light blue and high as a dark blue (the default goes the other way, which is usually not a "natural" mapping -- more saturation = more of the thing)
+- The fill scale uses a log10 transformation. When there is a wide range of values (e.g. from 0 to 1000) you can fit more information into the finite number of shades of color we can perceive if you use a log scale. Think about a topographic map -- you do not necessarily want linear scaling for the lines if you're limited to only 7 lines. 
+- The smooth line has been changed to orange, as orange vs. blue is still a relatively safe set of colors to use for all types of colorblindness.
+
+While this is no longer showing the raw data (as we've binned and computed a statistic), it's still reasonably close to the raw data. This is perhaps the first plot where we get a true sense of how many actively playing children there are in chess matches, and how dense they are relative to the distribution of ratings once out of childhood. 
+
+:::
+
+::::
+
+:::: example
+### Age, Gender, and Ratings
+
+Returning to our exploration, let's consider the age distribution of active vs. inactive players. 
+
+::: panel-tabset
+
+#### R {-}
+
+
+```{r}
+#| fig-width: 6
+#| fig-height: 4
+#| fig-cap: 'The image is a line graph displaying density distribution of two different activities categorized as "Active" and "Inactive" over a range of ages in 2020. The x-axis represents age, spanning from 0 to 100, and the y-axis represents density, ranging from 0.00 to approximately 0.035. The "Active" category is depicted with a red line, while the "Inactive" category is shown with a blue line. The red line peaks sharply between ages 10 and 15, indicating higher density, and then gradually decreases with a small bump at 30 and a large bump at 50. The blue line peaks slightly later, closer to age 20, and decreases more steadily, with smaller fluctuations. Both lines taper off as age approaches 100. On the right, a legend identifies the color coding for each category. The graph is set on a white background with a grid.'
+
+Chess2020 |>
+  # filter(Activity == "Active") |>
+  ggplot(aes(x = Age, color = Activity)) + 
+  geom_density()+
+  xlab("Age in 2020") +
+  scale_x_continuous(breaks = (1:10)*10)
+```
+
+
+#### Python {-}
+
+```{python}
+#| fig-width: 6
+#| fig-height: 4
+#| fig-alt: 'The image is a line graph displaying age density in 2020 for two activity categories: "Active" and "Inactive." The x-axis represents ages ranging from 0 to 110, while the y-axis represents density ranging from 0.0000 to 0.0200. The "Active" category is shown with a blue line and the "Inactive" category with an orange line. Both lines start at age ~0, with the "Active" line peaking sharply between ages 10 and 15, indicating higher density, and then gradually decreasing with a small bump at 30 and a large bump at 50. The "Inactive" line follows a similar initial trend but peaks slightly later, closer to age 20, and decreases more steadily, with smaller fluctuations alongside the "Active" line. The background has a grid layout, and a legend on the right side indicates the color associated with each activity type.'
+
+plt.figure(figsize=(6,4))
+
+(
+  so.Plot(Chess2020, x = 'Age', color = 'Activity').
+  add(so.Line(), so.KDE()).
+  label(x = "Age in 2020", y = "Density").
+  scale(x = so.Continuous().tick(every=10)).
+  show()
+)
+
+```
+
+:::
+
+We also have information on players' gender. 
+Chess has traditionally been perceived as very male-dominated, but let's see if that stereotype holds up to the data.
+
+::: panel-tabset
+
+#### R {-}
+
+```{r}
+#| fig-width: 6
+#| fig-height: 4
+#| fig-alt: 'The image is a line graph displaying age distribution data for two sexes, labeled as "F" and "M." The x-axis represents "Age," ranging from 0 to 100, and the y-axis represents "count," going from 0 to 10,000, with grid lines for reference. Two lines are depicted: a red line for "F" (female) and a blue line for "M" (male). The blue line peaks sharply around age 25 with a count slightly above 7,500 before gradually declining with age. The red line also peaks around age 25, though lower, with a count just above 2,500, and then slopes downward more smoothly. The legend on the right side uses colored boxes to label each line according to "Sex."'
+
+ggplot(Chess2020, aes(x = Age, color = Sex)) + 
+  geom_density(aes(y = after_stat(count)))
+```
+
+#### Python {-}
+
+```{python}
+#| fig-width: 6
+#| fig-height: 4
+#| fig-alt: 'The image is a line graph displaying age distribution data for two sexes, labeled as "F" and "M." The x-axis represents "Age," ranging from 0 to 100, and the y-axis represents "Density," going from 0 to 0.025, with grid lines for reference. Two lines are depicted: a red line for "F" (female) and a blue line for "M" (male). The blue line peaks sharply around age 25 with a count slightly below 0.025 before gradually declining with age. The red line also peaks around age 25, though lower, with a count just above 0.005, and then slopes downward more smoothly. The legend on the right side uses colored boxes to label each line according to "Sex."'
+
+
+(
+  so.Plot(Chess2020, x = 'Age', color = 'Sex').
+  add(so.Line(), so.KDE(common_norm = True, common_grid = True)).
+  label(x = "Age in 2020", y = "Density").
+  scale(x = so.Continuous().tick(every=10)).
+  show()
+)
+
+```
+
+:::
+
+Ok, so there are clearly fewer females who have rating $> 1000$ according to FIDE. 
+What if we look at active vs. inactive players of both genders?
+
+
+
+::: panel-tabset
+
+#### R {-}
+
+```{r}
+#| fig-width: 6
+#| fig-height: 5
+#| fig-alt: 'The image consists of two stacked density plots representing age distributions for active and inactive groups, segmented by sex. Both plots feature a horizontal x-axis labeled "Age" and a vertical y-axis labeled "count." The upper plot is labeled "Active," and the lower plot is labeled "Inactive," with these labels placed vertically on the right sides of the graphs. Each plot shows two curves, a red curve representing female (F) data and a blue curve representing male (M) data. In both plots, the male curve exhibits a higher initial peak compared to the female curve, indicating more males in the younger age categories. The legend on the right differentiates the colors associated with each sex. The peak age for both genders is lower in active players than in inactive players, indicating that there may have been a shift towards starting players at younger ages within the chess community.'
+
+
+Chess2020 |>
+ggplot(aes(x = Age, color = Sex)) + 
+  geom_density(aes(y = after_stat(count))) + 
+  facet_grid(Activity~.)
+```
+
+#### Python {-}
+
+```{python}
+#| fig-width: 6
+#| fig-height: 5
+#| fig-alt: 'The image consists of two stacked density plots representing age distributions for active and inactive groups, segmented by sex. Both plots feature a horizontal x-axis labeled "Age" and a vertical y-axis labeled "Density." The upper plot is labeled "Active," and the lower plot is labeled "Inactive," with these labels placed vertically on the right sides of the graphs. Each plot shows two curves, a red curve representing female (F) data and a blue curve representing male (M) data. In both plots, the male curve exhibits a higher initial peak compared to the female curve, indicating more males in the younger age categories. The legend on the right differentiates the colors associated with each sex. The peak age for both genders is lower in active players than in inactive players, indicating that there may have been a shift towards starting players at younger ages within the chess community.'
+
+plt.figure(figsize=(6,5))
+
+(
+  so.Plot(Chess2020, x = 'Age', color = 'Sex').
+  add(so.Line(), so.KDE(common_norm = True, common_grid = True)).
+  label(x = "Age in 2020", y = "Density").
+  facet(row = "Activity").
+  scale(x = so.Continuous().tick(every=10)).
+  show()
+)
+
+```
+
+:::
+
+It is clear that there are a few interesting things going on in this plot. 
+First, there is about a 5-year shift left in the age distribution of active players compared to inactive players, suggesting the possibility of demographic changes -- either players starting earlier, young players reaching >1000 rating more frequently, or some other factor.
+
+Second, it is clear that the behavior of men playing chess is different than that of women: men continue playing well into their 60s, while women usually quit before age 40. 
+
+::::
+
+Observations: 
+
+- It is helpful, when possible, to show the full data, with aesthetics and facets chosen to highlight different variable combinations.
+
+- Summary statistics can be useful to highlight relationships amid noise.
+
+- Data reduction strategies (binning, alpha blending, sampling) can be useful when overplotting obscures the information present in the chart. 
+
+
+
 
 ## Evaluating Graphics: Effectiveness, Clarity, and Comprehension {#sec-checklist}
 
@@ -715,7 +1165,8 @@ Then, it can be helpful to work through the grammar of graphics to ensure that e
   - Color scales
   
       - [ ] Is the color scale used the most accessible scale for the data? 
-      - [ ] If color is mapped to a continuous value, is the scale transformed to maximize the contrast across the range of the variable? Log transforms can often be useful to increase contrast between different orders of magnitude of a continuous value. 
+      - [ ] If color is mapped to a continuous value, is the scale transformed to maximize the contrast across the range of the variable?     
+      Log transforms can often be useful to increase contrast between different orders of magnitude of a continuous value. 
       
   - Transformations
   
@@ -723,13 +1174,17 @@ Then, it can be helpful to work through the grammar of graphics to ensure that e
       - [ ] Are transformed elements labeled clearly?
       - [ ] Does the transformation improve comprehension?
     - Coordinate Systems
-      - [ ] Is the coordinate system appropriate for the message? If polar coordinates are used, is there a clear justification for deviating from better-understood cartesian coordinates?
+      - [ ] Is the coordinate system appropriate for the message?    
+      If polar coordinates are used, is there a clear justification for deviating from better-understood cartesian coordinates?
 
 5. Facets and Layout
 
-    - [ ] Does the layout support the comparisons of interest? Are facets that viewers may want to compare ordered so that they are adjacent?
-    - [ ] How much effort is required to make secondary comparisons? Consider visual distance traveled between elements in the secondary comparison, alignment of axes, etc. 
-    - [ ] Are there too many facets shown? How does the number of facets required for the comparison compare to the overall increase in visual clutter?
+    - [ ] Does the layout support the comparisons of interest?    
+    Are facets that viewers may want to compare ordered so that they are adjacent?
+    - [ ] How much effort is required to make secondary comparisons?    
+    Consider visual distance traveled between elements in the secondary comparison, alignment of axes, etc. 
+    - [ ] Are there too many facets shown?     
+    How does the number of facets required for the comparison compare to the overall increase in visual clutter?
     - [ ] Are facet labels clear and easy to understand?
 
 6. Annotations
