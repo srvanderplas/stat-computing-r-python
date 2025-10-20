@@ -683,14 +683,14 @@ The `Chess2020` object from the `ChessGmooG` data package created to accompany G
 
 :::: setup
 
-### Chess Data Setup {-}
+#### Chess Data Setup {-}
 
 First, we need to do a bit of data setup so that both R and Python can access the data. 
 This time, it's critical to run the R code first and then python, since we're exporting the data from R to a CSV that can be read in using python. 
 
 ::: panel-tabset
 
-#### R {-}
+##### R {-}
 ```{r}
 ## packages for the chapter
 # install.packages(c("ggridges", "ChessGmooG")) # <0>
@@ -705,7 +705,7 @@ readr::write_csv(Chess2020, file = "../data/Chess2020.csv") # <3>
 3. Export the data to CSV so it can be loaded in Python
 
 
-#### Python{-}
+##### Python{-}
 
 ```{python}
 import pandas as pd
@@ -721,13 +721,13 @@ Chess2020 = pd.read_csv("../data/Chess2020.csv")
 
 
 :::: example
-### Exploring Distributions: Rating and Age
+#### Exploring Distributions: Rating and Age
 
 First, it's a good idea to generate some basic distributional plots to explore the contents of the data. 
 
 ::: panel-tabset
 
-#### R {-}
+##### R {-}
 
 ```{r}
 #| fig-width: 6
@@ -744,7 +744,7 @@ ggplot(Chess2020, aes(x = DEC20)) +
 ```
 
 
-#### Python {-}
+##### Python {-}
 ```{python}
 #| fig-width: 6
 #| fig-height: 2
@@ -773,7 +773,7 @@ What if the different curves are due to activity? We have active and inactive pl
 
 ::: panel-tabset
 
-#### R {-}
+##### R {-}
 
 ```{r}
 #| fig-width: 6
@@ -790,7 +790,7 @@ ggplot(Chess2020, aes(x = DEC20)) +
 ```
 
 
-#### Python {-}
+##### Python {-}
 ```{python}
 #| fig-width: 6
 #| fig-height: 3
@@ -812,7 +812,7 @@ It seems likely that players are more likely to become inactive once they reach 
 
 ::: panel-tabset
 
-#### R {-}
+##### R {-}
 
 
 ```{r}
@@ -839,7 +839,7 @@ Chess2020 |>
 ```
 
 
-#### Python {-}
+##### Python {-}
 
 ```{python}
 #| fig-width: 6
@@ -895,11 +895,11 @@ The next set of tabs shows these options as executed in `ggplot2` (for brevity, 
 
 :::: example
 
-### Overplotting Solutions
+#### Overplotting Solutions
 
 ::: panel-tabset
 
-#### Shape and $\alpha$ Optimization {-}
+##### Shape and $\alpha$ Optimization {-}
 
 ```{r}
 #| fig-width: 6
@@ -919,7 +919,7 @@ Chess2020 |>
 
 Notice that  this gives us somewhat better definition of the density areas than @fig-r-rating-age-orig, and allows us to see that the point density is much higher in the cluster between 10 and 20 than it is between 45 and 70.
 
-#### Sampling Points {-}
+##### Sampling Points {-}
 
 ```{r}
 #| fig-width: 6
@@ -939,7 +939,7 @@ Chess2020 |>
 ```
 
 
-#### Binning {-}
+##### Binning {-}
 
 
 ```{r}
@@ -986,13 +986,13 @@ While this is no longer showing the raw data (as we've binned and computed a sta
 ::::
 
 :::: example
-### Age, Gender, and Ratings
+#### Age, Gender, and Ratings
 
 Returning to our exploration, let's consider the age distribution of active vs. inactive players. 
 
 ::: panel-tabset
 
-#### R {-}
+##### R {-}
 
 
 ```{r}
@@ -1009,7 +1009,7 @@ Chess2020 |>
 ```
 
 
-#### Python {-}
+##### Python {-}
 
 ```{python}
 #| fig-width: 6
@@ -1035,7 +1035,7 @@ Chess has traditionally been perceived as very male-dominated, but let's see if 
 
 ::: panel-tabset
 
-#### R {-}
+##### R {-}
 
 ```{r}
 #| fig-width: 6
@@ -1046,7 +1046,7 @@ ggplot(Chess2020, aes(x = Age, color = Sex)) +
   geom_density(aes(y = after_stat(count)))
 ```
 
-#### Python {-}
+##### Python {-}
 
 ```{python}
 #| fig-width: 6
@@ -1073,7 +1073,7 @@ What if we look at active vs. inactive players of both genders?
 
 ::: panel-tabset
 
-#### R {-}
+##### R {-}
 
 ```{r}
 #| fig-width: 6
@@ -1087,7 +1087,7 @@ ggplot(aes(x = Age, color = Sex)) +
   facet_grid(Activity~.)
 ```
 
-#### Python {-}
+##### Python {-}
 
 ```{python}
 #| fig-width: 6
@@ -1125,7 +1125,175 @@ Observations:
 - Data reduction strategies (binning, alpha blending, sampling) can be useful when overplotting obscures the information present in the chart. 
 
 
+### Annotations {#sec-annotations}
 
+Annotations (labels, arrows, highlighted information, and captions) allow you to communicate specific parts of the data. 
+
+Good annotations help readers understand key findings, interpret data without having to reference legends, and see (and make sense of) structure, changes, and anomalies in the data. 
+
+:::: demo
+
+#### COVID - Flattening the curve
+
+In early 2020, the news started mentioning a cluster of pneumonia cases in China.
+The first cases were detected in the US in Washington state (Jan 20). A second case was confirmed on January 24 in Illinois, and the third-fifth cases were confirmed on January 26  in Arizona and California. By mid-February, Italy had become another hotspot. 
+
+On March 9, one of the classic graphics of the COVID-19 pandemic was released (@fig-flatten-curve), showing the power of both annotation and animation.
+
+![This #FlattenTheCurve graph surged to prominence this week. But it didn't say why it is so bad when medical treatment capacity is overwhelmed -> mortality rate rises. So, here is a small animation that shows the value of early containment and double dividend of delay. #Covid19. Image by Alexander Radtke (@lxrdk), [posted on Twitter](https://web.archive.org/web/20200312121759/https://twitter.com/alxrdk/status/1237021885239635969).](../images/wrangling/flatten-the-curve-smaller.gif){#fig-flatten-curve width="100%" fig-alt="A plot labeled 'Why it is so important to act early on COVID-19', with x-axis showing time and y-axis showwing people in need of medical care. A shift to "early containment" pushes the case curve out over time (with the same number of cases overall), and simultaneously, a curve showing treatment capacity changes, until the treatment capacity is above the number of people in need of medical care. The proportion of the case curve above the treatment capacity is shaded in purple and corresponds to badly treated patients (high mortality), while the proportion of the case curve below treatment capacity represents properly cared-for patients (low mortality). As the curve moves, annotations pop up showing the effect of medical workers becoming ill (reduced treatment capacity) and the effect of medical research (increased treatment capacity)."}
+
+On March 11, the WHO declared COVID-19 a pandemic. 
+By March 15, many states issued stay-home orders and only essential workers were allowed out. 
+
+::::
+
+:::: example
+
+#### Different Types of Annotations
+
+In this example, we'll stay on the same COVID theme, but we'll use [COVID (SARS-CoV-2) case counts in New York City](https://data.cityofnewyork.us/Health/COVID-19-Daily-Counts-of-Cases-Hospitalizations-an/rc75-m7u3/about_data), which was one of the big hotspots in the US early in the pandemic.
+This example will be done in `ggplot2` because annotations tend to be more of a pain to create manually in seaborn.
+
+```{r}
+library(readr)
+library(lubridate)
+library(dplyr)
+library(tidyr)
+library(stringr)
+library(ggplot2)
+library(zoo) # rollapply function
+
+covid <- read_csv("../data/COVID-19_Daily_Counts_of_Cases,_Hospitalizations,_and_Deaths_20251020.csv") |>
+  select(date_of_interest:DEATH_COUNT) |>
+  mutate(date = mdy(date_of_interest)) |>
+  select(-date_of_interest, -PROBABLE_CASE_COUNT) |>
+  mutate(`Case_Count_-_Week_Average` = rollapply(CASE_COUNT, 7, mean, align="center", fill = "NA")) |>
+  pivot_longer(-date, names_to = "variable", values_to = "count") |>
+  mutate(variable = str_replace_all(variable, "_", " ") |> str_to_title()) |>
+  mutate(variable = str_replace_all(variable, pattern = c("Case Count" = "Cases", "Death Count" = "Deaths", "Hospitalized Count" = "Hospitalizations")))
+
+head(covid)
+```
+
+```{r}
+color_values <- c("Cases" = "#8780de", "Cases - Week Average" = "#544ad0", "Deaths" = "#ff7800", "Hospitalizations" = "#26a269")
+alpha_values <- c("Cases" = .5, "Cases - Week Average" = 1, "Deaths" = 1, "Hospitalizations" = 1)
+
+p <- filter(covid, date > ymd(20200101), date <= ymd(20201231)) |>
+ggplot(aes(x = date, y = count, color = variable, alpha = variable)) + 
+  geom_line() +
+  scale_alpha_manual("Counts", values = alpha_values) + 
+  scale_color_manual("Counts", values = color_values) + 
+  ylab("# Recorded People") +
+  ggtitle("SARS-CoV2 Cases, Hospitalizations, and Deaths in NYC") +
+  theme(axis.title.x = element_blank())
+
+p
+```
+
+Now, this is a perfectly useful plot, but as you'll remember from the short-term memory section, direct annotation can be more effective than using a legend. Let's try that. 
+
+
+```{r}
+p_annotate_lines <- p +  
+  theme(legend.position = "none") +
+  annotate("text", y = 2700, x = ymd("20201201"), label = "Cases (7d avg)", color = color_values[2], hjust = 1) + 
+  annotate("text", y = 5500, x = ymd("20201225"), label = "Daily Cases\n    (work week variation)", color = color_values[1], hjust = 1) + 
+  annotate("text", y = 520, x = ymd("20201231"), label = "Hospitalizations", color = color_values[4], hjust = 1) + 
+  annotate("text", y = -120, x = ymd("20201231"), label = "Deaths", color = color_values[3], hjust = 1)
+
+
+p_annotate_lines
+```
+
+This is nice -- we don't have to refer to the legend and each line is labeled on the chart directly. 
+We also have devoted more room on the chart to the data itself, which is a plus. 
+
+Annotations can also be used to provide useful contextual information. 
+
+::: {.callout collapse=true}
+##### Contextual Information - COVID in NYC, 2020
+
+The [user guide for the data](../data/COVID19_CaseHospDeath_UserGuide_20201202.docx) provides the following information: 
+
+> This file includes data since February 29, 2020, which is the date that the Health Department classifies as the start of the COVID-19 outbreak in NYC as it was the date of the first laboratory-confirmed COVID-19 case.
+
+>  In March, April, and early May, the NYC Health Department had discouraged people with mild and moderate symptoms from being tested, so data from those months primarily represent people with more severe illness. Until mid-May, patients with more severe COVID-19 illness were more likely to have been tested and included in these data. 
+
+We can get additional context on the pandemic timeline from the [CDC Museum COVID-19 Timeline](https://www.cdc.gov/museum/timeline/covid19.html):
+
+- March 15, 2020 - States begin to implement shutdowns in order to prevent the spread of COVID-19. The New York City public school system— the largest school system in the U.S., with 1.1 million students— shuts down, while Ohio calls for restaurants and bars to close.
+
+- March 28, 2020 - CDC issues a domestic travel advisory for New York, New Jersey, and Connecticut due to high community transmission of COVID-19 in those states, urging residents to refrain from all non-essential domestic travel for at least 14 days, effective immediately.
+
+- April 10, 2020 - With 159,937 confirmed cases, New York State now has more reported cases of COVID-19 than Spain (153,000), Italy (143,000), or China (82,000). Amid critical hospital bed and ventilator shortages, aerial images emerge of workers in hazmat suits burying coffins in mass graves at Hart Island off the Bronx, an area used for over 150 years by New York City officials as a mass burial site for those with no next-of-kin or who cannot afford funerals.
+
+:::
+
+Let's see whether we can add this information to the chart too. 
+
+```{r}
+count_travel_adv <- filter(covid, date == ymd(20200328), 
+                           variable == "Cases - Week Average")$count
+count_mass_graves <- filter(covid, date == ymd(20200410), 
+                            variable == "Deaths")$count
+
+p_info_annot <- 
+  p_annotate_lines + 
+  scale_x_date(expand = expansion(add=c(75, 0)), 
+               date_labels = "%b %y", date_breaks = "1 month") + 
+  
+  annotate("rect", 
+           xmin = ymd(20200301), xmax = ymd(20200515), ymin = 0, ymax = 6500, 
+           alpha = 0.05, fill = "black") + 
+  annotate("text", x = ymd(20200520), y = 6500, 
+           label = "Tests available for\nsevere cases only",
+           hjust = 0, vjust = 1, color = "grey30") + 
+  
+  annotate("segment", linetype = "dotted", 
+           x = ymd(20200229), xend = ymd(20200229), 
+           y = 500, yend = 0) + 
+  annotate("segment", linetype = "dotted", 
+           x = ymd(20200229), xend = ymd(20200224), 
+           y = 500, yend = 500) + 
+  annotate("text", x = ymd(20200224), y = 500, 
+           label = "1st Pos\nCOVID Test", hjust = 1, vjust = 0.5) + 
+  
+  annotate("segment", linetype = "dotted", 
+           x = ymd(20200315), xend = ymd(20200315), 
+           y = 1350, yend = 0) + 
+  annotate("segment", linetype = "dotted", 
+           x = ymd(20200315), xend = ymd(20200305), 
+           y = 1350, yend = 1350) + 
+  annotate("text", x = ymd(20200305), y = 1350, 
+           label = "NYC Schools\nShut Down", hjust = 1, vjust = 0.5) + 
+  
+  annotate("segment", linetype = "dotted",
+           x = ymd(20200328), xend = ymd(20200328), 
+           y = 0, yend = count_travel_adv) + 
+  annotate("segment", linetype = "dotted", 
+           x = ymd(20200328), xend = ymd(20200318), 
+           y = count_travel_adv, yend = count_travel_adv) + 
+  annotate("text", x = ymd(20200318), y = count_travel_adv, 
+           label = "CDC Issues\nTravel Advisory\nfor NY State", 
+           hjust = 1, vjust = 0.5)  + 
+  
+  annotate("segment", linetype = "dotted", 
+           x = ymd(20200410), xend = ymd(20200410), 
+           y = 0, yend = count_mass_graves) + 
+  annotate("text", x = ymd(20200405), y = -100, 
+           label = "Mass graves in NYC", hjust = 0, vjust = 1) 
+
+p_info_annot
+
+```
+We had to slightly extend the x-axis to accommodate the annotations, but this also has a rhetorical purpose -- NYC didn't have its first positive test until March 20, but the actual spread of cases in NYC was likely occurring well before that date -- they just couldn't be measured.
+
+It is possible to add too many annotations to a chart and clutter it up. The last chart above is getting close, and it would be reasonable to e.g. omit the 1st positive covid test annotation because it's implicit, but the additional context may also be useful. 
+
+What variations would you add?
+
+::::
 
 ## Evaluating Graphics: Effectiveness, Clarity, and Comprehension {#sec-checklist}
 
