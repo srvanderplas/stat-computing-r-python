@@ -1,11 +1,13 @@
 # Animated and Interactive Graphics {#sec-interactive-graphics}
 
 Interactive and animated graphics are one of the major advantages of using the `quarto` or `Rmarkdown` (or `Jupyter`) ecosystems - because you can easily create web pages in markdown (without the pain of learning/writing HTML) and you aren't limited by the static constraints of paper any more.
-This chapter will focus on several different libraries that allow you to create different types of interactive charts, graphs, and interfaces: Shiny, `Plotly`, `Leaflet` (maps), and `Observable`.
-There are *many* other options out there - `d3.js`, `highCharts`, `crosstalk` (an interface specifically designed for Shiny and markdown) [@mockClientsideInteractivityMore2020]. 
+This chapter will focus on several different libraries that allow you to create different types of interactive charts, graphs, and interfaces: `Plotly`, `Leaflet` (maps), and Shiny. 
+There are *many* other options out there - `Observable`, `d3.js`, `highCharts`, and `crosstalk` (an interface specifically designed for Shiny and markdown) [@mockClientsideInteractivityMore2020]. 
 While I'd love to include them all, they are all being updated too, which would leave me with a lot of things to maintain to keep this chapter current. 
+Some additional coverage of JavaScript graphics is available in @sec-javascript-graphics.
+
 Plotly content is included even though the `plotly` [documentation for R, julia, F#, and Matlab is being deprecated.](https://web.archive.org/web/20251024184918/https://community.plotly.com/t/retire-the-documentation-for-r-matlab-julia-and-f/94147). 
-Plotly is still a reliable library (and has a lovely ggplot2 interface), so because [the R package is still being maintained (for now)](https://www.reddit.com/r/rstats/comments/1nto2ir/plotly_is_retiring_its_r_documentation/njh81sw/) I have left it included as part of this chapter. 
+Plotly is still a reliable library (and has a lovely `ggplot2` interface), so because [the R package is still being maintained (for now)](https://www.reddit.com/r/rstats/comments/1nto2ir/plotly_is_retiring_its_r_documentation/njh81sw/) I have left it included as part of this chapter. 
 
 
 ## {{< fa bullseye >}} Objectives 
@@ -138,12 +140,22 @@ volcano <- volcano %>%
 ```{python}
 #| label: cleaning-up-volcano-py
 volcano2 = volcano.query("tectonic_settings != 'Unknown'")
-volcano2[['zone', 'crust']] = volcano2.tectonic_settings.\
-                              str.split(" / ", expand = True)
+
+volcano3 = volcano2.join(
+  volcano2['tectonic_settings'].str.split(" / ", expand = True).rename(
+    columns={0:'zone',1:'crust'}
+  ), validate = "1:1"
+)
+
+volcano2 = volcano3
+
+del volcano3
+
 # Remove anything after ( as well as ? if it exists
-volcano2 = volcano2.assign(volcano_type =
-            volcano2['primary_volcano_type'].\
-            str.replace(r"(\(.*)?\??$", "", regex = True))
+volcano2 = volcano2.assign(volcano_type = volcano2['primary_volcano_type'].\
+                                str.replace(r"(\(.*)?\??$", "", regex = True))
+
+
 ```
 :::
 
@@ -260,7 +272,6 @@ Here, the interactivity actually helps a bit: we don't need to use the legend to
 I added the rug layer after the initial bout because I was curious how much data each of these curves were based on. If we want only curves with n > 10 observations, we can do that:
 
 ::: panel-tabset
-
 
 #### ggplotly
 

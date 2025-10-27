@@ -1,2 +1,36 @@
+---
+engine: knitr
+---
+
 # JavaScript Graphics {#sec-javascript-graphics}
 
+`quarto` natively supports Observable JS graphics, which enhance vanilla JavaScript using a "reactive runtime" that implements Shiny-like reactivity. 
+This is particularly useful when working with interactive graphics. 
+
+
+## {{< fa bullseye >}} Objectives 
+
+- Use Observable.js to create interactive graphics
+- Understand how to include Observable.js graphics in quarto documents
+- Create animated or interactive charts using Observable.js that facilitate viewer understanding
+
+## Introduction
+
+Observable graphics can be created in two ways: via a hosted service at https://observablehq.com/, and via the Observable JS ("OJS") core library scripts, which can be included into standalone documents (like quarto). 
+In fact, Quarto handles this natively, and will include the necessary libraries if you use an `{ojs}` executable code block.
+
+First, we have to create an OJS block to read in some data. 
+```{r}
+library(dplyr)
+library(tidyr)
+frogid <- read.csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2025/2025-09-02/frogID_data.csv')
+frognames <- read.csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2025/2025-09-02/frog_names.csv') |>
+  group_by(scientificName) |> 
+  slice_head(n=1)
+frogs <- dplyr::left_join(frogid, frognames, by = "scientificName")
+write.csv(frogs, file = "../data/frogs.csv", row.names = F)
+```
+
+```{ojs}
+frogs = FileAttachment('../data/frogs.csv').csv({typed: true})
+```
