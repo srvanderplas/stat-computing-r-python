@@ -14,14 +14,21 @@ This is particularly useful when working with interactive graphics.
 - Understand how to include Observable.js graphics in quarto documents
 - Create animated or interactive charts using Observable.js that facilitate viewer understanding
 
+## Resources
+
+- [Observable Plot from `ggplot2`](https://observablehq.com/@observablehq/plot-from-ggplot2)
+- [Observable Tutorials](https://observablehq.com/@observablehq/hands-on-tutorials-overview)
+
 ## Introduction
 
 Observable graphics can be created in two ways: via a hosted service at https://observablehq.com/, and via the Observable JS ("OJS") core library scripts, which can be included into standalone documents (like quarto). 
 In fact, Quarto handles this natively, and will include the necessary libraries if you use an `{ojs}` executable code block.
 
+
 First, we do a bit of preprocessing in R to get our data into a form we can use. 
 
 ```{r}
+#| cache: false
 library(dplyr)
 library(tidyr)
 frogid <- read.csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2025/2025-09-02/frogID_data.csv')
@@ -29,15 +36,29 @@ frognames <- read.csv('https://raw.githubusercontent.com/rfordatascience/tidytue
   group_by(scientificName) |> 
   slice_head(n=1)
 frogs <- dplyr::left_join(frogid, frognames, by = "scientificName")
-
-ojs_define(data = frogs)
+write.csv(frogs, "../data/frogs.csv")
 ```
-The last step is to use the `ojs_define()` function in R (also works in python) to make the frogs data available to OJS chunks. 
-Note that this will not work until the document is compiled, because OJS does not work interactively in quarto notebooks. 
 
+```{r}
+ojs_define(frogs = frogs) # JSname = Rname
+```
+
+<!--
+The last step is to use the `ojs_define()` function in R or python to make the frogs data available to OJS chunks. 
+Note that this will not work until the document is compiled, because OJS does not work interactively in quarto notebooks. 
+-->
 
 ```{ojs}
-filtered = transpose(data).filter(function(frog) {
-  return scientificName.includes(frog.scientificName) 
+land = FileAttachment("../data/australian-states.json").json()
+proj = Object({type: "stereographic", rotate: [-130, 30], domain: land})
+Plot.plot({  
+  projection: proj,
+  marks: [
+    Plot.graticule(),
+    Plot.geo(land, {fill: "#aaa", fillOpacity: 0.2}),
+    Plot.sphere(),
+    Plot.dot(transpose(frogs), {x: "decimalLongitude", y: "decimalLatitude", stroke: "subfamily", fill: "subfamily", fillOpacity: 0.2}),
+    Plot.dot(transpose(frogs), Plot.pointer({x: "decimalLongitude", y: "decimalLatitude", stroke: "subfamily", fill: "subfamily"}))
+  ]
 })
 ```
