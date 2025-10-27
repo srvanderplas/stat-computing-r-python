@@ -19,7 +19,8 @@ This is particularly useful when working with interactive graphics.
 Observable graphics can be created in two ways: via a hosted service at https://observablehq.com/, and via the Observable JS ("OJS") core library scripts, which can be included into standalone documents (like quarto). 
 In fact, Quarto handles this natively, and will include the necessary libraries if you use an `{ojs}` executable code block.
 
-First, we have to create an OJS block to read in some data. 
+First, we do a bit of preprocessing in R to get our data into a form we can use. 
+
 ```{r}
 library(dplyr)
 library(tidyr)
@@ -28,9 +29,15 @@ frognames <- read.csv('https://raw.githubusercontent.com/rfordatascience/tidytue
   group_by(scientificName) |> 
   slice_head(n=1)
 frogs <- dplyr::left_join(frogid, frognames, by = "scientificName")
-write.csv(frogs, file = "../data/frogs.csv", row.names = F)
+
+ojs_define(data = frogs)
 ```
+The last step is to use the `ojs_define()` function in R (also works in python) to make the frogs data available to OJS chunks. 
+Note that this will not work until the document is compiled, because OJS does not work interactively in quarto notebooks. 
+
 
 ```{ojs}
-frogs = FileAttachment('../data/frogs.csv').csv({typed: true})
+filtered = transpose(data).filter(function(frog) {
+  return scientificName.includes(frog.scientificName) 
+})
 ```
