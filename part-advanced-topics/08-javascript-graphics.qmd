@@ -35,7 +35,9 @@ frogid <- read.csv('https://raw.githubusercontent.com/rfordatascience/tidytuesda
 frognames <- read.csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/main/data/2025/2025-09-02/frog_names.csv') |>
   group_by(scientificName) |> 
   slice_head(n=1)
-frogs <- dplyr::left_join(frogid, frognames, by = "scientificName")
+frogs <- dplyr::left_join(frogid, frognames, by = "scientificName") |>
+  mutate(dateTime = paste0(eventDate, "T", eventTime, " ", timezone)) |>
+  select(-eventDate, -eventTime, -timezone)
 write.csv(frogs, "../data/frogs.csv")
 ```
 
@@ -62,3 +64,94 @@ Plot.plot({
   ]
 })
 ```
+
+You can see this example in an observable notebook [here](https://observablehq.com/@university-of-nebraska-lincoln/exploring-australian-frogs). 
+
+```{ojs}
+
+// Replace "subfamily" with the name of the column you want to color by.
+// Replace "frogs" by the name of the dataset
+// The domain is the list of unique values in the column.
+// The range is the array of colors you want to use.
+colorscale = d3.scaleOrdinal().domain(frogs.map(d => d.subfamily)).range(["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b"])
+
+map = {
+  // You'll often see Leaflet examples initializing a map like L.map('map'),
+  // which tells the library to look for a div with the id 'map' on the page.
+  // In Observable, we instead create a div from scratch in this cell, so it's
+  // completely self-contained.
+  let container = DOM.element('div', { style: `width: ${ width }px; height: ${640}px;` });
+  
+  // Note that I'm yielding the container pretty early here: this allows the
+  // div to be placed on the page. This is important, because Leaflet uses
+  // the div's .offsetWidth and .offsetHeight to size the map. If I were
+  // to only return the container at the end of this method, Leaflet might
+  // get the wrong idea about the map's size.
+  yield container;
+  
+  // Now we create a map object and add a layer to it.
+  let bbox = [113.338953078, -43.6345972634, 153.569469029, -10.6681857235], // bounding box for Australia
+    fitBounds = [ [bbox[1], bbox[0]], [bbox[3], bbox[2]] ]; // formatted for leaflet
+  let map = L.map(container).fitBounds(fitBounds);
+  
+  let osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+  let pointLayer = L.layerGroup();
+  for (const row of frogs) {
+    const latitude = row.decimalLatitude;
+    const longitude = row.decimalLongitude;
+    const name = row.scientificName || ''; // Optional: Use a 'name' column for the popup
+
+    if (latitude & longitude) {
+      const marker = L.circleMarker([latitude, longitude], {
+        fillColor: colorscale(row.subfamily), 
+        color: colorscale(row.subfamily), 
+        radius: 3,
+        fillOpacity: 0.2});
+      // Optional: Add a popup if you have a name column.
+      if (name) {
+        marker.bindPopup(`<h3>${name}</h3>${row.dateTime}<br/>${row.commonName}`);
+      }
+      pointLayer.addLayer(marker);
+    }
+  }
+  
+  pointLayer.addTo(map);
+}
+
+
+```
+
+Here, we use Leaflet within Observable to get a similar (but more interactive) result. 
+Notice that while Observable's plot syntax is variable/column oriented, Leaflet (and JavaScript more generally) is row oriented, and so we have to use a for loop to go through each row in the data set and add a `circleMarker` with a corresponding popup. 
+This increases the rendering time for the plot, which is not great, and might suggest figuring out optimizations like grouping points together at some zoom levels to reduce the rendering load. 
+That's a level of sophistication that I'll leave to [someone else](https://docs.maptiler.com/leaflet/examples/cluster/) to demonstrate. 
+
+## Observable + VegaLite
+
+Vega Lite is a charting library for JavaScript that generates charts with some basic interactivity enabled (mostly tooltips). 
+It works with Python via Altair as well. 
+VegaLite was inspired by the grammar of graphics but does not necessarily interpret the grammar in the same way that `ggplot2` does. 
+
+This tutorial is borrowed/modified in part from an Observable notebook, [Charting with Vega-Lite](https://observablehq.com/@observablehq/vega-lite). 
+I'll be using [memes](../data/memes.json) data from [https://api.imgflip.com/get_memes](https://api.imgflip.com/get_memes).
+
+::: column-margin
+While Observable allows chunks to be in any order (and it will figure out which one needs to run first), this is one of my least favorite aspects of non-R notebooks (jupyter also allows nonlinear execution), and so I write my JS code linearly. 
+:::
+
+```{ojs}
+import { vl } from "@vega/vega-lite-api" // Import vega-lite libraries
+
+memes = FileAttachment("../data/memes.json").json() // Add data
+
+vl.markCircle()                         // Make a scatter chart
+  .data(memes)                          // Using the memes data 
+  .encode(
+    vl.x().fieldQ("box_count"),         // For x, use the box_count field
+    vl.y().fieldQ("captions"),          // For y, use the captions field
+    vl.tooltip().fieldN("url")          // For tooltips, show the url field
+  )
+  .render() 
+```
+
