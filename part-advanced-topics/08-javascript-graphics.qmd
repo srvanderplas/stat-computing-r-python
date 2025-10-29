@@ -14,18 +14,41 @@ This is particularly useful when working with interactive graphics.
 - Understand how to include Observable.js graphics in quarto documents
 - Create animated or interactive charts using Observable.js that facilitate viewer understanding
 
-## Resources
 
+## An Introduction to Observable
+
+::: learnmore
+
+### Observable Resources {-}
+
+- [A Minimal Introduction to JavaScript and Observable](https://observablehq.com/@uwdata/a-minimal-introduction-to-javascript-and-observable?collection=@uwdata/visualization-curriculum)
 - [Observable Plot from `ggplot2`](https://observablehq.com/@observablehq/plot-from-ggplot2)
 - [Observable Tutorials](https://observablehq.com/@observablehq/hands-on-tutorials-overview)
 
-## Introduction
+:::
 
-Observable graphics can be created in two ways: via a hosted service at https://observablehq.com/, and via the Observable JS ("OJS") core library scripts, which can be included into standalone documents (like quarto). 
-In fact, Quarto handles this natively, and will include the necessary libraries if you use an `{ojs}` executable code block.
+Observable graphics can be created in two ways: 
+
+- via a hosted service at https://observablehq.com/, and 
+- via the Observable JS ("OJS") core library scripts, which can be included into standalone documents (like quarto). 
+
+In fact, Quarto handles Observable natively, and will include the necessary libraries if you use an `{ojs}` executable code block.
+OJS chunks are different than R and python chunks, in that they do not work in interactive mode - you will only be able to see the result when the document compiles. 
+Observable also has a [radically different model for how notebooks run](https://observablehq.com/@observablehq/how-observable-runs) that leads to chunks not being loaded in order.
+As a result, you cannot define variables more than once (because this messes with the dependency diagrams) or import libraries multiple times in a single notebook.
+
+I've attempted to only import libraries once, the first time they are used, but this can be a bit confusing. 
+
+::: demo
+
+### Sharing Data with Observable
+
+For this example, we'll use the [Australian Frogs data from TidyTuesday](https://github.com/rfordatascience/tidytuesday/blob/main/data/2025/2025-09-02/readme.md), provided by the Australian Society of Herpetologists and JJL Rowley & CT Callaghan, and curated by Jessica Moore. 
+
+You can see this example in an observable notebook [here](https://observablehq.com/@university-of-nebraska-lincoln/exploring-australian-frogs). 
 
 
-First, we do a bit of preprocessing in R to get our data into a form we can use. 
+First, we do a bit of preprocessing in R to get our data into a single data frame so that it is easy to import into JavaScript. 
 
 ```{r}
 #| cache: false
@@ -38,120 +61,566 @@ frognames <- read.csv('https://raw.githubusercontent.com/rfordatascience/tidytue
 frogs <- dplyr::left_join(frogid, frognames, by = "scientificName") |>
   mutate(dateTime = paste0(eventDate, "T", eventTime, " ", timezone)) |>
   select(-eventDate, -eventTime, -timezone)
-write.csv(frogs, "../data/frogs.csv")
+write.csv(frogs, "../data/frogs.csv") 
 ```
 
 ```{r}
-ojs_define(frogs = frogs) # JSname = Rname
+#| cache: false
+ojs_define(frogs = frogs) # JSname = Rname 
 ```
 
-<!--
-The last step is to use the `ojs_define()` function in R or python to make the frogs data available to OJS chunks. 
-Note that this will not work until the document is compiled, because OJS does not work interactively in quarto notebooks. 
--->
+The last step is to use the `ojs_define()` function in R or python to make the frogs data available to OJS chunks.
+The argument name is the name you'll use to refer to the data in the OJS chunk, and the argument value is the name of the data in R or python. 
+Note that this will not work until the document is compiled, because OJS does not work interactively in quarto notebooks, so if you try to run this R chunk interactively, you will get an error about `ojs_define` not being defined.
+
+
+:::
+
+::: demo
+
+### Observable Plots (Maps)
 
 ```{ojs}
-land = FileAttachment("../data/australian-states.json").json()
-proj = Object({type: "stereographic", rotate: [-130, 30], domain: land})
+// Assumes frogs is defined in an R or python chunk
+
+land = FileAttachment("../data/australian-states.json").json() // <1>
+
+proj = Object({type: "stereographic", rotate: [-130, 30], domain: land}) // <2>
+
+
 Plot.plot({  
   projection: proj,
   marks: [
-    Plot.graticule(),
-    Plot.geo(land, {fill: "#aaa", fillOpacity: 0.2}),
-    Plot.sphere(),
-    Plot.dot(transpose(frogs), {x: "decimalLongitude", y: "decimalLatitude", stroke: "subfamily", fill: "subfamily", fillOpacity: 0.2}),
-    Plot.dot(transpose(frogs), Plot.pointer({x: "decimalLongitude", y: "decimalLatitude", stroke: "subfamily", fill: "subfamily"}))
+    Plot.graticule(), // <3>
+    Plot.geo(land, {color: "#000", fill: "#aaa", fillOpacity: 0.2}), // <4>
+    Plot.dot( // <5>
+      transpose(frogs), // <6>
+      {
+        x: "decimalLongitude", 
+        y: "decimalLatitude", 
+        stroke: "subfamily",  // <7>
+        fill: "subfamily",    // <8>
+        fillOpacity: 0.2      // <9>
+      }),
+    Plot.dot(
+      transpose(frogs), 
+      Plot.pointer({          // <10> 
+        x: "decimalLongitude",// <10> 
+        y: "decimalLatitude", // <10> 
+        stroke: "subfamily",  // <10> 
+        fill: "subfamily"     // <10> 
+    }))
   ]
 })
 ```
+1. Load the australian state borders
+2. Set the map projection. `domain: land` ensures that the longitude limits fully include Australia. `rotate: [-130,30]` sets the map projection rotation. Without the domain argument, the rotate argument gives a sideways Australian map.
+3. `Plot.graticule` = grid lines for the map projection
+4. `Plot.geo` plots a map, with the australian states outlined in black and filled in light grey
+5. `Plot.dot` provides dots for each frog observation
+6. JS handles things rowwise, so we transpose the data
+7. stroke = outline of the point
+8. fill = inside of the point
+9. Opacity is handled separately for stroke and fill.
+10. This pointer object reacts to whichever point is closest to the mouse. The differences in arguments compared to the Plot.dot() object above mean the fill will be fully opaque and the point will look solid.
 
-You can see this example in an observable notebook [here](https://observablehq.com/@university-of-nebraska-lincoln/exploring-australian-frogs). 
+
+:::
+
+
+::: demo
+
+### Observable + Leaflet
+
+First, we import `d3` version 7, and ensure that this chunk isn't cached so that any other chunks which use d3 will not be screwed up when we recompile. 
 
 ```{ojs}
+//| cache: false
+d3 = require("d3@7")
+```
 
-// Replace "subfamily" with the name of the column you want to color by.
-// Replace "frogs" by the name of the dataset
-// The domain is the list of unique values in the column.
-// The range is the array of colors you want to use.
-colorscale = d3.scaleOrdinal().domain(frogs.map(d => d.subfamily)).range(["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b"])
+```{ojs}
+// define frogs2 a different way, using a CSV (just as a demo)
+frogs2 = FileAttachment("../data/frogs.csv").csv({"typed": true}) 
 
-map = {
-  // You'll often see Leaflet examples initializing a map like L.map('map'),
-  // which tells the library to look for a div with the id 'map' on the page.
-  // In Observable, we instead create a div from scratch in this cell, so it's
-  // completely self-contained.
-  let container = DOM.element('div', { style: `width: ${ width }px; height: ${640}px;` });
+colorscale = d3.scaleOrdinal()                  // <1>
+    .domain(frogs2.map(d => d.subfamily))        // <1>
+    .range(["#1f77b4", "#ff7f0e", "#2ca02c",    // <1>
+            "#d62728", "#9467bd", "#8c564b"])   // <1>
+
+map = { // <2>
+
+  let container = DOM.element('div',                    // <3>
+    { style: `width: ${ width }px; height: ${640}px;` } // <3>
+  );                                                    // <3>
   
-  // Note that I'm yielding the container pretty early here: this allows the
-  // div to be placed on the page. This is important, because Leaflet uses
-  // the div's .offsetWidth and .offsetHeight to size the map. If I were
-  // to only return the container at the end of this method, Leaflet might
-  // get the wrong idea about the map's size.
-  yield container;
+  yield container; // <4>
   
-  // Now we create a map object and add a layer to it.
-  let bbox = [113.338953078, -43.6345972634, 153.569469029, -10.6681857235], // bounding box for Australia
-    fitBounds = [ [bbox[1], bbox[0]], [bbox[3], bbox[2]] ]; // formatted for leaflet
-  let map = L.map(container).fitBounds(fitBounds);
+  let bbox = [113.338953078, -43.6345972634, 153.569469029, -10.6681857235],  // <5>
+    fitBounds = [ [bbox[1], bbox[0]], [bbox[3], bbox[2]] ];                   // <5>
+  let map = L.map(container).fitBounds(fitBounds);                            // <5>
   
-  let osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+  let osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map); // <6>
 
-  let pointLayer = L.layerGroup();
-  for (const row of frogs) {
-    const latitude = row.decimalLatitude;
-    const longitude = row.decimalLongitude;
-    const name = row.scientificName || ''; // Optional: Use a 'name' column for the popup
+  let pointLayer = L.layerGroup();                  // <7>
+  
+  for (const row of frogs2) {                        // <8>
+    const name = row.scientificName || 'unknown';   // <9>
 
-    if (latitude & longitude) {
-      const marker = L.circleMarker([latitude, longitude], {
-        fillColor: colorscale(row.subfamily), 
-        color: colorscale(row.subfamily), 
-        radius: 3,
-        fillOpacity: 0.2});
-      // Optional: Add a popup if you have a name column.
-      if (name) {
-        marker.bindPopup(`<h3>${name}</h3>${row.dateTime}<br/>${row.commonName}`);
-      }
-      pointLayer.addLayer(marker);
+    if (row.decimalLatitude & row.decimalLongitude) { // <10>
+      const marker = L.circleMarker(                  // <11>
+        [row.decimalLatitude, row.decimalLongitude],  // <12>
+        {                                             // <13>
+          fillColor: colorscale(row.subfamily),       // <13>
+          color: colorscale(row.subfamily),           // <13>
+          radius: 3,                                  // <13>
+          fillOpacity: 0.2                            // <13>
+        }                                             // <13>
+      );
+        
+      if (name) {                                               // <14>
+        marker.bindPopup(                                       // <14>
+        `<h3>${name}</h3>${row.dateTime}<br/>${row.commonName}` // <14>
+        );                                                      // <14>
+      }                                                         // <14>
+      
+      pointLayer.addLayer(marker); // <15>
     }
   }
   
-  pointLayer.addTo(map);
+  pointLayer.addTo(map); // <16>
 }
 
 
 ```
+1. "Subfamily" is the name of the column we want to color by. "frogs" is the name of the dataset. The domain is the list of unique values in the column, and the range is the array of colors we want to use.
+2. You'll often see Leaflet examples initializing a map like L.map('map'), which tells the library to look for a div with the id 'map' on the page. Instead, here, we create the full object as a self-contained entity.
+3. This code creates a div from scratch and sets the width and height of the container. 
+4. The `yield` statement allows the container/div to be placed on the page. Doing this early allows Leaflet to use the div's .offsetWidth and .offsetHeight to size the map. Waiting till later might give Leaflet the wrong dimensions for the map, which could lead to rendering issues. 
+5. This creates a bounding box for Australia, formats it for Leaflet, and then applies the bounding box. 
+6. Then, we use Open Street Map to add tiles to the map corresponding to Australia.
+7. A `LayerGroup` keeps things that are all the same together. 
+8. JavaScript works row-wise, so we need a for loop to get through each row in the data set. 
+9. This allows us to specify that if there is no scientificName defined, to just use a pre-specified string ('unknown', in this case). This will make the popup a bit easier to understand.
+10. JavaScript allows if statements to test for whether a value is defined -- so if there is not a latitude and longitude, then we just don't plot a point. 
+11. `circleMarker` is just one option - you can use `marker`, `circleMarker`, or even [custom marker types](https://leafletjs.com/examples/custom-icons/) defined by your own icons. A non-circle `marker` is like a pin in a map, but there are fewer customization options (e.g. opacity, fill, color), and so with the number of points we have, we want to be able to use opacity in particular.
+12. This provides the longitude (x) and latitude (y).
+13. This sets the aesthetic mappings for appearance (`color`, `fillColor`) as well as constant values that are not mapped to variables (`radius`, `fillOpacity`). These are provided inside `{}` as a set of key-value pairs. 
+14. This creates the formatted pop-up with the scientific name and the time which the observation was made. I'm sure we could format that time to be more useful, but for now let's just leave it be. 
+15. We then add the point and popup to the layer of points.
+16. The final step is to add the `pointLayer` to the map. 
+
+
 
 Here, we use Leaflet within Observable to get a similar (but more interactive) result. 
 Notice that while Observable's plot syntax is variable/column oriented, Leaflet (and JavaScript more generally) is row oriented, and so we have to use a for loop to go through each row in the data set and add a `circleMarker` with a corresponding popup. 
-This increases the rendering time for the plot, which is not great, and might suggest figuring out optimizations like grouping points together at some zoom levels to reduce the rendering load. 
+The sheer number of points increases the rendering time for the plot, which is not great, and might suggest figuring out optimizations like grouping points together at some zoom levels to reduce the rendering load. 
 That's a level of sophistication that I'll leave to [someone else](https://docs.maptiler.com/leaflet/examples/cluster/) to demonstrate. 
+
+:::
+
+
 
 ## Observable + VegaLite
 
-Vega Lite is a charting library for JavaScript that generates charts with some basic interactivity enabled (mostly tooltips). 
-It works with Python via Altair as well. 
-VegaLite was inspired by the grammar of graphics but does not necessarily interpret the grammar in the same way that `ggplot2` does. 
+::: learnmore
 
-This tutorial is borrowed/modified in part from an Observable notebook, [Charting with Vega-Lite](https://observablehq.com/@observablehq/vega-lite). 
-I'll be using [memes](../data/memes.json) data from [https://api.imgflip.com/get_memes](https://api.imgflip.com/get_memes).
+### Observable + VegaLite Resources {-}
 
-::: column-margin
-While Observable allows chunks to be in any order (and it will figure out which one needs to run first), this is one of my least favorite aspects of non-R notebooks (jupyter also allows nonlinear execution), and so I write my JS code linearly. 
+This visualization curriculum would probably have been a suitable "go here for a different textbook" chapter if I'd found it soon enough in my dig through Observable. Oh well.
+
+- [Visualization Curriculum by UW Interactive Data Lab](https://observablehq.com/@uwdata/data-visualization-curriculum?collection=@uwdata/visualization-curriculum)
+  - [Introduction to Vega-Lite](https://observablehq.com/@uwdata/introduction-to-vega-lite) by Jeffrey Heer
+  - [Data Types, Graphical Marks, and Visual Encoding Channels](https://observablehq.com/@uwdata/data-types-graphical-marks-and-visual-encoding-channels?collection=@uwdata/visualization-curriculum) 
+  - [Data Transformation](https://observablehq.com/@uwdata/data-transformation?collection=@uwdata/visualization-curriculum)
+  - [Scales, Axes, and Legends](https://observablehq.com/@uwdata/scales-axes-and-legends?collection=@uwdata/visualization-curriculum)
+  - [Multi-View Composition](https://observablehq.com/@uwdata/multi-view-composition?collection=@uwdata/visualization-curriculum)
+  - [Interaction](https://observablehq.com/@uwdata/interaction?collection=@uwdata/visualization-curriculum)
+  - [Cartographic Visualization](https://observablehq.com/@uwdata/cartographic-visualization?collection=@uwdata/visualization-curriculum) (Maps)
+  - 
+- [Charting with Vega-Lite](https://observablehq.com/@observablehq/vega-lite)
+
+{{< video https://youtu.be/Y8Fp9z-9DWc >}}
+This YouTube video shows a talk at OpenVis 2016 by Arvind Satyanarayan, creator of Vega. Vega is a JavaScript library built on top of d3.js, a lower-level JavaScript library for interactive graphics. 
+
+{{< video https://youtu.be/9uaHRWj04D4 >}}
+This is an OpenVis 2016 talk by Wongsuphasawat, Moritz, and Satyanarayan about Vega-Lite, a grammar of graphics built on top of Vega. 
+
 :::
 
+Vega Lite is a charting library for JavaScript that generates charts with some basic interactivity enabled (mostly tooltips, sliders, animations). 
+It works with [Python via `Altair`](https://altair-viz.github.io/) as well, which means that you could get comfortable with Vega-Lite across multiple languages. 
+VegaLite was inspired by the grammar of graphics but does not necessarily interpret the grammar in the same way that `ggplot2` does. 
+
+I'll be using [memes](../data/memes.json) data from [https://api.imgflip.com/get_memes](https://api.imgflip.com/get_memes).
+You can see this section in an [Observable Notebook](https://observablehq.com/d/6138ab97a24fbd1b) if you prefer. 
+
+While Observable allows chunks to be in any order (and it will figure out which one needs to run first), this is one of my least favorite aspects of non-R notebooks (jupyter also allows nonlinear execution), and so I try to write my JS code linearly. 
+When you are looking at Observable Notebooks, it's fairly common to have the dependencies and imports at the bottom along with any data definitions. 
+I find this confusing and irritating, but I suspect that it's something you get used to over time, if you're not trying to switch between Observable/jupyter style notebooks and quarto style notebooks. 
+
+
+### A Basic Example
+
+First, we'll load some libraries (vega-lite, SummaryTable) that will be used in this example. 
+
+::: demo
+
+#### Loading Libraries
+
 ```{ojs}
-import { vl } from "@vega/vega-lite-api" // Import vega-lite libraries
-
-memes = FileAttachment("../data/memes.json").json() // Add data
-
-vl.markCircle()                         // Make a scatter chart
-  .data(memes)                          // Using the memes data 
-  .encode(
-    vl.x().fieldQ("box_count"),         // For x, use the box_count field
-    vl.y().fieldQ("captions"),          // For y, use the captions field
-    vl.tooltip().fieldN("url")          // For tooltips, show the url field
-  )
-  .render() 
+//| cache: false
+import { vl } from "@vega/vega-lite-api-v6" // Import vega-lite libraries
+import { SummaryTable } from "@observablehq/summary-table"
 ```
 
+:::
+
+::: demo
+
+#### Reading Data from an API
+
+```{ojs}
+data = fetch("https://api.imgflip.com/get_memes").then((response) => response.json()) 
+tmp = data.data.memes
+
+// Add data and format it usefully
+// Box Count (jittered) is a jittered categorical variable
+// Calculate area of the meme in pixels as well
+memes = tmp.map(d => ({
+  ...d,
+  "Box Count (jittered)": +d.box_count + (Math.random() - 0.5) * 0.5,  // Adjust jitter width as needed
+  "Area (px)": +d.width*d.height // get area of the meme in pixels
+}))
+
+```
+
+:::
+
+
+Just for completeness, it's helpful to get a look at the data frame, so I've included a summary in @sec-demo-summarizing-meme-data.
+
+
+::: {.demo collapse="true"}
+
+#### Summarizing Data {#sec-demo-summarizing-meme-data}
+
+```{ojs}
+SummaryTable(memes)
+```
+
+:::
+
+Now that we have our data, we might want to examine the number of versions of each meme, by the number of caption boxes in the meme. 
+A boxplot is typically a good first look at the distribution of variables. 
+
+::: demo
+
+#### Creating a Boxplot
+
+Let's start out with a boxplot. 
+Vega-Lite distinguishes field types using `fieldN` (nominal), `fieldO` (ordinal), and `fieldQ` (quantitative) options. 
+Quantitative scale axes include 0 by default to adhere to graphical conventions, but this can be disabled by adding `.scale({zero: false})` to the end of the field statement. 
+Similarly, you can disable "nice" scale breaks/limits by adding `.scale({nice: false})` to the end of the field statement. 
+
+```{ojs}
+vl.markBoxplot({size: 100})        // Make a boxplot, have the boxes be wider
+  .data(memes)                     // Using the memes data 
+  .encode(
+    vl.x().fieldN("box_count"),    // For x, use the box_count field. FieldN says "Nominal" (FieldQ = quantitative)
+    vl.y().fieldQ("captions"),     // For y, use the captions field
+    vl.tooltip().fieldN("name")    // For tooltips, show the meme name
+  )
+  .width(500)
+  .height(250)
+  .render()
+```
+
+:::
+
+However, this only allows us to highlight the outliers. 
+We might instead want to use points so that we can examine each point and get additional tooltip information. 
+If we use $x = box_count$ directly, then we'll end up with lots of overplotting. 
+Instead, we can jitter `box_count` by adding some random noise (which we did above). 
+
+::: demo
+
+#### Scatter Plot with Jittering
+
+```{ojs}
+vl.markPoint()
+  .data(memes)
+  .width({"step": 50})
+  .encode(
+    vl.x().fieldQ("Box Count (jittered)").scale({zero: false}),
+    vl.y().fieldQ("captions"),          
+    vl.tooltip().fieldN("name")          
+  )
+  .render()
+
+```
+
+:::
+
+Of course, we can also map additional information, such as the area of the meme image, to the points. 
+
+::: demo
+
+#### Mapping Additional Aesthetics
+
+```{ojs}
+vl.markPoint()
+  .data(memes)
+  .encode(
+    vl.x().fieldQ("Box Count (jittered)").scale({zero: false}),
+    vl.y().fieldQ("captions"),          
+    vl.tooltip().fieldN("name"),
+    vl.stroke().fieldQ("Area (px)").scale({scheme: "magma"})
+  )
+  .render()
+```
+
+:::
+
+
+### Interactivity and Linked Charts
+
+Vega-Lite and Observable can do much cooler things, though - we can select subsets of points across multiple charts, or use a graphic to query another graphic. 
+
+For this, we'll use the `movies` data included with vega.
+Some of these examples are modified slightly from the Interaction Observable notebook. 
+
+::: demo
+
+#### Loading Data from JSON
+
+```{ojs}
+//| cache: false
+
+// vl imported above
+// d3 imported above
+
+import {uniqueValid} from "@uwdata/data-utilities"
+
+```
+
+```{ojs}
+//| cache: false
+
+datasets = require('vega-datasets@1')
+```
+
+
+```{ojs}
+//| cache: false
+movies = datasets['movies.json'](); // load dataset
+genres = uniqueValid(movies, d => d.Major_Genre);
+mpaa = ['G', 'PG', 'PG-13', 'R', 'NC-17', 'Not Rated'];
+```
+
+:::
+
+
+::: demo
+
+#### Selectors: Dropdown Menus, Radio Inputs, and more
+
+```{ojs}
+{  
+  const selectGenre = vl.selectPoint('Select')          // <1>
+    .fields('Major_Genre')          // <2>
+    .init({Major_Genre: genres[0]}) // <3>
+    .bind(vl.menu(genres));         // <4>
+  
+  return vl.markCircle()            // <5>
+    .data(movies)
+    .params(selectGenre)            // <6>
+    .encode(
+      vl.x().fieldQ('Rotten_Tomatoes_Rating'), 
+      vl.y().fieldQ('IMDB_Rating'),
+      vl.tooltip().fieldN('Title'),
+      vl.opacity().if(selectGenre, vl.value(0.75)).value(0.05) // <7> 
+    )
+    .render();
+}
+```
+1. Name the selection 'Select'
+2. Limit selection to the Major_Genre field
+3. Use the first genre entry as initial value
+4. Bind to a menu of unique genre values
+5. Create a scatter plot
+6. Use the `selectGenre` menu value as a parameter
+7. Change the opacity conditionally so that points in the selected genre are higher opacity
+
+We can even use multiple selector inputs to get a more complex subset of the data.
+
+```{ojs}
+{  
+  const selection = vl.selectPoint('Select')  // <1>
+    .fields('Major_Genre', 'MPAA_Rating')
+    .init({                                   // <2>
+      Major_Genre: 'Drama',                   // <2>
+      MPAA_Rating: 'R'                        // <2>
+    })                                        // <2>
+    .bind({                                   // <3>
+      Major_Genre: vl.menu(genres),           // <3>
+      MPAA_Rating: vl.radio(mpaa)             // <3>
+    });                                       // <3>
+   
+  return vl.markCircle()                      // <4>
+    .data(movies)
+    .params(selection)                        // <5>
+    .encode(
+      vl.x().fieldQ('Rotten_Tomatoes_Rating'),
+      vl.y().fieldQ('IMDB_Rating'),
+      vl.tooltip().fieldN('Title'),
+      vl.opacity().if(selection, vl.value(0.75)).value(0.05)
+    )
+    .render();
+}
+
+```
+1. Set up selection wiring
+2. Set hard-wired initial selected values of Drama and R rating
+3. Create menu for genres, radio buttons for mpaa rating
+4. Create scatterplot
+5. Use selection values as parameters for the plot
+
+:::
+
+In some situations, it may be more natural to use a plot as a selection mechanism to show data in a second plot. We'll explore this option next.
+
+::: demo
+
+#### Plots as Dynamic Queries {#sec-vegalite-plots-dynamic-queries}
+
+```{ojs}
+{
+  const brush = vl
+    .selectInterval() // <1>
+    .encodings('x');  // <2>
+  
+  // dynamic query histogram
+  const years = vl
+    .markBar({width: 4}) // <3>
+    .data(movies) 
+    .encode(
+      vl.x().year('Release_Date')
+            .title('Films by Release Year'),
+      vl.y().count()
+            .title(null)
+    )
+    .params(brush) // <4> 
+    .width(600)
+    .height(50);
+  
+  // ratings scatter plot
+  const ratings = vl.markCircle()
+    .data(movies)
+    .encode(
+      vl.x().fieldQ('Rotten_Tomatoes_Rating'),
+      vl.y().fieldQ('IMDB_Rating'),
+      vl.tooltip().fieldN('Title'),
+      vl.opacity().if(brush, vl.value(0.75)).value(0.05) // <5>
+    )
+    .width(600)
+    .height(400);
+
+  return vl
+  .vconcat(years, ratings) // <6>
+  .spacing(5) // <7>
+  .render(); 
+}
+```
+1. Create a selector that can be integrated into the plot.
+2. Limit selection to x-axis values so that the y-values don't matter. 
+3. Create a histogram
+4. Use the selector as a dynamic query within the histogram
+5. Connect brush to appearance of the points in the scatterplot
+6. Connect the two plots vertically
+7. Add a bit of spacing between panels
+
+:::
+
+::: demo
+#### Panning and Zooming
+
+It may be useful in some cases to be able to move around a chart. 
+We can think of this as selecting all of the data lying within the x-axis and y-axis limits.
+That is, we can define a selection interval of the data that is within the scales!
+
+```{ojs}
+vl.markCircle()
+  .data(movies)
+  .params(
+    vl.selectInterval().bind('scales') // bind interval selection to scale domains
+  )
+  .encode(
+    vl.x().fieldQ('Rotten_Tomatoes_Rating'),
+    vl.y().fieldQ('IMDB_Rating')
+      .axis({minExtent: 30}), // add min extent to stabilize axis title placement
+    vl.tooltip(['Title', 'Release_Date', 'IMDB_Rating', 'Rotten_Tomatoes_Rating'])
+  )
+  .width(600)
+  .height(450)
+  .render()
+
+```
+
+:::
+
+
+::: demo
+#### Overview and Detail on Demand
+
+One of the maxims of interactive (and even static) data visualization is "details-on-demand" -- that is, the ways that we can get a sense of the data is to allow people to move around the data set (zoom), look at subsets (filter), and then to get details when they're ready for them. 
+
+One easy way to do this is to provide a large-scale overview and then to allow people to zoom in, often using two plots - one that serves as a query selector, and one that shows the resulting data, as in @sec-vegalite-plots-dynamic-queries. 
+
+Another way to do this is to provide those details as tooltips and additional layers that respond to the selection. 
+
+```{ojs}
+{
+  const hover = vl.selectPoint()
+    .on('mouseover') // <1>
+    .toggle(false)   // <1>
+    .nearest(true);  // <2>
+  
+  const click = vl.selectPoint(); // <3> 
+  
+  const hoverOrClick = vl.or(click.empty(false), hover.empty(false)); // <4>
+  
+  const plot = vl.markCircle().encode( vl.x().fieldQ('Rotten_Tomatoes_Rating'),   // <5>
+    vl.y().fieldQ('IMDB_Rating') );                                               // <5>
+  
+  const base = plot.transform( vl.filter(hoverOrClick) ); // <6>
+  
+  const halo = { size: 100, stroke: 'firebrick', strokeWidth: 1 };  // <7>
+  const label = { dx: 4, dy: -8, align: 'right' };                  // <7>
+  const white = { stroke: 'white', strokeWidth: 2 };                // <7>
+
+  return vl               // <8>
+    .data(movies)
+    .layer(
+      plot.params(hover, click),
+      base.markPoint(halo),
+      base.markText(label, white).encode(vl.text().fieldN('Title')),
+      base.markText(label).encode(vl.text().fieldN('Title'))
+    )
+    .width(600)
+    .height(450)
+    .render();
+}
+```
+1. Select a point when the user hovers over it, but not when it's shift-hovered
+2. Select nearest point to the mouse cursor
+3. Also select points if they're clicked on.
+4. Combine hover and click selections. Empty selections should match nothing.
+5. Define scatter plot encodings shared by all marks.
+6. Create a shared base for new layers that has the selectors.
+7. Set appearance of new layers
+8. Layer scatter plot points, halo annotations, and title labels together, then render the chart.
+
+:::
+
+## References
