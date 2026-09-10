@@ -36,6 +36,8 @@ RUN --mount=type=cache,target=/var/cache/apt \
       libsecret-1-dev \
     # units
       libglpk-dev libudunits2-dev \
+    # uv
+      libuv1-dev \
     # R pkgs
     && install2.r --error --deps TRUE \
       RJDBC odbc devtools digest tinytex quarto rmarkdown yaml rstudioapi renv reticulate \
