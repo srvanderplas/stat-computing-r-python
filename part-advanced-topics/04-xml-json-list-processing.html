@@ -2,14 +2,17 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.31">
+<meta name="generator" content="quarto-1.9.37">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2025-10-29">
+<meta name="dcterms.date" content="2026-09-10">
 
 <title>32&nbsp; Record-based Data and List Processing Strategies – Statistical Computing using R and Python</title>
 <style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -95,10 +98,10 @@ div.csl-indent {
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-fced259a1985fd972ecb57c7cd45153f.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-cad2a2f8a56dfe71ee895a68e79c9b9a.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-f07762a21ba25cba39e145f6fd1c637f.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-dca5339161ad4b751befb3930fcb4780.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -140,19 +143,6 @@ gtag('config', 'G-4ZFBDKXJXP', { 'anonymize_ip': true});
 <script src="../site_libs/quarto-diagram/mermaid-init.js"></script>
 <link href="../site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 <style>
-div.callout-demo.callout {
-  border-left-color: #91d5d4;
-}
-div.callout-demo.callout-style-default > .callout-header {
-  background-color: rgba(145, 213, 212, 0.13);
-}
-div.callout-demo .callout-toggle::before {  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgb(33, 37, 41)" class="bi bi-chevron-down" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>');}
-div.callout-demo.callout-style-default .callout-icon::before, div.callout-demo.callout-titled .callout-icon::before {
-  font-family: 'Font Awesome 6 Free', FontAwesome;
-  font-style: normal;
-  content: '\f12e' !important;
-  background-image: none;
-}
 div.callout-example.callout {
   border-left-color: #f39c12;
 }
@@ -164,6 +154,32 @@ div.callout-example.callout-style-default .callout-icon::before, div.callout-exa
   font-family: 'Font Awesome 6 Free', FontAwesome;
   font-style: normal;
   content: '\f206' !important;
+  background-image: none;
+}
+div.callout-setup.callout {
+  border-left-color: #f3e969;
+}
+div.callout-setup.callout-style-default > .callout-header {
+  background-color: rgba(243, 233, 105, 0.13);
+}
+div.callout-setup .callout-toggle::before {  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgb(33, 37, 41)" class="bi bi-chevron-down" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>');}
+div.callout-setup.callout-style-default .callout-icon::before, div.callout-setup.callout-titled .callout-icon::before {
+  font-family: 'Font Awesome 6 Free', FontAwesome;
+  font-style: normal;
+  content: '\f6e3' !important;
+  background-image: none;
+}
+div.callout-advanced.callout {
+  border-left-color: #cbbaf9;
+}
+div.callout-advanced.callout-style-default > .callout-header {
+  background-color: rgba(203, 186, 249, 0.13);
+}
+div.callout-advanced .callout-toggle::before {  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgb(33, 37, 41)" class="bi bi-chevron-down" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>');}
+div.callout-advanced.callout-style-default .callout-icon::before, div.callout-advanced.callout-titled .callout-icon::before {
+  font-family: 'Font Awesome 6 Free', FontAwesome;
+  font-style: normal;
+  content: '\f5dc' !important;
   background-image: none;
 }
 div.callout-learnmore.callout {
@@ -192,36 +208,23 @@ div.callout-diy.callout-style-default .callout-icon::before, div.callout-diy.cal
   content: '\f0ad' !important;
   background-image: none;
 }
-div.callout-advanced.callout {
-  border-left-color: #cbbaf9;
+div.callout-demo.callout {
+  border-left-color: #91d5d4;
 }
-div.callout-advanced.callout-style-default > .callout-header {
-  background-color: rgba(203, 186, 249, 0.13);
+div.callout-demo.callout-style-default > .callout-header {
+  background-color: rgba(145, 213, 212, 0.13);
 }
-div.callout-advanced .callout-toggle::before {  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgb(33, 37, 41)" class="bi bi-chevron-down" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>');}
-div.callout-advanced.callout-style-default .callout-icon::before, div.callout-advanced.callout-titled .callout-icon::before {
+div.callout-demo .callout-toggle::before {  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgb(33, 37, 41)" class="bi bi-chevron-down" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>');}
+div.callout-demo.callout-style-default .callout-icon::before, div.callout-demo.callout-titled .callout-icon::before {
   font-family: 'Font Awesome 6 Free', FontAwesome;
   font-style: normal;
-  content: '\f5dc' !important;
-  background-image: none;
-}
-div.callout-setup.callout {
-  border-left-color: #f3e969;
-}
-div.callout-setup.callout-style-default > .callout-header {
-  background-color: rgba(243, 233, 105, 0.13);
-}
-div.callout-setup .callout-toggle::before {  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="rgb(33, 37, 41)" class="bi bi-chevron-down" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>');}
-div.callout-setup.callout-style-default .callout-icon::before, div.callout-setup.callout-titled .callout-icon::before {
-  font-family: 'Font Awesome 6 Free', FontAwesome;
-  font-style: normal;
-  content: '\f6e3' !important;
+  content: '\f12e' !important;
   background-image: none;
 }
 </style>
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <script type="text/javascript">
 const typesetMath = (el) => {
@@ -234,7 +237,7 @@ const typesetMath = (el) => {
     var macros = [];
     for (var i = 0; i < mathElements.length; i++) {
       var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
         window.katex.render(texText.data, mathElements[i], {
           displayMode: mathElements[i].classList.contains('display'),
           throwOnError: false,
@@ -630,7 +633,7 @@ window.Quarto = {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">October 29, 2025</p>
+      <p class="date">September 10, 2026</p>
     </div>
   </div>
   
@@ -699,7 +702,7 @@ window.Quarto = {
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Demo: Hierarchical Employee Data
+<span class="screen-reader-only">Demo</span>Demo: Hierarchical Employee Data
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -792,12 +795,12 @@ Figure&nbsp;32.1: This entity-relationship diagram contains information about co
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Example: Hierarchical Employee Data
+<span class="screen-reader-only">Example</span>Example: Hierarchical Employee Data
 </div>
 </div>
 <div class="callout-body-container callout-body">
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" aria-current="page">Problem Description</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">R (purrr)</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false">Python</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="" aria-current="page">Problem Description</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">R (purrr)</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false" href="">Python</a></li></ul>
 <div class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <p>Read in <a href="../data/sample_employee_data.xml">this XML file of sample employee data</a> and</p>
@@ -814,7 +817,7 @@ Example: Hierarchical Employee Data
 </div>
 <div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(xml2)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(xml2)</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(purrr)</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(stringr)</span>
@@ -868,11 +871,11 @@ Example: Hierarchical Employee Data
 <span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a><span class="do">## 1 12078633     FALSE</span></span>
 <span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a><span class="do">## 2  9361578     FALSE</span></span>
 <span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a><span class="do">## 3 39197635     FALSE</span></span>
-<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a><span class="do">## 4 69647139     FALSE</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a><span class="do">## 4 69647139     FALSE</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>The <code>purrr::pluck()</code> function is a good way to pull out the information we need, once we convert the xml file to a list structure (which is still not a tabular form).</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>supervisors <span class="ot">&lt;-</span> <span class="fu">xml_find_all</span>(info, <span class="st">"//*/ORG_REL/*"</span>)<span class="sc">|&gt;</span> </span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>supervisors <span class="ot">&lt;-</span> <span class="fu">xml_find_all</span>(info, <span class="st">"//*/ORG_REL/*"</span>)<span class="sc">|&gt;</span> </span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_list</span>() <span class="sc">|&gt;</span></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map_chr</span>(<span class="sc">~</span>purrr<span class="sc">::</span><span class="fu">pluck</span>(., <span class="st">"SUPERVISOR_ID"</span>, <span class="dv">1</span>)) </span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>employees <span class="ot">&lt;-</span> <span class="fu">xml_find_all</span>(info, <span class="st">"//*/ORG_REL/*"</span>)<span class="sc">|&gt;</span> </span>
@@ -901,10 +904,10 @@ Example: Hierarchical Employee Data
 <span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a><span class="do">## 1   +1-448-259-7632x679 531909398      TRUE</span></span>
 <span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a><span class="do">## 2 001-272-144-5412x0950 226062294      TRUE</span></span>
 <span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a><span class="do">## 3  001-011-455-7532x304 228640945      TRUE</span></span>
-<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a><span class="do">## 4     (195)612-9014x134 533899921      TRUE</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a><span class="do">## 4     (195)612-9014x134 533899921      TRUE</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>ids <span class="ot">&lt;-</span> <span class="fu">xml_find_all</span>(info, <span class="st">"//*/TRAINING/TRAININ/EMPLOYEE_ID"</span>)<span class="sc">|&gt;</span> <span class="fu">xml_text</span>()</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>ids <span class="ot">&lt;-</span> <span class="fu">xml_find_all</span>(info, <span class="st">"//*/TRAINING/TRAININ/EMPLOYEE_ID"</span>)<span class="sc">|&gt;</span> <span class="fu">xml_text</span>()</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>get_employee_training_type <span class="ot">&lt;-</span> <span class="cf">function</span>(id) {</span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  employee_training_xpath <span class="ot">&lt;-</span> <span class="fu">sprintf</span>(<span class="st">"//*/TRAINING/TRAININ/EMPLOYEE_ID[text()='%s']"</span>, id)</span>
@@ -924,10 +927,10 @@ Example: Hierarchical Employee Data
 <span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map_lgl</span>(duplicates)</span>
 <span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="fu">unique</span>(ids)[dupe_employees] <span class="sc">|&gt;</span> <span class="fu">as.numeric</span>() <span class="sc">|&gt;</span> <span class="fu">sort</span>()</span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 1106 2519 2584 2674 5506</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] 1106 2519 2584 2674 5506</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># This is how easy it is in tabular form... </span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># This is how easy it is in tabular form... </span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>training_str <span class="ot">&lt;-</span> <span class="fu">xml_find_all</span>(info, <span class="st">"//*/TRAINING/TRAININ"</span>)<span class="sc">|&gt;</span> </span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as_list</span>() <span class="sc">|&gt;</span></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map_dfr</span>(<span class="sc">~</span>.x <span class="sc">|&gt;</span> </span>
@@ -937,12 +940,12 @@ Example: Hierarchical Employee Data
 <span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>            <span class="fu">set_names</span>(<span class="st">"id"</span>, <span class="st">"type"</span>, <span class="st">"employee_id"</span>, <span class="st">"score"</span>)</span>
 <span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> <span class="fu">group_by</span>(employee_id) <span class="sc">|&gt;</span></span>
 <span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">n =</span> <span class="fu">n</span>(), <span class="at">n_unique =</span> <span class="fu">length</span>(<span class="fu">unique</span>(type))) <span class="sc">|&gt;</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(n <span class="sc">!=</span> n_unique)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(n <span class="sc">!=</span> n_unique)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 <div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> bs4 <span class="im">import</span> BeautifulSoup</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> bs4 <span class="im">import</span> BeautifulSoup</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.read_xml(<span class="st">"../data/sample_employee_data.xml"</span>, </span>
@@ -966,11 +969,11 @@ Example: Hierarchical Employee Data
 <span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="co">## 36  Alexander   Marsh  ...     +1-126-214-2102x641  39197635</span></span>
 <span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="co">## 37      Kayla  Parker  ...      549-226-0959x23219  69647139</span></span>
 <span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="co">## </span></span>
-<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="co">## [4 rows x 6 columns]</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="co">## [4 rows x 6 columns]</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>In order to not convert things to a tabular format, we have to use the xml library directly. This is annoying and a good vote in favor of using tabular formats instead of hierarchical stuff, particularly when pandas makes it easy to get the tabular format we need back out.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> xml.etree.ElementTree <span class="im">as</span> ET</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> xml.etree.ElementTree <span class="im">as</span> ET</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>doc <span class="op">=</span> ET.parse(<span class="vs">r"</span><span class="dv">..</span><span class="vs">/data/sample_employee_data</span><span class="dv">.</span><span class="vs">xml"</span>)</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>root <span class="op">=</span> doc.getroot()</span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>relationships <span class="op">=</span> root.find(<span class="st">"ORG_REL"</span>)</span>
@@ -1001,11 +1004,11 @@ Example: Hierarchical Employee Data
 <span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a><span class="co">## 20    4611</span></span>
 <span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a><span class="co">## 28    3547</span></span>
 <span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a><span class="co">## 45    6925</span></span>
-<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a><span class="co">## dtype: object</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a><span class="co">## dtype: object</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Now we tackle the training problem in a similar way, making use of the fact that we can group one series (training types) by another (employee ID) and the index of the grouped series will have the employee ID we want. This is right on the border of tabular data, and yes, I’m intentionally blurring the lines even further. Ultimately, what we want is to solve the problem.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>trainings <span class="op">=</span> root.find(<span class="st">"TRAINING"</span>)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>trainings <span class="op">=</span> root.find(<span class="st">"TRAINING"</span>)</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>trainings <span class="op">=</span> trainings.findall(<span class="st">"TRAININ"</span>)</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>training_types <span class="op">=</span> pd.Series([e[<span class="dv">1</span>].text <span class="cf">for</span> e <span class="kw">in</span> trainings])</span>
@@ -1013,7 +1016,7 @@ Example: Hierarchical Employee Data
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>multiple_trainings <span class="op">=</span> training_types.groupby(training_empl).agg(<span class="kw">lambda</span> x: <span class="bu">len</span>(x) <span class="op">!=</span> x.nunique())</span>
 <span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Employees who took the same training multiple times</span></span>
 <span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>multiple_trainings.index[multiple_trainings.values]</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co">## Index(['1106', '2519', '2584', '2674', '5506'], dtype='object')</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co">## Index(['1106', '2519', '2584', '2674', '5506'], dtype='object')</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </div>
 </div>
@@ -1033,7 +1036,7 @@ Example: Hierarchical Employee Data
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="header-section-number">32.1.2.2.1</span> Demo: Relationship Data Networks
+<span class="screen-reader-only">Demo</span><span class="header-section-number">32.1.2.2.1</span> Demo: Relationship Data Networks
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -1245,7 +1248,7 @@ Figure&nbsp;32.2: Romantic relationships between characters in Grey’s Anatomy,
 <p>Then, if we have additional data on each person, such as an astrological sign, we could also have a person table containing that information. We can then reshape and join these tables to create different tables that are suitable for different analyses.</p>
 <p>If you’d like to play around with this data, there are two JSON files that contain all of the information you would need: <a href="../data/greys-anatomy-data.json">relationships</a>, and <a href="../data/greys-anatomy-astrology.json">astrological signs</a> (not all characters have known or imputed astrological signs, so there will be some missing data).</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tibble)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tibble)</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(purrr)</span>
@@ -1257,11 +1260,11 @@ Figure&nbsp;32.2: Romantic relationships between characters in Grey’s Anatomy,
 <span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">map_df</span>(as_tibble)</span>
 <span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>astrology <span class="ot">&lt;-</span> <span class="fu">read_json</span>(<span class="st">"../data/greys-anatomy-astrology.json"</span>)</span>
 <span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>astrology <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">Person =</span> <span class="fu">names</span>(astrology), <span class="at">sign =</span> <span class="fu">unlist</span>(astrology)) <span class="sc">|&gt;</span></span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">sign =</span> <span class="fu">factor</span>(sign, <span class="at">levels =</span> sign_order, <span class="at">ordered =</span> T))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">sign =</span> <span class="fu">factor</span>(sign, <span class="at">levels =</span> sign_order, <span class="at">ordered =</span> T))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Since I don’t know anything about astrology, let’s start by examining whether certain astrological signs are more likely to have a certain type of relationship.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="annotated-cell-9"><pre class="sourceCode r code-annotation-code code-with-copy code-annotated"><code class="sourceCode r"><span id="annotated-cell-9-1"><a href="#annotated-cell-9-1" aria-hidden="true" tabindex="-1"></a>long_rels <span class="ot">&lt;-</span> relationships <span class="sc">|&gt;</span> </span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="annotated-cell-9"><pre class="sourceCode r code-annotation-code code-with-copy code-annotated"><code class="sourceCode r"><span id="annotated-cell-9-1"><a href="#annotated-cell-9-1" aria-hidden="true" tabindex="-1"></a>long_rels <span class="ot">&lt;-</span> relationships <span class="sc">|&gt;</span> </span>
 <button class="code-annotation-anchor" data-target-cell="annotated-cell-9" data-target-annotation="1">1</button><span id="annotated-cell-9-2" class="code-annotation-target"><a href="#annotated-cell-9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">id =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">n</span>()) <span class="sc">|&gt;</span></span>
 <span id="annotated-cell-9-3"><a href="#annotated-cell-9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>)</span>
 <span id="annotated-cell-9-4"><a href="#annotated-cell-9-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -1296,7 +1299,7 @@ Figure&nbsp;32.2: Romantic relationships between characters in Grey’s Anatomy,
 <span id="annotated-cell-9-33"><a href="#annotated-cell-9-33" aria-hidden="true" tabindex="-1"></a><span class="do">## 15 romantic        43 target Winston Ndugu </span></span>
 <span id="annotated-cell-9-34"><a href="#annotated-cell-9-34" aria-hidden="true" tabindex="-1"></a><span class="do">## 16 romantic        45 target Nico Kim      </span></span>
 <span id="annotated-cell-9-35"><a href="#annotated-cell-9-35" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 0 × 2</span></span>
-<span id="annotated-cell-9-36"><a href="#annotated-cell-9-36" aria-hidden="true" tabindex="-1"></a><span class="do">## # ℹ 2 variables: Person &lt;chr&gt;, sign &lt;ord&gt;</span></span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="annotated-cell-9-36"><a href="#annotated-cell-9-36" aria-hidden="true" tabindex="-1"></a><span class="do">## # ℹ 2 variables: Person &lt;chr&gt;, sign &lt;ord&gt;</span></span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-annotation">
 <dl class="code-annotation-container-hidden code-annotation-container-grid">
 <dt data-target-cell="annotated-cell-9" data-target-annotation="1">1</dt>
@@ -1321,14 +1324,14 @@ Figure&nbsp;32.2: Romantic relationships between characters in Grey’s Anatomy,
 <p>This table has a <em>lot</em> of zeros, so I don’t think we’re going to be able to pull off a statistical analysis because the data is too sparse. Perhaps we could ask AI for similar data sets on the characters of House, ER, and other medical dramas, and then combine the data, if we wanted to proceed with a formal analysis. <span class="citation" data-cites="holsterChapter7Network2022"><a href="#ref-holsterChapter7Network2022" role="doc-biblioref">[1]</a></span> provides demonstrations for how to analyze network data, if you are interested.</p>
 <p>We can also just join both the source and the target in the same dataset to combine the information, as long as we are careful about renaming columns – the resulting contingency table is shown under the code chunk below. The sparsity of this data (we have 144 possible astrological combinations, and only 48 relationships) all but guarantees that we won’t be able to do any meaningful data analysis – Grey’s Anatomy just didn’t have enough relationships over 21 years for statistical purposes.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>relationship_signs <span class="ot">&lt;-</span> relationships <span class="sc">|&gt;</span> </span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>relationship_signs <span class="ot">&lt;-</span> relationships <span class="sc">|&gt;</span> </span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(astrology, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"source"</span> <span class="ot">=</span> <span class="st">"Person"</span>)) <span class="sc">|&gt;</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">source_sign =</span> sign) <span class="sc">|&gt;</span></span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(astrology, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"target"</span> <span class="ot">=</span> <span class="st">"Person"</span>)) <span class="sc">|&gt;</span></span>
 <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">target_sign =</span> sign)</span>
 <span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(<span class="at">Source =</span> relationship_signs<span class="sc">$</span>source_sign, <span class="at">Target =</span> relationship_signs<span class="sc">$</span>target_sign) <span class="sc">|&gt;</span></span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="at">caption =</span> <span class="st">"Relationships in Grey's Anatomy, by astrological sign of the initiating individual (rows) and the target (columns). Not all relationships are included as not all characters have known or imputed (by the actor's sign) astrological sign."</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>(<span class="at">caption =</span> <span class="st">"Relationships in Grey's Anatomy, by astrological sign of the initiating individual (rows) and the target (columns). Not all relationships are included as not all characters have known or imputed (by the actor's sign) astrological sign."</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output-display">
 <table class="caption-top table table-sm table-striped small">
 <caption>Relationships in Grey’s Anatomy, by astrological sign of the initiating individual (rows) and the target (columns). Not all relationships are included as not all characters have known or imputed (by the actor’s sign) astrological sign.</caption>
@@ -1565,14 +1568,14 @@ Figure&nbsp;32.2: Romantic relationships between characters in Grey’s Anatomy,
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Example: Computer Language Influences
+<span class="screen-reader-only">Example</span>Example: Computer Language Influences
 </div>
 </div>
 <div class="callout-body-container callout-body">
 <p>New computer languages are often influenced by existing languages – for instance, R is an open-source clone of S, which was a proprietary language used at IBM – the function names are the same, but the methods are not necessarily identical underneath the hood.</p>
 <p>I <a href="../data/language-inheritance-gpt.txt">worked with ChatGPT</a> to develop a “family tree” of programming languages, focusing primarily on those used for data analysis tasks. ChatGPT was categorically wrong several times, so while I can vouch for the R/Julia/Python portions of the tree, it’s harder to guarantee that the other portions of the tree are 100% correct, though they seem to mostly match up with my prior knowledge. In this case, the goal is to provide you with a dataset that can be manipulated, so that’s the critical part of this exercise.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">Problem Description</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-3" role="tab" aria-controls="tabset-2-3" aria-selected="false">Python</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true" href="">Problem Description</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false" href="">R</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-3" role="tab" aria-controls="tabset-2-3" aria-selected="false" href="">Python</a></li></ul>
 <div class="tab-content">
 <div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
 <p>The json file <a href="../data/Language-Inheritance.json"><code>Language-Inheritance.json</code></a> provides data on each programming language in the relationship diagram, including the release date and creator(s) credited with the language.</p>
@@ -1628,7 +1631,7 @@ Figure&nbsp;32.3: Relationships between computer languages. Direct influences ar
 </div>
 <div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="annotated-cell-11"><pre class="sourceCode r code-annotation-code code-with-copy code-annotated"><code class="sourceCode r"><span id="annotated-cell-11-1"><a href="#annotated-cell-11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(jsonlite)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="annotated-cell-11"><pre class="sourceCode r code-annotation-code code-with-copy code-annotated"><code class="sourceCode r"><span id="annotated-cell-11-1"><a href="#annotated-cell-11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(jsonlite)</span>
 <span id="annotated-cell-11-2"><a href="#annotated-cell-11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tibble)</span>
 <span id="annotated-cell-11-3"><a href="#annotated-cell-11-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
 <span id="annotated-cell-11-4"><a href="#annotated-cell-11-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
@@ -1703,7 +1706,7 @@ Figure&nbsp;32.3: Relationships between computer languages. Direct influences ar
 <span id="annotated-cell-11-73"><a href="#annotated-cell-11-73" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 1 × 5</span></span>
 <span id="annotated-cell-11-74"><a href="#annotated-cell-11-74" aria-hidden="true" tabindex="-1"></a><span class="do">##   source target     relationship year_source year_target</span></span>
 <span id="annotated-cell-11-75"><a href="#annotated-cell-11-75" aria-hidden="true" tabindex="-1"></a><span class="do">##   &lt;chr&gt;  &lt;chr&gt;      &lt;chr&gt;              &lt;int&gt;       &lt;int&gt;</span></span>
-<span id="annotated-cell-11-76"><a href="#annotated-cell-11-76" aria-hidden="true" tabindex="-1"></a><span class="do">## 1 Java   JavaScript ecosystem           1995        1995</span></span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="annotated-cell-11-76"><a href="#annotated-cell-11-76" aria-hidden="true" tabindex="-1"></a><span class="do">## 1 Java   JavaScript ecosystem           1995        1995</span></span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-annotation">
 <dl class="code-annotation-container-hidden code-annotation-container-grid">
 <dt data-target-cell="annotated-cell-11" data-target-annotation="1">1</dt>
@@ -1748,7 +1751,7 @@ Figure&nbsp;32.3: Relationships between computer languages. Direct influences ar
 </div>
 <div id="tabset-2-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-3-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="annotated-cell-12"><pre class="sourceCode python code-annotation-code code-with-copy code-annotated"><code class="sourceCode python"><span id="annotated-cell-12-1"><a href="#annotated-cell-12-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="annotated-cell-12"><pre class="sourceCode python code-annotation-code code-with-copy code-annotated"><code class="sourceCode python"><span id="annotated-cell-12-1"><a href="#annotated-cell-12-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
 <span id="annotated-cell-12-2"><a href="#annotated-cell-12-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
 <span id="annotated-cell-12-3"><a href="#annotated-cell-12-3" aria-hidden="true" tabindex="-1"></a></span>
 <button class="code-annotation-anchor" data-target-cell="annotated-cell-12" data-target-annotation="1">1</button><span id="annotated-cell-12-4" class="code-annotation-target"><a href="#annotated-cell-12-4" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> <span class="bu">open</span>(<span class="st">'../data/Language-Inheritance.json'</span>) <span class="im">as</span> f:</span>
@@ -1781,7 +1784,7 @@ Figure&nbsp;32.3: Relationships between computer languages. Direct influences ar
 <span id="annotated-cell-12-31"><a href="#annotated-cell-12-31" aria-hidden="true" tabindex="-1"></a><span class="co">## 3    Algol     Pascal  inheritance         1958          NaN</span></span>
 <span id="annotated-cell-12-32"><a href="#annotated-cell-12-32" aria-hidden="true" tabindex="-1"></a><span class="co">## 4        C        C++  inheritance         1972       1983.0</span></span>
 <span id="annotated-cell-12-33"><a href="#annotated-cell-12-33" aria-hidden="true" tabindex="-1"></a><span class="co">##    source      target relationship  year_source  year_target</span></span>
-<span id="annotated-cell-12-34"><a href="#annotated-cell-12-34" aria-hidden="true" tabindex="-1"></a><span class="co">## 25   Java  JavaScript    ecosystem         1995       1995.0</span></span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="annotated-cell-12-34"><a href="#annotated-cell-12-34" aria-hidden="true" tabindex="-1"></a><span class="co">## 25   Java  JavaScript    ecosystem         1995       1995.0</span></span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-annotation">
 <dl class="code-annotation-container-hidden code-annotation-container-grid">
 <dt data-target-cell="annotated-cell-12" data-target-annotation="1">1</dt>
@@ -1853,7 +1856,7 @@ Figure&nbsp;32.3: Relationships between computer languages. Direct influences ar
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-<span class="header-section-number">32.2.1</span> Demo: Book/TV Show Characters
+<span class="screen-reader-only">Demo</span><span class="header-section-number">32.2.1</span> Demo: Book/TV Show Characters
 </div>
 </div>
 <div class="callout-body-container callout-body">
@@ -1861,17 +1864,17 @@ Figure&nbsp;32.3: Relationships between computer languages. Direct influences ar
 <p>The JSON file has more than 50k rows, but it’s clear that there is a structure to the data, along with a lot of missing information.</p>
 <p>The tabs below work through the five steps listed immediately above this section.</p>
 <div class="tabset-margin-container"></div><div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">1. Examine the record structure</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">2. Identify Needed Data</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-3" role="tab" aria-controls="tabset-3-3" aria-selected="false">3. Sketch Form of the Data</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-4" role="tab" aria-controls="tabset-3-4" aria-selected="false">4. Write Functions to Format Data</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-5" role="tab" aria-controls="tabset-3-5" aria-selected="false">5. Double-check Records for Accuracy</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true" href="">1. Examine the record structure</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false" href="">2. Identify Needed Data</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-3" role="tab" aria-controls="tabset-3-3" aria-selected="false" href="">3. Sketch Form of the Data</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-4" role="tab" aria-controls="tabset-3-4" aria-selected="false" href="">4. Write Functions to Format Data</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-5-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-5" role="tab" aria-controls="tabset-3-5" aria-selected="false" href="">5. Double-check Records for Accuracy</a></li></ul>
 <div class="tab-content">
 <div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
 <p>There is only one type of record in the file – data corresponding to each character in the series.</p>
 <div class="callout callout-style-simple callout-none no-icon callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon no-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Selection of 4 records
+<span class="screen-reader-only">None</span>Selection of 4 records
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
@@ -2039,7 +2042,7 @@ Selection of 4 records
 </div>
 <div id="tabset-3-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-4-tab">
 <div class="cell">
-<div class="sourceCode cell-code" id="annotated-cell-14"><pre class="sourceCode r code-annotation-code code-with-copy code-annotated"><code class="sourceCode r"><span id="annotated-cell-14-1"><a href="#annotated-cell-14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(jsonlite)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="annotated-cell-14"><pre class="sourceCode r code-annotation-code code-with-copy code-annotated"><code class="sourceCode r"><span id="annotated-cell-14-1"><a href="#annotated-cell-14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(jsonlite)</span>
 <span id="annotated-cell-14-2"><a href="#annotated-cell-14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tibble)</span>
 <span id="annotated-cell-14-3"><a href="#annotated-cell-14-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
 <span id="annotated-cell-14-4"><a href="#annotated-cell-14-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
@@ -2107,7 +2110,7 @@ Selection of 4 records
 <span id="annotated-cell-14-66"><a href="#annotated-cell-14-66" aria-hidden="true" tabindex="-1"></a>personalInfo <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(datatbl<span class="sc">$</span>personal)</span>
 <span id="annotated-cell-14-67"><a href="#annotated-cell-14-67" aria-hidden="true" tabindex="-1"></a>relationships <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(datatbl<span class="sc">$</span>relationships)</span>
 <span id="annotated-cell-14-68"><a href="#annotated-cell-14-68" aria-hidden="true" tabindex="-1"></a>book <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(datatbl<span class="sc">$</span>book)</span>
-<span id="annotated-cell-14-69"><a href="#annotated-cell-14-69" aria-hidden="true" tabindex="-1"></a>tv_show <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(datatbl<span class="sc">$</span>tv)</span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="annotated-cell-14-69"><a href="#annotated-cell-14-69" aria-hidden="true" tabindex="-1"></a>tv_show <span class="ot">&lt;-</span> <span class="fu">bind_rows</span>(datatbl<span class="sc">$</span>tv)</span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-annotation">
 <dl class="code-annotation-container-hidden code-annotation-container-grid">
 <dt data-target-cell="annotated-cell-14" data-target-annotation="1">1</dt>
@@ -2177,15 +2180,15 @@ Selection of 4 records
 <div id="tabset-3-5" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-5-tab">
 <p>When double-checking records, I like to use a combination of strategies - random spot-checking, as well as checking values I know are likely to be challenging in one way or another.</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">3420934</span>)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">3420934</span>)</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>tests <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="at">size =</span> <span class="dv">3</span>, <span class="at">x =</span> <span class="dv">1</span><span class="sc">:</span><span class="fu">length</span>(data))</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>tests</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="do">## [1]  408 2000 1161</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="do">## [1]  408 2000 1161</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Random individual with ID=<code>r .QuartoInlineRender(tests[1])</code></summary>
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>i <span class="ot">&lt;-</span> tests[<span class="dv">1</span>]</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>i <span class="ot">&lt;-</span> tests[<span class="dv">1</span>]</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>data[[i]][<span class="fu">c</span>(<span class="st">"url"</span>, <span class="st">"name"</span>, <span class="st">"gender"</span>, <span class="st">"culture"</span>, <span class="st">"born"</span>, <span class="st">"died"</span>, <span class="st">"titles"</span>, <span class="st">"aliases"</span>, <span class="st">"allegiances"</span>)] <span class="sc">|&gt;</span> <span class="fu">print</span>()</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="do">## $url</span></span>
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "https://anapioficeandfire.com/api/characters/408"</span></span>
@@ -2281,13 +2284,13 @@ Selection of 4 records
 <span id="cb12-94"><a href="#cb12-94" aria-hidden="true" tabindex="-1"></a><span class="do">## list()</span></span>
 <span id="cb12-95"><a href="#cb12-95" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(tv_show, id <span class="sc">==</span> <span class="fu">as.character</span>(i)) <span class="sc">|&gt;</span> <span class="fu">print</span>()</span>
 <span id="cb12-96"><a href="#cb12-96" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 0 × 3</span></span>
-<span id="cb12-97"><a href="#cb12-97" aria-hidden="true" tabindex="-1"></a><span class="do">## # ℹ 3 variables: id &lt;chr&gt;, tvSeries &lt;chr&gt;, playedBy &lt;chr&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb12-97"><a href="#cb12-97" aria-hidden="true" tabindex="-1"></a><span class="do">## # ℹ 3 variables: id &lt;chr&gt;, tvSeries &lt;chr&gt;, playedBy &lt;chr&gt;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Random individual with ID=<code>r .QuartoInlineRender(tests[2])</code></summary>
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>i <span class="ot">&lt;-</span> tests[<span class="dv">2</span>]</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>i <span class="ot">&lt;-</span> tests[<span class="dv">2</span>]</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>data[[i]][<span class="fu">c</span>(<span class="st">"url"</span>, <span class="st">"name"</span>, <span class="st">"gender"</span>, <span class="st">"culture"</span>, <span class="st">"born"</span>, <span class="st">"died"</span>, <span class="st">"titles"</span>, <span class="st">"aliases"</span>, <span class="st">"allegiances"</span>)] <span class="sc">|&gt;</span> <span class="fu">print</span>()</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="do">## $url</span></span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "https://anapioficeandfire.com/api/characters/2000"</span></span>
@@ -2362,13 +2365,13 @@ Selection of 4 records
 <span id="cb13-73"><a href="#cb13-73" aria-hidden="true" tabindex="-1"></a><span class="do">## list()</span></span>
 <span id="cb13-74"><a href="#cb13-74" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(tv_show, id <span class="sc">==</span> <span class="fu">as.character</span>(i)) <span class="sc">|&gt;</span> <span class="fu">print</span>()</span>
 <span id="cb13-75"><a href="#cb13-75" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 0 × 3</span></span>
-<span id="cb13-76"><a href="#cb13-76" aria-hidden="true" tabindex="-1"></a><span class="do">## # ℹ 3 variables: id &lt;chr&gt;, tvSeries &lt;chr&gt;, playedBy &lt;chr&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb13-76"><a href="#cb13-76" aria-hidden="true" tabindex="-1"></a><span class="do">## # ℹ 3 variables: id &lt;chr&gt;, tvSeries &lt;chr&gt;, playedBy &lt;chr&gt;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Random individual with ID=<code>r .QuartoInlineRender(tests[3])</code></summary>
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>i <span class="ot">&lt;-</span> tests[<span class="dv">3</span>]</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>i <span class="ot">&lt;-</span> tests[<span class="dv">3</span>]</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>data[[i]][<span class="fu">c</span>(<span class="st">"url"</span>, <span class="st">"name"</span>, <span class="st">"gender"</span>, <span class="st">"culture"</span>, <span class="st">"born"</span>, <span class="st">"died"</span>, <span class="st">"titles"</span>, <span class="st">"aliases"</span>, <span class="st">"allegiances"</span>)] <span class="sc">|&gt;</span> <span class="fu">print</span>()</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="do">## $url</span></span>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "https://anapioficeandfire.com/api/characters/1161"</span></span>
@@ -2448,14 +2451,14 @@ Selection of 4 records
 <span id="cb14-78"><a href="#cb14-78" aria-hidden="true" tabindex="-1"></a><span class="do">## list()</span></span>
 <span id="cb14-79"><a href="#cb14-79" aria-hidden="true" tabindex="-1"></a><span class="fu">filter</span>(tv_show, id <span class="sc">==</span> <span class="fu">as.character</span>(i)) <span class="sc">|&gt;</span> <span class="fu">print</span>()</span>
 <span id="cb14-80"><a href="#cb14-80" aria-hidden="true" tabindex="-1"></a><span class="do">## # A tibble: 0 × 3</span></span>
-<span id="cb14-81"><a href="#cb14-81" aria-hidden="true" tabindex="-1"></a><span class="do">## # ℹ 3 variables: id &lt;chr&gt;, tvSeries &lt;chr&gt;, playedBy &lt;chr&gt;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb14-81"><a href="#cb14-81" aria-hidden="true" tabindex="-1"></a><span class="do">## # ℹ 3 variables: id &lt;chr&gt;, tvSeries &lt;chr&gt;, playedBy &lt;chr&gt;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <p>Then, we move on to the nonrandom sample, picking people we know and can verify, as well as those who might reasonably have significant missing data or excessively long nested lists of attributes.</p>
 <div class="cell">
 <details class="code-fold">
 <summary>Arya Stark</summary>
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>i <span class="ot">&lt;-</span> <span class="dv">148</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>i <span class="ot">&lt;-</span> <span class="dv">148</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>data[[i]][<span class="fu">c</span>(<span class="st">"url"</span>, <span class="st">"name"</span>, <span class="st">"gender"</span>, <span class="st">"culture"</span>, <span class="st">"born"</span>, <span class="st">"died"</span>, <span class="st">"titles"</span>, <span class="st">"aliases"</span>, <span class="st">"allegiances"</span>)] <span class="sc">|&gt;</span> <span class="fu">print</span>()</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="do">## $url</span></span>
 <span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "https://anapioficeandfire.com/api/characters/148"</span></span>
@@ -2625,13 +2628,13 @@ Selection of 4 records
 <span id="cb15-168"><a href="#cb15-168" aria-hidden="true" tabindex="-1"></a><span class="do">## 3 148   Season 3 Maisie Williams</span></span>
 <span id="cb15-169"><a href="#cb15-169" aria-hidden="true" tabindex="-1"></a><span class="do">## 4 148   Season 4 Maisie Williams</span></span>
 <span id="cb15-170"><a href="#cb15-170" aria-hidden="true" tabindex="-1"></a><span class="do">## 5 148   Season 5 Maisie Williams</span></span>
-<span id="cb15-171"><a href="#cb15-171" aria-hidden="true" tabindex="-1"></a><span class="do">## 6 148   Season 6 Maisie Williams</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb15-171"><a href="#cb15-171" aria-hidden="true" tabindex="-1"></a><span class="do">## 6 148   Season 6 Maisie Williams</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Jon Snow</summary>
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>i <span class="ot">&lt;-</span> <span class="dv">583</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>i <span class="ot">&lt;-</span> <span class="dv">583</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>data[[i]][<span class="fu">c</span>(<span class="st">"url"</span>, <span class="st">"name"</span>, <span class="st">"gender"</span>, <span class="st">"culture"</span>, <span class="st">"born"</span>, <span class="st">"died"</span>, <span class="st">"titles"</span>, <span class="st">"aliases"</span>, <span class="st">"allegiances"</span>)] <span class="sc">|&gt;</span> <span class="fu">print</span>()</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="do">## $url</span></span>
 <span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "https://anapioficeandfire.com/api/characters/583"</span></span>
@@ -2778,13 +2781,13 @@ Selection of 4 records
 <span id="cb16-145"><a href="#cb16-145" aria-hidden="true" tabindex="-1"></a><span class="do">## 3 583   Season 3 Kit Harington</span></span>
 <span id="cb16-146"><a href="#cb16-146" aria-hidden="true" tabindex="-1"></a><span class="do">## 4 583   Season 4 Kit Harington</span></span>
 <span id="cb16-147"><a href="#cb16-147" aria-hidden="true" tabindex="-1"></a><span class="do">## 5 583   Season 5 Kit Harington</span></span>
-<span id="cb16-148"><a href="#cb16-148" aria-hidden="true" tabindex="-1"></a><span class="do">## 6 583   Season 6 Kit Harington</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb16-148"><a href="#cb16-148" aria-hidden="true" tabindex="-1"></a><span class="do">## 6 583   Season 6 Kit Harington</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Cersei Lannister</summary>
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>i <span class="ot">&lt;-</span> <span class="dv">238</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>i <span class="ot">&lt;-</span> <span class="dv">238</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>data[[i]][<span class="fu">c</span>(<span class="st">"url"</span>, <span class="st">"name"</span>, <span class="st">"gender"</span>, <span class="st">"culture"</span>, <span class="st">"born"</span>, <span class="st">"died"</span>, <span class="st">"titles"</span>, <span class="st">"aliases"</span>, <span class="st">"allegiances"</span>)] <span class="sc">|&gt;</span> <span class="fu">print</span>()</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="do">## $url</span></span>
 <span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "https://anapioficeandfire.com/api/characters/238"</span></span>
@@ -2921,13 +2924,13 @@ Selection of 4 records
 <span id="cb17-135"><a href="#cb17-135" aria-hidden="true" tabindex="-1"></a><span class="do">## 3 238   Season 3 Lena Headey</span></span>
 <span id="cb17-136"><a href="#cb17-136" aria-hidden="true" tabindex="-1"></a><span class="do">## 4 238   Season 4 Lena Headey</span></span>
 <span id="cb17-137"><a href="#cb17-137" aria-hidden="true" tabindex="-1"></a><span class="do">## 5 238   Season 5 Lena Headey</span></span>
-<span id="cb17-138"><a href="#cb17-138" aria-hidden="true" tabindex="-1"></a><span class="do">## 6 238   Season 6 Lena Headey</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb17-138"><a href="#cb17-138" aria-hidden="true" tabindex="-1"></a><span class="do">## 6 238   Season 6 Lena Headey</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <div class="cell">
 <details class="code-fold">
 <summary>Drogo</summary>
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>i <span class="ot">&lt;-</span> <span class="dv">1346</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>i <span class="ot">&lt;-</span> <span class="dv">1346</span></span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>data[[i]][<span class="fu">c</span>(<span class="st">"url"</span>, <span class="st">"name"</span>, <span class="st">"gender"</span>, <span class="st">"culture"</span>, <span class="st">"born"</span>, <span class="st">"died"</span>, <span class="st">"titles"</span>, <span class="st">"aliases"</span>, <span class="st">"allegiances"</span>)] <span class="sc">|&gt;</span> <span class="fu">print</span>()</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="do">## $url</span></span>
 <span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="do">## [1] "https://anapioficeandfire.com/api/characters/1346"</span></span>
@@ -3032,7 +3035,7 @@ Selection of 4 records
 <span id="cb18-103"><a href="#cb18-103" aria-hidden="true" tabindex="-1"></a><span class="do">##   id    tvSeries playedBy   </span></span>
 <span id="cb18-104"><a href="#cb18-104" aria-hidden="true" tabindex="-1"></a><span class="do">##   &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;      </span></span>
 <span id="cb18-105"><a href="#cb18-105" aria-hidden="true" tabindex="-1"></a><span class="do">## 1 1346  Season 1 Jason Momoa</span></span>
-<span id="cb18-106"><a href="#cb18-106" aria-hidden="true" tabindex="-1"></a><span class="do">## 2 1346  Season 2 Jason Momoa</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb18-106"><a href="#cb18-106" aria-hidden="true" tabindex="-1"></a><span class="do">## 2 1346  Season 2 Jason Momoa</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 </div>
@@ -3042,12 +3045,12 @@ Selection of 4 records
 </div>
 <p><span class="citation" data-cites="bryanManipulateXMLPurrr2024"><a href="#ref-bryanManipulateXMLPurrr2024" role="doc-biblioref">[2]</a></span> and <span class="citation" data-cites="bryanAnalyzeGithubStuff2025"><a href="#ref-bryanAnalyzeGithubStuff2025" role="doc-biblioref">[3]</a></span> contain additional worked examples in R, and <span class="citation" data-cites="westTabulateJSONData2022"><a href="#ref-westTabulateJSONData2022" role="doc-biblioref">[4]</a></span> contains an example in python for how to convert JSON/XML/API values to tabular data.</p>
 <div class="callout callout-style-default callout-learnmore callout-titled">
-<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-title-container flex-fill">
-Learn More
+<span class="screen-reader-only">Learnmore</span>Learn More
 </div>
 <div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
@@ -3073,16 +3076,16 @@ Learn More
 
 <div id="refs" class="references csl-bib-body" data-entry-spacing="0" role="list">
 <div id="ref-holsterChapter7Network2022" class="csl-entry" role="listitem">
-<div class="csl-left-margin">[1] </div><div class="csl-right-inline">J. D. Holster, <span>“Chapter 7 network analysis,”</span> in <em>Introduction to r for data science: A <span>LISA</span> 2020 guidebook</em>, 2022 [Online]. Available: <a href="https://bookdown.org/jdholster1/idsr/network-analysis.html#community-detection">https://bookdown.org/jdholster1/idsr/network-analysis.html#community-detection</a>. [Accessed: Jul. 07, 2025]</div>
+<div class="csl-left-margin">[1] </div><div class="csl-right-inline">J. D. Holster, <span>“Chapter 7 network analysis,”</span> in <em>Introduction to r for data science: A <span>LISA</span> 2020 guidebook</em>, 2022 [Online]. Available: <a href="https://bookdown.org/jdholster1/idsr/network-analysis.html#community-detection">https://bookdown.org/jdholster1/idsr/network-analysis.html#community-detection</a>. [Accessed: July 07, 2025]</div>
 </div>
 <div id="ref-bryanManipulateXMLPurrr2024" class="csl-entry" role="listitem">
-<div class="csl-left-margin">[2] </div><div class="csl-right-inline">J. Bryan, <span>“Manipulate <span>XML</span> with purrr, dplyr, and tidyr.”</span> Jun. 27, 2024 [Online]. Available: <a href="https://github.com/jennybc/manipulate-xml-with-purrr-dplyr-tidyr">https://github.com/jennybc/manipulate-xml-with-purrr-dplyr-tidyr</a>. [Accessed: Jul. 07, 2025]</div>
+<div class="csl-left-margin">[2] </div><div class="csl-right-inline">J. Bryan, <span>“Manipulate <span>XML</span> with purrr, dplyr, and tidyr.”</span> June 27, 2024 [Online]. Available: <a href="https://github.com/jennybc/manipulate-xml-with-purrr-dplyr-tidyr">https://github.com/jennybc/manipulate-xml-with-purrr-dplyr-tidyr</a>. [Accessed: July 07, 2025]</div>
 </div>
 <div id="ref-bryanAnalyzeGithubStuff2025" class="csl-entry" role="listitem">
-<div class="csl-left-margin">[3] </div><div class="csl-right-inline">J. Bryan, <span>“Analyze github stuff with r.”</span> Jul. 03, 2025 [Online]. Available: <a href="https://github.com/jennybc/analyze-github-stuff-with-r">https://github.com/jennybc/analyze-github-stuff-with-r</a>. [Accessed: Jul. 07, 2025]</div>
+<div class="csl-left-margin">[3] </div><div class="csl-right-inline">J. Bryan, <span>“Analyze github stuff with r.”</span> July 03, 2025 [Online]. Available: <a href="https://github.com/jennybc/analyze-github-stuff-with-r">https://github.com/jennybc/analyze-github-stuff-with-r</a>. [Accessed: July 07, 2025]</div>
 </div>
 <div id="ref-westTabulateJSONData2022" class="csl-entry" role="listitem">
-<div class="csl-left-margin">[4] </div><div class="csl-right-inline">Z. West, <span>“Tabulate <span>JSON</span> data in python using pandas. Αlphαrithms,”</span> Jun. 30, 2022. [Online]. Available: <a href="https://www.alpharithms.com/tabulate-json-data-python-pandas-262811/">https://www.alpharithms.com/tabulate-json-data-python-pandas-262811/</a>. [Accessed: Jul. 07, 2025]</div>
+<div class="csl-left-margin">[4] </div><div class="csl-right-inline">Z. West, <span>“Tabulate <span>JSON</span> data in python using pandas. Αlphαrithms,”</span> June 30, 2022. [Online]. Available: <a href="https://www.alpharithms.com/tabulate-json-data-python-pandas-262811/">https://www.alpharithms.com/tabulate-json-data-python-pandas-262811/</a>. [Accessed: July 07, 2025]</div>
 </div>
 </div>
 </section>
@@ -3139,13 +3142,14 @@ Learn More
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
         }
-        return codeEl.innerText;
+      }
+      return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy
